@@ -1,5 +1,7 @@
 package se.skorup.main;
 
+import se.skorup.API.DebugMethods;
+
 /**
  * The class responsible for starting the program,
  * i.e. the main class.
@@ -11,6 +13,7 @@ public class Main
      * */
     public static void main(String[] args)
     {
-        System.out.println("Hello World!");
+        DebugMethods.log("Hello World", DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Hello World", DebugMethods.LogType.ERROR);
     }
 }
