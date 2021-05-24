@@ -2,6 +2,7 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
+import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
@@ -37,6 +38,9 @@ public class MainFrame extends JFrame
 
     /** The control panel of this frame. */
     private ControlPanel ctrPanel;
+
+    /** The button panel of this frame. */
+    private ButtonPanel btnPanel;
 
     /** The container panel. */
     private final JPanel pContainer = new JPanel();
@@ -98,10 +102,11 @@ public class MainFrame extends JFrame
     private void addComponents()
     {
         pContainer.add(ctrPanel, BorderLayout.PAGE_START);
+        pContainer.add(btnPanel, BorderLayout.PAGE_END);
 
         cp.add(lblSpacer1, BorderLayout.PAGE_START);
         cp.add(lblSpacer2, BorderLayout.LINE_START);
-        cp.add(ctrPanel, BorderLayout.CENTER);
+        cp.add(pContainer, BorderLayout.CENTER);
         cp.add(lblSpacer3, BorderLayout.LINE_END);
         cp.add(lblSpacer4, BorderLayout.PAGE_END);
     }
@@ -119,6 +124,7 @@ public class MainFrame extends JFrame
         cp.setLayout(layout);
 
         ctrPanel = new ControlPanel(this, managers);
+        btnPanel = new ButtonPanel(this);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);

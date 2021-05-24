@@ -16,6 +16,15 @@ public class Utils
     //Foregrounds
     /** The foreground color. */
     public static final Color FOREGROUND_COLOR = Color.WHITE;
+
+    // About
+    /** The version of the program. */
+    public static final String VERSION = "0.1-INDEV";
+
+    /** The about string. */
+    public static final String ABOUT =
+            "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
+
     /**
      * Gets the folder name of this project,
      * were it saves all its files. <br><br>

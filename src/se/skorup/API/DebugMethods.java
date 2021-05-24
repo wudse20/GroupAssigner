@@ -24,7 +24,7 @@ public class DebugMethods
      * */
     public static void log(String message, LogType type)
     {
-        System.out.println("[%s/%s] %s".formatted(getCurrentTime(), type, message));
+        System.out.printf("[%s/%s] %s%n", getCurrentTime(), type, message);
     }
 
     public static String getCurrentTime()

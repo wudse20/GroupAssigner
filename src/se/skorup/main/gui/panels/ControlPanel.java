@@ -93,7 +93,8 @@ public class ControlPanel extends JPanel implements ItemListener
             {
                 JOptionPane.showMessageDialog(
                 this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+                );
                 return;
             }
 
