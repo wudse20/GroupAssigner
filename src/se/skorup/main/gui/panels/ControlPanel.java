@@ -1,18 +1,23 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The control panel at the top of the MainFrame.
  * */
-public class ControlPanel extends JPanel
+public class ControlPanel extends JPanel implements ItemListener
 {
     /** The reference to the managers. */
     private final List<GroupManager> managers;
@@ -64,6 +69,7 @@ public class ControlPanel extends JPanel
 
         cbManagers.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         cbManagers.setForeground(Utils.FOREGROUND_COLOR);
+        cbManagers.addItemListener(this);
 
         this.updateManagers();
     }
@@ -74,5 +80,25 @@ public class ControlPanel extends JPanel
     private void addComponents()
     {
         this.add(cbManagers);
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e)
+    {
+        var index = cbManagers.getSelectedIndex();
+        if (index != -1 && e.getStateChange() == ItemEvent.SELECTED)
+        {
+            // Check for adding
+            if (index == managers.size())
+            {
+                JOptionPane.showMessageDialog(
+                this, "Not Yet Implemented",
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            ((GroupManager) Objects.requireNonNull(cbManagers.getSelectedItem()))
+                    .getAllPersons().forEach(x -> DebugMethods.log(x.toString(), DebugMethods.LogType.DEBUG));
+        }
     }
 }
