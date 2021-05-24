@@ -1,10 +1,21 @@
 package se.skorup.main.objects;
 
+import java.io.Serializable;
+
 /**
  * The supertype for all persons.
  * */
-public abstract class Person
+public abstract class Person implements Serializable
 {
+    /**
+     * The enum that keeps track of the different
+     * roles of the different persons.
+     * */
+    public enum Role
+    {
+        CANDIDATE, LEADER
+    }
+
     /** The name of the person. */
     private final String name;
 
@@ -21,6 +32,26 @@ public abstract class Person
     {
         this.name = name;
         this.id = id;
+    }
+
+    /**
+     * Getter for: name
+     *
+     * @return the name of the person.
+     * */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Getter for: id
+     *
+     * @return the id of the person.
+     * */
+    public int getId()
+    {
+        return id;
     }
 
     @Override
