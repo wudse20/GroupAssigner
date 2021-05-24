@@ -7,9 +7,9 @@ import se.skorup.main.objects.Person;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -103,6 +103,44 @@ public class GroupManager implements Serializable
                         x instanceof Leader :
                         x instanceof Candidate
                     ).collect(Collectors.toSet());
+    }
+
+    /**
+     * Gets a person from a given id.<br><br>
+     *
+     * Time: O(1)
+     *
+     * @param id the id of the person that's being searched from.
+     * @return the person matching the id. If no person matches
+     *         then it will return {@code null}.
+     * @see GroupManager#getPersonFromName(String) GroupManager.getPersonFromString
+     * */
+    public Person getPersonFromId(int id)
+    {
+        return group.get(id);
+    }
+
+    /**
+     * Gets a person from a given name. <br><br>
+     *
+     * Time: O(n)
+     *
+     * @param name the name that's being searched for.
+     * @return {@code null} iff param name is null. If there are
+     *         no results then it will return an empty list. Otherwise
+     *         it will return a list of all the persons that matches
+     *         the name.
+     * @see GroupManager#getPersonFromId(int) GroupManager.getPersonFromId
+     * */
+    public List<Person> getPersonFromName(final String name)
+    {
+        if (name == null)
+            return null;
+
+        return group.values()
+                    .stream()
+                    .filter(x -> x.getName().equals(name))
+                    .collect(Collectors.toList());
     }
 
     /**

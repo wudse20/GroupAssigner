@@ -11,6 +11,8 @@ import java.util.HashSet;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 
@@ -122,5 +124,48 @@ public class GroupManagerTester
         assertEquals(ctr, gm.getAllOfRoll(Person.Role.LEADER));
         assertEquals(ctr2.size(), gm.getAllOfRoll(Person.Role.CANDIDATE).size());
         assertEquals(ctr2, gm.getAllOfRoll(Person.Role.CANDIDATE));
+    }
+
+    /**
+     * Tests the method get from id.
+     * */
+    @Test
+    public void testGetFromId()
+    {
+        var gm = new GroupManager();
+        var p = gm.registerPerson("Anton", Person.Role.LEADER);
+        assertNotNull(gm.getPersonFromId(p.getId()));
+
+        gm.removePerson(p.getId());
+        assertNull(gm.getPersonFromId(p.getId()));
+    }
+
+    /**
+     * Test the method get from name.
+     * */
+    @Test
+    public void testGetFromName()
+    {
+        var gm = new GroupManager();
+        gm.registerPerson("Anton", Person.Role.LEADER);
+        assertNull(gm.getPersonFromName(null));
+        assertEquals(0, gm.getPersonFromName("Sebbe").size());
+        assertEquals(1, gm.getPersonFromName("Anton").size());
+    }
+
+    /**
+     * Test the method get from name with
+     * many entries.
+     * */
+    @Test
+    public void manyGetFromName()
+    {
+        var gm = new GroupManager();
+
+        for (int i = 0; i < (int) Math.pow(10, 3); i++)
+        {
+            gm.registerPerson("Anton", Person.Role.LEADER);
+            assertEquals(i + 1, gm.getPersonFromName("Anton").size());
+        }
     }
 }
