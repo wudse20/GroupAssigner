@@ -1,10 +1,18 @@
 package se.skorup.main.manager;
 
 import org.testng.annotations.Test;
+import se.skorup.main.objects.Candidate;
+import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 /**
  * The class responsible for testing
@@ -12,16 +20,6 @@ import static org.testng.Assert.assertThrows;
  * */
 public class GroupManagerTester
 {
-    /**
-     * Tests the getNextId method.
-     * */
-    @Test
-    public void testGetNextId()
-    {
-        for (int i = 0; i < (int) Math.pow(10, 6); i++)
-            assertEquals(i, GroupManager.getNextId());
-    }
-
     /**
      * Tests the register person method,
      * were everything is fine.
@@ -54,5 +52,75 @@ public class GroupManagerTester
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson(null, Person.Role.LEADER));
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("  ap  ", Person.Role.CANDIDATE));
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("Anton", null));
+    }
+
+    /**
+     * Tests that register person returns the correct
+     * type for the persons, created.
+     * */
+    @Test
+    public void testRegisterPersonType()
+    {
+        var gm = new GroupManager();
+
+        assertTrue(gm.registerPerson("Anton", Person.Role.LEADER) instanceof Leader);
+        assertTrue(gm.registerPerson("Sebbe", Person.Role.CANDIDATE) instanceof Candidate);
+    }
+
+    /**
+     * Tests the remove person method
+     * */
+    @Test
+    public void testRemove()
+    {
+        var gm = new GroupManager();
+        var p = gm.registerPerson("Anton", Person.Role.LEADER);
+        assertTrue(gm.removePerson(p.getId()));
+        assertFalse(gm.removePerson(p.getId()));
+    }
+
+    /**
+     * Test the get all persons method.
+     * */
+    @Test
+    public void testGetAllPersons()
+    {
+        var gm = new GroupManager();
+
+        var ctr = new HashSet<>(
+                Arrays.asList(
+                    gm.registerPerson("Anton", Person.Role.LEADER),
+                    gm.registerPerson("Sebbe", Person.Role.CANDIDATE)
+                )
+        );
+
+        assertEquals(ctr.size(), gm.getAllPersons().size());
+        assertEquals(ctr, gm.getAllPersons());
+    }
+
+    /**
+     * Test the get all of roll method.
+     * */
+    @Test
+    public void testGetAllOfRole()
+    {
+        var gm = new GroupManager();
+
+        var ctr = new HashSet<>(
+                Collections.singletonList(
+                        gm.registerPerson("Anton", Person.Role.LEADER)
+                )
+        );
+
+        var ctr2 = new HashSet<>(
+                Collections.singletonList(
+                        gm.registerPerson("Sebbe", Person.Role.CANDIDATE)
+                )
+        );
+
+        assertEquals(ctr.size(), gm.getAllOfRoll(Person.Role.LEADER).size());
+        assertEquals(ctr, gm.getAllOfRoll(Person.Role.LEADER));
+        assertEquals(ctr2.size(), gm.getAllOfRoll(Person.Role.CANDIDATE).size());
+        assertEquals(ctr2, gm.getAllOfRoll(Person.Role.CANDIDATE));
     }
 }
