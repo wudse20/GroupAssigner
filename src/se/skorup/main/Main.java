@@ -1,6 +1,8 @@
 package se.skorup.main;
 
-import se.skorup.API.DebugMethods;
+import se.skorup.main.gui.frames.MainFrame;
+
+import javax.swing.SwingUtilities;
 
 /**
  * The class responsible for starting the program,
@@ -13,7 +15,6 @@ public class Main
      * */
     public static void main(String[] args)
     {
-        DebugMethods.log("Hello World", DebugMethods.LogType.DEBUG);
-        DebugMethods.log("Hello World", DebugMethods.LogType.ERROR);
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 }

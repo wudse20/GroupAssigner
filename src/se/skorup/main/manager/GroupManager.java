@@ -21,20 +21,27 @@ public class GroupManager implements Serializable
     /** The next id that will be used. */
     private static int nextId = 0;
 
+    /** The number of members. */
+    private int members = 0;
+
     /**
      * The map that keeps track of all the persons,
      * key is the id of the person.
      * */
     private final Map<Integer, Person> group;
 
+    /** The name of the group. */
+    private final String name;
+
     /**
      * Creates a new empty GroupManager.<br><br>
      *
-     * This will reset the id counter.
+     * @param name the name of the group.
      * */
-    public GroupManager()
+    public GroupManager(String name)
     {
         this.group = new HashMap<>();
+        this.name = name;
     }
 
     /**
@@ -61,6 +68,7 @@ public class GroupManager implements Serializable
         var id = getNextId();
         Person p = (r.equals(Person.Role.LEADER)) ? new Leader(name, id) : new Candidate(name, id);
         group.put(id, p);
+        members++;
         return p;
     }
 
@@ -74,6 +82,9 @@ public class GroupManager implements Serializable
      * */
     public boolean removePerson(int id)
     {
+        if (group.containsKey(id))
+            members--;
+
         return group.remove(id) != null;
     }
 
@@ -149,5 +160,21 @@ public class GroupManager implements Serializable
     public static int getNextId()
     {
         return nextId++;
+    }
+
+    /**
+     * Getter for: members
+     *
+     * @return the number of members.
+     * */
+    public int getMemberCount()
+    {
+        return members;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "%s (%d)".formatted(name, members);
     }
 }

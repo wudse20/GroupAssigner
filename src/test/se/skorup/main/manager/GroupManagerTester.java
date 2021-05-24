@@ -29,7 +29,7 @@ public class GroupManagerTester
     @Test
     public void testRegisterPerson()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
 
         try
         {
@@ -50,7 +50,7 @@ public class GroupManagerTester
     @Test
     public void testRegisterPersonThrows()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson(null, Person.Role.LEADER));
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("  ap  ", Person.Role.CANDIDATE));
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("Anton", null));
@@ -63,7 +63,7 @@ public class GroupManagerTester
     @Test
     public void testRegisterPersonType()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
 
         assertTrue(gm.registerPerson("Anton", Person.Role.LEADER) instanceof Leader);
         assertTrue(gm.registerPerson("Sebbe", Person.Role.CANDIDATE) instanceof Candidate);
@@ -75,7 +75,7 @@ public class GroupManagerTester
     @Test
     public void testRemove()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
         var p = gm.registerPerson("Anton", Person.Role.LEADER);
         assertTrue(gm.removePerson(p.getId()));
         assertFalse(gm.removePerson(p.getId()));
@@ -87,7 +87,7 @@ public class GroupManagerTester
     @Test
     public void testGetAllPersons()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
 
         var ctr = new HashSet<>(
                 Arrays.asList(
@@ -106,7 +106,7 @@ public class GroupManagerTester
     @Test
     public void testGetAllOfRole()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
 
         var ctr = new HashSet<>(
                 Collections.singletonList(
@@ -132,7 +132,7 @@ public class GroupManagerTester
     @Test
     public void testGetFromId()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
         var p = gm.registerPerson("Anton", Person.Role.LEADER);
         assertNotNull(gm.getPersonFromId(p.getId()));
 
@@ -146,7 +146,7 @@ public class GroupManagerTester
     @Test
     public void testGetFromName()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
         gm.registerPerson("Anton", Person.Role.LEADER);
         assertNull(gm.getPersonFromName(null));
         assertEquals(0, gm.getPersonFromName("Sebbe").size());
@@ -160,12 +160,41 @@ public class GroupManagerTester
     @Test
     public void manyGetFromName()
     {
-        var gm = new GroupManager();
+        var gm = new GroupManager("");
 
         for (int i = 0; i < (int) Math.pow(10, 3); i++)
         {
             gm.registerPerson("Anton", Person.Role.LEADER);
             assertEquals(i + 1, gm.getPersonFromName("Anton").size());
         }
+    }
+
+    /**
+     * Tests the member count.
+     * */
+    @Test
+    public void testMemberCount()
+    {
+        var gm = new GroupManager("");
+        assertEquals(0, gm.getMemberCount());
+
+        Person p = null;
+        int i = 0;
+        for (; i < (int) Math.pow(10, 6); i++)
+        {
+            p = gm.registerPerson("Anton", Person.Role.LEADER);
+            assertEquals(i + 1, gm.getMemberCount());
+        }
+
+        assert p != null;
+        gm.removePerson(p.getId());
+        assertEquals(i - 1, gm.getMemberCount());
+        gm.removePerson(p.getId());
+        assertEquals(i - 1, gm.getMemberCount());
+
+        try { gm.registerPerson(null, null); }
+        catch (IllegalArgumentException e) {}
+
+        assertEquals(i - 1, gm.getMemberCount());
     }
 }
