@@ -1,6 +1,7 @@
 package se.skorup.API;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * Some debug methods used in the program.
@@ -28,16 +29,17 @@ public class DebugMethods
 
     public static String getCurrentTime()
     {
-        String year = Integer.toString(LocalDateTime.now().getYear());
+        var h = (LocalTime.now().getHour() < 10) ?
+                "0" + LocalTime.now().getHour()  :
+                Integer.toString(LocalTime.now().getHour());
 
-        String month = (LocalDateTime.now().getMonthValue() < 10) ?
-                "0" + LocalDateTime.now().getMonthValue() :
-                Integer.toString(LocalDateTime.now().getMonthValue());
+        var m = (LocalTime.now().getMinute() < 10) ?
+                "0" + LocalTime.now().getMinute()  :
+                Integer.toString(LocalTime.now().getMinute());
+        var s = (LocalTime.now().getSecond() < 10) ?
+                "0" + LocalTime.now().getSecond()  :
+                Integer.toString(LocalTime.now().getSecond());
 
-        String day = (LocalDateTime.now().getDayOfMonth() < 10) ?
-                "0" + LocalDateTime.now().getDayOfMonth() :
-                Integer.toString(LocalDateTime.now().getDayOfMonth());
-
-        return "%s-%s-%s".formatted(year, month, day);
+        return "%s:%s:%s".formatted(h, m, s);
     }
 }
