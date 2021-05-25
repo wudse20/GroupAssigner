@@ -12,4 +12,14 @@ public final class Candidate extends Person
     {
         super(name, id);
     }
+
+    @Override
+    public Candidate clone()
+    {
+        var newCandidate = new Candidate(name, id);
+        newCandidate.denylist = denylist;
+        newCandidate.wishlist = wishlist;
+
+        return newCandidate;
+    }
 }

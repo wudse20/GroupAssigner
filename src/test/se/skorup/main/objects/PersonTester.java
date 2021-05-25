@@ -2,11 +2,14 @@ package se.skorup.main.objects;
 
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -78,5 +81,29 @@ public class PersonTester
             assertFalse(p.addDenylistId(i));
 
         assertTrue(Arrays.equals(items, p.getDenylist()));
+    }
+
+    /**
+     * Tests the clone method.
+     * */
+    public void testClone()
+    {
+        var p = new Leader("Anton", 0);
+        var p2 = p.clone();
+        assertEquals(p, p2);
+        assertNotSame(p, p2);
+    }
+
+    /**
+     * Tests the clone method, with map on list.
+     * */
+    @Test
+    public void testCloneList()
+    {
+        var persons = new ArrayList<Person>();
+        persons.add(new Leader("Anton", 0));
+        persons.add(new Candidate("Sebbe", 0));
+
+        assertEquals(persons, persons.stream().map(Person::clone).collect(Collectors.toCollection(ArrayList::new)));
     }
 }

@@ -15,4 +15,14 @@ public final class Leader extends Person
     {
         super(name, id);
     }
+
+    @Override
+    public Leader clone()
+    {
+        var newCandidate = new Leader(name, id);
+        newCandidate.denylist = denylist;
+        newCandidate.wishlist = wishlist;
+
+        return newCandidate;
+    }
 }

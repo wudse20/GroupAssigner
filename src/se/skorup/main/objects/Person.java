@@ -19,16 +19,16 @@ public abstract class Person implements Serializable
     }
 
     /** The name of the person. */
-    private final String name;
+    protected final String name;
 
     /** The id of the person. */
-    private final int id;
+    protected final int id;
 
     /** The denylist of the person. */
-    private final Set<Integer> denylist = new HashSet<>();
+    protected Set<Integer> denylist = new HashSet<>();
 
     /** The wishes of the person. */
-    private final Set<Integer> wishlist = new HashSet<>();
+    protected Set<Integer> wishlist = new HashSet<>();
 
     /**
      * Creates a new person with a name.
@@ -134,5 +134,18 @@ public abstract class Person implements Serializable
     public int hashCode()
     {
         return id;
+    }
+
+    @Override
+    public Person clone()
+    {
+        try
+        {
+            return (Person) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            return null;
+        }
     }
 }

@@ -17,13 +17,20 @@ public class PersonListModel extends AbstractListModel<Person>
     private final List<Person> persons;
 
     /**
-     * Creates a new PersonListModel.
+     * Creates a new PersonListModel. If persons
+     * is null an empty array list will takes its
+     * place.
      *
-     * @param persons the persons in the list.
+     * @param persons the persons in the list. If
+     *                {@code null} an empty ArrayList
+     *                will be created.
      * */
     public PersonListModel(Collection<Person> persons)
     {
-        this.persons = new ArrayList<>(persons);
+        if (persons != null)
+            this.persons = new ArrayList<>(persons);
+        else
+            this.persons = new ArrayList<>();
     }
 
     /**
@@ -65,7 +72,7 @@ public class PersonListModel extends AbstractListModel<Person>
     public void removeAll()
     {
         this.persons.clear();
-        // Index1 is 0, since java persons will be cleared.
+        // Index1 is 0, since persons will be cleared.
         fireContentsChanged(this, 0, 0);
     }
 

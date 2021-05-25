@@ -4,17 +4,12 @@ import se.skorup.API.Utils;
 import se.skorup.main.gui.models.PersonListModel;
 import se.skorup.main.objects.Person;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 
 /**
