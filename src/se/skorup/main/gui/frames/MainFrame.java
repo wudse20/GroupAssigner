@@ -4,7 +4,6 @@ import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
-import se.skorup.main.gui.panels.PersonPanel;
 import se.skorup.main.gui.panels.SidePanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;

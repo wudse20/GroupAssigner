@@ -109,7 +109,7 @@ public abstract class Person implements Serializable
     @Override
     public String toString()
     {
-        return "%s: %d".formatted(name, id);
+        return "%s, id: %d".formatted(name, id);
     }
 
     /**

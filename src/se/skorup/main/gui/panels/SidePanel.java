@@ -24,10 +24,10 @@ public class SidePanel extends JPanel implements ComponentListener
     private final BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 
     /** The PersonPanel for the leaders. */
-    private final PersonPanel pLeaders;
+    private final PersonListPanel pLeaders;
 
     /** The PersonPanel for the candidates. */
-    private final PersonPanel pCandidates;
+    private final PersonListPanel pCandidates;
 
     /** The spacer between the panels. */
     private final JLabel lblSpacer1 = new JLabel(" ");
@@ -44,9 +44,9 @@ public class SidePanel extends JPanel implements ComponentListener
     {
         this.mf = mf;
         this.pLeaders =
-            new PersonPanel("Ledare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.LEADER));
+            new PersonListPanel("Ledare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.LEADER));
         this.pCandidates =
-            new PersonPanel("Deltagare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.CANDIDATE));
+            new PersonListPanel("Deltagare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.CANDIDATE));
 
         this.setProperties();
         this.addComponents();
