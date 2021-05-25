@@ -2,8 +2,12 @@ package se.skorup.main.objects;
 
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * The class that tests the abstract class person
@@ -38,5 +42,41 @@ public class PersonTester
         Person l = new Leader("Anton", 1);
         Person c = new Candidate("Sebbe", 1);
         assertNotEquals(l, c);
+    }
+
+    /**
+     * Tests the wishlist.
+     * */
+    @Test
+    public void testWishlist()
+    {
+        var p = new Leader("Anton", 0);
+        var items = new int[] {1, 2, 3, 4, 5};
+
+        for (var i : items)
+            assertTrue(p.addWishlistId(i));
+
+        for (var i : items)
+            assertFalse(p.addWishlistId(i));
+
+        assertTrue(Arrays.equals(items, p.getWishlist()));
+    }
+
+    /**
+     * Tests the denylist.
+     * */
+    @Test
+    public void testDenylist()
+    {
+        var p = new Leader("Anton", 0);
+        var items = new int[] {1, 2, 3, 4, 5};
+
+        for (var i : items)
+            assertTrue(p.addDenylistId(i));
+
+        for (var i : items)
+            assertFalse(p.addDenylistId(i));
+
+        assertTrue(Arrays.equals(items, p.getDenylist()));
     }
 }
