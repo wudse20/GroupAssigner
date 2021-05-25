@@ -4,6 +4,7 @@ import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
+import se.skorup.main.gui.panels.PersonPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -102,6 +103,7 @@ public class MainFrame extends JFrame
     private void addComponents()
     {
         pContainer.add(ctrPanel, BorderLayout.PAGE_START);
+        pContainer.add(new PersonPanel("Ledare:", managers.get(0).getAllOfRoll(Person.Role.LEADER)), BorderLayout.LINE_START);
         pContainer.add(btnPanel, BorderLayout.PAGE_END);
 
         cp.add(lblSpacer1, BorderLayout.PAGE_START);
@@ -118,7 +120,7 @@ public class MainFrame extends JFrame
     private void setProperties()
     {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(400, 300));
+        this.setSize(new Dimension(1200, 600));
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setLayout(layout);
