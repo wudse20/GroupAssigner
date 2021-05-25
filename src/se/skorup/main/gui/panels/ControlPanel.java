@@ -100,6 +100,8 @@ public class ControlPanel extends JPanel implements ItemListener
 
             ((GroupManager) Objects.requireNonNull(cbManagers.getSelectedItem()))
                     .getAllPersons().forEach(x -> DebugMethods.log(x.toString(), DebugMethods.LogType.DEBUG));
+
+            mf.setCurrentGroupManager(index);
         }
     }
 }

@@ -5,6 +5,7 @@ import se.skorup.API.Utils;
 import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
 import se.skorup.main.gui.panels.PersonPanel;
+import se.skorup.main.gui.panels.SidePanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -25,6 +26,8 @@ public class MainFrame extends JFrame
     /** The group managers. */
     private final List<GroupManager> managers = new ArrayList<>();
 
+    private GroupManager currentGroupManager;
+
     /** Adds a demo group if {@code true}. */
     private final boolean debug = true;
 
@@ -42,6 +45,9 @@ public class MainFrame extends JFrame
 
     /** The button panel of this frame. */
     private ButtonPanel btnPanel;
+
+    /** The side panel. */
+    private SidePanel sidePanel;
 
     /** The container panel. */
     private final JPanel pContainer = new JPanel();
@@ -64,7 +70,6 @@ public class MainFrame extends JFrame
     public MainFrame()
     {
         super("Gruppskapare");
-        this.demoGroup();
         this.init();
     }
 
@@ -89,6 +94,9 @@ public class MainFrame extends JFrame
     private void init()
     {
         DebugMethods.log("Starting initialization of MainFrame.", DebugMethods.LogType.DEBUG);
+        this.demoGroup();
+        this.currentGroupManager = (managers.size() != 0) ? managers.get(0) : null;
+        DebugMethods.log("GroupManagers initialized.", DebugMethods.LogType.DEBUG);
         this.setProperties();
         DebugMethods.log("The properties has been set.", DebugMethods.LogType.DEBUG);
         this.addComponents();
@@ -103,7 +111,7 @@ public class MainFrame extends JFrame
     private void addComponents()
     {
         pContainer.add(ctrPanel, BorderLayout.PAGE_START);
-        pContainer.add(new PersonPanel("Ledare:", managers.get(0).getAllOfRoll(Person.Role.LEADER)), BorderLayout.LINE_START);
+        pContainer.add(sidePanel, BorderLayout.LINE_START);
         pContainer.add(btnPanel, BorderLayout.PAGE_END);
 
         cp.add(lblSpacer1, BorderLayout.PAGE_START);
@@ -127,8 +135,30 @@ public class MainFrame extends JFrame
 
         ctrPanel = new ControlPanel(this, managers);
         btnPanel = new ButtonPanel(this);
+        sidePanel = new SidePanel(this);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);
+    }
+
+    /**
+     * Sets the current group manager.
+     *
+     * @param index the index of the current group manager.
+     * */
+    public void setCurrentGroupManager(int index)
+    {
+        this.currentGroupManager = managers.get(index);
+    }
+
+    /**
+     * Gets the current group manager.
+     *
+     * @return the current group manager, iff no exist
+     *         managers it will return {@code null}.
+     * */
+    public GroupManager getCurrentGroup()
+    {
+        return currentGroupManager;
     }
 }
