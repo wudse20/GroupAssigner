@@ -12,6 +12,7 @@ import java.util.HashSet;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
@@ -98,6 +99,7 @@ public class GroupManagerTester
 
         assertEquals(ctr.size(), gm.getAllPersons().size());
         assertEquals(ctr, gm.getAllPersons());
+        assertNotSame(gm.getAllPersons(), gm.getAllPersons());
     }
 
     /**
@@ -196,5 +198,21 @@ public class GroupManagerTester
         catch (IllegalArgumentException e) {}
 
         assertEquals(i - 1, gm.getMemberCount());
+    }
+
+    @Test
+    public void testGetAllBut()
+    {
+        var gm = new GroupManager("");
+
+        var p = gm.registerPerson("Anton", Person.Role.LEADER);
+        var p2 = gm.registerPerson("Sebbe", Person.Role.CANDIDATE);
+
+        var ctr = new HashSet<>(Arrays.asList(p, p2));
+        var ctr2 = new HashSet<>(Collections.singletonList(p2));
+
+        assertEquals(ctr.size() - 1, gm.getAllBut(p).size());
+        assertEquals(ctr2, gm.getAllBut(p));
+        assertThrows(IllegalArgumentException.class, () -> gm.getAllBut(null));
     }
 }

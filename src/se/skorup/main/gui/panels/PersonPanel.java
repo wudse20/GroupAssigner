@@ -11,7 +11,9 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * The panel responsible for listing a person for edit.
@@ -144,6 +146,26 @@ public class PersonPanel extends JPanel
             this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
             lblName.setText(p.getName());
+            var group = mf.getCurrentGroup();
+            var deny = Arrays.stream(p.getDenylist()).boxed().collect(Collectors.toList());
+            var wish = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList());
+
+            var addedDeny = group.getAllBut(p);
+            var addedWish = group.getAllBut(p);
+
+            // All persons intersect list = added persons to list.
+            addedDeny.stream().map(Person::getId).collect(Collectors.toSet()).retainAll(deny);
+            addedWish.stream().map(Person::getId).collect(Collectors.toSet()).retainAll(wish);
+
+            var notAddedDeny = group.getAllBut(p);
+            var notAddedWish = group.getAllBut(p);
+
+            // All persons \ added = persons not added.
+            notAddedDeny.removeAll(addedDeny);
+            notAddedWish.removeAll(addedWish);
+
+            denylist.setListData(addedDeny, notAddedDeny);
+            wishlist.setListData(addedWish, notAddedWish);
         }
 
         this.addComponents();

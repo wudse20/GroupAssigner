@@ -99,6 +99,25 @@ public class GroupManager implements Serializable
     }
 
     /**
+     * Returns a set that contains all the
+     * persons except for p.
+     *
+     * @param p the person not contained in the set.
+     * @return A set that contains all persons but p.
+     * @throws IllegalArgumentException iff p == {@code null}
+     * */
+    public Set<Person> getAllBut(Person p) throws IllegalArgumentException
+    {
+        if (p == null)
+            throw new IllegalArgumentException("Param p cannot be null");
+
+        return group.values()
+                    .stream()
+                    .filter(x -> x.getId() != p.getId())
+                    .collect(Collectors.toSet());
+    }
+
+    /**
      * Get all persons of roll r.
      *
      * @param r the roll that's wanted.

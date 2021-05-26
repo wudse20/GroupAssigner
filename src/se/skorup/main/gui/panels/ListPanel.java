@@ -15,8 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -46,6 +48,8 @@ public class ListPanel extends JPanel implements ActionListener
     /** The panel holding the buttons. */
     private final JPanel btnPanel = new JPanel();
 
+    private final JPanel buttonContainer = new JPanel();
+
     /** The container holding the main items. */
     private final JPanel container = new JPanel();
 
@@ -59,10 +63,13 @@ public class ListPanel extends JPanel implements ActionListener
     private final JLabel lblSpacer1 = new JLabel(" ");
 
     /** The spacer label. */
-    private final JLabel lblSpacer2 = new JLabel("        ");
+    private final JLabel lblSpacer2 = new JLabel(" ");
 
     /** The spacer label. */
     private final JLabel lblSpacer3 = new JLabel("        ");
+
+    /** The spacer label. */
+    private final JLabel lblSpacer4 = new JLabel("        ");
 
     /** The info label. */
     private final JLabel lblInfo;
@@ -71,10 +78,12 @@ public class ListPanel extends JPanel implements ActionListener
     private final BorderLayout layout = new BorderLayout();
 
     /** The layout of the container. */
-    private final FlowLayout containerLayout = new FlowLayout(FlowLayout.CENTER);
+    private final GridLayout containerLayout = new GridLayout(1, 3);
 
     /** The layout of the btnPanel. */
     private final BoxLayout btnPanelLayout = new BoxLayout(btnPanel, BoxLayout.Y_AXIS);
+
+    private final FlowLayout buttonContainerLayout = new FlowLayout(FlowLayout.CENTER);
 
     /** The list of the added persons. */
     private final JList<Person> listAdded = new JList<>();
@@ -108,7 +117,7 @@ public class ListPanel extends JPanel implements ActionListener
     {
         this.notAdded = notAdded.stream().map(Person::clone).collect(Collectors.toSet());
         this.added = added.stream().map(Person::clone).collect(Collectors.toSet());
-        this.lblInfo = new JLabel("  " + label);
+        this.lblInfo = new JLabel(label);
 
         this.setProperties();
         this.refreshListData();
@@ -120,15 +129,18 @@ public class ListPanel extends JPanel implements ActionListener
      * */
     private void addComponents()
     {
-        btnPanel.add(btnAdd);
         btnPanel.add(lblSpacer1);
+        btnPanel.add(btnAdd);
+        btnPanel.add(lblSpacer2);
         btnPanel.add(btnRemove);
 
-        container.add(scrNotAdded);
-        container.add(lblSpacer2);
-        container.add(btnPanel);
-        container.add(lblSpacer3);
+        buttonContainer.add(lblSpacer3);
+        buttonContainer.add(btnPanel);
+        buttonContainer.add(lblSpacer4);
+
         container.add(scrAdded);
+        container.add(buttonContainer);
+        container.add(scrNotAdded);
 
         this.add(lblInfo, BorderLayout.PAGE_START);
         this.add(container, BorderLayout.CENTER);
@@ -160,6 +172,9 @@ public class ListPanel extends JPanel implements ActionListener
 
         btnPanel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnPanel.setLayout(btnPanelLayout);
+
+        buttonContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        buttonContainer.setLayout(buttonContainerLayout);
 
         btnAdd.setForeground(Utils.FOREGROUND_COLOR);
         btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -214,6 +229,23 @@ public class ListPanel extends JPanel implements ActionListener
             return;
 
         callbacks.add(c);
+    }
+
+    /**
+     * Sets the list data of the panel.
+     *
+     * @param added the new elements in the added list.
+     * @param notAdded the new elements in the not added list.
+     * */
+    public void setListData(Collection<Person> added, Collection<Person> notAdded)
+    {
+        this.added.clear();
+        this.added.addAll(added);
+
+        this.notAdded.clear();
+        this.notAdded.addAll(notAdded);
+
+        this.refreshListData();
     }
 
     @Override

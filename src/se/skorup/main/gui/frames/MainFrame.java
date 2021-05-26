@@ -166,15 +166,11 @@ public class MainFrame extends JFrame
         personPanel = new PersonPanel(this);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(1200, 600));
+        this.setSize(new Dimension(1200, 620));
         this.addWindowStateListener(sidePanel);
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setLayout(layout);
-
-//        var pArr = new Person[0];
-//        personPanel.setPerson(getCurrentGroup().getAllPersons().toArray(pArr)[0]);
-        personPanel.setPerson(null);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);
