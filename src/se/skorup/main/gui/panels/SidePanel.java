@@ -10,12 +10,14 @@ import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 /**
  * The side panel to the left of the GUI in
  * the MainFrame.
  * */
-public class SidePanel extends JPanel implements ComponentListener
+public class SidePanel extends JPanel implements ComponentListener, WindowStateListener
 {
     /** The instance of the MainFrame. */
     private final MainFrame mf;
@@ -89,4 +91,10 @@ public class SidePanel extends JPanel implements ComponentListener
 
     @Override
     public void componentHidden(ComponentEvent e) {}
+
+    @Override
+    public void windowStateChanged(WindowEvent e)
+    {
+        this.setPreferredSize(new Dimension(mf.getWidth() / 5, this.getHeight()));
+    }
 }

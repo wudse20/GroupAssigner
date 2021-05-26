@@ -158,19 +158,21 @@ public class MainFrame extends JFrame
      * */
     private void setProperties()
     {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(1200, 600));
-
-        cp.setBackground(Utils.BACKGROUND_COLOR);
-        cp.setLayout(layout);
-
         ctrPanel = new ControlPanel(this, managers);
         btnPanel = new ButtonPanel(this);
         sidePanel = new SidePanel(this);
         personPanel = new PersonPanel(this);
 
-        var pArr = new Person[0];
-        personPanel.setPerson(getCurrentGroup().getAllPersons().toArray(pArr)[0]);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(new Dimension(1200, 600));
+        this.addWindowStateListener(sidePanel);
+
+        cp.setBackground(Utils.BACKGROUND_COLOR);
+        cp.setLayout(layout);
+
+//        var pArr = new Person[0];
+//        personPanel.setPerson(getCurrentGroup().getAllPersons().toArray(pArr)[0]);
+        personPanel.setPerson(null);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);

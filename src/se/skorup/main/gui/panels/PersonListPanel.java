@@ -1,6 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.Utils;
+import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.models.PersonListModel;
 import se.skorup.main.objects.Person;
 
@@ -9,16 +10,23 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * The panel that lists the persons.
  * */
-public class PersonListPanel extends JPanel
+public class PersonListPanel extends JPanel implements ListSelectionListener
 {
     /** The set of persons in the list. */
     private final Set<Person> persons;
+
+    /** The action callbacks. */
+    private final List<ActionCallback> callbacks = new Vector<>();
 
     /** The label. */
     private final JLabel lblGroupInfo;
@@ -83,9 +91,32 @@ public class PersonListPanel extends JPanel
         listPersons.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listPersons.setModel(model);
         listPersons.setBorder(BorderFactory.createEmptyBorder());
+        listPersons.addListSelectionListener(this);
 
         scrListPersons.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
 
         this.updateList();
+    }
+
+    /**
+     * Adds an ActionCallback to the panel.
+     * If the provided callback is null, then
+     * it will do nothing.
+     *
+     * @param c the callback to be added, if {@code null}
+     *          then it will do nothing and just return.
+     * */
+    public void addActionCallback(ActionCallback c)
+    {
+        if (c == null)
+            return;
+
+        callbacks.add(c);
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e)
+    {
+        callbacks.forEach(ActionCallback::callback);
     }
 }
