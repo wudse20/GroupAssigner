@@ -165,11 +165,23 @@ public class ListPanel extends JPanel implements ActionListener
         btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnAdd.setActionCommand(Buttons.ADD.toString());
         btnAdd.addActionListener(this);
+        btnAdd.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createEmptyBorder(3, 15, 5, 15)
+            )
+        );
 
         btnRemove.setForeground(Utils.FOREGROUND_COLOR);
         btnRemove.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnRemove.setActionCommand(Buttons.REMOVE.toString());
         btnRemove.addActionListener(this);
+        btnRemove.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createEmptyBorder(3, 15, 5, 15)
+            )
+        );
 
         listAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listAdded.setForeground(Utils.FOREGROUND_COLOR);
