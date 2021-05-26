@@ -19,7 +19,7 @@ public class ButtonPanel extends JPanel implements ActionListener
     /** The different button types. */
     private enum Buttons
     {
-        SAVE, PRINT, ABOUT, HELP
+        SAVE, CREATE_GROUPS, ABOUT, HELP
     }
 
     /** The instance of the MainFrame. */
@@ -31,8 +31,8 @@ public class ButtonPanel extends JPanel implements ActionListener
     /** The button for saving. */
     private final JButton btnSave = new JButton("Spara");
 
-    /** The button for printing. */
-    private final JButton btnPrint = new JButton("Skriv ut");
+    /** The button for creating groups. */
+    private final JButton btnCreateGroup = new JButton("Skapa grupper");
 
     /** The button for the about information. */
     private final JButton btnAbout = new JButton("Om");
@@ -60,7 +60,7 @@ public class ButtonPanel extends JPanel implements ActionListener
 
         this.add(btnHelp);
         this.add(btnAbout);
-        this.add(btnPrint);
+        this.add(btnCreateGroup);
         this.add(btnSave);
     }
 
@@ -87,10 +87,10 @@ public class ButtonPanel extends JPanel implements ActionListener
         btnSave.setActionCommand(Buttons.SAVE.toString());
         btnSave.addActionListener(this);
 
-        btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnPrint.setForeground(Utils.FOREGROUND_COLOR);
-        btnPrint.setActionCommand(Buttons.PRINT.toString());
-        btnPrint.addActionListener(this);
+        btnCreateGroup.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnCreateGroup.setForeground(Utils.FOREGROUND_COLOR);
+        btnCreateGroup.setActionCommand(Buttons.CREATE_GROUPS.toString());
+        btnCreateGroup.addActionListener(this);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ButtonPanel extends JPanel implements ActionListener
                 "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
             );
         }
-        else if (cmd.equals(Buttons.PRINT.toString()))
+        else if (cmd.equals(Buttons.CREATE_GROUPS.toString()))
         {
             JOptionPane.showMessageDialog(
                 this, "Not Yet Implemented",

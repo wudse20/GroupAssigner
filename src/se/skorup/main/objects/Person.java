@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * The supertype for all persons.
  * */
-public abstract class Person implements Serializable
+public abstract class Person implements Serializable, Comparable<Person>
 {
     /**
      * The enum that keeps track of the different
@@ -147,5 +147,11 @@ public abstract class Person implements Serializable
         {
             return null;
         }
+    }
+
+    @Override
+    public int compareTo(Person p)
+    {
+        return Integer.compare(id, p.id);
     }
 }
