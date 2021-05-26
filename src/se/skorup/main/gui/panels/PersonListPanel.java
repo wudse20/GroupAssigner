@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.models.PersonListModel;
@@ -24,6 +25,9 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
 {
     /** The set of persons in the list. */
     private final Set<Person> persons;
+
+    /** The current person. */
+    private Person p;
 
     /** The action callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
@@ -114,9 +118,41 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
         callbacks.add(c);
     }
 
+    /**
+     * Deselects everything in this list.
+     * */
+    public void deselectAll()
+    {
+        listPersons.clearSelection();
+        p = null;
+    }
+
+    /**
+     * Gets the currently selected person.
+     *
+     * @return the currently selected person;
+     *         {@code null} iff there is no
+     *         person selected.
+     * */
+    public Person getCurrentPerson()
+    {
+        return p;
+    }
+
     @Override
     public void valueChanged(ListSelectionEvent e)
     {
-        callbacks.forEach(ActionCallback::callback);
+        // Preventing double events.
+        if (!e.getValueIsAdjusting())
+        {
+            int index = listPersons.getSelectedIndex();
+            if (index != -1)
+            {
+                p = model.getElementAt(index);
+                DebugMethods.log("Selected person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+            }
+
+            callbacks.forEach(ActionCallback::callback);
+        }
     }
 }

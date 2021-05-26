@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.objects.Person;
@@ -74,7 +75,38 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(mf.getWidth() / 5, this.getHeight()));
 
+        pLeaders.addActionCallback(pCandidates::deselectAll);
+        pLeaders.addActionCallback(this::callback);
+
+        pCandidates.addActionCallback(pLeaders::deselectAll);
+        pCandidates.addActionCallback(this::callback);
+
         mf.addComponentListener(this);
+    }
+
+    /**
+     * The callback called when a Candidate is
+     * selected.
+     * */
+    private void callback()
+    {
+        var p = getCurrentPerson();
+        DebugMethods.log("Showing %s.".formatted(p), DebugMethods.LogType.DEBUG);
+        mf.updatePerson(p);
+    }
+
+    /**
+     * Gets the currently selected person.
+     *
+     * @return the currently selected person;
+     *         {@code null} iff there is no
+     *         person selected.
+     * */
+    public Person getCurrentPerson()
+    {
+        return (pCandidates.getCurrentPerson() == null) ?
+                pLeaders.getCurrentPerson() :
+                pCandidates.getCurrentPerson();
     }
 
     @Override

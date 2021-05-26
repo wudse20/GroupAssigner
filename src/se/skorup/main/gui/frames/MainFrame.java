@@ -106,7 +106,9 @@ public class MainFrame extends JFrame
         {
             var gm = new GroupManager("DEMO - Grupp");
             gm.registerPerson("Anton", Person.Role.LEADER);
-            gm.registerPerson("Sebbe", Person.Role.CANDIDATE);
+            gm.registerPerson("Sebbe", Person.Role.LEADER);
+            gm.registerPerson("Felix", Person.Role.CANDIDATE);
+            gm.registerPerson("Victoria", Person.Role.CANDIDATE);
 
             managers.add(gm);
         }
@@ -192,6 +194,18 @@ public class MainFrame extends JFrame
     public void setCurrentGroupManager(int index)
     {
         this.currentGroupManager = managers.get(index);
+    }
+
+    /**
+     * Updates the person being edited.
+     *
+     * @param p the person being edited.
+     *          If {@code null} then it
+     *          will clear the selection.
+     * */
+    public void updatePerson(Person p)
+    {
+        personPanel.setPerson(p);
     }
 
     /**
