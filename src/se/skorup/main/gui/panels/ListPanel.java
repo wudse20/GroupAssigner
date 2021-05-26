@@ -56,8 +56,15 @@ public class ListPanel extends JPanel implements ActionListener
     private final JButton btnAdd = new JButton("<html>&rarr;</html>");
 
     /** The spacer label. */
-    private final JLabel lblSpacer = new JLabel(" ");
+    private final JLabel lblSpacer1 = new JLabel(" ");
 
+    /** The spacer label. */
+    private final JLabel lblSpacer2 = new JLabel("        ");
+
+    /** The spacer label. */
+    private final JLabel lblSpacer3 = new JLabel("        ");
+
+    /** The info label. */
     private final JLabel lblInfo;
 
     /** The layout of the panel. */
@@ -101,7 +108,7 @@ public class ListPanel extends JPanel implements ActionListener
     {
         this.notAdded = notAdded.stream().map(Person::clone).collect(Collectors.toSet());
         this.added = added.stream().map(Person::clone).collect(Collectors.toSet());
-        this.lblInfo = new JLabel(label);
+        this.lblInfo = new JLabel("  " + label);
 
         this.setProperties();
         this.refreshListData();
@@ -114,11 +121,13 @@ public class ListPanel extends JPanel implements ActionListener
     private void addComponents()
     {
         btnPanel.add(btnAdd);
-        btnPanel.add(lblSpacer);
+        btnPanel.add(lblSpacer1);
         btnPanel.add(btnRemove);
 
         container.add(scrNotAdded);
+        container.add(lblSpacer2);
         container.add(btnPanel);
+        container.add(lblSpacer3);
         container.add(scrAdded);
 
         this.add(lblInfo, BorderLayout.PAGE_START);
@@ -153,28 +162,30 @@ public class ListPanel extends JPanel implements ActionListener
         btnPanel.setLayout(btnPanelLayout);
 
         btnAdd.setForeground(Utils.FOREGROUND_COLOR);
-        btnAdd.setBackground(Utils.BACKGROUND_COLOR);
+        btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnAdd.setActionCommand(Buttons.ADD.toString());
         btnAdd.addActionListener(this);
 
         btnRemove.setForeground(Utils.FOREGROUND_COLOR);
-        btnRemove.setBackground(Utils.BACKGROUND_COLOR);
+        btnRemove.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnRemove.setActionCommand(Buttons.REMOVE.toString());
         btnRemove.addActionListener(this);
 
-        listAdded.setBackground(Utils.BACKGROUND_COLOR);
+        listAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listAdded.setForeground(Utils.FOREGROUND_COLOR);
         listAdded.setModel(modelAdded);
 
         scrAdded.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-        scrAdded.setBackground(Utils.BACKGROUND_COLOR);
+        scrAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
-        listNotAdded.setBackground(Utils.BACKGROUND_COLOR);
+        listNotAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listNotAdded.setForeground(Utils.FOREGROUND_COLOR);
         listNotAdded.setModel(modelNotAdded);
 
         scrNotAdded.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-        scrNotAdded.setBackground(Utils.BACKGROUND_COLOR);
+        scrNotAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+
+        lblInfo.setForeground(Utils.FOREGROUND_COLOR);
     }
 
     /**

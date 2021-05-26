@@ -4,16 +4,19 @@ import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
+import se.skorup.main.gui.panels.PersonPanel;
 import se.skorup.main.gui.panels.SidePanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,17 +30,11 @@ public class MainFrame extends JFrame
 
     private GroupManager currentGroupManager;
 
-    /** Adds a demo group if {@code true}. */
+    /** Adds a demo group iff {@code true}. */
     private final boolean debug = true;
 
     /** The frame's container. */
     private final Container cp = this.getContentPane();
-
-    /** The layout of the frame. */
-    private final BorderLayout layout = new BorderLayout();
-
-    /** The layout of the container. */
-    private final BorderLayout pContainerLayout = new BorderLayout();
 
     /** The control panel of this frame. */
     private ControlPanel ctrPanel;
@@ -48,8 +45,30 @@ public class MainFrame extends JFrame
     /** The side panel. */
     private SidePanel sidePanel;
 
+    /** The panel for persons. */
+    private PersonPanel personPanel;
+
+    /** The container for the person panel. */
+    private final JPanel pPersonContainer = new JPanel();
+
+    /** The container for the person container panel. */
+    private final JPanel pPersonContainerContainer = new JPanel();
+
     /** The container panel. */
     private final JPanel pContainer = new JPanel();
+
+    /** The layout for pPersonContainerContainer. */
+    private final BoxLayout pPersonContainerContainerLayout =
+            new BoxLayout(pPersonContainerContainer, BoxLayout.Y_AXIS);
+
+    /** The layout of the frame. */
+    private final BorderLayout layout = new BorderLayout();
+
+    /** The layout of the container. */
+    private final BorderLayout pContainerLayout = new BorderLayout();
+
+    /** The layout for the person container. */
+    private final FlowLayout pPersonContainerLayout = new FlowLayout(FlowLayout.LEFT);
 
     /** Spacer */
     private final JLabel lblSpacer1 = new JLabel(" ");
@@ -62,6 +81,12 @@ public class MainFrame extends JFrame
 
     /** Spacer */
     private final JLabel lblSpacer4 = new JLabel("   ");
+
+    /** Spacer */
+    private final JLabel lblSpacer5 = new JLabel("   ");
+
+    /** Spacer */
+    private final JLabel lblSpacer6 = new JLabel("<html><br><br></html>");
 
     /**
      * Creates a new MainFrame.
@@ -109,8 +134,15 @@ public class MainFrame extends JFrame
      * */
     private void addComponents()
     {
+        pPersonContainer.add(lblSpacer5);
+        pPersonContainer.add(personPanel);
+
+        pPersonContainerContainer.add(lblSpacer6);
+        pPersonContainerContainer.add(pPersonContainer);
+
         pContainer.add(ctrPanel, BorderLayout.PAGE_START);
         pContainer.add(sidePanel, BorderLayout.LINE_START);
+        pContainer.add(pPersonContainerContainer, BorderLayout.CENTER);
         pContainer.add(btnPanel, BorderLayout.PAGE_END);
 
         cp.add(lblSpacer1, BorderLayout.PAGE_START);
@@ -135,9 +167,19 @@ public class MainFrame extends JFrame
         ctrPanel = new ControlPanel(this, managers);
         btnPanel = new ButtonPanel(this);
         sidePanel = new SidePanel(this);
+        personPanel = new PersonPanel(this);
+
+        var pArr = new Person[0];
+        personPanel.setPerson(getCurrentGroup().getAllPersons().toArray(pArr)[0]);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);
+
+        pPersonContainer.setBackground(Utils.BACKGROUND_COLOR);
+        pPersonContainer.setLayout(pPersonContainerLayout);
+
+        pPersonContainerContainer.setBackground(Utils.BACKGROUND_COLOR);
+        pPersonContainerContainer.setLayout(pPersonContainerContainerLayout);
     }
 
     /**
