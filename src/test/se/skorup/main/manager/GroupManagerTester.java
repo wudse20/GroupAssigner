@@ -200,6 +200,9 @@ public class GroupManagerTester
         assertEquals(i - 1, gm.getMemberCount());
     }
 
+    /**
+     * Tests the get all but person method.
+     * */
     @Test
     public void testGetAllBut()
     {
@@ -214,5 +217,34 @@ public class GroupManagerTester
         assertEquals(ctr.size() - 1, gm.getAllBut(p).size());
         assertEquals(ctr2, gm.getAllBut(p));
         assertThrows(IllegalArgumentException.class, () -> gm.getAllBut(null));
+    }
+
+    /**
+     * Tests the get all of role but method.
+     * */
+    @Test
+    public void testGetAllOfRoleBut()
+    {
+        var gm = new GroupManager("");
+
+        var p = gm.registerPerson("Some other leader", Person.Role.LEADER);
+        var p2 = gm.registerPerson("Some other candidate", Person.Role.CANDIDATE);
+
+        var ctr = new HashSet<>(
+            Collections.singletonList(
+                gm.registerPerson("Anton", Person.Role.LEADER)
+            )
+        );
+
+        var ctr2 = new HashSet<>(
+            Collections.singletonList(
+                gm.registerPerson("Sebbe", Person.Role.CANDIDATE)
+            )
+        );
+
+        assertEquals(ctr, gm.getAllOfRollBut(p));
+        assertEquals(ctr2, gm.getAllOfRollBut(p2));
+        assertThrows(IllegalArgumentException.class, () -> gm.getAllOfRollBut(null));
+        assertThrows(IllegalArgumentException.class, () -> gm.getAllOfRollBut(new Person("Anton", 123) {}));
     }
 }

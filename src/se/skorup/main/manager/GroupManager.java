@@ -136,6 +136,37 @@ public class GroupManager implements Serializable
     }
 
     /**
+     * Gets all of a role but the provided
+     * person p. The role used is the role
+     * of the provided person.
+     *
+     * @param p the person that is being excluded.
+     * @return the set containing all of the role
+     *         of the person.
+     * @throws IllegalArgumentException if p is {@code null}. It will
+     *                                  also throw this exception if
+     *                                  p isn't instanceof Candidate
+     *                                  or Leader, i.e. Person. This
+     *                                  shouldn't be possible but
+     *                                  it's here just to be safe.
+     * */
+    public Set<Person> getAllOfRollBut(Person p) throws IllegalArgumentException
+    {
+        if (p == null)
+            throw new IllegalArgumentException("Param p cannot be null");
+        else if (!(p instanceof Candidate || p instanceof Leader)) // Shouldn't be possible; but just to be safe :)
+            throw new IllegalArgumentException(
+                "Param p cannot be an instance of class Person, " +
+                "needs to be an instance of the subclasses."
+            );
+
+        var res = getAllOfRoll(p instanceof Candidate ? Person.Role.CANDIDATE : Person.Role.LEADER);
+        res.remove(p);
+
+        return res;
+    }
+
+    /**
      * Gets a person from a given id.<br><br>
      *
      * Time: O(1)

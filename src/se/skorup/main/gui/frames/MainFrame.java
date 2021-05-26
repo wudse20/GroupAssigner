@@ -59,7 +59,7 @@ public class MainFrame extends JFrame
 
     /** The layout for pPersonContainerContainer. */
     private final BoxLayout pPersonContainerContainerLayout =
-            new BoxLayout(pPersonContainerContainer, BoxLayout.Y_AXIS);
+        new BoxLayout(pPersonContainerContainer, BoxLayout.Y_AXIS);
 
     /** The layout of the frame. */
     private final BorderLayout layout = new BorderLayout();
@@ -175,7 +175,7 @@ public class MainFrame extends JFrame
         personPanel = new PersonPanel(this);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(1200, 620));
+        this.setSize(new Dimension(1200, 665));
         this.addWindowStateListener(sidePanel);
 
         cp.setBackground(Utils.BACKGROUND_COLOR);

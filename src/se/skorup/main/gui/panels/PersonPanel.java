@@ -6,11 +6,14 @@ import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * The panel responsible for listing a person for edit.
  * */
-public class PersonPanel extends JPanel
+public class PersonPanel extends JPanel implements ActionListener
 {
     /** The instance of the MainFrame in use. */
     private final MainFrame mf;
@@ -32,8 +35,14 @@ public class PersonPanel extends JPanel
     /** The container panel. */
     private final JPanel pContainer = new JPanel();
 
+    /** The checkbox panel. */
+    private final JPanel pCheckBox = new JPanel();
+
     /** The layout of the name panel. */
     private final FlowLayout pNameLayout = new FlowLayout(FlowLayout.LEFT);
+
+    /** The layout of the checkbox panel. */
+    private final FlowLayout pCheckBoxLayout = new FlowLayout(FlowLayout.LEFT);
 
     /** The layout of the container. */
     private final BoxLayout pContainerLayout = new BoxLayout(pContainer, BoxLayout.Y_AXIS);
@@ -68,6 +77,12 @@ public class PersonPanel extends JPanel
     /** Spacer */
     private final JLabel lblSpacer6 = new JLabel(" ");
 
+    /** Spacer */
+    private final JLabel lblSpacer7 = new JLabel(" ");
+
+    /** The check box for checking only candidates. */
+    private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
+
     /**
      * Creates a new person panel.
      *
@@ -92,11 +107,15 @@ public class PersonPanel extends JPanel
 
         pName.add(lblName);
 
+        pCheckBox.add(cbShowOnlySameRole);
+
         pContainer.add(pName);
         pContainer.add(lblSpacer5);
         pContainer.add(wishlist);
         pContainer.add(lblSpacer6);
         pContainer.add(denylist);
+        pContainer.add(lblSpacer7);
+        pContainer.add(pCheckBox);
 
         this.add(lblSpacer1, BorderLayout.PAGE_START);
         this.add(lblSpacer2, BorderLayout.LINE_START);
@@ -120,6 +139,13 @@ public class PersonPanel extends JPanel
 
         pName.setLayout(pNameLayout);
         pName.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+
+        cbShowOnlySameRole.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        cbShowOnlySameRole.setForeground(Utils.FOREGROUND_COLOR);
+        cbShowOnlySameRole.addActionListener(this);
+
+        pCheckBox.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pCheckBox.setLayout(pCheckBoxLayout);
 
         pContainer.setLayout(pContainerLayout);
         pContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -150,8 +176,13 @@ public class PersonPanel extends JPanel
             var deny = Arrays.stream(p.getDenylist()).boxed().collect(Collectors.toList());
             var wish = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList());
 
-            var addedDeny = group.getAllBut(p);
-            var addedWish = group.getAllBut(p);
+            var candidatesOnly = cbShowOnlySameRole.isSelected();
+
+            var addedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+            var addedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+
+            var notAddedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+            var notAddedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
 
             // All persons intersect list = added persons to list.
             var denies = addedDeny.stream().map(Person::getId).collect(Collectors.toSet());
@@ -159,9 +190,6 @@ public class PersonPanel extends JPanel
 
             denies.retainAll(deny);
             wishes.retainAll(wish);
-
-            var notAddedDeny = group.getAllBut(p);
-            var notAddedWish = group.getAllBut(p);
 
             // All persons \ added = persons not added.
             notAddedDeny.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
@@ -191,6 +219,12 @@ public class PersonPanel extends JPanel
     public void setPerson(Person p)
     {
         this.p = p;
+        this.setup();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
         this.setup();
     }
 }

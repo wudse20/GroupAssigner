@@ -36,7 +36,7 @@ public abstract class Person implements Serializable, Comparable<Person>
      * @param name the name of the person.
      * @param id the id of the person.
      * */
-    public Person(String name, int id)
+    protected Person(String name, int id)
     {
         this.name = name;
         this.id = id;
