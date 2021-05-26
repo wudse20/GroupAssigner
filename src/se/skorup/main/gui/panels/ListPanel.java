@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.models.PersonListModel;
@@ -10,7 +11,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
@@ -138,9 +138,9 @@ public class ListPanel extends JPanel implements ActionListener
         buttonContainer.add(btnPanel);
         buttonContainer.add(lblSpacer4);
 
-        container.add(scrAdded);
-        container.add(buttonContainer);
         container.add(scrNotAdded);
+        container.add(buttonContainer);
+        container.add(scrAdded);
 
         this.add(lblInfo, BorderLayout.PAGE_START);
         this.add(container, BorderLayout.CENTER);
@@ -251,9 +251,51 @@ public class ListPanel extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+        var cmd = e.getActionCommand();
+        DebugMethods.log(
+            "Getting action command: %s".formatted(cmd),
+            DebugMethods.LogType.DEBUG
         );
+
+        if (cmd.equals(Buttons.ADD.toString()))
+        {
+            var index = listNotAdded.getSelectedIndex();
+            DebugMethods.log("ADD, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
+
+            if (index != -1 && modelNotAdded.getSize() != 0)
+            {
+                var p = modelNotAdded.getElementAt(index);
+                modelAdded.addItem(p);
+                modelNotAdded.removeItem(p);
+
+                listAdded.clearSelection();
+                listNotAdded.clearSelection();
+
+                // Invokes the callbacks.
+                callbacks.forEach(ActionCallback::callback);
+
+                DebugMethods.log("Adding person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+            }
+        }
+        else
+        {
+            var index = listAdded.getSelectedIndex();
+            DebugMethods.log("REMOVE, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
+
+            if (index != -1 && modelAdded.getSize() != 0)
+            {
+                var p = modelAdded.getElementAt(index);
+                modelNotAdded.addItem(p);
+                modelAdded.removeItem(p);
+
+                listAdded.clearSelection();
+                listNotAdded.clearSelection();
+
+                // Invokes the callbacks.
+                callbacks.forEach(ActionCallback::callback);
+
+                DebugMethods.log("Removing person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+            }
+        }
     }
 }

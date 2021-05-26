@@ -154,18 +154,28 @@ public class PersonPanel extends JPanel
             var addedWish = group.getAllBut(p);
 
             // All persons intersect list = added persons to list.
-            addedDeny.stream().map(Person::getId).collect(Collectors.toSet()).retainAll(deny);
-            addedWish.stream().map(Person::getId).collect(Collectors.toSet()).retainAll(wish);
+            var denies = addedDeny.stream().map(Person::getId).collect(Collectors.toSet());
+            var wishes = addedWish.stream().map(Person::getId).collect(Collectors.toSet());
+
+            denies.retainAll(deny);
+            wishes.retainAll(wish);
 
             var notAddedDeny = group.getAllBut(p);
             var notAddedWish = group.getAllBut(p);
 
             // All persons \ added = persons not added.
-            notAddedDeny.removeAll(addedDeny);
-            notAddedWish.removeAll(addedWish);
+            notAddedDeny.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
+            notAddedWish.removeAll(wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
 
-            denylist.setListData(addedDeny, notAddedDeny);
-            wishlist.setListData(addedWish, notAddedWish);
+            denylist.setListData(
+                denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+                notAddedDeny
+            );
+
+            wishlist.setListData(
+                wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+                notAddedWish
+            );
         }
 
         this.addComponents();

@@ -107,8 +107,17 @@ public class MainFrame extends JFrame
             var gm = new GroupManager("DEMO - Grupp");
             gm.registerPerson("Anton", Person.Role.LEADER);
             gm.registerPerson("Sebbe", Person.Role.LEADER);
-            gm.registerPerson("Felix", Person.Role.CANDIDATE);
-            gm.registerPerson("Victoria", Person.Role.CANDIDATE);
+            gm.registerPerson("Victoria", Person.Role.LEADER);
+            gm.registerPerson("Felix", Person.Role.LEADER);
+            gm.registerPerson("Ami", Person.Role.LEADER);
+            gm.registerPerson("Susann", Person.Role.LEADER);
+
+            gm.registerPerson("Adina", Person.Role.CANDIDATE);
+            gm.registerPerson("Pernilla", Person.Role.CANDIDATE);
+            gm.registerPerson("Alexandra", Person.Role.CANDIDATE);
+            gm.registerPerson("Erica", Person.Role.CANDIDATE);
+            gm.registerPerson("Kristin", Person.Role.CANDIDATE);
+            gm.registerPerson("Gunnel", Person.Role.CANDIDATE);
 
             managers.add(gm);
         }
