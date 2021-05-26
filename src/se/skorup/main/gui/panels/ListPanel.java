@@ -241,9 +241,11 @@ public class ListPanel extends JPanel implements ActionListener
     {
         this.added.clear();
         this.added.addAll(added);
+        this.listAdded.clearSelection();
 
         this.notAdded.clear();
         this.notAdded.addAll(notAdded);
+        this.listNotAdded.clearSelection();
 
         this.refreshListData();
     }
