@@ -13,6 +13,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.util.HashSet;
 
 /**
  * The side panel to the left of the GUI in
@@ -46,10 +47,19 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
     public SidePanel(MainFrame mf)
     {
         this.mf = mf;
-        this.pLeaders =
-            new PersonListPanel("Ledare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.LEADER));
-        this.pCandidates =
-            new PersonListPanel("Deltagare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.CANDIDATE));
+
+        if (mf.getCurrentGroup() != null)
+        {
+            this.pLeaders =
+                new PersonListPanel("Ledare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.LEADER));
+            this.pCandidates =
+                new PersonListPanel("Deltagare:", mf.getCurrentGroup().getAllOfRoll(Person.Role.CANDIDATE));
+        }
+        else
+        {
+            this.pLeaders = new PersonListPanel("Ledare:", new HashSet<>());
+            this.pCandidates = new PersonListPanel("Deltagare:", new HashSet<>());
+        }
 
         this.setProperties();
         this.addComponents();

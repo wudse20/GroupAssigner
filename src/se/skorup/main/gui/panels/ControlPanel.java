@@ -2,12 +2,14 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
+import se.skorup.main.gui.frames.AddGroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -94,10 +96,9 @@ public class ControlPanel extends JPanel implements ItemListener
             // Check for adding
             if (index == managers.size())
             {
-                JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-                );
+                SwingUtilities.invokeLater(() -> {
+                    var add = new AddGroupFrame();
+                });
                 return;
             }
 

@@ -13,7 +13,6 @@ import se.skorup.main.objects.Person;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -39,7 +38,7 @@ public class MainFrame extends JFrame
     private GroupManager currentGroupManager;
 
     /** Adds a demo group iff {@code true}. */
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     /** The frame's container. */
     private final Container cp = this.getContentPane();
@@ -136,22 +135,10 @@ public class MainFrame extends JFrame
             try
             {
                 managers.addAll((List<GroupManager>) SerializationManager.deserializeObject(savePath));
-
-                if (managers.size() == 0)
-                {
-                    JOptionPane.showMessageDialog(
-                            this, "Not Yet Implemented",
-                            "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-                    );
-
-                    // TODO Handle
-                    System.exit(0);
-                }
             }
             catch (Exception e)
             {
                 // TODO: Handle Error
-                e.printStackTrace();
                 DebugMethods.log(
                     "Failed to load save: %s".formatted(e.getLocalizedMessage()),
                     DebugMethods.LogType.ERROR
