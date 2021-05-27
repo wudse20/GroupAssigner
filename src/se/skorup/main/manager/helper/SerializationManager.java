@@ -1,5 +1,6 @@
 package se.skorup.main.manager.helper;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,5 +78,20 @@ public class SerializationManager
         ois.close();
 
         return obj;
+    }
+
+    /**
+     * Creates a file if it doesn't exist.
+     *
+     * @param f the file.
+     * @return {@code true} if and only if the directory was created,
+     *         along with all necessary parent directories;
+     *         {@code false} otherwise
+     * @throws IOException if the file creation goes wrong.
+     * */
+    public static boolean createFileIfNotExists(File f) throws IOException
+    {
+        var dirPath = f.getPath().substring(0, f.getPath().lastIndexOf('\\'));
+        return new File(dirPath).mkdirs();
     }
 }

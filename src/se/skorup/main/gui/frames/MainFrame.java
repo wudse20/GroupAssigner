@@ -7,16 +7,19 @@ import se.skorup.main.gui.panels.ControlPanel;
 import se.skorup.main.gui.panels.PersonPanel;
 import se.skorup.main.gui.panels.SidePanel;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,10 @@ import java.util.List;
  * */
 public class MainFrame extends JFrame
 {
+    /** The path to the save file. */
+    private static final String savePath =
+        "%ssaves\\save.data".formatted(Utils.getFolderName());
+
     /** The group managers. */
     private final List<GroupManager> managers = new ArrayList<>();
 
@@ -100,9 +107,10 @@ public class MainFrame extends JFrame
     }
 
     /**
-     * Adds a demo group if debug param is {@code true}.
+     * Adds a demo group if debug param is {@code true},
+     * else it will try to read from the file.
      * */
-    private void demoGroup()
+    private void addGroups()
     {
         if (debug)
         {
@@ -123,6 +131,33 @@ public class MainFrame extends JFrame
 
             managers.add(gm);
         }
+        else
+        {
+            try
+            {
+                managers.addAll((List<GroupManager>) SerializationManager.deserializeObject(savePath));
+
+                if (managers.size() == 0)
+                {
+                    JOptionPane.showMessageDialog(
+                            this, "Not Yet Implemented",
+                            "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+                    );
+
+                    // TODO Handle
+                    System.exit(0);
+                }
+            }
+            catch (Exception e)
+            {
+                // TODO: Handle Error
+                e.printStackTrace();
+                DebugMethods.log(
+                    "Failed to load save: %s".formatted(e.getLocalizedMessage()),
+                    DebugMethods.LogType.ERROR
+                );
+            }
+        }
     }
 
     /**
@@ -131,7 +166,7 @@ public class MainFrame extends JFrame
     private void init()
     {
         DebugMethods.log("Starting initialization of MainFrame.", DebugMethods.LogType.DEBUG);
-        this.demoGroup();
+        this.addGroups();
         this.currentGroupManager = (managers.size() != 0) ? managers.get(0) : null;
         DebugMethods.log("GroupManagers initialized.", DebugMethods.LogType.DEBUG);
         this.setProperties();
@@ -193,6 +228,35 @@ public class MainFrame extends JFrame
 
         pPersonContainerContainer.setBackground(Utils.BACKGROUND_COLOR);
         pPersonContainerContainer.setLayout(pPersonContainerContainerLayout);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::saveGroupManagers));
+    }
+
+    /**
+     * Saves the group managers iff debug is false.
+     * */
+    private void saveGroupManagers()
+    {
+        if (!debug)
+        {
+            try
+            {
+                DebugMethods.log("Starting saving process.", DebugMethods.LogType.DEBUG);
+                SerializationManager.createFileIfNotExists(new File(savePath));
+                SerializationManager.serializeObject(savePath, managers);
+                DebugMethods.log("Saving process finished correctly.", DebugMethods.LogType.DEBUG);
+            }
+            catch (Exception e)
+            {
+                // TODO: handle error
+                e.printStackTrace();
+
+                DebugMethods.log(
+                    "Saving process failed: %s".formatted(e.getLocalizedMessage()),
+                    DebugMethods.LogType.ERROR
+                );
+            }
+        }
     }
 
     /**

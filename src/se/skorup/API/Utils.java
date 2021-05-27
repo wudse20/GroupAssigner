@@ -35,6 +35,6 @@ public class Utils
      * */
     public static String getFolderName()
     {
-        return "%s\\.%s\\".formatted(System.getenv("APPDATA"), "GroupAssigner");
+        return "%s\\.%s\\".formatted(System.getenv("APPDATA"), "group-assigner");
     }
 }
