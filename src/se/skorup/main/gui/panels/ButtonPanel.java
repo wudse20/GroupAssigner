@@ -125,10 +125,26 @@ public class ButtonPanel extends JPanel implements ActionListener
         }
         else if (cmd.equals(Buttons.SAVE.toString()))
         {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
+            var res = mf.saveGroupManagers();
+
+            if (res)
+            {
+                JOptionPane.showMessageDialog(
+                    mf, "Du har sparat!",
+                "Sparat!", JOptionPane.INFORMATION_MESSAGE
+                );
+
+                DebugMethods.log("Saved groups", DebugMethods.LogType.DEBUG);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(
+                        mf, "Sparningen misslyckades!",
+                        "Error!", JOptionPane.ERROR_MESSAGE
+                );
+
+                DebugMethods.log("Save was unsuccessful", DebugMethods.LogType.ERROR);
+            }
         }
     }
 }

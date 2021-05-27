@@ -234,8 +234,10 @@ public class MainFrame extends JFrame
 
     /**
      * Saves the group managers iff debug is false.
+     *
+     * @return {@code true} iff it saved correctly.
      * */
-    private void saveGroupManagers()
+    public boolean saveGroupManagers()
     {
         if (!debug)
         {
@@ -245,6 +247,8 @@ public class MainFrame extends JFrame
                 SerializationManager.createFileIfNotExists(new File(savePath));
                 SerializationManager.serializeObject(savePath, managers);
                 DebugMethods.log("Saving process finished correctly.", DebugMethods.LogType.DEBUG);
+
+                return true;
             }
             catch (Exception e)
             {
@@ -255,8 +259,12 @@ public class MainFrame extends JFrame
                     "Saving process failed: %s".formatted(e.getLocalizedMessage()),
                     DebugMethods.LogType.ERROR
                 );
+
+                return false;
             }
         }
+
+        return false;
     }
 
     /**
