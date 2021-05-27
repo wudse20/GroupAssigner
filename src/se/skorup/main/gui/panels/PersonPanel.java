@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.objects.Person;
@@ -16,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -204,6 +206,29 @@ public class PersonPanel extends JPanel implements ActionListener
                 wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
                 notAddedWish
             );
+
+            denylist.removeAllActionCallbacks();
+            wishlist.removeAllActionCallbacks();
+
+            denylist.addActionCallback(() -> {
+                var res = denylist.getLists();
+                p.setDenylist(res.get(ListPanel.ADDED_KEY));
+
+                DebugMethods.log(
+                        "New denylist for %s: %s".formatted(p, Arrays.toString(p.getDenylist())),
+                        DebugMethods.LogType.DEBUG
+                );
+            });
+
+            wishlist.addActionCallback(() -> {
+                var res = wishlist.getLists();
+                p.setWishlist(res.get(ListPanel.ADDED_KEY));
+
+                DebugMethods.log(
+                        "New wishlist for %s: %s".formatted(p, Arrays.toString(p.getWishlist())),
+                        DebugMethods.LogType.DEBUG
+                );
+            });
         }
 
         this.addComponents();

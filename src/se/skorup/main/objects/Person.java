@@ -3,6 +3,7 @@ package se.skorup.main.objects;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The supertype for all persons.
@@ -104,6 +105,42 @@ public abstract class Person implements Serializable, Comparable<Person>
     public int[] getWishlist()
     {
         return this.wishlist.stream().mapToInt(x -> x).toArray();
+    }
+
+    /**
+     * Sets the denylist of this person. <br><br>
+     *
+     * This method clones the input.
+     *
+     * @param persons the new set of persons on
+     *                the denylist. If {@code null}
+     *                then it will return without
+     *                doing anything.
+     * */
+    public void setDenylist(Set<Person> persons)
+    {
+        if (persons == null)
+            return;
+
+        this.denylist = persons.stream().map(Person::getId).collect(Collectors.toSet());
+    }
+
+    /**
+     * Sets wishlist of this person. <br><br>
+     *
+     * This method clones the input.
+     *
+     * @param persons the new set of persons on
+     *                the wishlist. If {@code null}
+     *                then it will return without
+     *                doing anything.
+     * */
+    public void setWishlist(Set<Person> persons)
+    {
+        if (persons == null)
+            return;
+
+        this.wishlist = persons.stream().map(Person::getId).collect(Collectors.toSet());
     }
 
     @Override

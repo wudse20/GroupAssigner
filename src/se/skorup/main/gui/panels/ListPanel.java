@@ -18,8 +18,11 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -30,6 +33,12 @@ import java.util.stream.Collectors;
  * */
 public class ListPanel extends JPanel implements ActionListener
 {
+    /** The key for the added set in {@link ListPanel#getLists()} */
+    public static final String ADDED_KEY = "added";
+
+    /** The key for the not added set in {@link ListPanel#getLists()} */
+    public static final String NOT_ADDED_KEY = "notAdded";
+
     /** The enum used for button action commands. */
     private enum Buttons
     {
@@ -232,6 +241,14 @@ public class ListPanel extends JPanel implements ActionListener
     }
 
     /**
+     * Removes all the callbacks.
+     * */
+    public void removeAllActionCallbacks()
+    {
+        callbacks.clear();
+    }
+
+    /**
      * Sets the list data of the panel.
      *
      * @param added the new elements in the added list.
@@ -248,6 +265,26 @@ public class ListPanel extends JPanel implements ActionListener
         this.listNotAdded.clearSelection();
 
         this.refreshListData();
+    }
+
+    /**
+     * Get the two different lists.<br> <br>
+     *
+     * To access the different sets use: <br>
+     * <b>Added: {@link ListPanel#ADDED_KEY}</b><br>
+     * <b>Not Added: {@link ListPanel#NOT_ADDED_KEY}</b>
+     *
+     * @return a Map containing the two lists. Where the key, String,
+     *         is the key for the set and the value, Set&lt;Person&gt;,
+     *         is the set containing the person that corresponds to the
+     *         list with the correct key.
+     * */
+    public Map<String, Set<Person>> getLists()
+    {
+        var res = new HashMap<String, Set<Person>>();
+        res.put("added", added);
+        res.put("notAdded", notAdded);
+        return res;
     }
 
     @Override
@@ -267,6 +304,10 @@ public class ListPanel extends JPanel implements ActionListener
             if (index != -1 && modelNotAdded.getSize() != 0)
             {
                 var p = modelNotAdded.getElementAt(index);
+
+                added.add(p);
+                notAdded.remove(p);
+
                 modelAdded.addItem(p);
                 modelNotAdded.removeItem(p);
 
@@ -287,6 +328,10 @@ public class ListPanel extends JPanel implements ActionListener
             if (index != -1 && modelAdded.getSize() != 0)
             {
                 var p = modelAdded.getElementAt(index);
+
+                notAdded.add(p);
+                added.remove(p);
+
                 modelNotAdded.addItem(p);
                 modelAdded.removeItem(p);
 
