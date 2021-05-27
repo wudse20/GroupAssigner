@@ -46,6 +46,9 @@ public class ControlPanel extends JPanel implements ItemListener
         this.addComponents();
     }
 
+    /**
+     * Updates the group managers.
+     * */
     private void updateManagers()
     {
         // Clears the list.

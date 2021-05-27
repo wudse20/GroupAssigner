@@ -16,7 +16,10 @@ public abstract class Person implements Serializable, Comparable<Person>
      * */
     public enum Role
     {
-        CANDIDATE, LEADER
+        /** The candidate role, TODO: find new name. */
+        CANDIDATE,
+        /** The leader role. */
+        LEADER
     }
 
     /** The name of the person. */

@@ -206,6 +206,8 @@ public class GroupManager implements Serializable
 
     /**
      * Gets the next id of the person.
+     *
+     * @return the next id.
      * */
     public static int getNextId()
     {

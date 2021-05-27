@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -141,7 +142,7 @@ public class ImmutableArrayTester
 
     /**
      * This method test: <br>
-     *     - {@link ImmutableArray#forEach)}
+     *     - {@link ImmutableArray#forEach(Consumer)} )}
      * */
     @Test
     public void testForEach2()

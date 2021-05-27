@@ -1,5 +1,10 @@
 package se.skorup.main.objects;
 
+/**
+ * TODO: rename.
+ *
+ * The class for the candidates.
+ * */
 public final class Candidate extends Person
 {
     /**

@@ -21,6 +21,7 @@ import java.util.function.Predicate;
  */
 public class ImmutableArray<E> implements ImmutableCollection<E>, Iterable<E>
 {
+    /** The elements of the array. */
     private final E[] elems;
 
     /**
@@ -374,6 +375,7 @@ public class ImmutableArray<E> implements ImmutableCollection<E>, Iterable<E>
      * */
     private class ImmutableArrayIterator implements Iterator<E>
     {
+        /** The counter of the iterator.*/
         private int count;
 
         /**

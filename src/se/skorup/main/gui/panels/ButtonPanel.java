@@ -19,7 +19,14 @@ public class ButtonPanel extends JPanel implements ActionListener
     /** The different button types. */
     private enum Buttons
     {
-        SAVE, CREATE_GROUPS, ABOUT, HELP
+        /** The save button. */
+        SAVE,
+        /** The create groups button. */
+        CREATE_GROUPS,
+        /** The about button.*/
+        ABOUT,
+        /** The help button.*/
+        HELP
     }
 
     /** The instance of the MainFrame. */

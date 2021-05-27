@@ -28,6 +28,7 @@ public class MainFrame extends JFrame
     /** The group managers. */
     private final List<GroupManager> managers = new ArrayList<>();
 
+    /** The currently used group manager. */
     private GroupManager currentGroupManager;
 
     /** Adds a demo group iff {@code true}. */

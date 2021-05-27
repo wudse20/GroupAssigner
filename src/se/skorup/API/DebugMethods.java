@@ -13,7 +13,10 @@ public class DebugMethods
      * */
     public enum LogType
     {
-        ERROR, DEBUG
+        /** The error status. */
+        ERROR,
+        /** The debug status. */
+        DEBUG
     }
 
     /**
@@ -27,6 +30,11 @@ public class DebugMethods
         System.out.printf("[%s/%s] %s%n", getCurrentTime(), type, message);
     }
 
+    /**
+     * Gets the current time and formats it into a string.
+     *
+     * @return a formatted string of the current time.
+     * */
     public static String getCurrentTime()
     {
         var h = (LocalTime.now().getHour() < 10) ?

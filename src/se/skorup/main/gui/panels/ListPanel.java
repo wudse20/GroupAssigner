@@ -42,7 +42,10 @@ public class ListPanel extends JPanel implements ActionListener
     /** The enum used for button action commands. */
     private enum Buttons
     {
-        ADD, REMOVE
+        /** The add button. */
+        ADD,
+        /** The remove button. */
+        REMOVE
     }
 
     /** The persons that aren't added. */
@@ -57,6 +60,7 @@ public class ListPanel extends JPanel implements ActionListener
     /** The panel holding the buttons. */
     private final JPanel btnPanel = new JPanel();
 
+    /** The panel for the btnPanel. */
     private final JPanel buttonContainer = new JPanel();
 
     /** The container holding the main items. */
@@ -92,6 +96,7 @@ public class ListPanel extends JPanel implements ActionListener
     /** The layout of the btnPanel. */
     private final BoxLayout btnPanelLayout = new BoxLayout(btnPanel, BoxLayout.Y_AXIS);
 
+    /** The layout of the button container.*/
     private final FlowLayout buttonContainerLayout = new FlowLayout(FlowLayout.CENTER);
 
     /** The list of the added persons. */

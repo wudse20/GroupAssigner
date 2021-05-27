@@ -12,6 +12,8 @@ public class Main
 {
     /**
      * The main method starts the program.
+     *
+     * @param args the args passed to the command line.
      * */
     public static void main(String[] args)
     {
