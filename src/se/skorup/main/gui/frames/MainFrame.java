@@ -88,7 +88,7 @@ public class MainFrame extends JFrame
 
     /** Spacer */
     private final JLabel lblSpacer6 = // Not hacky at all :)
-            new JLabel("<html><br><br><br><br><br></html>");
+            new JLabel("<html><br><br><br></html>");
 
     /**
      * Creates a new MainFrame.
@@ -177,7 +177,7 @@ public class MainFrame extends JFrame
         personPanel = new PersonPanel(this);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(1200, 665));
+        this.setSize(new Dimension(1200, 685));
         this.addWindowStateListener(sidePanel);
         this.addWindowStateListener(personPanel);
         this.addComponentListener(personPanel);

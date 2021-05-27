@@ -11,6 +11,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -96,8 +97,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     public PersonPanel(MainFrame mf)
     {
         this.mf = mf;
-        this.wishlist = new ListPanel(new HashSet<>(), new HashSet<>(), "Önskelista:", mf.getWidth() / 5);
-        this.denylist = new ListPanel(new HashSet<>(), new HashSet<>(), "Denylist:", mf.getWidth() / 5);
+        this.wishlist = new ListPanel(new HashSet<>(), new HashSet<>(), "Önskelista:");
+        this.denylist = new ListPanel(new HashSet<>(), new HashSet<>(), "Denylist:");
 
         this.setProperties();
         this.setup();
@@ -261,8 +262,10 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     @Override
     public void componentResized(ComponentEvent e)
     {
-        wishlist.setListWidth(mf.getWidth() / 5);
-        denylist.setListWidth(mf.getWidth() / 5);
+        var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
+
+        wishlist.setPreferredListSize(d);
+        denylist.setPreferredListSize(d);
     }
 
     @Override
@@ -277,7 +280,9 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     @Override
     public void windowStateChanged(WindowEvent e)
     {
-        wishlist.setListWidth(mf.getWidth() / 5);
-        denylist.setListWidth(mf.getWidth() / 5);
+        var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
+
+        wishlist.setPreferredListSize(d);
+        denylist.setPreferredListSize(d);
     }
 }
