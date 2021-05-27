@@ -224,9 +224,28 @@ public class GroupManager implements Serializable
         return members;
     }
 
+    /**
+     * Getter for: group.
+     *
+     * @return the map containing the group.
+     * */
+    public Map<Integer, Person> getGroup()
+    {
+        return group;
+    }
+
     @Override
     public String toString()
     {
         return "%s (%d)".formatted(name, members);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return o instanceof GroupManager g &&
+               this.group.equals(g.group)  &&
+               this.name.equals(g.name)    &&
+               this.members == g.members;
     }
 }

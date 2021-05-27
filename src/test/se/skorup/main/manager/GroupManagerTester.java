@@ -11,6 +11,7 @@ import java.util.HashSet;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
@@ -246,5 +247,45 @@ public class GroupManagerTester
         assertEquals(ctr2, gm.getAllOfRollBut(p2));
         assertThrows(IllegalArgumentException.class, () -> gm.getAllOfRollBut(null));
         assertThrows(IllegalArgumentException.class, () -> gm.getAllOfRollBut(new Person("Anton", 123) {}));
+    }
+
+    /**
+     * Tests the equals method.
+     * */
+    @Test
+    public void testEquals()
+    {
+        var gm = new GroupManager("");
+
+        assertEquals(gm, new GroupManager(""));
+        assertNotEquals(gm, new GroupManager("Hej"));
+
+        var p1 = gm.registerPerson("Anton", Person.Role.LEADER);
+        var p2 = gm.registerPerson("Sebbe", Person.Role.CANDIDATE);
+
+        var gm2 = new GroupManager("");
+        var p3 = gm2.registerPerson("Anton", Person.Role.LEADER);
+        var p4 = gm2.registerPerson("Sebbe", Person.Role.CANDIDATE);
+
+        gm2.getGroup().remove(p3.getId());
+        gm2.getGroup().remove(p4.getId());
+
+        p3.setId(p1.getId());
+        p4.setId(p2.getId());
+
+        gm2.getGroup().put(p3.getId(), p3);
+        gm2.getGroup().put(p4.getId(), p4);
+
+        assertEquals(gm2, gm);
+        assertNotEquals(gm, null);
+
+        gm2.registerPerson("Anton", Person.Role.LEADER);
+        assertNotEquals(gm, gm2);
+
+        var gm3 = new GroupManager("Kaka");
+        gm3.registerPerson("Anton", Person.Role.LEADER);
+        gm3.registerPerson("Sebbe", Person.Role.CANDIDATE);
+
+        assertNotEquals(gm, gm3);
     }
 }

@@ -26,7 +26,7 @@ public abstract class Person implements Serializable, Comparable<Person>
     protected final String name;
 
     /** The id of the person. */
-    protected final int id;
+    protected int id;
 
     /** The denylist of the person. */
     protected Set<Integer> denylist = new HashSet<>();
@@ -88,6 +88,18 @@ public abstract class Person implements Serializable, Comparable<Person>
     public int getId()
     {
         return id;
+    }
+
+    /**
+     * Setter for: id <br><br>
+     *
+     * WARNING DO NOT USE. only used for tests.
+     *
+     * @param id the new id.
+     * */
+    public void setId(int id)
+    {
+        this.id = id;
     }
 
     /**
