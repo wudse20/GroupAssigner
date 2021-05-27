@@ -15,15 +15,18 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * The panel responsible for listing a person for edit.
  * */
-public class PersonPanel extends JPanel implements ActionListener
+public class PersonPanel extends JPanel implements ActionListener, WindowStateListener, ComponentListener
 {
     /** The instance of the MainFrame in use. */
     private final MainFrame mf;
@@ -56,10 +59,10 @@ public class PersonPanel extends JPanel implements ActionListener
     private final JLabel lblName = new JLabel();
 
     /** The ListPanel for the wishlist. */
-    private final ListPanel wishlist = new ListPanel(new HashSet<>(), new HashSet<>(), "Önskelista:");
+    private final ListPanel wishlist;
 
     /** The ListPanel for the denylist. */
-    private final ListPanel denylist = new ListPanel(new HashSet<>(), new HashSet<>(), "Denylist:");
+    private final ListPanel denylist;
 
     /** Spacer */
     private final JLabel lblSpacer1 = new JLabel(" ");
@@ -93,6 +96,8 @@ public class PersonPanel extends JPanel implements ActionListener
     public PersonPanel(MainFrame mf)
     {
         this.mf = mf;
+        this.wishlist = new ListPanel(new HashSet<>(), new HashSet<>(), "Önskelista:", mf.getWidth() / 5);
+        this.denylist = new ListPanel(new HashSet<>(), new HashSet<>(), "Denylist:", mf.getWidth() / 5);
 
         this.setProperties();
         this.setup();
@@ -251,5 +256,28 @@ public class PersonPanel extends JPanel implements ActionListener
     public void actionPerformed(ActionEvent e)
     {
         this.setup();
+    }
+
+    @Override
+    public void componentResized(ComponentEvent e)
+    {
+        wishlist.setListWidth(mf.getWidth() / 5);
+        denylist.setListWidth(mf.getWidth() / 5);
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {}
+
+    @Override
+    public void componentShown(ComponentEvent e) {}
+
+    @Override
+    public void componentHidden(ComponentEvent e) {}
+
+    @Override
+    public void windowStateChanged(WindowEvent e)
+    {
+        wishlist.setListWidth(mf.getWidth() / 5);
+        denylist.setListWidth(mf.getWidth() / 5);
     }
 }

@@ -14,6 +14,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -56,6 +57,9 @@ public class ListPanel extends JPanel implements ActionListener
 
     /** All the action callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
+
+    /** The width of the list. */
+    private int listWidth;
 
     /** The panel holding the buttons. */
     private final JPanel btnPanel = new JPanel();
@@ -126,12 +130,14 @@ public class ListPanel extends JPanel implements ActionListener
      * @param added the persons added.
      * @param notAdded the persons not added.
      * @param label the text of the label above the panel.
+     * @param listWidth is the width of the lists (the preferred one)
      * */
-    public ListPanel(Set<Person> notAdded, Set<Person> added, String label)
+    public ListPanel(Set<Person> notAdded, Set<Person> added, String label, int listWidth)
     {
         this.notAdded = notAdded.stream().map(Person::clone).collect(Collectors.toSet());
         this.added = added.stream().map(Person::clone).collect(Collectors.toSet());
         this.lblInfo = new JLabel(label);
+        this.listWidth = listWidth;
 
         this.setProperties();
         this.refreshListData();
@@ -218,6 +224,7 @@ public class ListPanel extends JPanel implements ActionListener
 
         scrAdded.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         scrAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        scrAdded.setPreferredSize(new Dimension(listWidth, scrAdded.getHeight()));
 
         listNotAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listNotAdded.setForeground(Utils.FOREGROUND_COLOR);
@@ -290,6 +297,25 @@ public class ListPanel extends JPanel implements ActionListener
         res.put("added", added);
         res.put("notAdded", notAdded);
         return res;
+    }
+
+    /**
+     * Setter for: listWidth
+     *
+     * @param listWidth the new listWidht.
+     * */
+    public void setListWidth(int listWidth)
+    {
+        DebugMethods.log(
+            "New list width for %s: %d px".formatted(lblInfo.getText(), listWidth),
+                DebugMethods.LogType.DEBUG
+        );
+
+        this.listWidth = listWidth;
+
+        // listAdded in both to make sure the height is the same.
+        scrAdded.setPreferredSize(new Dimension(listWidth, listAdded.getHeight()));
+        scrNotAdded.setPreferredSize(new Dimension(listWidth, listAdded.getHeight()));
     }
 
     @Override

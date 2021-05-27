@@ -87,7 +87,8 @@ public class MainFrame extends JFrame
     private final JLabel lblSpacer5 = new JLabel("   ");
 
     /** Spacer */
-    private final JLabel lblSpacer6 = new JLabel("<html><br><br></html>");
+    private final JLabel lblSpacer6 = // Not hacky at all :)
+            new JLabel("<html><br><br><br><br><br></html>");
 
     /**
      * Creates a new MainFrame.
@@ -178,6 +179,8 @@ public class MainFrame extends JFrame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(new Dimension(1200, 665));
         this.addWindowStateListener(sidePanel);
+        this.addWindowStateListener(personPanel);
+        this.addComponentListener(personPanel);
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setLayout(layout);
