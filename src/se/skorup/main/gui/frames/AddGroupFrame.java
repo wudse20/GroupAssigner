@@ -2,7 +2,6 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.Utils;
 import se.skorup.main.gui.models.NameListModel;
-import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.InputPanel;
 
 import javax.swing.BorderFactory;
@@ -11,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -37,10 +37,10 @@ public class AddGroupFrame extends JFrame
     private final JPanel pListContainer = new JPanel();
 
     /** The input panel for the group name. */
-    private final InputPanel pName = new InputPanel("Grupp: ", 36);
+    private final InputPanel pName = new InputPanel("Grupp: ", 24);
 
     /** The input panel for the group members. */
-    private final InputPanel pInputGroupMember = new InputPanel("Namn: ", 36);
+    private final InputPanel pInputGroupMember = new InputPanel("Namn: ", 24);
 
     /** The button panel. */
     private final JPanel pButtons = new JPanel();
@@ -169,12 +169,30 @@ public class AddGroupFrame extends JFrame
 
         btnApply.setForeground(Utils.FOREGROUND_COLOR);
         btnApply.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnApply.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+            this, "Not Yet Implemented",
+            "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
 
         btnCancel.setForeground(Utils.FOREGROUND_COLOR);
         btnCancel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnCancel.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+            this, "Not Yet Implemented",
+            "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
 
         btnImport.setForeground(Utils.FOREGROUND_COLOR);
         btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnImport.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+                    this, "Not Yet Implemented",
+                    "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
 
         pListContainer.setLayout(pListContainerLayout);
         pListContainer.setBackground(Utils.BACKGROUND_COLOR);

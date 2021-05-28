@@ -60,6 +60,7 @@ public class InputPanel extends JPanel implements DocumentListener
     private void setProperties()
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
+        this.setLayout(layout);
 
         txfInput.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         txfInput.setForeground(Utils.FOREGROUND_COLOR);
