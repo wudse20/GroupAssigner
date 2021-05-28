@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.KeyListener;
 import java.util.List;
@@ -59,7 +60,8 @@ public class InputPanel extends JPanel implements DocumentListener
      * */
     private void setProperties()
     {
-        this.setBackground(Utils.BACKGROUND_COLOR);
+        super.setBackground(Utils.BACKGROUND_COLOR);
+
         this.setLayout(layout);
 
         txfInput.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -95,6 +97,14 @@ public class InputPanel extends JPanel implements DocumentListener
     }
 
     /**
+     * Clears the text field.
+     * */
+    public void clear()
+    {
+        txfInput.setText("");
+    }
+
+    /**
      * Gets the text from the text field.
      *
      * @return the text of the text field.
@@ -105,11 +115,21 @@ public class InputPanel extends JPanel implements DocumentListener
     }
 
     /**
+     * Sets the color of the text field.
+     *
+     * @param c the new color of the text field.
+     * */
+    public void setTextFieldBackground(Color c)
+    {
+        txfInput.setBackground(c);
+    }
+
+    /**
      * Adds the key listener to the text field
      * instead of the panel
      *
      * @param k the key listener that will be added.
-     *          if {@code null then nothing happens.}
+     *          if {@code null} then nothing happens.
      * */
     @Override
     public void addKeyListener(KeyListener k)

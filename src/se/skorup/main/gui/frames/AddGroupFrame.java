@@ -1,5 +1,6 @@
 package se.skorup.main.gui.frames;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.models.NameListModel;
 import se.skorup.main.gui.panels.InputPanel;
@@ -13,16 +14,19 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashSet;
 
 /**
  * The frame used to add groups.
  * */
-public class AddGroupFrame extends JFrame
+public class AddGroupFrame extends JFrame implements KeyListener
 {
     /** The container of the frame. */
     private final Container cp = this.getContentPane();
@@ -159,7 +163,9 @@ public class AddGroupFrame extends JFrame
         pInputContainer.setLayout(pInputContainerLayout);
 
         names.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        names.setForeground(Utils.FOREGROUND_COLOR);
         names.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
+        names.setModel(nameModel);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);
@@ -199,5 +205,47 @@ public class AddGroupFrame extends JFrame
 
         lblList.setForeground(Utils.FOREGROUND_COLOR);
         lblList.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
+
+        pInputGroupMember.addKeyListener(this);
+        pInputGroupMember.addActionCallback(
+            () -> pInputGroupMember.setTextFieldBackground(Utils.COMPONENT_BACKGROUND_COLOR)
+        );
+    }
+
+    /**
+     * Adds a name to the list.
+     * */
+    private void addName()
+    {
+        var input = pInputGroupMember.getText();
+
+        // If the input is accepted.
+        if (input.trim().length() >= 2)
+        {
+            nameModel.addItem(input);
+            pInputGroupMember.clear();
+        }
+        else
+        {
+            pInputGroupMember.setTextFieldBackground(Color.RED.darker());
+            JOptionPane.showMessageDialog(
+        this, "För kort namn! Måste var minst två bokstäver långt.",
+            "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+        // If enter key was released
+        if (e.getKeyCode() == 10)
+            addName();
     }
 }

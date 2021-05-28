@@ -40,6 +40,17 @@ public class NameListModel extends AbstractListModel<String>
     }
 
     /**
+     * Adds an item to the list.
+     *
+     * @param name the new item added.
+     * */
+    public void addItem(String name)
+    {
+        this.names.add(name);
+        fireContentsChanged(this, 0, names.size());
+    }
+
+    /**
      * Removes an item.
      *
      * @param name the item to be removed.
