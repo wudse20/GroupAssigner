@@ -184,12 +184,7 @@ public class AddGroupFrame extends JFrame implements KeyListener
 
         btnCancel.setForeground(Utils.FOREGROUND_COLOR);
         btnCancel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnCancel.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-            this, "Not Yet Implemented",
-            "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
-        });
+        btnCancel.addActionListener((e) -> this.dispose());
 
         btnImport.setForeground(Utils.FOREGROUND_COLOR);
         btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
