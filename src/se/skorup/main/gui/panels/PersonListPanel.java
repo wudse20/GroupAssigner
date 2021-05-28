@@ -24,7 +24,7 @@ import java.util.Vector;
 public class PersonListPanel extends JPanel implements ListSelectionListener
 {
     /** The set of persons in the list. */
-    private final Set<Person> persons;
+    private Set<Person> persons;
 
     /** The current person. */
     private Person p;
@@ -79,6 +79,24 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
     {
         model.removeAll();
         model.addItems(persons);
+    }
+
+    /**
+     * Updates the the list with a new
+     * set of persons.
+     *
+     * @param persons the new set of persons.
+     *                If {@code null} then it
+     *                will return without doing
+     *                anything.
+     * */
+    public void updateList(Set<Person> persons)
+    {
+        if (persons == null)
+            return;
+
+        this.persons = persons;
+        updateList();
     }
 
     /**
@@ -155,12 +173,13 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
             if (index != -1)
             {
                 p = model.getElementAt(index);
-                DebugMethods.log("Selected person: %s".formatted(p), DebugMethods.LogType.DEBUG);
 
+                DebugMethods.log("Selected person: %s".formatted(p), DebugMethods.LogType.DEBUG);
                 DebugMethods.log(
                         "Invoking callbacks from list %s".formatted(lblGroupInfo.getText()),
                         DebugMethods.LogType.DEBUG
                 );
+
                 callbacks.forEach(ActionCallback::callback);
             }
 

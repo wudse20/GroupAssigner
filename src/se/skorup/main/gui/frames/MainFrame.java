@@ -262,6 +262,9 @@ public class MainFrame extends JFrame
     public void setCurrentGroupManager(int index)
     {
         this.currentGroupManager = managers.get(index);
+
+        if (sidePanel != null)
+            sidePanel.refreshLists();
     }
 
     /**
@@ -274,6 +277,16 @@ public class MainFrame extends JFrame
     public void updatePerson(Person p)
     {
         personPanel.setPerson(p);
+    }
+
+    /**
+     * Adds a new GroupManager to the frame.
+     *
+     * @param manager the new GroupManager.
+     * */
+    public void addGroupManager(GroupManager manager)
+    {
+        this.managers.add(manager);
     }
 
     /**

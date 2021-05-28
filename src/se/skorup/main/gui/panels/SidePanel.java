@@ -119,6 +119,17 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
                 pCandidates.getCurrentPerson();
     }
 
+    /**
+     * Refreshes the lists.
+     * */
+    public void refreshLists()
+    {
+        var gm = mf.getCurrentGroup();
+
+        pLeaders.updateList(gm.getAllOfRoll(Person.Role.LEADER));
+        pCandidates.updateList(gm.getAllOfRoll(Person.Role.CANDIDATE));
+    }
+
     @Override
     public void componentResized(ComponentEvent e)
     {

@@ -98,6 +98,11 @@ public class ControlPanel extends JPanel implements ItemListener
             {
                 SwingUtilities.invokeLater(() -> {
                     var add = new AddGroupFrame();
+                    add.addAddListener((event) -> {
+                        mf.addGroupManager(event.result());
+                        event.frame().dispose();
+                        this.updateManagers();
+                    });
                 });
                 return;
             }

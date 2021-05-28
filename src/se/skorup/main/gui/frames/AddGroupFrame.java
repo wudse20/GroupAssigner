@@ -2,8 +2,12 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
+import se.skorup.main.gui.events.AddEvent;
+import se.skorup.main.gui.interfaces.AddListener;
 import se.skorup.main.gui.models.NameListModel;
 import se.skorup.main.gui.panels.InputPanel;
+import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -21,13 +25,20 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * The frame used to add groups.
  * */
 public class AddGroupFrame extends JFrame implements KeyListener
 {
+    /** The resulting group. */
+    private GroupManager result;
+
+    private List<AddListener> addListeners = new ArrayList<>();
+
     /** The container of the frame. */
     private final Container cp = this.getContentPane();
 
@@ -176,10 +187,10 @@ public class AddGroupFrame extends JFrame implements KeyListener
         btnApply.setForeground(Utils.FOREGROUND_COLOR);
         btnApply.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnApply.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-            this, "Not Yet Implemented",
-            "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
+            result = new GroupManager(pName.getText());
+            nameModel.getItems().forEach(x -> result.registerPerson(x, Person.Role.CANDIDATE));
+            DebugMethods.log("Created: %s".formatted(result), DebugMethods.LogType.DEBUG);
+            this.invokeAddListeners();
         });
 
         btnCancel.setForeground(Utils.FOREGROUND_COLOR);
@@ -228,6 +239,32 @@ public class AddGroupFrame extends JFrame implements KeyListener
             "För kort namn!", JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    /**
+     * Invokes the add listeners.
+     * */
+    private void invokeAddListeners()
+    {
+        var ae = new AddEvent(this, result);
+
+        for (var al : addListeners)
+            al.groupCreated(ae);
+    }
+
+    /**
+     * Adds an AddListener to the frame.
+     *
+     * @param l the AddListener to be added,
+     *          if {@code null} then it will
+     *          return without doing anything.
+     * */
+    public void addAddListener(AddListener l)
+    {
+        if (l == null)
+            return;
+
+        addListeners.add(l);
     }
 
     @Override

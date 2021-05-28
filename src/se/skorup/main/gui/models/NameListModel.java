@@ -1,5 +1,7 @@
 package se.skorup.main.gui.models;
 
+import se.skorup.API.ImmutableArray;
+
 import javax.swing.AbstractListModel;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,6 +73,16 @@ public class NameListModel extends AbstractListModel<String>
         // fireContentsChange(..., 0, 0) since the size of the list will
         // always be zero, no other possibilities.
         fireContentsChanged(this, 0, 0);
+    }
+
+    /**
+     * Returns an ImmutableArray of all the items.
+     *
+     * @return an ImmutableArray of all the items.
+     * */
+    public ImmutableArray<String> getItems()
+    {
+        return ImmutableArray.fromList(names);
     }
 
     @Override
