@@ -186,12 +186,7 @@ public class AddGroupFrame extends JFrame implements KeyListener
 
         btnApply.setForeground(Utils.FOREGROUND_COLOR);
         btnApply.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnApply.addActionListener((e) -> {
-            result = new GroupManager(pName.getText());
-            nameModel.getItems().forEach(x -> result.registerPerson(x, Person.Role.CANDIDATE));
-            DebugMethods.log("Created: %s".formatted(result), DebugMethods.LogType.DEBUG);
-            this.invokeAddListeners();
-        });
+        btnApply.addActionListener((e) -> createGroup());
 
         btnCancel.setForeground(Utils.FOREGROUND_COLOR);
         btnCancel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -216,6 +211,42 @@ public class AddGroupFrame extends JFrame implements KeyListener
         pInputGroupMember.addActionCallback(
             () -> pInputGroupMember.setTextFieldBackground(Utils.COMPONENT_BACKGROUND_COLOR)
         );
+
+        pName.addActionCallback(
+            () -> pName.setTextFieldBackground(Utils.COMPONENT_BACKGROUND_COLOR)
+        );
+    }
+
+    /**
+     * Creates the group from the inputted data.
+     * */
+    private void createGroup()
+    {
+        // Check if the name of the groups meet
+        // the standard.
+        if (pName.getText().trim().length() < 5)
+        {
+            pName.setTextFieldBackground(Color.RED);
+            JOptionPane.showMessageDialog(
+            this, "För kort namn! Måste var minst fem bokstäver långt.",
+            "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+        else if (nameModel.getItems().size() == 0)
+        {
+            JOptionPane.showMessageDialog(
+            this, "Du måste lägga till minst en person i gruppen.",
+            "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        result = new GroupManager(pName.getText());
+        nameModel.getItems().forEach(x -> result.registerPerson(x, Person.Role.CANDIDATE));
+        DebugMethods.log("Created: %s".formatted(result), DebugMethods.LogType.DEBUG);
+        this.invokeAddListeners();
     }
 
     /**
