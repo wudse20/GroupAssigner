@@ -205,6 +205,19 @@ public class GroupManager implements Serializable
     }
 
     /**
+     * Returns a list of all names.
+     *
+     * @return a list with all names.
+     * */
+    public List<String> getNames()
+    {
+        return group.values()
+                    .stream()
+                    .map(Person::getName)
+                    .collect(Collectors.toList());
+    }
+
+    /**
      * Gets the next id of the person.
      *
      * @return the next id.

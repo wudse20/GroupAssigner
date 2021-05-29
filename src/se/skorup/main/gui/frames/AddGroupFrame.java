@@ -1,6 +1,7 @@
 package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
+import se.skorup.API.ImmutableArray;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.events.AddEvent;
 import se.skorup.main.gui.interfaces.AddListener;
@@ -12,6 +13,7 @@ import se.skorup.main.objects.Person;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -25,10 +27,16 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The frame used to add groups.
@@ -38,7 +46,8 @@ public class AddGroupFrame extends JFrame implements KeyListener
     /** The resulting group. */
     private GroupManager result;
 
-    private List<AddListener> addListeners = new ArrayList<>();
+    /** The add listeners of the frame. */
+    private final List<AddListener> addListeners = new ArrayList<>();
 
     /** The container of the frame. */
     private final Container cp = this.getContentPane();
@@ -194,12 +203,7 @@ public class AddGroupFrame extends JFrame implements KeyListener
 
         btnImport.setForeground(Utils.FOREGROUND_COLOR);
         btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnImport.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-                    this, "Not Yet Implemented",
-                    "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
-        });
+        btnImport.addActionListener((e) -> importFromDocs());
 
         pListContainer.setLayout(pListContainerLayout);
         pListContainer.setBackground(Utils.BACKGROUND_COLOR);
@@ -261,7 +265,11 @@ public class AddGroupFrame extends JFrame implements KeyListener
         {
             if (input.indexOf(',') != -1)
             {
-                var inputs = Arrays.stream(input.split(",")).map(String::trim).toArray(String[]::new);
+                var inputs =
+                    Arrays.stream(input.split(","))
+                          .map(String::trim)
+                          .toArray(String[]::new);
+
                 for (var s : inputs)
                 {
                     if (s.length() >= 2)
@@ -303,6 +311,123 @@ public class AddGroupFrame extends JFrame implements KeyListener
 
         for (var al : addListeners)
             al.groupCreated(ae);
+    }
+
+    /**
+     * Reads a file and return its content.
+     *
+     * @param f the file to be read.
+     * @return the content of the file,
+     *         if it cannot be read then
+     *         it will return an empty
+     *         String.
+     * */
+    private String readFile(File f)
+    {
+        if (!f.exists())
+            return "";
+
+        try
+        {
+            var fr = new FileReader(f, StandardCharsets.UTF_8);
+            var br = new BufferedReader(fr);
+
+            var lines = new StringBuilder();
+
+            String tmp;
+
+            while ((tmp = br.readLine()) != null)
+                lines.append(tmp).append("\n");
+
+            fr.close();
+            br.close();
+
+            return lines.toString();
+        }
+        catch (IOException e)
+        {
+            return "";
+        }
+    }
+
+    /**
+     * Imports data and creates a group manager from the docs.
+     * */
+    private void importFromDocs()
+    {
+        var fc = new JFileChooser(".");
+        var selection = fc.showDialog(this, "Välj");
+
+        if (selection == JFileChooser.APPROVE_OPTION)
+        {
+            var data =
+                readFile(fc.getSelectedFile()).trim().toUpperCase();
+
+            data = ImmutableArray.fromArray(data.split("")).dropMatching("\"").mkString("");
+
+            if (data.equals(""))
+            {
+                JOptionPane.showMessageDialog(
+                this, "The content of the file %s cannot be read.".formatted(fc.getSelectedFile()),
+                "Error", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            var lines = data.split("\n");
+            var processedData =
+                ImmutableArray.fromArray(lines)
+                              .drop(1) // Drops the header.
+                              .map(x -> x.split(",")) // Splits at ','.
+                              .map(ImmutableArray::fromArray) // Converts to immutable arrays.
+                              .map(x -> x.drop(1)) // drops the time info.
+                              .map(x -> x.map(String::trim)); // Trims the strings to shape.
+
+            DebugMethods.log(processedData.toString(), DebugMethods.LogType.DEBUG);
+
+            result = new GroupManager(fc.getSelectedFile().getName());
+            for (int i = 0; i < processedData.size(); i++)
+            {
+                var curArr = processedData.get(i);
+                Person p = null;
+
+                for (int ii = 0; ii < curArr.size(); ii++)
+                {
+                    var s = curArr.get(ii);
+                    var names = result.getNames();
+
+                    if (!names.contains(s))
+                    {
+                        var person = result.registerPerson(s, Person.Role.CANDIDATE);
+
+                        if (ii == 0)
+                        {
+                            p = person;
+                            continue;
+                        }
+
+                        assert p != null;
+                        p.addWishlistId(person.getId());
+                    }
+                    else
+                    {
+                        var person = result.getPersonFromName(s).get(0);
+
+                        if (ii == 0)
+                        {
+                            p = person;
+                            continue;
+                        }
+
+                        assert p != null;
+                        p.addWishlistId(person.getId());
+                    }
+                }
+            }
+
+            invokeAddListeners();
+        }
     }
 
     /**
