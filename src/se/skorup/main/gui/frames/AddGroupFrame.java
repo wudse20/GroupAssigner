@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -70,7 +71,6 @@ public class AddGroupFrame extends JFrame implements KeyListener
     private final BoxLayout pInputContainerLayout =
         new BoxLayout(pInputContainer, BoxLayout.Y_AXIS);
 
-    /** The layout of the frame. */
     /** The layout of the frame. */
     private final BorderLayout layout = new BorderLayout();
 
@@ -259,6 +259,28 @@ public class AddGroupFrame extends JFrame implements KeyListener
         // If the input is accepted.
         if (input.trim().length() >= 2)
         {
+            if (input.indexOf(',') != -1)
+            {
+                var inputs = Arrays.stream(input.split(",")).map(String::trim).toArray(String[]::new);
+                for (var s : inputs)
+                {
+                    if (s.length() >= 2)
+                    {
+                        nameModel.addItem(s);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(
+                        this, "Namnet %s är för kort, minst två bokstäver.".formatted(s),
+                        "För kort namn!", JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
+
+                pInputGroupMember.clear();
+                return;
+            }
+
             nameModel.addItem(input);
             pInputGroupMember.clear();
         }
