@@ -38,7 +38,7 @@ public class MainFrame extends JFrame
     private GroupManager currentGroupManager;
 
     /** Adds a demo group iff {@code true}. */
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     /** The frame's container. */
     private final Container cp = this.getContentPane();
