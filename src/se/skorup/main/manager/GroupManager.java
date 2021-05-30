@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class GroupManager implements Serializable
 {
     /** The next id that will be used. */
-    private static int nextId = 0;
+    private int nextId = 0;
 
     /** The number of members. */
     private int members = 0;
@@ -223,7 +223,7 @@ public class GroupManager implements Serializable
      *
      * @return the next id.
      * */
-    public static int getNextId()
+    public int getNextId()
     {
         return nextId++;
     }
