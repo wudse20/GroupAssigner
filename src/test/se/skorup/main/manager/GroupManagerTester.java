@@ -4,6 +4,7 @@ import org.testng.annotations.Test;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.Tuple;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -287,5 +288,27 @@ public class GroupManagerTester
         gm3.registerPerson("Sebbe", Person.Role.CANDIDATE);
 
         assertNotEquals(gm, gm3);
+    }
+
+    /**
+     * Tests the getDenyGraph method.
+     * */
+    @Test
+    public void testGetDenyGraph()
+    {
+        var gm = new GroupManager("");
+
+        var p1 = gm.registerPerson("Anton", Person.Role.CANDIDATE);
+        var p2 = gm.registerPerson("Sebbe", Person.Role.CANDIDATE);
+        var p3 = gm.registerPerson("Sebbe 2", Person.Role.CANDIDATE);
+
+        p1.addDenylistId(p2.getId());
+        p2.addDenylistId(p3.getId());
+
+        var ctr = new HashSet<Tuple>();
+        ctr.add(new Tuple(p1.getId(), p2.getId()));
+        ctr.add(new Tuple(p2.getId(), p3.getId()));
+
+        assertEquals(ctr, gm.getDenyGraph());
     }
 }

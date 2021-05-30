@@ -3,6 +3,7 @@ package se.skorup.main.manager;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.Tuple;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -245,6 +246,29 @@ public class GroupManager implements Serializable
     public Map<Integer, Person> getGroup()
     {
         return group;
+    }
+
+    /**
+     * Generates the graph based on the denylists.
+     * The graph (V, E), where V is the set of
+     * vertices and edges E &#8838; V x V. This
+     * method returns E.
+     *
+     * @return a set containing the relations
+     *         consisting of the edges a binary
+     *         tuples.
+     * */
+    public Set<Tuple> getDenyGraph()
+    {
+        var result = new HashSet<Tuple>();
+
+        for (var e : group.entrySet())
+        {
+            for (var i : e.getValue().getDenylist())
+                result.add(new Tuple(e.getKey(), i));
+        }
+
+        return result;
     }
 
     @Override

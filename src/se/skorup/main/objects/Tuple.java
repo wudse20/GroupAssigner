@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A tupel of two integers..
+ * A tuple of two integers..
  * */
 public record Tuple(int a, int b)
 {
