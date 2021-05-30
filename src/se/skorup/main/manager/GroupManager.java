@@ -133,7 +133,7 @@ public class GroupManager implements Serializable
                         r.equals(Person.Role.LEADER) ?
                         x instanceof Leader :
                         x instanceof Candidate
-                    ).collect(Collectors.toSet());
+                    ).collect(Collectors.toCollection(HashSet::new));
     }
 
     /**

@@ -2,6 +2,8 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
+import se.skorup.main.groups.RandomGroupCreator;
+import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.MainFrame;
 
 import javax.swing.JButton;
@@ -118,10 +120,14 @@ public class ButtonPanel extends JPanel implements ActionListener
         }
         else if (cmd.equals(Buttons.CREATE_GROUPS.toString()))
         {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
+            try
+            {
+                DebugMethods.log(new RandomGroupCreator(mf.getCurrentGroup()).generateGroup((byte) 2).toString(), DebugMethods.LogType.DEBUG);
+            }
+            catch (NoGroupAvailableException | IllegalArgumentException e2)
+            {
+                DebugMethods.log(e2.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+            }
         }
         else if (cmd.equals(Buttons.SAVE.toString()))
         {

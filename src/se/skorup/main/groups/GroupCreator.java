@@ -1,5 +1,7 @@
 package se.skorup.main.groups;
 
+import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+
 import java.util.List;
 import java.util.Set;
 
@@ -21,8 +23,9 @@ public interface GroupCreator
      * @return a list containing sets of integers which corresponds
      *         to groups.
      * @throws IllegalArgumentException iff groupSize &lt; 2.
+     * @throws NoGroupAvailableException iff there is now way to create a group.
      * */
-    List<Set<Integer>> generateGroup(byte groupSize) throws IllegalArgumentException;
+    List<Set<Integer>> generateGroup(byte groupSize) throws IllegalArgumentException, NoGroupAvailableException;
 
     /**
      * Generates subgroups of the provided
@@ -35,6 +38,7 @@ public interface GroupCreator
      * @return a list containing sets of integers which corresponds
      *         to groups.
      * @throws IllegalArgumentException iff nbrGroups &lt; 2.
+     * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
-    List<Set<Integer>> generateGroup(short nbrGroups) throws IllegalArgumentException;
+    List<Set<Integer>> generateGroup(short nbrGroups) throws IllegalArgumentException, NoGroupAvailableException;
 }
