@@ -265,7 +265,10 @@ public class GroupManager implements Serializable
         for (var e : group.entrySet())
         {
             for (var i : e.getValue().getDenylist())
+            {
                 result.add(new Tuple(e.getKey(), i));
+                result.add(new Tuple(i, e.getKey())); // Adds the inverse as well.
+            }
         }
 
         return result;
