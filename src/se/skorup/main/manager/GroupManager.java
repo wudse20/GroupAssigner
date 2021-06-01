@@ -251,11 +251,12 @@ public class GroupManager implements Serializable
     /**
      * Generates the graph based on the denylists.
      * The graph (V, E), where V is the set of
-     * vertices and edges E &#8838; V x V. This
-     * method returns E.
+     * vertices and edges E &#8838; V x V. This graph
+     * is undirected, so if (v, w) &#8712; E &hArr;
+     * (w, v) &#8712; E. This method returns E.
      *
      * @return a set containing the relations
-     *         consisting of the edges a binary
+     *         consisting of the edges, binary
      *         tuples.
      * */
     public Set<Tuple> getDenyGraph()
@@ -269,6 +270,29 @@ public class GroupManager implements Serializable
                 result.add(new Tuple(e.getKey(), i));
                 result.add(new Tuple(i, e.getKey())); // Adds the inverse as well.
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Generates the graph based on the wishlists.
+     * The graph (V, E), where V is the set of
+     * vertices and E the set of edges.
+     * E &#8838; V x V. This method returns E.
+     *
+     * @return a set containing the relations
+     *         consisting of the edges, binary
+     *         tuples.
+     * */
+    public Set<Tuple> getWishGraph()
+    {
+        var result = new HashSet<Tuple>();
+
+        for (var e : group.entrySet())
+        {
+            for (var i : e.getValue().getWishlist())
+                result.add(new Tuple(e.getKey(), i));
         }
 
         return result;

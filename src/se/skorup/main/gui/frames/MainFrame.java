@@ -127,6 +127,7 @@ public class MainFrame extends JFrame
             gm.registerPerson("Erica", Person.Role.CANDIDATE);
             gm.registerPerson("Kristin", Person.Role.CANDIDATE);
             gm.registerPerson("Gunnel", Person.Role.CANDIDATE);
+            gm.registerPerson("Sebastian", Person.Role.CANDIDATE);
 
             managers.add(gm);
         }
