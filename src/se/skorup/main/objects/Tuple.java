@@ -49,6 +49,8 @@ public record Tuple(int a, int b)
      *                 calculated on.
      * @param numbers the set the relation's image
      *                is calculated under.
+     * @return the values that are in the image of the
+     *         set under a relation-
      * */
     public static Set<Integer> imageOfSet(Set<Tuple> relation, Set<Integer> numbers)
     {

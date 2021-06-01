@@ -17,6 +17,9 @@ public class SerializationManagerTester
 {
     /**
      * Tests serialization and deserialization of an object.
+     *
+     * @throws IOException iff test fails.
+     * @throws ClassNotFoundException iff test fails.
      * */
     @Test
     public void testSerializeAndDeserialize() throws IOException, ClassNotFoundException

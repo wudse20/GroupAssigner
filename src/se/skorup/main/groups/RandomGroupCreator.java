@@ -23,6 +23,8 @@ public class RandomGroupCreator implements GroupCreator
     /**
      * Creates a new RandomGroup
      * creator.
+     *
+     * @param gm the group manager in use.
      * */
     public RandomGroupCreator(GroupManager gm)
     {

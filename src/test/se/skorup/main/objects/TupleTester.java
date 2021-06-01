@@ -41,6 +41,9 @@ public class TupleTester
         assertEquals(ctr, Tuple.imageOf(set, 1));
     }
 
+    /**
+     * Tests the image of set method.
+     * */
     @Test
     public void testImageOfSet()
     {

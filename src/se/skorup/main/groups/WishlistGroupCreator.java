@@ -12,6 +12,7 @@ import java.util.Set;
  * */
 public class WishlistGroupCreator implements GroupCreator
 {
+    /** The group manager used to create the groups. */
     private final GroupManager gm;
 
     /**
