@@ -5,6 +5,7 @@ import se.skorup.API.Utils;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 /**
  * A setting panel is a panel, with
@@ -12,6 +13,9 @@ import java.awt.FlowLayout;
  * */
 public class SettingPanel extends JPanel
 {
+    /** If the input should be shown or not. */
+    private final boolean shouldHaveInput;
+
     /** The checkbox of it's frame. */
     private final JRadioButton radio;
 
@@ -19,7 +23,7 @@ public class SettingPanel extends JPanel
     private final InputPanel pInput;
 
     /** The layout of this panel. */
-    private final FlowLayout layout = new FlowLayout(FlowLayout.RIGHT);
+    private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
     /**
      * Creates a new SettingPanel.
@@ -27,11 +31,14 @@ public class SettingPanel extends JPanel
      * @param radioLabel The label of the radiobutton.
      * @param txfLabel The label of the text field.
      * @param chars the number of chars in the text field.
+     * @param shouldHaveInput if {@code true} then it will have an input,
+     *                        else, i.e. {@code false}, it will have no input.
      * */
-    public SettingPanel(String radioLabel, String txfLabel, int chars)
+    public SettingPanel(String radioLabel, String txfLabel, int chars, boolean shouldHaveInput)
     {
-        pInput = new InputPanel(txfLabel, chars);
-        radio = new JRadioButton(radioLabel);
+        this.shouldHaveInput = shouldHaveInput;
+        this.pInput = new InputPanel(txfLabel, chars);
+        this.radio = new JRadioButton(radioLabel);
 
         this.setProperties();
         this.addComponents();
@@ -47,6 +54,7 @@ public class SettingPanel extends JPanel
 
         radio.setBackground(Utils.BACKGROUND_COLOR);
         radio.setForeground(Utils.FOREGROUND_COLOR);
+        radio.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 12));
     }
 
     /**
@@ -55,7 +63,9 @@ public class SettingPanel extends JPanel
     private void addComponents()
     {
         this.add(radio);
-        this.add(pInput);
+
+        if (shouldHaveInput)
+            this.add(pInput);
     }
 
     /**

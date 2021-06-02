@@ -11,11 +11,13 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 
 /**
  * The frame used to create the groups.
@@ -40,23 +42,51 @@ public class GroupFrame extends JFrame
     /** The button group for the settings. */
     private final ButtonGroup bgSettings = new ButtonGroup();
 
-    /** The radio button for pairing a group with the leaders. */
-    private final JRadioButton btnLeaders = new JRadioButton("Para grupper med ledare");
+    /** The panel for pairing a group with the leaders. */
+    private final SettingPanel pLeaders =
+        new SettingPanel("Para grupper med ledare", null, 0, false);
 
     /** The panel for setting number of groups. */
-    private final SettingPanel pNbrGroups = new SettingPanel("Antal grupper", null, 2);
+    private final SettingPanel pNbrGroups =
+        new SettingPanel("%-25s".formatted("Antal grupper"), null, 4, true);
 
     /** The panel for setting persons/group. */
-    private final SettingPanel pNbrMembers = new SettingPanel("Antal personer/grupp", null, 2);
+    private final SettingPanel pNbrMembers =
+        new SettingPanel("%-25s".formatted("Antal personer/grupp"), null, 4, true);
 
     /** The panel for the settings. */
     private final JPanel pSettings = new JPanel();
+
+    /** The top of the panel. */
+    private final JPanel pTop = new JPanel();
+
+    /** The container panel of the checkbox. */
+    private final JPanel pCBContainer = new JPanel();
+
+    /** The container panel of the checkbox's container panel. */
+    private final JPanel pCBContainerContainer = new JPanel();
+
+    /** The layout of the container panel for the checkbox's container panel. */
+    private final BoxLayout pCBContainerContainerLayout = new BoxLayout(pCBContainerContainer, BoxLayout.Y_AXIS);
+
+    /** The layout of the container panel for the checkbox. */
+    private final FlowLayout pCBContainerLayout = new FlowLayout(FlowLayout.LEFT);
+
+    /** The layout of the top panel. */
+    private final BoxLayout pTopLayout = new BoxLayout(pTop, BoxLayout.X_AXIS);
 
     /** The layout for the settings panel. */
     private final BoxLayout pSettingsLayout = new BoxLayout(pSettings, BoxLayout.Y_AXIS);
 
     /** This is the layout of the frame. */
     private final BorderLayout layout = new BorderLayout();
+
+    /** A spacer in th gui. */
+    private final JLabel lblSpacer1 = new JLabel("%-10s".formatted(" "));
+
+    /** A spacer in th gui. */
+    private final JLabel lblSpacer2 =
+        new JLabel("<html><br><br><br></html>"); // Not hacky at all, good practice :)
 
     /**
      * Creates a new group frame.
@@ -79,7 +109,7 @@ public class GroupFrame extends JFrame
      * */
     private void setProperties()
     {
-        this.setSize(new Dimension(400, 300));
+        this.setSize(new Dimension(1200, 685));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
@@ -90,18 +120,29 @@ public class GroupFrame extends JFrame
         cbCreator.setForeground(Utils.FOREGROUND_COLOR);
         cbCreator.addItem(randomCreator);
         cbCreator.addItem(wishlistCreator);
+        cbCreator.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         pSettings.setBackground(Utils.BACKGROUND_COLOR);
         pSettings.setLayout(pSettingsLayout);
-
-        btnLeaders.setForeground(Utils.FOREGROUND_COLOR);
-        btnLeaders.setBackground(Utils.BACKGROUND_COLOR);
+        pSettings.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
         pNbrGroups.setRadioSelected(true);
 
         bgSettings.add(pNbrGroups.getRadio());
         bgSettings.add(pNbrMembers.getRadio());
-        bgSettings.add(btnLeaders);
+        bgSettings.add(pLeaders.getRadio());
+
+        pTop.setBackground(Utils.BACKGROUND_COLOR);
+        pTop.setLayout(pTopLayout);
+
+        lblSpacer1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        pCBContainer.setBackground(Utils.BACKGROUND_COLOR);
+        pCBContainer.setLayout(pCBContainerLayout);
+
+        pCBContainerContainer.setBackground(Utils.BACKGROUND_COLOR);
+        pCBContainerContainer.setLayout(pCBContainerContainerLayout);
+        pCBContainerContainer.setAlignmentX(Component.RIGHT_ALIGNMENT);
     }
 
     /**
@@ -111,8 +152,17 @@ public class GroupFrame extends JFrame
     {
         pSettings.add(pNbrGroups);
         pSettings.add(pNbrMembers);
-        pSettings.add(btnLeaders);
+        pSettings.add(pLeaders);
 
-        this.add(pSettings, BorderLayout.PAGE_START);
+        pCBContainer.add(cbCreator);
+
+        pCBContainerContainer.add(lblSpacer2);
+        pCBContainerContainer.add(pCBContainer);
+
+        pTop.add(pCBContainerContainer);
+        pTop.add(lblSpacer1);
+        pTop.add(pSettings);
+
+        this.add(pTop, BorderLayout.PAGE_START);
     }
 }
