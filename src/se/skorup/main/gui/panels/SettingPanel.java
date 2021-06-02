@@ -2,8 +2,8 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.Utils;
 
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import java.awt.FlowLayout;
 
 /**
@@ -13,25 +13,25 @@ import java.awt.FlowLayout;
 public class SettingPanel extends JPanel
 {
     /** The checkbox of it's frame. */
-    private final JCheckBox cb;
+    private final JRadioButton radio;
 
     /** The input panel that holds the text field and it's label. */
     private final InputPanel pInput;
 
     /** The layout of this panel. */
-    private final FlowLayout layout = new FlowLayout(FlowLayout.CENTER);
+    private final FlowLayout layout = new FlowLayout(FlowLayout.RIGHT);
 
     /**
      * Creates a new SettingPanel.
      *
-     * @param cbLabel The label of the checkbox.
+     * @param radioLabel The label of the radiobutton.
      * @param txfLabel The label of the text field.
      * @param chars the number of chars in the text field.
      * */
-    public SettingPanel(String cbLabel, String txfLabel, int chars)
+    public SettingPanel(String radioLabel, String txfLabel, int chars)
     {
         pInput = new InputPanel(txfLabel, chars);
-        cb = new JCheckBox(cbLabel);
+        radio = new JRadioButton(radioLabel);
 
         this.setProperties();
         this.addComponents();
@@ -43,9 +43,10 @@ public class SettingPanel extends JPanel
     private void setProperties()
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
+        this.setLayout(layout);
 
-        cb.setBackground(Utils.BACKGROUND_COLOR);
-        cb.setForeground(Utils.FOREGROUND_COLOR);
+        radio.setBackground(Utils.BACKGROUND_COLOR);
+        radio.setForeground(Utils.FOREGROUND_COLOR);
     }
 
     /**
@@ -53,7 +54,7 @@ public class SettingPanel extends JPanel
      * */
     private void addComponents()
     {
-        this.add(cb);
+        this.add(radio);
         this.add(pInput);
     }
 
@@ -73,19 +74,29 @@ public class SettingPanel extends JPanel
      * @return {@code true} iff the checkbox is selected.<br>
      *         {@code false} iff the checkbox isn't selected.
      * */
-    public boolean isCheckboxSelected()
+    public boolean isRadioSelected()
     {
-        return cb.isSelected();
+        return radio.isSelected();
     }
 
     /**
-     * Sets the status of the checkbox.
+     * Sets the status of the radio button.
      *
      * @param selected if {@code true} then the checkbox will be
      *                 selected, else it will be unselected.
      * */
-    public void setCheckboxSelected(boolean selected)
+    public void setRadioSelected(boolean selected)
     {
-        cb.setSelected(selected);
+        radio.setSelected(selected);
+    }
+
+    /**
+     * Getter for: radio button.
+     *
+     * @return gets the radio button.
+     * */
+    public JRadioButton getRadio()
+    {
+        return radio;
     }
 }
