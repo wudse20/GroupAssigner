@@ -9,9 +9,11 @@ import se.skorup.main.manager.GroupManager;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -39,6 +41,21 @@ public class GroupFrame extends JFrame
     /** The list with the different creators. */
     private final JComboBox<GroupCreator> cbCreator = new JComboBox<>();
 
+    /** The button to create groups. */
+    private final JButton btnCreate = new JButton("Skapa undergrupper");
+
+    /** The button for closing. */
+    private final JButton btnClose = new JButton("Stäng");
+
+    /** The button for printing. */
+    private final JButton btnPrint = new JButton("Skriv ut");
+
+    /** The button for saving. */
+    private final JButton btnSave = new JButton("Spara");
+
+    /** The button for loading. */
+    private final JButton btnLoad = new JButton("Ladda");
+
     /** The button group for the settings. */
     private final ButtonGroup bgSettings = new ButtonGroup();
 
@@ -65,6 +82,12 @@ public class GroupFrame extends JFrame
 
     /** The container panel of the checkbox's container panel. */
     private final JPanel pCBContainerContainer = new JPanel();
+
+    /** The JPanel for the buttons. */
+    private final JPanel pButtons = new JPanel();
+
+    /** The layout for the button panel. */
+    private final FlowLayout pButtonsLayout = new FlowLayout(FlowLayout.RIGHT);
 
     /** The layout of the container panel for the checkbox's container panel. */
     private final BoxLayout pCBContainerContainerLayout = new BoxLayout(pCBContainerContainer, BoxLayout.Y_AXIS);
@@ -143,6 +166,54 @@ public class GroupFrame extends JFrame
         pCBContainerContainer.setBackground(Utils.BACKGROUND_COLOR);
         pCBContainerContainer.setLayout(pCBContainerContainerLayout);
         pCBContainerContainer.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        pButtons.setBackground(Utils.BACKGROUND_COLOR);
+        pButtons.setLayout(pButtonsLayout);
+
+        btnClose.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnClose.setForeground(Utils.FOREGROUND_COLOR);
+        btnClose.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+                this, "Not Yet Implemented",
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
+
+        btnCreate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnCreate.setForeground(Utils.FOREGROUND_COLOR);
+        btnCreate.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+                this, "Not Yet Implemented",
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
+
+        btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnPrint.setForeground(Utils.FOREGROUND_COLOR);
+        btnPrint.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+                this, "Not Yet Implemented",
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
+
+        btnSave.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnSave.setForeground(Utils.FOREGROUND_COLOR);
+        btnSave.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+                this, "Not Yet Implemented",
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
+
+        btnLoad.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnLoad.setForeground(Utils.FOREGROUND_COLOR);
+        btnLoad.addActionListener((e) -> {
+            JOptionPane.showMessageDialog(
+                this, "Not Yet Implemented",
+                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
+            );
+        });
     }
 
     /**
@@ -163,6 +234,13 @@ public class GroupFrame extends JFrame
         pTop.add(lblSpacer1);
         pTop.add(pSettings);
 
+        pButtons.add(btnClose);
+        pButtons.add(btnLoad);
+        pButtons.add(btnSave);
+        pButtons.add(btnPrint);
+        pButtons.add(btnCreate);
+
         this.add(pTop, BorderLayout.PAGE_START);
+        this.add(pButtons, BorderLayout.PAGE_END);
     }
 }
