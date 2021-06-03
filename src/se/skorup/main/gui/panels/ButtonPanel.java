@@ -125,6 +125,7 @@ public class ButtonPanel extends JPanel implements ActionListener
             SwingUtilities.invokeLater(() -> {
                 var gf = new GroupFrame(mf.getCurrentGroup());
                 mf.setVisible(false);
+                gf.addActionCallback(() -> mf.setVisible(true));
             });
         }
         else if (cmd.equals(Buttons.SAVE.toString()))

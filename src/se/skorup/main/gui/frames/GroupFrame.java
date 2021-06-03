@@ -4,6 +4,7 @@ import se.skorup.API.Utils;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
 import se.skorup.main.groups.WishlistGroupCreator;
+import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.panels.SettingPanel;
 import se.skorup.main.manager.GroupManager;
 
@@ -20,6 +21,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * The frame used to create the groups.
@@ -34,6 +37,8 @@ public class GroupFrame extends JFrame
 
     /** The wishlist group creator. */
     private final GroupCreator wishlistCreator;
+
+    private final List<ActionCallback> callbacks = new Vector<>();
 
     /** This frames's container. */
     private final Container cp = this.getContentPane();
@@ -173,10 +178,8 @@ public class GroupFrame extends JFrame
         btnClose.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnClose.setForeground(Utils.FOREGROUND_COLOR);
         btnClose.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
+            invokeCallbacks();
+            dispose();
         });
 
         btnCreate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -242,5 +245,27 @@ public class GroupFrame extends JFrame
 
         this.add(pTop, BorderLayout.PAGE_START);
         this.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Invokes all the callbacks.
+     * */
+    private void invokeCallbacks()
+    {
+        callbacks.forEach(ActionCallback::callback);
+    }
+
+    /**
+     * Adds an action callback to the frame.
+     *
+     * @param ac the callback to be added. If {@code null}
+     *           then it will do noting.
+     * */
+    public void addActionCallback(ActionCallback ac)
+    {
+        if (ac == null)
+            return;
+
+        callbacks.add(ac);
     }
 }
