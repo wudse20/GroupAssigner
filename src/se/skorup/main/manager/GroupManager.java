@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 /**
  * The manager that registers and keeps track of
  * the different people in a group.
+ *
+ * TODO: ADD GROUP MEMBER OF ROLE
  * */
 public class GroupManager implements Serializable
 {

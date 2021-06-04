@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 /**
  * The class used to generate random groups.
+ * 
+ * TODO: FIX GROUP SIZE!
  * */
 public class RandomGroupCreator implements GroupCreator
 {

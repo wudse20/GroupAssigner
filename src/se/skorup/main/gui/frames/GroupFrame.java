@@ -1,12 +1,15 @@
 package se.skorup.main.gui.frames;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
 import se.skorup.main.groups.WishlistGroupCreator;
+import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.panels.SettingPanel;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Person;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -21,7 +24,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -61,6 +66,9 @@ public class GroupFrame extends JFrame
     /** The button for loading. */
     private final JButton btnLoad = new JButton("Ladda");
 
+    /** The label for displaying the groups.*/
+    private final JLabel lblGroup = new JLabel("");
+
     /** The button group for the settings. */
     private final ButtonGroup bgSettings = new ButtonGroup();
 
@@ -90,6 +98,12 @@ public class GroupFrame extends JFrame
 
     /** The JPanel for the buttons. */
     private final JPanel pButtons = new JPanel();
+
+    /** The container for the label. */
+    private final JPanel pLabelContainer = new JPanel();
+
+    /** The layout for the container of the label. */
+    private final FlowLayout pLabelContainerLayout = new FlowLayout(FlowLayout.CENTER);
 
     /** The layout for the button panel. */
     private final FlowLayout pButtonsLayout = new FlowLayout(FlowLayout.RIGHT);
@@ -185,10 +199,7 @@ public class GroupFrame extends JFrame
         btnCreate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCreate.setForeground(Utils.FOREGROUND_COLOR);
         btnCreate.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
+            generateGroups();
         });
 
         btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -217,6 +228,12 @@ public class GroupFrame extends JFrame
                 "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
             );
         });
+
+        pLabelContainer.setLayout(pLabelContainerLayout);
+        pLabelContainer.setBackground(Utils.BACKGROUND_COLOR);
+
+        lblGroup.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
+        lblGroup.setForeground(Utils.FOREGROUND_COLOR);
     }
 
     /**
@@ -243,7 +260,10 @@ public class GroupFrame extends JFrame
         pButtons.add(btnPrint);
         pButtons.add(btnCreate);
 
+        pLabelContainer.add(lblGroup);
+
         this.add(pTop, BorderLayout.PAGE_START);
+        this.add(pLabelContainer, BorderLayout.CENTER);
         this.add(pButtons, BorderLayout.PAGE_END);
     }
 
@@ -253,6 +273,232 @@ public class GroupFrame extends JFrame
     private void invokeCallbacks()
     {
         callbacks.forEach(ActionCallback::callback);
+    }
+
+    /**
+     * Generates a group.
+     * */
+    private void generateGroups()
+    {
+        var gc = (GroupCreator) cbCreator.getSelectedItem();
+        List<Set<Integer>> list = null; // Just to have initialized.
+
+        // Checks for unimplemented group creators
+        if (gc instanceof WishlistGroupCreator g)
+        {
+            JOptionPane.showMessageDialog(
+                this, "%s isn't implemted yet.".formatted(g),
+                "Not yet implemented", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        // Checks for leader mode
+        if (pLeaders.isRadioSelected())
+        {
+            var leaders = gm.getAllOfRoll(Person.Role.LEADER);
+            var groups = leaders.size();
+
+            // If there are to few groups.
+            if (groups < 2)
+            {
+                JOptionPane.showMessageDialog(
+                    this, "Det finns för få leadare. Det finns bara %d leadare.".formatted(groups),
+                    "För få grupper!", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            try
+            {
+                list = tryGenerateGroup(gc, groups, true);
+            }
+            catch (IllegalArgumentException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                    this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
+                    "Felaktig indata", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+            catch (NoGroupAvailableException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                    this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
+                    "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
+        }
+        else if (pNbrGroups.isRadioSelected())
+        {
+            int groups;
+
+            try
+            {
+                groups = Integer.parseInt(pNbrGroups.getTextFieldData());
+            }
+            catch (NumberFormatException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                    this, "Antalet grupper är inget nummer fel: %s".formatted(e.getLocalizedMessage()),
+                    "Inget nummer", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            try
+            {
+                list = tryGenerateGroup(gc, groups, true);
+            }
+            catch (IllegalArgumentException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                        this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
+                        "Felaktig indata", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+            catch (NoGroupAvailableException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                        this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
+                        "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
+        }
+        else
+        {
+            int persons;
+
+            try
+            {
+                persons = Integer.parseInt(pNbrMembers.getTextFieldData());
+            }
+            catch (NumberFormatException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                        this, "Antalet personer är inget nummer fel: %s".formatted(e.getLocalizedMessage()),
+                        "Inget nummer", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            try
+            {
+                list = tryGenerateGroup(gc, persons, false);
+            }
+            catch (IllegalArgumentException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                        this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
+                        "Felaktig indata", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+            catch (NoGroupAvailableException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+                JOptionPane.showMessageDialog(
+                        this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
+                        "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
+        }
+    }
+
+    /**
+     * Tries to generate groups. It will try to generate the group 1000 times,
+     * if it fails then NoGroupAvailableException will be thrown.
+     *
+     * @param gc the group creator used to create the groups.
+     * @param number the number used as the argument in the GroupCreator.
+     * @param numberIsNbrGroups if {@code true} {@link GroupCreator#generateGroup(short)} will be called,
+     *                          else if {@code false} {@link GroupCreator#generateGroup(byte)} will be
+     *                          called.
+     * @throws IllegalArgumentException iff {@link GroupCreator#generateGroup(byte)} or
+     *                                  {@link GroupCreator#generateGroup(short)} does it.
+     * @throws NoGroupAvailableException iff {@link GroupCreator#generateGroup(byte)} or
+     *                                   {@link GroupCreator#generateGroup(short)} does it.
+     * @throws NullPointerException iff gc is {@code null}.
+     * */
+    private List<Set<Integer>> tryGenerateGroup(GroupCreator gc, int number, boolean numberIsNbrGroups)
+            throws IllegalArgumentException, NoGroupAvailableException, NullPointerException
+    {
+        if (gc == null)
+            throw new NullPointerException("GroupCreator, gc, cannot be null!");
+
+        if (numberIsNbrGroups)
+        {
+            int i = 0;
+
+            while (i < 1000)
+            {
+                try
+                {
+                    return gc.generateGroup((short) number);
+                }
+                catch (NoGroupAvailableException e)
+                {
+                    i++;
+                    DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+                }
+            }
+
+            throw new NoGroupAvailableException("There are no possible groups, too many denylist items.");
+        }
+        else
+        {
+            int i = 0;
+
+            while (i < 1000)
+            {
+                try
+                {
+                    return gc.generateGroup((byte) number);
+                }
+                catch (NoGroupAvailableException e)
+                {
+                    i++;
+                    DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+                }
+            }
+
+            throw new NoGroupAvailableException("There are no possible groups, too many denylist items.");
+        }
     }
 
     /**
@@ -267,5 +513,12 @@ public class GroupFrame extends JFrame
             return;
 
         callbacks.add(ac);
+    }
+
+    @Override
+    public void dispose()
+    {
+        invokeCallbacks();
+        super.dispose();
     }
 }
