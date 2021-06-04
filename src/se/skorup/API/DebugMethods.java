@@ -31,6 +31,28 @@ public class DebugMethods
     }
 
     /**
+     * Logs a formatted message to the console.
+     *
+     * @param o the object to be logged.
+     * @param type the type of the message.
+     * */
+    public static void log(Object o, LogType type)
+    {
+        log(o.toString(), type);
+    }
+
+    /**
+     * Logs a formatted message to the console.
+     *
+     * @param i the number to be logged.
+     * @param type the type of the message.
+     * */
+    public static void log(int i, LogType type)
+    {
+        log(Integer.toString(i), type);
+    }
+
+    /**
      * Gets the current time and formats it into a string.
      *
      * @return a formatted string of the current time.
