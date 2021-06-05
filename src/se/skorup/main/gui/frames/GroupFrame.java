@@ -25,9 +25,13 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * The frame used to create the groups.
@@ -339,6 +343,8 @@ public class GroupFrame extends JFrame
             }
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
+            formatGroup(list, true);
+            return;
         }
         else if (pNbrGroups.isRadioSelected())
         {
@@ -438,6 +444,59 @@ public class GroupFrame extends JFrame
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
         }
+
+        formatGroup(list, false);
+    }
+
+    /**
+     * Formats the groups and prints them to the GUI.
+     *
+     * @param groups the generated groups from a GroupCreator.
+     * @param leaderMode iff {@code true} it will map each group to a leader.
+     * */
+    private void formatGroup(List<Set<Integer>> groups, boolean leaderMode)
+    {
+        // The persons to be printed.
+        var persons =
+            groups.stream()
+                  .map(x -> x.stream().map(gm::getPersonFromId).collect(Collectors.toSet()))
+                  .collect(Collectors.toList());
+
+        var sb = new StringBuilder().append("<html><table>");
+        var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
+        int count = 0;
+        int max = Collections.max(groups.stream().map(Set::size).collect(Collectors.toList()));
+
+        for (var s : persons)
+        {
+            if (count++ % 2 == 0)
+                sb.append("<tr>").append("<td>");
+            else
+                sb.append("<td>");
+
+            if (leaderMode && leaders.size() > 1)
+                sb.append("<font color=RED>")
+                  .append(leaders.remove(0))
+                  .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
+
+            for (var p : s)
+            {
+                sb.append("<br>").append(p).append("&emsp;&emsp;&emsp;&emsp;");
+            }
+
+            if (s.size() < max)
+            {
+                int diff = max - s.size();
+
+                sb.append("<br>".repeat(diff + 1));
+            }
+
+            sb.append("</td>");
+        }
+
+        sb.append("</table></html>");
+
+        lblGroup.setText(sb.toString());
     }
 
     /**
