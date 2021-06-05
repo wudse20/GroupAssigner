@@ -54,7 +54,7 @@ public class RandomGroupCreator implements GroupCreator
         {
             var p = candidates.remove(random.nextInt(candidates.size()));
 
-            if (i++ % size == 0)
+            if (i++ % size == 0 && candidates.size() >= size)
             {
                 if (current != null)
                     result.add(current);
@@ -100,7 +100,7 @@ public class RandomGroupCreator implements GroupCreator
                 "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
             );
 
-        return generateGroup(gm.getMemberCount() / nbrGroups);
+        return generateGroup(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / nbrGroups);
     }
 
     @Override

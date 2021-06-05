@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 /**
  * The manager that registers and keeps track of
  * the different people in a group.
- *
- * TODO: ADD GROUP MEMBER OF ROLE
  * */
 public class GroupManager implements Serializable
 {
@@ -238,6 +236,17 @@ public class GroupManager implements Serializable
     public int getMemberCount()
     {
         return members;
+    }
+
+    /**
+     * Getter for: members of role.
+     *
+     * @param r the role sought after.
+     * @return the number of members of role r.
+     * */
+    public int getMemberCountOfRole(Person.Role r)
+    {
+        return getAllOfRoll(r).size();
     }
 
     /**
