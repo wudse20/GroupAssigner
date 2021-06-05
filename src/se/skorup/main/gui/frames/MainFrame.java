@@ -117,9 +117,6 @@ public class MainFrame extends JFrame
             gm.registerPerson("Anton", Person.Role.LEADER);
             gm.registerPerson("Sebbe", Person.Role.LEADER);
             gm.registerPerson("Victoria", Person.Role.LEADER);
-            gm.registerPerson("Felix", Person.Role.LEADER);
-            gm.registerPerson("Ami", Person.Role.LEADER);
-            gm.registerPerson("Susann", Person.Role.LEADER);
 
             gm.registerPerson("Adina", Person.Role.CANDIDATE);
             gm.registerPerson("Pernilla", Person.Role.CANDIDATE);
@@ -128,6 +125,9 @@ public class MainFrame extends JFrame
             gm.registerPerson("Kristin", Person.Role.CANDIDATE);
             gm.registerPerson("Gunnel", Person.Role.CANDIDATE);
             gm.registerPerson("Sebastian", Person.Role.CANDIDATE);
+            gm.registerPerson("Felix", Person.Role.CANDIDATE);
+            gm.registerPerson("Ami", Person.Role.CANDIDATE);
+            gm.registerPerson("Susann", Person.Role.CANDIDATE);
 
             managers.add(gm);
         }

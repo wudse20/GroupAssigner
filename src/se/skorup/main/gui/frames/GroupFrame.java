@@ -14,6 +14,7 @@ import se.skorup.main.objects.Person;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,6 +70,9 @@ public class GroupFrame extends JFrame
 
     /** The button for loading. */
     private final JButton btnLoad = new JButton("Ladda");
+
+    /** The checkbox used for overflow. */
+    private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
 
     /** The label for displaying the groups.*/
     private final JLabel lblGroup = new JLabel("");
@@ -238,6 +242,9 @@ public class GroupFrame extends JFrame
 
         lblGroup.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
         lblGroup.setForeground(Utils.FOREGROUND_COLOR);
+
+        boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
+        boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
     }
 
     /**
@@ -258,6 +265,7 @@ public class GroupFrame extends JFrame
         pTop.add(lblSpacer1);
         pTop.add(pSettings);
 
+        pButtons.add(boxOverflow);
         pButtons.add(btnClose);
         pButtons.add(btnLoad);
         pButtons.add(btnSave);
@@ -474,10 +482,14 @@ public class GroupFrame extends JFrame
             else
                 sb.append("<td>");
 
-            if (leaderMode && leaders.size() > 1)
+            if (leaderMode && leaders.size() >= 1)
                 sb.append("<font color=RED>")
                   .append(leaders.remove(0))
                   .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
+            else if (!leaderMode)
+                sb.append("<font color=RED>")
+                        .append("Grupp ").append(count).append(':')
+                        .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
 
             for (var p : s)
             {
@@ -505,13 +517,13 @@ public class GroupFrame extends JFrame
      *
      * @param gc the group creator used to create the groups.
      * @param number the number used as the argument in the GroupCreator.
-     * @param numberIsNbrGroups if {@code true} {@link GroupCreator#generateGroup(short)} will be called,
-     *                          else if {@code false} {@link GroupCreator#generateGroup(byte)} will be
+     * @param numberIsNbrGroups if {@code true} {@link GroupCreator#generateGroup(short, boolean)} will be called,
+     *                          else if {@code false} {@link GroupCreator#generateGroup(byte, boolean)} will be
      *                          called.
-     * @throws IllegalArgumentException iff {@link GroupCreator#generateGroup(byte)} or
-     *                                  {@link GroupCreator#generateGroup(short)} does it.
-     * @throws NoGroupAvailableException iff {@link GroupCreator#generateGroup(byte)} or
-     *                                   {@link GroupCreator#generateGroup(short)} does it.
+     * @throws IllegalArgumentException iff {@link GroupCreator#generateGroup(byte, boolean)} or
+     *                                  {@link GroupCreator#generateGroup(short, boolean)} does it.
+     * @throws NoGroupAvailableException iff {@link GroupCreator#generateGroup(byte, boolean)} or
+     *                                   {@link GroupCreator#generateGroup(short, boolean)} does it.
      * @throws NullPointerException iff gc is {@code null}.
      * */
     private List<Set<Integer>> tryGenerateGroup(GroupCreator gc, int number, boolean numberIsNbrGroups)
@@ -528,7 +540,7 @@ public class GroupFrame extends JFrame
             {
                 try
                 {
-                    return gc.generateGroup((short) number);
+                    return gc.generateGroup((short) number, boxOverflow.isSelected());
                 }
                 catch (NoGroupAvailableException e)
                 {
@@ -547,7 +559,7 @@ public class GroupFrame extends JFrame
             {
                 try
                 {
-                    return gc.generateGroup((byte) number);
+                    return gc.generateGroup((byte) number, boxOverflow.isSelected());
                 }
                 catch (NoGroupAvailableException e)
                 {

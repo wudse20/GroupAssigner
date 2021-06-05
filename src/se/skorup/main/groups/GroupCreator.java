@@ -20,12 +20,15 @@ public interface GroupCreator
      *
      * @param groupSize The size of the group. Must
      *                  be larger than 1, i.e groupSize &#8805; 2.
+     * @param overflow if {@code true} then it will overflow and create
+     *                 extra groups, else it will put the remainder in
+     *                 the last group.
      * @return a list containing sets of integers which corresponds
      *         to groups.
      * @throws IllegalArgumentException iff groupSize &lt; 2.
      * @throws NoGroupAvailableException iff there is now way to create a group.
      * */
-    List<Set<Integer>> generateGroup(byte groupSize) throws IllegalArgumentException, NoGroupAvailableException;
+    List<Set<Integer>> generateGroup(byte groupSize, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException;
 
     /**
      * Generates subgroups of the provided
@@ -35,10 +38,13 @@ public interface GroupCreator
      *
      * @param nbrGroups the amount of groups. Must be
      *                  larger than 1, i.e nbrGroups &#8805; 2.
+     * @param overflow if {@code true} then it will overflow and create
+     *                 extra groups, else it will put the remainder in
+     *                 the last group.
      * @return a list containing sets of integers which corresponds
      *         to groups.
      * @throws IllegalArgumentException iff nbrGroups &lt; 2.
      * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
-    List<Set<Integer>> generateGroup(short nbrGroups) throws IllegalArgumentException, NoGroupAvailableException;
+    List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException;
 }

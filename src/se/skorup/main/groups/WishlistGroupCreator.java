@@ -27,13 +27,13 @@ public class WishlistGroupCreator implements GroupCreator
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(byte groupSize) throws IllegalArgumentException, NoGroupAvailableException
+    public List<Set<Integer>> generateGroup(byte groupSize, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
     {
         return null;
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(short nbrGroups) throws IllegalArgumentException, NoGroupAvailableException
+    public List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
     {
         return null;
     }

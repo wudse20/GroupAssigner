@@ -38,10 +38,11 @@ public class RandomGroupCreator implements GroupCreator
      * size.
      *
      * @param size the size of the group.
+     * @param overflow if the groups should overflow or not.
      * @return a List containing the generated groups.
      * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
-    private List<Set<Integer>> generateGroup(int size) throws NoGroupAvailableException
+    private List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
         var deny = gm.getDenyGraph();
         var result = new ArrayList<Set<Integer>>();
@@ -52,15 +53,18 @@ public class RandomGroupCreator implements GroupCreator
         Set<Integer> current = null; // Just to have it initialized.
         while (candidates.size() != 0)
         {
-            var p = candidates.remove(random.nextInt(candidates.size()));
-
-            if (i++ % size == 0 && candidates.size() >= size)
+            if (i++ % size == 0)
             {
                 if (current != null)
                     result.add(current);
 
-                current = new HashSet<>();
+                if (!overflow && candidates.size() >= size)
+                    current = new HashSet<>();
+                else if (overflow)
+                    current = new HashSet<>();
             }
+
+            var p = candidates.remove(random.nextInt(candidates.size()));
 
             int count = 0;
             while (Tuple.imageOfSet(deny, current).contains(p.getId()))
@@ -75,32 +79,32 @@ public class RandomGroupCreator implements GroupCreator
             current.add(p.getId());
         }
 
-        if (current != null)
+        if (current != null && !result.contains(current))
             result.add(current);
 
         return result;
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(byte groupSize) throws IllegalArgumentException, NoGroupAvailableException
+    public List<Set<Integer>> generateGroup(byte groupSize, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
     {
         if (groupSize < 2)
             throw new IllegalArgumentException(
                 "groupSize needs to greater or equal to 2, your value: %d < 2".formatted(groupSize)
             );
 
-        return generateGroup((int) groupSize); // Cast to int to prevent infinite recursion.
+        return generateGroup((int) groupSize, overflow); // Cast to int to prevent infinite recursion.
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(short nbrGroups) throws IllegalArgumentException, NoGroupAvailableException
+    public List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
     {
         if (nbrGroups < 2)
             throw new IllegalArgumentException(
                 "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
             );
 
-        return generateGroup(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / nbrGroups);
+        return generateGroup(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / nbrGroups, overflow);
     }
 
     @Override
