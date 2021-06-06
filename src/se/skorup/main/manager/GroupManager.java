@@ -32,7 +32,7 @@ public class GroupManager implements Serializable
     private final Map<Integer, Person> group;
 
     /** The name of the group. */
-    private final String name;
+    private String name;
 
     /**
      * Creates a new empty GroupManager.<br><br>
@@ -307,6 +307,16 @@ public class GroupManager implements Serializable
         }
 
         return result;
+    }
+
+    /**
+     * Setter for: name
+     *
+     * @param name the new name of the group.
+     * */
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     @Override

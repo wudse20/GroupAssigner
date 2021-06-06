@@ -8,6 +8,7 @@ import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.awt.FlowLayout;
@@ -23,6 +24,16 @@ import java.util.Objects;
  * */
 public class ControlPanel extends JPanel implements ItemListener, ActionListener
 {
+    /** The enum for the different buttons. */
+    private enum Buttons
+    {
+        /** The label for the add button. */
+        ADD,
+
+        /** The label for the edit button. */
+        EDIT
+    }
+
     /** The reference to the managers. */
     private final List<GroupManager> managers;
 
@@ -34,6 +45,9 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
 
     /** The button used in adding. */
     private final JButton btnAdd = new JButton("Skapa en ny grupp");
+
+    /** The button used for editing. */
+    private final JButton btnEdit = new JButton("Ändra denna grupp");
 
     /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
@@ -80,7 +94,13 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
 
         btnAdd.setForeground(Utils.FOREGROUND_COLOR);
         btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAdd.setActionCommand(Buttons.ADD.toString());
         btnAdd.addActionListener(this);
+
+        btnEdit.setForeground(Utils.FOREGROUND_COLOR);
+        btnEdit.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnEdit.setActionCommand(Buttons.EDIT.toString());
+        btnEdit.addActionListener(this);
 
         this.updateManagers();
     }
@@ -92,6 +112,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     {
         this.add(cbManagers);
         this.add(btnAdd);
+        this.add(btnEdit);
     }
 
     @Override
@@ -110,13 +131,40 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        SwingUtilities.invokeLater(() -> {
-            var add = new AddGroupFrame();
-            add.addAddListener((event) -> {
-                mf.addGroupManager(event.result());
-                event.frame().dispose();
-                this.updateManagers();
+        var cmd = e.getActionCommand();
+
+        if (cmd.equals(Buttons.ADD.toString()))
+        {
+            SwingUtilities.invokeLater(() -> {
+                var add = new AddGroupFrame();
+                add.addAddListener((event) -> {
+                    mf.addGroupManager(event.result());
+                    event.frame().dispose();
+                    this.updateManagers();
+                });
             });
-        });
+        }
+        else if (cmd.equals(Buttons.EDIT.toString()))
+        {
+            if (mf.getCurrentGroup() == null)
+            {
+                JOptionPane.showMessageDialog(
+                    mf, "Det finns inga grupper",
+                    "Inga grupper", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            final var gm = mf.getCurrentGroup();
+
+            SwingUtilities.invokeLater(() -> {
+                var add = new AddGroupFrame(gm);
+                add.addAddListener((event) -> {
+                    event.frame().dispose();
+                    mf.refreshSidePanel();
+                });
+            });
+        }
     }
 }

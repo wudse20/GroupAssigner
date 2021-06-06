@@ -136,6 +136,23 @@ public class AddGroupFrame extends JFrame implements KeyListener
         this.addComponents();
     }
 
+    public AddGroupFrame(GroupManager gm)
+    {
+        super("Ändra en grupp!");
+        this.result = gm;
+
+        gm.getAllPersons()
+          .stream()
+          .map(Person::getName)
+          .forEach(nameModel::addItem);
+
+        pName.setText(gm.toString());
+        btnApply.setText("Uppdatera gruppen");
+
+        this.setProperties();
+        this.addComponents();
+    }
+
     /**
      * Adds the components.
      * */
@@ -232,8 +249,8 @@ public class AddGroupFrame extends JFrame implements KeyListener
         {
             pName.setTextFieldBackground(Color.RED);
             JOptionPane.showMessageDialog(
-            this, "För kort namn! Måste var minst fem bokstäver långt.",
-            "För kort namn!", JOptionPane.ERROR_MESSAGE
+                this, "För kort namn! Måste var minst fem bokstäver långt.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
             );
 
             return;
@@ -241,15 +258,31 @@ public class AddGroupFrame extends JFrame implements KeyListener
         else if (nameModel.getItems().size() == 0)
         {
             JOptionPane.showMessageDialog(
-            this, "Du måste lägga till minst en person i gruppen.",
-            "För kort namn!", JOptionPane.ERROR_MESSAGE
+                this, "Du måste lägga till minst en person i gruppen.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
             );
             return;
         }
 
-        result = new GroupManager(pName.getText());
-        nameModel.getItems().forEach(x -> result.registerPerson(x, Person.Role.CANDIDATE));
-        DebugMethods.log("Created: %s".formatted(result), DebugMethods.LogType.DEBUG);
+        if (result == null)
+        {
+            result = new GroupManager(pName.getText());
+
+            nameModel.getItems().forEach(x -> result.registerPerson(x, Person.Role.CANDIDATE));
+            DebugMethods.log("Created: %s".formatted(result), DebugMethods.LogType.DEBUG);
+        }
+        else
+        {
+            result.setName(pName.getText());
+            var names = new HashSet<>(result.getNames());
+
+            for (var n : nameModel.getItems())
+            {
+                if (!names.contains(n))
+                    result.registerPerson(n, Person.Role.CANDIDATE);
+            }
+        }
+
         this.invokeAddListeners();
     }
 
@@ -296,8 +329,8 @@ public class AddGroupFrame extends JFrame implements KeyListener
         {
             pInputGroupMember.setTextFieldBackground(Color.RED.darker());
             JOptionPane.showMessageDialog(
-        this, "För kort namn! Måste var minst två bokstäver långt.",
-            "För kort namn!", JOptionPane.ERROR_MESSAGE
+            this, "För kort namn! Måste var minst två bokstäver långt.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
             );
         }
     }

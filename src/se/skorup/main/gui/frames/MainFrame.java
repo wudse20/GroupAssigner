@@ -38,7 +38,7 @@ public class MainFrame extends JFrame
     private GroupManager currentGroupManager;
 
     /** Adds a demo group iff {@code true}. */
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     /** The frame's container. */
     private final Container cp = this.getContentPane();
@@ -312,5 +312,17 @@ public class MainFrame extends JFrame
     public GroupManager getCurrentGroup()
     {
         return currentGroupManager;
+    }
+
+    /**
+     * Removes a group manager, if the
+     * gm matches no group manager then nothing
+     * happens.
+     *
+     * @param gm the group manager to be removed.
+     * */
+    public void removeGroupManager(GroupManager gm)
+    {
+        managers.remove(gm);
     }
 }

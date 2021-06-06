@@ -115,6 +115,16 @@ public class InputPanel extends JPanel implements DocumentListener
     }
 
     /**
+     * Sets the text of the text field.
+     *
+     * @param text the new text of the text field.
+     * */
+    public void setText(String text)
+    {
+        txfInput.setText(text);
+    }
+
+    /**
      * Sets the color of the text field.
      *
      * @param c the new color of the text field.
