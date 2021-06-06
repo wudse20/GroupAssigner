@@ -122,11 +122,21 @@ public class ButtonPanel extends JPanel implements ActionListener
         }
         else if (cmd.equals(Buttons.CREATE_GROUPS.toString()))
         {
-            SwingUtilities.invokeLater(() -> {
-                var gf = new GroupFrame(mf.getCurrentGroup());
-                mf.setVisible(false);
-                gf.addActionCallback(() -> mf.setVisible(true));
-            });
+            if (mf.getCurrentGroup() != null)
+            {
+                SwingUtilities.invokeLater(() -> {
+                    var gf = new GroupFrame(mf.getCurrentGroup());
+                    mf.setVisible(false);
+                    gf.addActionCallback(() -> mf.setVisible(true));
+                });
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(
+                    mf, "Du kan inte skapa undergrupper, ty det inte är någon grupp vald.",
+                    "Ingen grupp vald", JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
         else if (cmd.equals(Buttons.SAVE.toString()))
         {

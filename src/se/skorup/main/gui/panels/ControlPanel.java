@@ -6,11 +6,13 @@ import se.skorup.main.gui.frames.AddGroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.Objects;
 /**
  * The control panel at the top of the MainFrame.
  * */
-public class ControlPanel extends JPanel implements ItemListener
+public class ControlPanel extends JPanel implements ItemListener, ActionListener
 {
     /** The reference to the managers. */
     private final List<GroupManager> managers;
@@ -29,6 +31,9 @@ public class ControlPanel extends JPanel implements ItemListener
 
     /** The combo box holding the group managers. */
     private final JComboBox<GroupManager> cbManagers = new JComboBox<>();
+
+    /** The button used in adding. */
+    private final JButton btnAdd = new JButton("Skapa en ny grupp");
 
     /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
@@ -58,9 +63,6 @@ public class ControlPanel extends JPanel implements ItemListener
 
         // Adds the items.
         managers.forEach(cbManagers::addItem);
-
-        // Adds dummy item used to detect clicks.
-        cbManagers.addItem(new GroupManager("Lägg till en grupp"));
     }
 
     /**
@@ -76,6 +78,10 @@ public class ControlPanel extends JPanel implements ItemListener
         cbManagers.setForeground(Utils.FOREGROUND_COLOR);
         cbManagers.addItemListener(this);
 
+        btnAdd.setForeground(Utils.FOREGROUND_COLOR);
+        btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAdd.addActionListener(this);
+
         this.updateManagers();
     }
 
@@ -85,6 +91,7 @@ public class ControlPanel extends JPanel implements ItemListener
     private void addComponents()
     {
         this.add(cbManagers);
+        this.add(btnAdd);
     }
 
     @Override
@@ -93,24 +100,23 @@ public class ControlPanel extends JPanel implements ItemListener
         var index = cbManagers.getSelectedIndex();
         if (index != -1 && e.getStateChange() == ItemEvent.SELECTED)
         {
-            // Check for adding
-            if (index == managers.size())
-            {
-                SwingUtilities.invokeLater(() -> {
-                    var add = new AddGroupFrame();
-                    add.addAddListener((event) -> {
-                        mf.addGroupManager(event.result());
-                        event.frame().dispose();
-                        this.updateManagers();
-                    });
-                });
-                return;
-            }
-
             ((GroupManager) Objects.requireNonNull(cbManagers.getSelectedItem()))
                     .getAllPersons().forEach(x -> DebugMethods.log(x.toString(), DebugMethods.LogType.DEBUG));
 
             mf.setCurrentGroupManager(index);
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        SwingUtilities.invokeLater(() -> {
+            var add = new AddGroupFrame();
+            add.addAddListener((event) -> {
+                mf.addGroupManager(event.result());
+                event.frame().dispose();
+                this.updateManagers();
+            });
+        });
     }
 }

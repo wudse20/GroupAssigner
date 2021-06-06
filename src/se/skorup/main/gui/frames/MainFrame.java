@@ -257,11 +257,16 @@ public class MainFrame extends JFrame
 
     /**
      * Sets the current group manager and refreshes the lists.
+     * If the passed index is out of bounds it will return
+     * without doing anything.
      *
      * @param index the index of the current group manager.
      * */
     public void setCurrentGroupManager(int index)
     {
+        if (index < 0 || index >= managers.size())
+            return;
+
         this.currentGroupManager = managers.get(index);
 
         if (sidePanel != null)
