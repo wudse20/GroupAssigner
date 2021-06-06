@@ -55,13 +55,20 @@ public class RandomGroupCreator implements GroupCreator
         {
             if (i++ % size == 0)
             {
-                if (current != null)
-                    result.add(current);
-
                 if (!overflow && candidates.size() >= size)
+                {
+                    if (current != null)
+                        result.add(current);
+
                     current = new HashSet<>();
+                }
                 else if (overflow)
+                {
+                    if (current != null)
+                        result.add(current);
+
                     current = new HashSet<>();
+                }
             }
 
             var p = candidates.remove(random.nextInt(candidates.size()));

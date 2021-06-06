@@ -48,6 +48,7 @@ public class GroupFrame extends JFrame
     /** The wishlist group creator. */
     private final GroupCreator wishlistCreator;
 
+    /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
 
     /** This frames's container. */
@@ -295,16 +296,16 @@ public class GroupFrame extends JFrame
         var gc = (GroupCreator) cbCreator.getSelectedItem();
         List<Set<Integer>> list = null; // Just to have initialized.
 
-        // Checks for unimplemented group creators
-        if (gc instanceof WishlistGroupCreator g)
-        {
-            JOptionPane.showMessageDialog(
-                this, "%s isn't implemted yet.".formatted(g),
-                "Not yet implemented", JOptionPane.ERROR_MESSAGE
-            );
-
-            return;
-        }
+//        // Checks for unimplemented group creators
+//        if (gc instanceof WishlistGroupCreator g)
+//        {
+//            JOptionPane.showMessageDialog(
+//                this, "%s isn't implemted yet.".formatted(g),
+//                "Not yet implemented", JOptionPane.ERROR_MESSAGE
+//            );
+//
+//            return;
+//        }
 
         // Checks for leader mode
         if (pLeaders.isRadioSelected())

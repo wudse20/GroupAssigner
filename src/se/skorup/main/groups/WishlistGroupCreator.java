@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * The group creator used to create groups
@@ -51,31 +52,92 @@ public class WishlistGroupCreator implements GroupCreator
 
         int i = 0;
         Set<Integer> current = null; // Just to have it initialized.
+        Person p = null; // Just to have it initialized.
         while (candidates.size() != 0)
         {
             if (i++ % size == 0)
             {
-                if (current != null)
-                    result.add(current);
-
                 if (!overflow && candidates.size() >= size)
+                {
+                    if (current != null)
+                        result.add(current);
+
                     current = new HashSet<>();
+                }
                 else if (overflow)
+                {
+                    if (current != null)
+                        result.add(current);
+
                     current = new HashSet<>();
+                }
             }
 
-//            var p = candidates.remove(random.nextInt(candidates.size()));
-//
-//            int count = 0;
-//            while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-//            {
-//                if (++count == 1000)
-//                    throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-//
-//                candidates.add(p);
-//                p = candidates.remove(random.nextInt(candidates.size()));
-//            }
+
+            assert current != null; // Just to stop it from complaining.
+            if (current.size() == 0)
+            {
+                p = candidates.remove(random.nextInt(candidates.size()));
+            }
+            else
+            {
+                var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
+
+                if (wishes.isEmpty())
+                {
+                    p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
+
+                    int count = 0;
+                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+                    {
+                        if (++count == 1000)
+                            throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+
+                        candidates.add(p);
+                        p = candidates.remove(random.nextInt(candidates.size()));
+                    }
+                }
+                else
+                {
+                    for (int j : wishes)
+                    {
+                        p = gm.getPersonFromId(j);
+
+                        if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
+                            break;
+
+                        p = null;
+                    }
+
+                    if (p == null)
+                    {
+                        // No wishes; that aren't blocked so resorts to random group
+                        // generation.
+                        p = candidates.remove(random.nextInt(candidates.size()));
+
+                        int count = 0;
+                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+                        {
+                            if (++count == 1000)
+                                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+
+                            candidates.add(p);
+                            p = candidates.remove(random.nextInt(candidates.size()));
+                        }
+                    }
+                    else
+                    {
+                        candidates.remove(p);
+                    }
+                }
+            }
+
+            current.add(p.getId());
+            added.add(p.getId());
         }
+
+        if (current != null)
+            result.add(current);
 
         return result;
     }
@@ -83,13 +145,23 @@ public class WishlistGroupCreator implements GroupCreator
     @Override
     public List<Set<Integer>> generateGroup(byte groupSize, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
     {
-        return null;
+        if (groupSize < 2)
+            throw new IllegalArgumentException(
+                    "groupSize needs to greater or equal to 2, your value: %d < 2".formatted(groupSize)
+            );
+
+        return generateGroup((int) groupSize, overflow); // Cast to int to prevent infinite recursion.
     }
 
     @Override
     public List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
     {
-        return null;
+        if (nbrGroups < 2)
+            throw new IllegalArgumentException(
+                    "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
+            );
+
+        return generateGroup(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / nbrGroups, overflow);
     }
 
     @Override
