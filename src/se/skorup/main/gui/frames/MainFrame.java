@@ -256,7 +256,7 @@ public class MainFrame extends JFrame
     }
 
     /**
-     * Sets the current group manager.
+     * Sets the current group manager and refreshes the lists.
      *
      * @param index the index of the current group manager.
      * */
@@ -266,6 +266,14 @@ public class MainFrame extends JFrame
 
         if (sidePanel != null)
             sidePanel.refreshLists();
+    }
+
+    /**
+     * Refreshes the list data.
+     * */
+    public void refreshSidePanel()
+    {
+        sidePanel.refreshLists();
     }
 
     /**

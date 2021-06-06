@@ -3,10 +3,12 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.MainFrame;
+import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -89,6 +91,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     /** The check box for checking only candidates. */
     private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
 
+    private final JButton btnChangeRole = new JButton("Byt roll");
+
     /**
      * Creates a new person panel.
      *
@@ -116,6 +120,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pName.add(lblName);
 
         pCheckBox.add(cbShowOnlySameRole);
+        pCheckBox.add(btnChangeRole);
 
         pContainer.add(pName);
         pContainer.add(lblSpacer5);
@@ -157,6 +162,15 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         pContainer.setLayout(pContainerLayout);
         pContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+
+        btnChangeRole.setForeground(Utils.FOREGROUND_COLOR);
+        btnChangeRole.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnChangeRole.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createEmptyBorder(3, 15, 5, 15)
+            )
+        );
     }
 
     /**
@@ -234,6 +248,22 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
                         "New wishlist for %s: %s".formatted(p, Arrays.toString(p.getWishlist())),
                         DebugMethods.LogType.DEBUG
                 );
+            });
+
+            btnChangeRole.setText((p instanceof Leader) ? "Gör till deltagare" : "Gör till ledare");
+
+            for (var a : btnChangeRole.getActionListeners())
+                btnChangeRole.removeActionListener(a);
+
+            btnChangeRole.addActionListener((e) -> {
+                mf.getCurrentGroup().removePerson(p.getId());
+                mf.getCurrentGroup().registerPerson(
+                    p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
+                );
+                mf.refreshSidePanel();
+
+                p = null;
+                setup();
             });
         }
 

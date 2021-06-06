@@ -79,6 +79,7 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
     {
         model.removeAll();
         model.addItems(persons);
+        listPersons.clearSelection();
     }
 
     /**
