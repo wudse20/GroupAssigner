@@ -194,43 +194,14 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
             this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
             lblName.setText(p.getName());
-            var group = mf.getCurrentGroup();
-            var deny = Arrays.stream(p.getDenylist()).boxed().collect(Collectors.toList());
-            var wish = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList());
 
-            var candidatesOnly = cbShowOnlySameRole.isSelected();
-
-            var addedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
-            var addedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
-
-            var notAddedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
-            var notAddedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
-
-            // All persons intersect list = added persons to list.
-            var denies = addedDeny.stream().map(Person::getId).collect(Collectors.toSet());
-            var wishes = addedWish.stream().map(Person::getId).collect(Collectors.toSet());
-
-            denies.retainAll(deny);
-            wishes.retainAll(wish);
-
-            // All persons \ added = persons not added.
-            notAddedDeny.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
-            notAddedWish.removeAll(wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
-
-            denylist.setListData(
-                denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
-                notAddedDeny
-            );
-
-            wishlist.setListData(
-                wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
-                notAddedWish
-            );
+            this.updateListData();
 
             denylist.removeAllActionCallbacks();
             wishlist.removeAllActionCallbacks();
 
             denylist.addActionCallback(() -> {
+                // Sets the new list data for the denylist.
                 var res = denylist.getLists();
                 p.setDenylist(res.get(ListPanel.ADDED_KEY));
 
@@ -238,6 +209,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
                         "New denylist for %s: %s".formatted(p, Arrays.toString(p.getDenylist())),
                         DebugMethods.LogType.DEBUG
                 );
+
+                updateListData();
             });
 
             wishlist.addActionCallback(() -> {
@@ -248,6 +221,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
                         "New wishlist for %s: %s".formatted(p, Arrays.toString(p.getWishlist())),
                         DebugMethods.LogType.DEBUG
                 );
+
+                updateListData();
             });
 
             btnChangeRole.setText((p instanceof Leader) ? "Gör till deltagare" : "Gör till ledare");
@@ -270,6 +245,50 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         this.addComponents();
         this.revalidate();
         this.repaint();
+    }
+
+    /**
+     * Updates the list data.
+     * */
+    private void updateListData()
+    {
+        var group = mf.getCurrentGroup();
+        var deny = Arrays.stream(p.getDenylist()).boxed().collect(Collectors.toList());
+        var wish = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList());
+
+        var candidatesOnly = cbShowOnlySameRole.isSelected();
+
+        var addedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+        var addedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+
+        var notAddedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+        var notAddedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+
+        // All persons intersect list = added persons to list.
+        var denies = addedDeny.stream().map(Person::getId).collect(Collectors.toSet());
+        var wishes = addedWish.stream().map(Person::getId).collect(Collectors.toSet());
+
+        denies.retainAll(deny);
+        wishes.retainAll(wish);
+
+        // All persons \ added = persons not added.
+        notAddedDeny.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
+        notAddedWish.removeAll(wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
+
+        // Removes all persons that shouldn't be in the wish- & denylist.
+        // It remove the items that are already added in the other list.
+        notAddedDeny.removeAll(wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
+        notAddedWish.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
+
+        denylist.setListData(
+            denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+            notAddedDeny
+        );
+
+        wishlist.setListData(
+            wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+            notAddedWish
+        );
     }
 
     /**

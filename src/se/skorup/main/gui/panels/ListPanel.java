@@ -287,8 +287,8 @@ public class ListPanel extends JPanel implements ActionListener
     public Map<String, Set<Person>> getLists()
     {
         var res = new HashMap<String, Set<Person>>();
-        res.put("added", added);
-        res.put("notAdded", notAdded);
+        res.put(ADDED_KEY, added);
+        res.put(NOT_ADDED_KEY, notAdded);
         return res;
     }
 
