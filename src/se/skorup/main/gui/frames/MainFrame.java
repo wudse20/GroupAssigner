@@ -282,6 +282,7 @@ public class MainFrame extends JFrame
     public void refreshSidePanel()
     {
         sidePanel.refreshLists();
+        personPanel.setPerson(null);
     }
 
     /**
