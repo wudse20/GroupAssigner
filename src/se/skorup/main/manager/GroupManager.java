@@ -60,9 +60,9 @@ public class GroupManager implements Serializable
             throw new IllegalArgumentException("The provided name cannot be null.");
         else if (r == null)
             throw new IllegalArgumentException("The provided role cannot be null.");
-        else if (name.trim().length() < 3)
+        else if (name.trim().length() < 2)
             throw new IllegalArgumentException(
-                    "The provided name needs to be at least of length 3, provided length %d"
+                    "The provided name needs to be at least of length 2, provided length %d"
                     .formatted(name.trim().length())
             );
 
