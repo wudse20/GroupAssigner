@@ -12,6 +12,7 @@ import se.skorup.main.gui.panels.SettingPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -28,10 +30,13 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -54,6 +59,7 @@ public class GroupFrame extends JFrame
     /** The groups that were generated last. */
     private List<Set<Integer>> lastGroups;
 
+    /** {@code true} = last generation was generated with leaders, else not. */
     private boolean lastWerePairWithLeaders = false;
 
     /** The list with all the callbacks. */
@@ -146,6 +152,9 @@ public class GroupFrame extends JFrame
     /** A spacer in th gui. */
     private final JLabel lblSpacer2 =
         new JLabel("<html><br><br><br></html>"); // Not hacky at all, good practice :)
+
+    /** The scroll pane for the result. */
+    private final JScrollPane scrLabelGroup = new JScrollPane(pLabelContainer);
 
     /**
      * Creates a new group frame.
@@ -249,6 +258,10 @@ public class GroupFrame extends JFrame
 
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
+
+        scrLabelGroup.getViewport().setBackground(Utils.BACKGROUND_COLOR);
+        scrLabelGroup.getViewport().setForeground(Utils.FOREGROUND_COLOR);
+        scrLabelGroup.setBorder(BorderFactory.createEmptyBorder());
     }
 
     /**
@@ -279,7 +292,7 @@ public class GroupFrame extends JFrame
         pLabelContainer.add(lblGroup);
 
         this.add(pTop, BorderLayout.PAGE_START);
-        this.add(pLabelContainer, BorderLayout.CENTER);
+        this.add(scrLabelGroup, BorderLayout.CENTER);
         this.add(pButtons, BorderLayout.PAGE_END);
     }
 
