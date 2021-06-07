@@ -269,8 +269,11 @@ public class MainFrame extends JFrame
 
         this.currentGroupManager = managers.get(index);
 
-        if (sidePanel != null)
+        if (sidePanel != null && personPanel != null)
+        {
             sidePanel.refreshLists();
+            personPanel.setPerson(null);
+        }
     }
 
     /**
