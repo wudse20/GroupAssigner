@@ -1,6 +1,7 @@
 package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
+import se.skorup.API.ImmutableArray;
 import se.skorup.API.Utils;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
@@ -20,12 +21,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +50,11 @@ public class GroupFrame extends JFrame
 
     /** The wishlist group creator. */
     private final GroupCreator wishlistCreator;
+
+    /** The groups that were generated last. */
+    private List<Set<Integer>> lastGroups;
+
+    private boolean lastWerePairWithLeaders = false;
 
     /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
@@ -213,12 +221,7 @@ public class GroupFrame extends JFrame
 
         btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnPrint.setForeground(Utils.FOREGROUND_COLOR);
-        btnPrint.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
-        });
+        btnPrint.addActionListener((e) -> print());
 
         btnSave.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnSave.setForeground(Utils.FOREGROUND_COLOR);
@@ -281,6 +284,73 @@ public class GroupFrame extends JFrame
     }
 
     /**
+     * Prints the groups.
+     * */
+    private void print()
+    {
+        if (lastGroups == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga skapade grupper!",
+                "Inga skapade grupper!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        var canvas = new JTextArea();
+        var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
+        var groups =
+            lastGroups.stream()
+                      .map(x -> new ArrayList<>(x.stream().map(gm::getPersonFromId).collect(Collectors.toList())))
+                      .collect(Collectors.toCollection(ArrayList::new));
+
+        canvas.setTabSize(4);
+        canvas.setLineWrap(true);
+
+        // Fist the overview
+        for (var i = 0; i < groups.size(); i++)
+        {
+            canvas.append(
+                "%s:\n"
+                .formatted(lastWerePairWithLeaders ? leaders.remove(0).getName() : "Grupp %d".formatted(i + 1))
+            );
+
+            for (var p : groups.get(i))
+                canvas.append("\t%s\n".formatted(p.getName()));
+
+            canvas.append("\n");
+        }
+
+        try
+        {
+            canvas.print();
+        }
+        catch (PrinterException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+        }
+
+        // Then print the big group signs.
+        canvas.setFont(new Font(Font.DIALOG, Font.BOLD, 36));
+
+        for (var g : groups)
+        {
+            canvas.setText("");
+            canvas.append(ImmutableArray.fromCollection(g).map(Person::getName).mkString("\n"));
+
+            try
+            {
+                canvas.print();
+            }
+            catch (PrinterException e)
+            {
+                DebugMethods.log(e, DebugMethods.LogType.ERROR);
+            }
+        }
+    }
+
+    /**
      * Invokes all the callbacks.
      * */
     private void invokeCallbacks()
@@ -295,17 +365,7 @@ public class GroupFrame extends JFrame
     {
         var gc = (GroupCreator) cbCreator.getSelectedItem();
         List<Set<Integer>> list = null; // Just to have initialized.
-
-//        // Checks for unimplemented group creators
-//        if (gc instanceof WishlistGroupCreator g)
-//        {
-//            JOptionPane.showMessageDialog(
-//                this, "%s isn't implemted yet.".formatted(g),
-//                "Not yet implemented", JOptionPane.ERROR_MESSAGE
-//            );
-//
-//            return;
-//        }
+        lastWerePairWithLeaders = pLeaders.isRadioSelected();
 
         // Checks for leader mode
         if (pLeaders.isRadioSelected())
@@ -352,6 +412,7 @@ public class GroupFrame extends JFrame
             }
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
+            this.lastGroups = list;
             formatGroup(list, true);
             return;
         }
@@ -454,6 +515,7 @@ public class GroupFrame extends JFrame
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
         }
 
+        this.lastGroups = list;
         formatGroup(list, false);
     }
 
