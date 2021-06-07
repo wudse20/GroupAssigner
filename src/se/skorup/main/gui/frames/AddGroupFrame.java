@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
@@ -133,6 +134,8 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     /** The button for removing names. */
     private final JButton btnRemove = new JButton("Tabort");
 
+    private final JScrollPane scrList = new JScrollPane(names);
+
     /**
      * Creates and shows a new AddGroupFrame.
      * */
@@ -177,7 +180,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
 
         pListContainer.add(lblList, BorderLayout.PAGE_START);
         pListContainer.add(lblSpacer6, BorderLayout.LINE_START);
-        pListContainer.add(names, BorderLayout.CENTER);
+        pListContainer.add(scrList, BorderLayout.CENTER);
         pListContainer.add(lblSpacer7, BorderLayout.LINE_END);
 
         pContainer.add(pInputContainer, BorderLayout.PAGE_START);
@@ -257,6 +260,8 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
             nameModel.removeItem(names.getSelectedValue());
             btnRemove.setEnabled(names.getSelectedIndex() - 1 != -1);
         });
+
+        scrList.setBorder(BorderFactory.createEmptyBorder());
     }
 
     /**

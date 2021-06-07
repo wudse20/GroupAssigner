@@ -16,7 +16,7 @@ public class Utils
 
     //Foregrounds
     /** The foreground color. */
-    public static final Color FOREGROUND_COLOR = Color.WHITE;
+    public static final Color FOREGROUND_COLOR = (Math.random() < 0.001) ? new Color(156, 95, 9) : Color.WHITE;
 
     // About
     /** The version of the program. */
