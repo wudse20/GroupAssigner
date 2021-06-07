@@ -91,7 +91,11 @@ public class SerializationManager
      * */
     public static boolean createFileIfNotExists(File f) throws IOException
     {
-        var dirPath = f.getPath().substring(0, f.getPath().lastIndexOf('\\'));
+        var dirPath =
+            (f.getPath().indexOf('\\') != -1) ?
+            f.getPath().substring(0, f.getPath().lastIndexOf('\\')) :
+            f.getPath().substring(0, f.getPath().lastIndexOf('/'));
+
         return new File(dirPath).mkdirs();
     }
 }

@@ -67,7 +67,7 @@ public class GroupManager implements Serializable
             );
 
         var id = getNextId();
-        Person p = (r.equals(Person.Role.LEADER)) ? new Leader(name, id) : new Candidate(name, id);
+        var p = (r.equals(Person.Role.LEADER)) ? new Leader(name, id) : new Candidate(name, id);
         group.put(id, p);
         members++;
         return p;

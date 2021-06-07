@@ -29,7 +29,7 @@ public class MainFrame extends JFrame
 {
     /** The path to the save file. */
     private static final String savePath =
-        "%ssaves\\save.data".formatted(Utils.getFolderName());
+        "%ssaves/save.data".formatted(Utils.getFolderName());
 
     /** The group managers. */
     private final List<GroupManager> managers = new ArrayList<>();

@@ -10,6 +10,7 @@ public class Utils
     //Backgrounds
     /** The background color. */
     public static final Color BACKGROUND_COLOR = new Color(64, 67, 71);
+
     /** The component background color. */
     public static final Color COMPONENT_BACKGROUND_COLOR = BACKGROUND_COLOR.brighter();
 
@@ -35,6 +36,16 @@ public class Utils
      * */
     public static String getFolderName()
     {
-        return "%s\\.%s\\".formatted(System.getenv("APPDATA"), "group-assigner");
+
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            DebugMethods.log("Is windows system", DebugMethods.LogType.DEBUG);
+            return "%s\\.%s\\".formatted(System.getenv("APPDATA"), "group-assigner");
+        }
+        else
+        {
+            DebugMethods.log("Is not windows", DebugMethods.LogType.DEBUG);
+            return "./.group_assigner";
+        }
     }
 }
