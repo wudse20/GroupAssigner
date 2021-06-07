@@ -19,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -36,18 +38,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
+import java.util.Set;
 
 /**
  * The frame used to add groups.
  * */
-public class AddGroupFrame extends JFrame implements KeyListener
+public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionListener
 {
     /** The resulting group. */
     private GroupManager result;
 
     /** The add listeners of the frame. */
     private final List<AddListener> addListeners = new ArrayList<>();
+
+    /** The removed names in edit mode. */
+    private final Set<String> removed = new HashSet<>();
 
     /** The container of the frame. */
     private final Container cp = this.getContentPane();
@@ -125,6 +130,9 @@ public class AddGroupFrame extends JFrame implements KeyListener
     /** The button for importing from google forms. */
     private final JButton btnImport = new JButton("Importera från google forms");
 
+    /** The button for removing names. */
+    private final JButton btnRemove = new JButton("Tabort");
+
     /**
      * Creates and shows a new AddGroupFrame.
      * */
@@ -162,6 +170,7 @@ public class AddGroupFrame extends JFrame implements KeyListener
         pInputContainer.add(pInputGroupMember);
         pInputContainer.add(lblSpacer5);
 
+        pButtons.add(btnRemove);
         pButtons.add(btnImport);
         pButtons.add(btnCancel);
         pButtons.add(btnApply);
@@ -203,6 +212,7 @@ public class AddGroupFrame extends JFrame implements KeyListener
         names.setForeground(Utils.FOREGROUND_COLOR);
         names.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         names.setModel(nameModel);
+        names.addListSelectionListener(this);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setLayout(pContainerLayout);
@@ -236,6 +246,17 @@ public class AddGroupFrame extends JFrame implements KeyListener
         pName.addActionCallback(
             () -> pName.setTextFieldBackground(Utils.COMPONENT_BACKGROUND_COLOR)
         );
+
+        btnRemove.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnRemove.setForeground(Utils.FOREGROUND_COLOR);
+        btnRemove.setEnabled(false);
+        btnRemove.addActionListener((e) -> {
+            if (result != null)
+                removed.add(names.getSelectedValue());
+
+            nameModel.removeItem(names.getSelectedValue());
+            btnRemove.setEnabled(names.getSelectedIndex() - 1 != -1);
+        });
     }
 
     /**
@@ -281,6 +302,10 @@ public class AddGroupFrame extends JFrame implements KeyListener
                 if (!names.contains(n))
                     result.registerPerson(n, Person.Role.CANDIDATE);
             }
+
+            for (var n : removed)
+                for (var p : result.getPersonFromName(n))
+                    result.removePerson(p.getId());
         }
 
         this.invokeAddListeners();
@@ -490,5 +515,12 @@ public class AddGroupFrame extends JFrame implements KeyListener
         // If enter key was released
         if (e.getKeyCode() == 10)
             addName();
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e)
+    {
+        // If selected item enable remove button.
+        btnRemove.setEnabled(names.getSelectedIndex() != -1);
     }
 }
