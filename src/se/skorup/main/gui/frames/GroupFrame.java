@@ -562,8 +562,8 @@ public class GroupFrame extends JFrame
                   .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
             else if (!leaderMode)
                 sb.append("<font color=RED>")
-                        .append("Grupp ").append(count).append(':')
-                        .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
+                  .append("Grupp ").append(count).append(':')
+                  .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
 
             for (var p : s)
             {

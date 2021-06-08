@@ -55,11 +55,12 @@ public class RandomGroupCreator implements GroupCreator
         {
             if (i++ % size == 0)
             {
+                if (current == null && !overflow)
+                    current = new HashSet<>();
+
                 if (!overflow && candidates.size() >= size)
                 {
-                    if (current != null)
-                        result.add(current);
-
+                    result.add(current);
                     current = new HashSet<>();
                 }
                 else if (overflow)

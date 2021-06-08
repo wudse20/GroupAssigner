@@ -57,11 +57,12 @@ public class WishlistGroupCreator implements GroupCreator
         {
             if (i++ % size == 0)
             {
+                if (current == null && !overflow)
+                    current = new HashSet<>();
+
                 if (!overflow && candidates.size() >= size)
                 {
-                    if (current != null)
-                        result.add(current);
-
+                    result.add(current);
                     current = new HashSet<>();
                 }
                 else if (overflow)
@@ -73,8 +74,6 @@ public class WishlistGroupCreator implements GroupCreator
                 }
             }
 
-
-            assert current != null; // Just to stop it from complaining.
             if (current.size() == 0)
             {
                 p = candidates.remove(random.nextInt(candidates.size()));
