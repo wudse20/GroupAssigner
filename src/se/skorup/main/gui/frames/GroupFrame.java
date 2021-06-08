@@ -18,6 +18,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,6 +36,10 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.awt.print.PrinterException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -85,6 +90,9 @@ public class GroupFrame extends JFrame
 
     /** The button for loading. */
     private final JButton btnLoad = new JButton("Ladda");
+
+    /** The button for saving to a file. */
+    private final JButton btnToFile = new JButton("Till fil");
 
     /** The checkbox used for overflow. */
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
@@ -260,6 +268,10 @@ public class GroupFrame extends JFrame
         scrLabelGroup.getViewport().setBackground(Utils.BACKGROUND_COLOR);
         scrLabelGroup.getViewport().setForeground(Utils.FOREGROUND_COLOR);
         scrLabelGroup.setBorder(BorderFactory.createEmptyBorder());
+
+        btnToFile.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnToFile.setForeground(Utils.FOREGROUND_COLOR);
+        btnToFile.addActionListener((e) -> toFile());
     }
 
     /**
@@ -283,6 +295,7 @@ public class GroupFrame extends JFrame
         pButtons.add(boxOverflow);
         pButtons.add(btnClose);
         pButtons.add(btnLoad);
+        pButtons.add(btnToFile);
         pButtons.add(btnSave);
         pButtons.add(btnPrint);
         pButtons.add(btnCreate);
@@ -292,6 +305,82 @@ public class GroupFrame extends JFrame
         this.add(pTop, BorderLayout.PAGE_START);
         this.add(scrLabelGroup, BorderLayout.CENTER);
         this.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Prints the groups to a file.
+     * */
+    private void toFile()
+    {
+        var fc = new JFileChooser(".");
+        var selection = fc.showDialog(this, "Välj");
+
+        if (selection == JFileChooser.APPROVE_OPTION)
+        {
+            var file = fc.getSelectedFile();
+            var sb = new StringBuilder();
+            var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
+
+            // Formats the text to the file format.
+            for (int i = 0; i < lastGroups.size(); i++)
+            {
+                if (lastWerePairWithLeaders)
+                    sb.append(leaders.remove(0).getName()).append(":\n");
+                else
+                    sb.append("Grupp ").append(i + 1).append(':').append('\n');
+
+                for (var id : lastGroups.get(i))
+                    sb.append('\t').append(gm.getPersonFromId(id).getName()).append('\n');
+            }
+
+            for (var g : lastGroups)
+            {
+                sb.append('\n');
+
+                for (var id : g)
+                    sb.append(gm.getPersonFromId(id).getName()).append('\n');
+            }
+
+            writeToFile(sb.toString(), file);
+        }
+    }
+
+    /**
+     * Writes a string to a file.
+     *
+     * @param data the data to be written.
+     * @param file the file to be written to.
+     * */
+    private void writeToFile(String data, File file)
+    {
+        BufferedWriter bw = null;
+
+        try
+        {
+            bw = new BufferedWriter(new FileWriter(file));
+            bw.write(data);
+        }
+        catch (IOException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                this, "Kunde inte spara filen!\nFel: %s".formatted(e.getLocalizedMessage()),
+                "Sparning misslyckades", JOptionPane.ERROR_MESSAGE
+            );
+        }
+        finally
+        {
+            try
+            {
+                if (bw != null)
+                    bw.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
