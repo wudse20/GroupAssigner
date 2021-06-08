@@ -111,7 +111,10 @@ public class RandomGroupCreator implements GroupCreator
                 "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
             );
 
-        return generateGroup(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / nbrGroups, overflow);
+        return generateGroup(
+            (int) Math.ceil((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
+            overflow
+        );
     }
 
     @Override

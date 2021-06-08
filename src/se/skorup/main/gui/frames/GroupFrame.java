@@ -224,9 +224,7 @@ public class GroupFrame extends JFrame
 
         btnCreate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCreate.setForeground(Utils.FOREGROUND_COLOR);
-        btnCreate.addActionListener((e) -> {
-            generateGroups();
-        });
+        btnCreate.addActionListener((e) -> generateGroups());
 
         btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnPrint.setForeground(Utils.FOREGROUND_COLOR);
