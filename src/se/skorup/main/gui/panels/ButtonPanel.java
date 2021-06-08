@@ -1,11 +1,13 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.DebugMethods;
+import se.skorup.API.ImmutableArray;
 import se.skorup.API.Utils;
 import se.skorup.main.groups.RandomGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
+import se.skorup.main.objects.Person;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -14,6 +16,7 @@ import javax.swing.SwingUtilities;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * The panel with all the buttons!
@@ -30,7 +33,9 @@ public class ButtonPanel extends JPanel implements ActionListener
         /** The about button.*/
         ABOUT,
         /** The help button.*/
-        HELP
+        HELP,
+        /** The button for displaying different sizes. */
+        SIZES
     }
 
     /** The instance of the MainFrame. */
@@ -51,6 +56,9 @@ public class ButtonPanel extends JPanel implements ActionListener
     /** The button for the help information. */
     private final JButton btnHelp = new JButton("Hjälp!");
 
+    /** The button for displaying the even group constellations. */
+    private final JButton btnSizes = new JButton("Jämna konstalationer");
+
     /**
      * Creates a new ButtonPanel.
      *
@@ -69,6 +77,7 @@ public class ButtonPanel extends JPanel implements ActionListener
     {
         DebugMethods.log("Adding components to button panel.", DebugMethods.LogType.DEBUG);
 
+        this.add(btnSizes);
         this.add(btnHelp);
         this.add(btnAbout);
         this.add(btnCreateGroup);
@@ -102,6 +111,11 @@ public class ButtonPanel extends JPanel implements ActionListener
         btnCreateGroup.setForeground(Utils.FOREGROUND_COLOR);
         btnCreateGroup.setActionCommand(Buttons.CREATE_GROUPS.toString());
         btnCreateGroup.addActionListener(this);
+
+        btnSizes.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnSizes.setForeground(Utils.FOREGROUND_COLOR);
+        btnSizes.setActionCommand(Buttons.SIZES.toString());
+        btnSizes.addActionListener(this);
     }
 
     @Override
@@ -160,6 +174,20 @@ public class ButtonPanel extends JPanel implements ActionListener
 
                 DebugMethods.log("Save was unsuccessful", DebugMethods.LogType.ERROR);
             }
+        }
+        else if (cmd.equals(Buttons.SIZES.toString()))
+        {
+            var size = mf.getCurrentGroup().getMemberCountOfRole(Person.Role.CANDIDATE);
+            var res = new ArrayList<Integer>();
+
+            for (int i = 1; i <= size; i++)
+                if (size % i == 0)
+                    res.add(i);
+
+            JOptionPane.showMessageDialog(
+                mf, "Jämna storlekar: %s".formatted(ImmutableArray.fromList(res).mkString(", ")),
+                "Jämna storlekar", JOptionPane.INFORMATION_MESSAGE
+            );
         }
     }
 }
