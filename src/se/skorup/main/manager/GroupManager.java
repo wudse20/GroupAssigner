@@ -319,6 +319,16 @@ public class GroupManager implements Serializable
         this.name = name;
     }
 
+    /**
+     * Getter for: name
+     *
+     * @return the name of the GroupManager.
+     * */
+    public String getName()
+    {
+        return this.name;
+    }
+
     @Override
     public String toString()
     {

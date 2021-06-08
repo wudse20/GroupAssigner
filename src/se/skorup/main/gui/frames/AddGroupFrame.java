@@ -157,7 +157,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
           .map(Person::getName)
           .forEach(nameModel::addItem);
 
-        pName.setText(gm.toString());
+        pName.setText(gm.getName());
         btnApply.setText("Uppdatera gruppen");
 
         this.setProperties();
