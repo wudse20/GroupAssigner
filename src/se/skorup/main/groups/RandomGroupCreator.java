@@ -8,6 +8,7 @@ import se.skorup.main.objects.Tuple;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -116,6 +117,57 @@ public class RandomGroupCreator implements GroupCreator
             (int) Math.ceil((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
             overflow
         );
+    }
+
+    @Override
+    public List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    {
+        if (sizes == null)
+            throw new IllegalArgumentException("Not enough groups 0");
+        else if (sizes.size() == 0)
+            throw new IllegalArgumentException(
+                "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
+            );
+
+
+        var deny = gm.getDenyGraph();
+        var result = new ArrayList<Set<Integer>>();
+        var random = new Random();
+        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
+
+        int i = 0;
+        int ii = 0;
+        var current = new HashSet<Integer>();
+        while (candidates.size() != 0)
+        {
+            var p = candidates.remove(random.nextInt(candidates.size()));
+
+            int count = 0;
+            while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+            {
+                if (++count == 1000)
+                    throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+
+                candidates.add(p);
+                p = candidates.remove(random.nextInt(candidates.size()));
+            }
+
+            current.add(p.getId());
+
+            if (sizes.get(i) == ++ii)
+            {
+                ii = 0;
+                i++;
+
+                result.add(current);
+                current = new HashSet<>();
+            }
+        }
+
+        if (current.size() != 0 && !result.contains(current))
+            result.add(current);
+
+        return result;
     }
 
     @Override

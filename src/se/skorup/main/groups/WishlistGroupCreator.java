@@ -8,6 +8,7 @@ import se.skorup.main.objects.Tuple;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
@@ -161,6 +162,106 @@ public class WishlistGroupCreator implements GroupCreator
             );
 
         return generateGroup(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / nbrGroups, overflow);
+    }
+
+    @Override
+    public List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    {
+        if (sizes == null)
+            throw new IllegalArgumentException("Not enough groups 0");
+        else if (sizes.size() < 2)
+            throw new IllegalArgumentException(
+                    "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
+            );
+
+
+        var result = new ArrayList<Set<Integer>>();
+        var random = new Random();
+        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
+        var wish = gm.getWishGraph();
+        var deny = gm.getDenyGraph();
+        var added = new HashSet<Integer>();
+
+        int i = 0;
+        int ii = 0;
+        Set<Integer> current = new HashSet<>();
+        Person p = null; // Just to have it initialized.
+        while (candidates.size() != 0)
+        {
+            if (current.size() == 0)
+            {
+                p = candidates.remove(random.nextInt(candidates.size()));
+            }
+            else
+            {
+                var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
+
+                if (wishes.isEmpty())
+                {
+                    p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
+
+                    int count = 0;
+                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+                    {
+                        if (++count == 1000)
+                            throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+
+                        candidates.add(p);
+                        p = candidates.remove(random.nextInt(candidates.size()));
+                    }
+                }
+                else
+                {
+                    for (int j : wishes)
+                    {
+                        p = gm.getPersonFromId(j);
+
+                        if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
+                            break;
+
+                        p = null;
+                    }
+
+                    if (p == null)
+                    {
+                        // No wishes; that aren't blocked so resorts to random group
+                        // generation.
+                        p = candidates.remove(random.nextInt(candidates.size()));
+
+                        int count = 0;
+                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+                        {
+                            if (++count == 1000)
+                                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+
+                            candidates.add(p);
+                            p = candidates.remove(random.nextInt(candidates.size()));
+                        }
+                    }
+                    else
+                    {
+                        candidates.remove(p);
+                    }
+                }
+            }
+
+            current.add(p.getId());
+            added.add(p.getId());
+
+            if (sizes.get(i) == ++ii)
+            {
+                ii = 0;
+                i++;
+
+                result.add(current);
+                current = new HashSet<>();
+            }
+        }
+
+        if (current.size() != 0 && !result.contains(current))
+            result.add(current);
+
+        return result;
     }
 
     @Override

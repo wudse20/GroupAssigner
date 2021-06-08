@@ -47,4 +47,20 @@ public interface GroupCreator
      * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
     List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException;
+
+    /**
+     * Generates subgroups of the provided GroupManager,
+     * with specified group sizes. This will overflow
+     * into the last group if there are too many entries
+     * and it will stop early if there are to many entries.
+     *
+     * @param sizes the list of integers containing the sizes
+     *              of the different groups.
+     * @return a list containing sets of integers which corresponds
+     *         to groups. The integers are the id's in their group
+     *         manager.
+     * @throws IllegalArgumentException iff sizes is empty or there is only one group.
+     * @throws NoGroupAvailableException iff there's no way to create a group.
+     * */
+    List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException;
 }
