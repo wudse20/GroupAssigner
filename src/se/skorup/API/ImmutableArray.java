@@ -332,6 +332,25 @@ public class ImmutableArray<E> implements ImmutableCollection<E>, Iterable<E>
         return ImmutableArray.fromList(res);
     }
 
+    /**
+     * Replaces a element at a specified index and
+     * returns a new ImmutableCollection with the
+     * updated element.
+     *
+     * @param index the index to replace the element at.
+     * @param newElement the new element.
+     * @return a new ImmutableCollection where the newElement has been placed
+     *          at index index.
+     * @throws IndexOutOfBoundsException iff the index is out of bounds for the collection.
+     * */
+    @Override
+    public ImmutableArray<E> replace(int index, E newElement) throws IndexOutOfBoundsException
+    {
+        var newArr = new ImmutableArray<>(elems);
+        newArr.elems[index] = newElement;
+        return newArr;
+    }
+
     @Override
     public Iterator<E> iterator()
     {

@@ -713,4 +713,51 @@ public class ImmutableArrayTester
         assertEquals(arr, arr2);
         assertSame(arr, arr2); // To check the instance.
     }
+
+    /**
+     * Tests the replace method.
+     * */
+    @Test
+    public void testReplace()
+    {
+        var arr = ImmutableArray.fill(100, new Random()::nextInt);
+        var arr2 = arr.replace(0, 1);
+
+        for (var i = 0; i < arr.size(); i++)
+        {
+            if (i == 0)
+                assertEquals(1, (int) arr2.get(0)); // Needs to cast from some reason...
+            else
+                assertEquals(arr.get(i), arr2.get(i));
+        }
+    }
+
+    /**
+     * Tests that the replace method throws IndexOutOfBoundsException.
+     * */
+    @Test
+    public void testReplaceThrows()
+    {
+        var arr = new ImmutableArray<>("a", "b", "c");
+        assertThrows(IndexOutOfBoundsException.class, () -> arr.replace(-1, "a"));
+        assertThrows(IndexOutOfBoundsException.class, () -> arr.replace(3, "a"));
+    }
+
+    /**
+     * Tests the replace method with null.
+     * */
+    @Test
+    public void testReplaceNull()
+    {
+        var arr = new ImmutableArray<>("a", "b", "c");
+        var arr2 = arr.replace(0, null);
+
+        for (var i = 0; i < arr.size(); i++)
+        {
+            if (i == 0)
+                assertNull(arr2.get(0));
+            else
+                assertEquals(arr.get(i), arr2.get(i));
+        }
+    }
 }

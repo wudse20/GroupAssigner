@@ -156,4 +156,17 @@ public interface ImmutableCollection<E>
      *         null then it will return it self;
      * */
     ImmutableCollection<E> dropWhile(Predicate<E> p);
+
+    /**
+     * Replaces a element at a specified index and
+     * returns a new ImmutableCollection with the
+     * updated element.
+     *
+     * @param index the index to replace the element at.
+     * @param newElement the new element.
+     * @return a new ImmutableCollection where the newElement has been placed
+     *          at index index.
+     * @throws IndexOutOfBoundsException iff the index is out of bounds for the collection.
+     * */
+    ImmutableCollection<E> replace(int index, E newElement) throws IndexOutOfBoundsException;
 }
