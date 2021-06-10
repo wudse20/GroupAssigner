@@ -55,7 +55,7 @@ public class GroupManagerTester
     {
         var gm = new GroupManager("");
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson(null, Person.Role.LEADER));
-        assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("  ap  ", Person.Role.CANDIDATE));
+        assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("  a  ", Person.Role.CANDIDATE));
         assertThrows(IllegalArgumentException.class, () -> gm.registerPerson("Anton", null));
     }
 
@@ -306,8 +306,14 @@ public class GroupManagerTester
         p2.addDenylistId(p3.getId());
 
         var ctr = new HashSet<Tuple>();
-        ctr.add(new Tuple(p1.getId(), p2.getId()));
-        ctr.add(new Tuple(p2.getId(), p3.getId()));
+
+        var t1 = new Tuple(p1.getId(), p2.getId());
+        var t2 = new Tuple(p2.getId(), p3.getId());
+
+        ctr.add(t1);
+        ctr.add(t2);
+        ctr.add(t1.invert());
+        ctr.add(t2.invert());
 
         assertEquals(ctr, gm.getDenyGraph());
     }
