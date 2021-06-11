@@ -174,7 +174,10 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
         pInputContainer.add(lblSpacer5);
 
         pButtons.add(btnRemove);
-        pButtons.add(btnImport);
+
+        if (result == null)
+            pButtons.add(btnImport);
+        
         pButtons.add(btnCancel);
         pButtons.add(btnApply);
 
