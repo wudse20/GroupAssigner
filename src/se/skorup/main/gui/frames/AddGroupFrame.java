@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The frame used to add groups.
@@ -177,7 +178,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
 
         if (result == null)
             pButtons.add(btnImport);
-        
+
         pButtons.add(btnCancel);
         pButtons.add(btnApply);
 
@@ -417,6 +418,26 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     }
 
     /**
+     * Converts each string to name case, i.e.
+     * ANTON -> Anton and ANTON SKORUP -> Anton Skorup.
+     *
+     * @param input the string to be converted.
+     * @return the converted string.
+     * */
+    private String toNameCase(String input)
+    {
+        var imArr = new ImmutableArray<>(
+            Arrays.stream(input.split(" ")).map(x -> ImmutableArray.fromArray(x.split(""))).collect(Collectors.toList())
+        );
+
+        var res = new ArrayList<ImmutableArray<String>>();
+        for (var arr : imArr)
+            res.add(arr.replace(0, arr.get(0).toUpperCase()));
+
+        return ImmutableArray.fromList(res).map(x -> x.mkString("")).mkString(" ");
+    }
+
+    /**
      * Imports data and creates a group manager from the docs.
      * */
     private void importFromDocs()
@@ -426,8 +447,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
 
         if (selection == JFileChooser.APPROVE_OPTION)
         {
-            var data =
-                readFile(fc.getSelectedFile()).trim().toUpperCase();
+            var data = toNameCase(readFile(fc.getSelectedFile()).trim());
 
             data = ImmutableArray.fromArray(data.split("")).dropMatching("\"").mkString("");
 
