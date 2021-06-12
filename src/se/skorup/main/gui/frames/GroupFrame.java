@@ -321,7 +321,32 @@ public class GroupFrame extends JFrame
         SwingUtilities.invokeLater(() -> {
             var frame = new SubGroupListFrame(BASE_GROUP_PATH);
 
-            frame.addActionCallback(() -> {/* TODO */});
+            frame.addActionCallback(() -> {
+                var f = frame.getSelectedFile();
+                frame.dispose();
+
+                SubGroup sg;
+                try
+                {
+                    sg = (SubGroup) SerializationManager.deserializeObject(f.getAbsolutePath());
+                }
+                catch (IOException | ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                    DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+                    JOptionPane.showMessageDialog(
+                        this, "Kunde inte läsa gruppen!\nFel: %s".formatted(e.getLocalizedMessage()),
+                        "Misslyckades att läsa från fil.", JOptionPane.ERROR_MESSAGE
+                    );
+
+                    return;
+                }
+
+                formatGroup(sg.groups(), sg.isLeaderMode());
+                lastGroups = sg.groups();
+                lastWerePairWithLeaders = sg.isLeaderMode();
+            });
         });
     }
 

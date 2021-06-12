@@ -105,6 +105,7 @@ public class SubGroupListFrame extends JFrame implements ActionListener
 
         var files =
             Arrays.stream(Objects.requireNonNull(dir))
+                  .map(x -> "%s%s".formatted(path, x))
                   .map(File::new) // Creates files.
                   .collect(Collectors.toCollection(Vector::new)); // Converts to collection, java.util.Vector.
 
@@ -180,12 +181,13 @@ public class SubGroupListFrame extends JFrame implements ActionListener
     public File getSelectedFile()
     {
         var index = cbSaves.getSelectedIndex();
+        DebugMethods.log(files.get(index).getAbsolutePath(), DebugMethods.LogType.DEBUG);
         return files.get(index);
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
-
+        this.callbacks.forEach(ActionCallback::callback);
     }
 }
