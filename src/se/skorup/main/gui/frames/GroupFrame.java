@@ -11,7 +11,9 @@ import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.panels.SettingPanel;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.SubGroup;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -54,6 +56,9 @@ import java.util.stream.Collectors;
  * */
 public class GroupFrame extends JFrame
 {
+    /** The common path of all subgroups. */
+    private final String BASE_GROUP_PATH;
+
     /** The group manager in use. */
     private final GroupManager gm;
 
@@ -181,6 +186,7 @@ public class GroupFrame extends JFrame
         this.gm = gm;
         this.randomCreator = new RandomGroupCreator(gm);
         this.wishlistCreator = new WishlistGroupCreator(gm);
+        this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), gm.getName());
 
         this.setProperties();
         this.addComponents();
@@ -247,12 +253,7 @@ public class GroupFrame extends JFrame
 
         btnSave.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnSave.setForeground(Utils.FOREGROUND_COLOR);
-        btnSave.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
-        });
+        btnSave.addActionListener((e) -> saveLastGroup());
 
         btnLoad.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnLoad.setForeground(Utils.FOREGROUND_COLOR);
@@ -302,8 +303,8 @@ public class GroupFrame extends JFrame
 
         pButtons.add(boxOverflow);
         pButtons.add(btnClose);
-        pButtons.add(btnLoad);
         pButtons.add(btnToFile);
+        pButtons.add(btnLoad);
         pButtons.add(btnSave);
         pButtons.add(btnPrint);
         pButtons.add(btnCreate);
@@ -313,6 +314,69 @@ public class GroupFrame extends JFrame
         this.add(pTop, BorderLayout.PAGE_START);
         this.add(scrLabelGroup, BorderLayout.CENTER);
         this.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Saves the last group.
+     * */
+    private void saveLastGroup()
+    {
+        if (lastGroups == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga skapade grupper!",
+                "Finns inga skapade grupper", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        var name =
+            JOptionPane.showInputDialog(
+                this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+        if (name == null)
+            return;
+
+        while (name.trim().length() < 3)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Namnet måste vara minst tre tecken långt.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+
+            name = JOptionPane.showInputDialog(
+                this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (name == null)
+                return;
+        }
+
+        var subGroups = new SubGroup(name, lastGroups, lastWerePairWithLeaders);
+        var path = "%s%s".formatted(BASE_GROUP_PATH, "%s.data".formatted(name));
+
+        try
+        {
+            SerializationManager.createFileIfNotExists(new File(path));
+            SerializationManager.serializeObject(path, subGroups);
+
+            JOptionPane.showMessageDialog(
+                this, "Du har sparat undergruppen!",
+                "Du har sparat!", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                this, "Fel vid sparning!\nFel: %s".formatted(e.getLocalizedMessage()),
+                "Sparningen misslyckades!", JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**
