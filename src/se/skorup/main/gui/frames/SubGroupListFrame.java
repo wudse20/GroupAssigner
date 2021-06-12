@@ -1,5 +1,6 @@
 package se.skorup.main.gui.frames;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
 
@@ -7,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -14,8 +16,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * The SubGroupListFrame used in seeing
@@ -28,6 +34,9 @@ public class SubGroupListFrame extends JFrame implements ActionListener
 
     /** The list of ActionCallbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
+
+    /** The found files. */
+    private List<File> files;
 
     /** The content pane of the frame. */
     private final Container cp = this.getContentPane();
@@ -74,6 +83,40 @@ public class SubGroupListFrame extends JFrame implements ActionListener
     }
 
     /**
+     * Refreshes the list data.
+     * */
+    private void refreshList()
+    {
+        cbSaves.removeAllItems();
+        var dir = new File(path).list();
+
+        if (dir == null || dir.length == 0)
+        {
+            this.setVisible(false);
+
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga sparade grupper.",
+                "Inga sparade grupper", JOptionPane.ERROR_MESSAGE
+            );
+
+            this.dispose();
+            return;
+        }
+
+        var files =
+            Arrays.stream(Objects.requireNonNull(dir))
+                  .map(File::new) // Creates files.
+                  .collect(Collectors.toCollection(Vector::new)); // Converts to collection, java.util.Vector.
+
+        this.files = files;
+
+        files.stream()
+             .map(File::getName) // Gets the names of the file.
+             .map(x -> x.substring(0, x.indexOf('.'))) // Removes the file extension.
+             .forEach(cbSaves::addItem); // Adds the items.
+    }
+
+    /**
      * Adds the components to the frame.
      * */
     private void addComponents()
@@ -96,6 +139,7 @@ public class SubGroupListFrame extends JFrame implements ActionListener
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(400, 110));
         this.setVisible(true);
+        this.refreshList();
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setForeground(Utils.FOREGROUND_COLOR);
@@ -126,6 +170,17 @@ public class SubGroupListFrame extends JFrame implements ActionListener
             return;
 
         callbacks.add(a);
+    }
+
+    /**
+     * Gets the currently selected file.
+     *
+     * @return the currently selected file.
+     * */
+    public File getSelectedFile()
+    {
+        var index = cbSaves.getSelectedIndex();
+        return files.get(index);
     }
 
     @Override
