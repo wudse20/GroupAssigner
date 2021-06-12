@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -257,12 +258,7 @@ public class GroupFrame extends JFrame
 
         btnLoad.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnLoad.setForeground(Utils.FOREGROUND_COLOR);
-        btnLoad.addActionListener((e) -> {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
-        });
+        btnLoad.addActionListener((e) -> loadGroups());
 
         pLabelContainer.setLayout(pLabelContainerLayout);
         pLabelContainer.setBackground(Utils.BACKGROUND_COLOR);
@@ -314,6 +310,19 @@ public class GroupFrame extends JFrame
         this.add(pTop, BorderLayout.PAGE_START);
         this.add(scrLabelGroup, BorderLayout.CENTER);
         this.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Loads the different groups; that are
+     * saved under this GroupManager.
+     * */
+    private void loadGroups()
+    {
+        SwingUtilities.invokeLater(() -> {
+            var frame = new SubGroupListFrame(BASE_GROUP_PATH);
+
+            frame.addActionCallback(() -> {/* TODO */});
+        });
     }
 
     /**
