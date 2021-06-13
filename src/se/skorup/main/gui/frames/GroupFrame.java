@@ -796,8 +796,10 @@ public class GroupFrame extends JFrame
         int count = 0;
         int max = Collections.max(groups.stream().map(Set::size).collect(Collectors.toList()));
 
-        for (var s : persons)
+        for (int i = 0; i < persons.size(); i++)
         {
+            var s = persons.get(i);
+
             if (count++ % 2 == 0)
                 sb.append("<tr>").append("<td>");
             else
@@ -805,7 +807,7 @@ public class GroupFrame extends JFrame
 
             if (leaderMode && leaders.size() >= 1)
                 sb.append("<font color=RED>")
-                  .append(leaders.remove(0))
+                  .append(leaders.remove(0).getName())
                   .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
             else if (!leaderMode)
                 sb.append("<font color=RED>")
@@ -814,7 +816,19 @@ public class GroupFrame extends JFrame
 
             for (var p : s)
             {
-                sb.append("<br>").append(p).append("&emsp;&emsp;&emsp;&emsp;");
+                if (cbCreator.getSelectedItem() instanceof WishlistGroupCreator)
+                {
+                    var groupIds = groups.get(i);
+                    groupIds.retainAll(Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList()));
+                    DebugMethods.log("%s wishes granted for %s".formatted(groupIds, p), DebugMethods.LogType.DEBUG);
+                    sb.append("<br>").append(p.getName()).append(" (Önskningar: ")
+                      .append(groupIds.size()).append(")").append("&emsp;&emsp;&emsp;&emsp;");
+                }
+                else
+                {
+                    sb.append("<br>").append(p.getName())
+                      .append("&emsp;&emsp;&emsp;&emsp;");
+                }
             }
 
             if (s.size() < max)
