@@ -329,4 +329,23 @@ public class MainFrame extends JFrame
     {
         managers.remove(gm);
     }
+
+    /**
+     * Removes the current group manager and
+     * updates the GUI accordingly.
+     * */
+    public void removeCurrentGroupManager()
+    {
+        if (currentGroupManager == null)
+            return;
+
+        managers.remove(currentGroupManager);
+        currentGroupManager = null;
+
+        if (managers.size() > 0)
+            currentGroupManager = managers.get(0);
+
+        refreshSidePanel();
+        ctrPanel.updateManagers();
+    }
 }

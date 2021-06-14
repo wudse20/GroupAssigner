@@ -31,7 +31,10 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         ADD,
 
         /** The label for the edit button. */
-        EDIT
+        EDIT,
+
+        /** The label for the delete button. */
+        DELETE
     }
 
     /** The reference to the managers. */
@@ -49,6 +52,9 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     /** The button used for editing. */
     private final JButton btnEdit = new JButton("Ändra denna grupp");
 
+    /** The button for deleting a group. */
+    private final JButton btnDelete = new JButton("Tabort denna grupp");
+
     /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
@@ -65,18 +71,6 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
 
         this.setProperties();
         this.addComponents();
-    }
-
-    /**
-     * Updates the group managers.
-     * */
-    private void updateManagers()
-    {
-        // Clears the list.
-        cbManagers.removeAllItems();
-
-        // Adds the items.
-        managers.forEach(cbManagers::addItem);
     }
 
     /**
@@ -102,6 +96,11 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         btnEdit.setActionCommand(Buttons.EDIT.toString());
         btnEdit.addActionListener(this);
 
+        btnDelete.setForeground(Utils.FOREGROUND_COLOR);
+        btnDelete.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnDelete.setActionCommand(Buttons.DELETE.toString());
+        btnDelete.addActionListener(this);
+
         this.updateManagers();
     }
 
@@ -113,6 +112,19 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         this.add(cbManagers);
         this.add(btnAdd);
         this.add(btnEdit);
+        this.add(btnDelete);
+    }
+
+    /**
+     * Updates the group managers.
+     * */
+    public void updateManagers()
+    {
+        // Clears the list.
+        cbManagers.removeAllItems();
+
+        // Adds the items.
+        managers.forEach(cbManagers::addItem);
     }
 
     @Override
@@ -165,6 +177,10 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
                     mf.refreshSidePanel();
                 });
             });
+        }
+        else if (cmd.equals(Buttons.DELETE.toString()))
+        {
+            mf.removeCurrentGroupManager();
         }
     }
 }

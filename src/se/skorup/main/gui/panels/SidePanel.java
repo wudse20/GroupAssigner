@@ -126,6 +126,13 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
     {
         var gm = mf.getCurrentGroup();
 
+        if (gm == null)
+        {
+            pLeaders.updateList(new HashSet<>());
+            pCandidates.updateList(new HashSet<>());
+            return;
+        }
+
         pLeaders.updateList(gm.getAllOfRoll(Person.Role.LEADER));
         pCandidates.updateList(gm.getAllOfRoll(Person.Role.CANDIDATE));
     }
