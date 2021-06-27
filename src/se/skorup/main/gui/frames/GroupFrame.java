@@ -2,6 +2,7 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
+import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
@@ -818,9 +819,13 @@ public class GroupFrame extends JFrame
             {
                 if (cbCreator.getSelectedItem() instanceof WishlistGroupCreator)
                 {
-                    var groupIds = groups.get(i);
-                    groupIds.retainAll(Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList()));
+                    var groupIds = new ImmutableHashSet<>(groups.get(i));
+                    groupIds = groupIds.intersection(
+                        Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet())
+                    );
+
                     DebugMethods.log("%s wishes granted for %s".formatted(groupIds, p), DebugMethods.LogType.DEBUG);
+
                     sb.append("<br>").append(p.getName()).append(" (Önskningar: ")
                       .append(groupIds.size()).append(")").append("&emsp;&emsp;&emsp;&emsp;");
                 }
