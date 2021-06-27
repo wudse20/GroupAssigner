@@ -70,11 +70,16 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
      * The intersection between this set and the
      * other set.
      *
-     * @param other the other set.
+     * @param other the other set. If {@code null} the it throws
+     *              NullPointerException.
      * @return the elements both in the other set and this set.
+     * @throws NullPointerException iff other is {@code null}.
      * */
-    public ImmutableHashSet<E> intersection(Set<E> other)
+    public ImmutableHashSet<E> intersection(Set<E> other) throws NullPointerException
     {
+        if (other == null)
+            throw new NullPointerException("Other is null");
+
         var res = new HashSet<E>();
 
         if (size() > other.size())
@@ -97,36 +102,51 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
      * The intersection between this set and the
      * other set.
      *
-     * @param other the other set.
+     * @param other the other set. If {@code null} the it throws
+     *              NullPointerException.
      * @return A set containing the elements both in the other set and this set.
+     * @throws NullPointerException iff other is {@code null}.
      * */
-    public ImmutableHashSet<E> intersection(ImmutableHashSet<E> other)
+    public ImmutableHashSet<E> intersection(ImmutableHashSet<E> other) throws NullPointerException
     {
+        if (other == null)
+            throw new NullPointerException("Other is null");
+
         return intersection(other.set);
     }
 
     /**
      * The union between this set and the other set.
      *
-     * @param other the other set.
+     * @param other the other set. If {@code null} the it throws
+     *              NullPointerException.
      * @return A set containing all the elements of both sets.
+     * @throws NullPointerException iff other is {@code null}.
      * */
-    public ImmutableHashSet<E> union(Set<E> other)
+    public ImmutableHashSet<E> union(Set<E> other) throws NullPointerException
     {
+        if (other == null)
+            throw new NullPointerException("Other is null");
+
         var res = new HashSet<>((other.size() > size()) ? other : set);
-        res.addAll((other.size() < size()) ? other : set);
+        res.addAll((other.size() > size()) ? set : other);
         return new ImmutableHashSet<>(res);
     }
 
     /**
      * The union between this set and the other set.
      *
-     * @param other the other set.
+     * @param other the other set. If {@code null} the it throws
+     *              NullPointerException.
      * @return A set containing all the elements of both sets.
+     * @throws NullPointerException iff other is {@code null}.
      * */
-    public ImmutableHashSet<E> union(ImmutableHashSet<E> other)
+    public ImmutableHashSet<E> union(ImmutableHashSet<E> other) throws NullPointerException
     {
-        return new ImmutableHashSet<>(other.set);
+        if (other == null)
+            throw new NullPointerException("Other is null");
+
+        return union(other.set);
     }
 
     @Override
@@ -185,8 +205,10 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
     @Override
     public boolean forAll(Predicate<E> p)
     {
-        for (var e : set)
-            if (!p.test(e))
+        for (var e : this)
+            if (e != null && !p.test(e))
+                return false;
+            else if (e == null)
                 return false;
 
         return true;
@@ -250,11 +272,20 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
         return new ImmutableHashSet<>(list);
     }
 
+    /**
+     * Doesn't work on the ImmutableHashSet, since
+     * the set cannot drop while, since there are
+     * no ordering
+     *
+     * @param p see {@link ImmutableCollection#dropWhile(Predicate)}.
+     * @return see {@link ImmutableCollection#dropWhile(Predicate)}.
+     * @throws UnsupportedOperationException Always since it cannot drop while, since
+     *                                       there are no ordering.
+     * */
     @Override
     public ImmutableCollection<E> dropWhile(Predicate<E> p)
     {
-        var imArr = ImmutableArray.fromCollection(set).dropWhile(p);
-        return new ImmutableHashSet<>(imArr);
+        throw new UnsupportedOperationException("There are no specified order, so cannot traverse in an order.");
     }
 
     /**
@@ -284,5 +315,24 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
     public Iterator<E> iterator()
     {
         return set.iterator();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return o instanceof ImmutableHashSet ihs &&
+               this.set.equals(ihs.set);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.set.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return '[' + mkString(", ") + ']';
     }
 }

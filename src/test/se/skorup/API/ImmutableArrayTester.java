@@ -423,7 +423,6 @@ public class ImmutableArrayTester
         assertEquals(0, ImmutableArray.fromArray(null).size());
     }
 
-
     /**
      * Tests the isEmpty method.
      * */
@@ -460,7 +459,7 @@ public class ImmutableArrayTester
      * Tests the mkString method.
      * */
     @Test
-    public void testMkString3i()
+    public void testMkString3()
     {
         var arr = new ImmutableArray<>(1, 2, 3, 4);
         var ctr = "1234";
@@ -540,7 +539,7 @@ public class ImmutableArrayTester
         var ctr = new ImmutableArray<>(1, 32, 53, 423, 521);
 
         assertNotNull(arr.sorted());
-        assertEquals(ctr, arr);
+        assertEquals(ctr, arr.sorted());
         assertEquals(ctr.size(), arr.sorted().size());
 
         assertEquals(new ImmutableArray<String>(), new ImmutableArray<String>().sorted());
