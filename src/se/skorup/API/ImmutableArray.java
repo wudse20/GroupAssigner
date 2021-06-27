@@ -351,6 +351,20 @@ public class ImmutableArray<E> implements ImmutableCollection<E>, Iterable<E>
         return newArr;
     }
 
+    /**
+     * Checks if the collection contains
+     * an item.
+     *
+     * @param e the item to be searched for.
+     * @return {@code true} iff the collection contains
+     *         the item, otherwise {@code false}.
+     * */
+    @Override
+    public boolean contains(E e)
+    {
+        return this.toList().contains(e);
+    }
+
     @Override
     public Iterator<E> iterator()
     {

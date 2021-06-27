@@ -169,4 +169,14 @@ public interface ImmutableCollection<E>
      * @throws IndexOutOfBoundsException iff the index is out of bounds for the collection.
      * */
     ImmutableCollection<E> replace(int index, E newElement) throws IndexOutOfBoundsException;
+
+    /**
+     * Checks if the collection contains
+     * an item.
+     *
+     * @param e the item to be searched for.
+     * @return {@code true} iff the collection contains
+     *         the item, otherwise {@code false}.
+     * */
+    boolean contains(E e);
 }
