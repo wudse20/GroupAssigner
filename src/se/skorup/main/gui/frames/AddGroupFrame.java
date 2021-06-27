@@ -135,6 +135,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     /** The button for removing names. */
     private final JButton btnRemove = new JButton("Tabort");
 
+    /** The list scroller. */
     private final JScrollPane scrList = new JScrollPane(names);
 
     /**
@@ -148,6 +149,12 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
         this.addComponents();
     }
 
+    /**
+     * Creates an AddGroupFrame with
+     * a group manager.
+     *
+     * @param gm the group manager.
+     * */
     public AddGroupFrame(GroupManager gm)
     {
         super("Ändra en grupp!");

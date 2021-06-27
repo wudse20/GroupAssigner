@@ -91,6 +91,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     /** The check box for checking only candidates. */
     private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
 
+    /** The button for changing roll. */
     private final JButton btnChangeRole = new JButton("Byt roll");
 
     /**
