@@ -64,6 +64,20 @@ public class SubgroupPanel extends JPanel implements Scrollable
         this.setForeground(Utils.FOREGROUND_COLOR);
     }
 
+    /**
+     * Draws the groups, if they're
+     * created.
+     * */
+    public void drawGroups()
+    {
+        this.subgroups = ImmutableArray.fromCollection(
+            gf.getLastSubgroups() != null ? gf.getLastSubgroups() : new ArrayList<>()
+        );
+
+        if (subgroups.size() <= 0)
+            return;
+    }
+
     @Override
     public void paintComponent(Graphics gOld)
     {

@@ -67,10 +67,15 @@ public class GroupFrame extends JFrame
     /** The wishlist group creator. */
     private final GroupCreator wishlistCreator;
 
+    /** The current SubGroups. */
+    private SubGroup currentGroups;
+
     /** The groups that were generated last. */
+    @Deprecated
     private List<Set<Integer>> lastGroups;
 
     /** {@code true} = last generation was generated with leaders, else not. */
+    @Deprecated
     private boolean lastWerePairWithLeaders = false;
 
     /** The list with all the callbacks. */
@@ -342,9 +347,9 @@ public class GroupFrame extends JFrame
                     return;
                 }
 
-                formatGroup(sg.groups(), sg.isLeaderMode());
                 lastGroups = sg.groups();
                 lastWerePairWithLeaders = sg.isLeaderMode();
+                currentGroups = sg;
             });
         });
     }
@@ -354,46 +359,23 @@ public class GroupFrame extends JFrame
      * */
     private void saveLastGroup()
     {
-        if (lastGroups == null)
+        // If no groups error msg + return
+        if (currentGroups == null)
         {
             JOptionPane.showMessageDialog(
-                this, "Det finns inga skapade grupper!",
-                "Finns inga skapade grupper", JOptionPane.ERROR_MESSAGE
+                this, "Det finns inga grupper att spara",
+                "INGA GRUPPER!", JOptionPane.ERROR_MESSAGE
             );
 
             return;
         }
 
-        var name =
-            JOptionPane.showInputDialog(
-                this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
-            );
-
-        if (name == null)
-            return;
-
-        while (name.trim().length() < 3)
-        {
-            JOptionPane.showMessageDialog(
-                this, "Namnet måste vara minst tre tecken långt.",
-                "För kort namn!", JOptionPane.ERROR_MESSAGE
-            );
-
-            name = JOptionPane.showInputDialog(
-                this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
-            );
-
-            if (name == null)
-                return;
-        }
-
-        var subGroups = new SubGroup(name, lastGroups, lastWerePairWithLeaders);
-        var path = "%s%s".formatted(BASE_GROUP_PATH, "%s.data".formatted(name));
+        var path = "%s%s".formatted(BASE_GROUP_PATH, "%s.data".formatted(currentGroups.name()));
 
         try
         {
             SerializationManager.createFileIfNotExists(new File(path));
-            SerializationManager.serializeObject(path, subGroups);
+            SerializationManager.serializeObject(path, currentGroups);
 
             JOptionPane.showMessageDialog(
                 this, "Du har sparat undergruppen!",
@@ -568,6 +550,29 @@ public class GroupFrame extends JFrame
      * */
     private void generateGroups()
     {
+        var name =
+                JOptionPane.showInputDialog(
+                        this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+                );
+
+        if (name == null)
+            return;
+
+        while (name.trim().length() < 3)
+        {
+            JOptionPane.showMessageDialog(
+                    this, "Namnet måste vara minst tre tecken långt.",
+                    "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+
+            name = JOptionPane.showInputDialog(
+                    this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (name == null)
+                return;
+        }
+
         var gc = (GroupCreator) cbCreator.getSelectedItem();
         List<Set<Integer>> list = null; // Just to have initialized.
         lastWerePairWithLeaders = pLeaders.isRadioSelected();
@@ -618,7 +623,7 @@ public class GroupFrame extends JFrame
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
             this.lastGroups = list;
-            formatGroup(list, true);
+            this.currentGroups = new SubGroup(name, list, true);
             return;
         }
         else if (pNbrGroups.isRadioSelected())
@@ -773,80 +778,7 @@ public class GroupFrame extends JFrame
         }
 
         this.lastGroups = list;
-        formatGroup(list, false);
-    }
-
-    /**
-     * Formats the groups and prints them to the GUI.
-     *
-     * @param groups the generated groups from a GroupCreator.
-     * @param leaderMode iff {@code true} it will map each group to a leader.
-     * */
-    private void formatGroup(List<Set<Integer>> groups, boolean leaderMode)
-    {
-        // The persons to be printed.
-        var persons =
-            groups.stream()
-                  .map(x -> x.stream().map(gm::getPersonFromId).collect(Collectors.toSet()))
-                  .collect(Collectors.toList());
-
-        var sb = new StringBuilder().append("<html><table>");
-        var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
-        int count = 0;
-        int max = Collections.max(groups.stream().map(Set::size).collect(Collectors.toList()));
-
-        for (int i = 0; i < persons.size(); i++)
-        {
-            var s = persons.get(i);
-
-            if (count++ % 2 == 0)
-                sb.append("<tr>").append("<td>");
-            else
-                sb.append("<td>");
-
-            if (leaderMode && leaders.size() >= 1)
-                sb.append("<font color=RED>")
-                  .append(leaders.remove(0).getName())
-                  .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
-            else if (!leaderMode)
-                sb.append("<font color=RED>")
-                  .append("Grupp ").append(count).append(':')
-                  .append("&emsp;&emsp;&emsp;&emsp;").append("</font>");
-
-            for (var p : s)
-            {
-                if (cbCreator.getSelectedItem() instanceof WishlistGroupCreator)
-                {
-                    var groupIds = new ImmutableHashSet<>(groups.get(i));
-                    groupIds = groupIds.intersection(
-                        Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet())
-                    );
-
-                    DebugMethods.log("%s wishes granted for %s".formatted(groupIds, p), DebugMethods.LogType.DEBUG);
-
-                    sb.append("<br>").append(p.getName()).append(" (Önskningar: ")
-                      .append(groupIds.size()).append(")").append("&emsp;&emsp;&emsp;&emsp;");
-                }
-                else
-                {
-                    sb.append("<br>").append(p.getName())
-                      .append("&emsp;&emsp;&emsp;&emsp;");
-                }
-            }
-
-            if (s.size() < max)
-            {
-                int diff = max - s.size();
-
-                sb.append("<br>".repeat(diff + 1));
-            }
-
-            sb.append("</td>");
-        }
-
-        sb.append("</table></html>");
-
-        lblGroup.setText(sb.toString());
+        this.currentGroups = new SubGroup(name, list, false);
     }
 
     /**
@@ -896,10 +828,13 @@ public class GroupFrame extends JFrame
     }
 
     /**
+     * TODO: REMOVE
+     *
      * Getter for: lastSubGroups
      *
      * @return the list containing the last subgroups.
      * */
+    @Deprecated
     public List<Set<Integer>> getLastSubgroups()
     {
         return lastGroups;
