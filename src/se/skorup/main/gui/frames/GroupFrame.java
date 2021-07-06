@@ -36,10 +36,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.awt.print.PrinterException;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -895,6 +891,16 @@ public class GroupFrame extends JFrame
             return;
 
         callbacks.add(ac);
+    }
+
+    /**
+     * Getter for: lastSubGroups
+     *
+     * @return the list containing the last subgroups.
+     * */
+    public List<Set<Integer>> getLastSubgroups()
+    {
+        return lastGroups;
     }
 
     @Override
