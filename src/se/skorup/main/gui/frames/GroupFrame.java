@@ -14,7 +14,7 @@ import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
-import se.skorup.main.objects.SubGroup;
+import se.skorup.main.objects.Subgroups;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -66,7 +66,7 @@ public class GroupFrame extends JFrame
     private final GroupCreator wishlistCreator;
 
     /** The current SubGroups. */
-    private SubGroup currentGroups;
+    private Subgroups currentGroups;
 
     /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
@@ -319,10 +319,10 @@ public class GroupFrame extends JFrame
                 var f = frame.getSelectedFile();
                 frame.dispose();
 
-                SubGroup sg;
+                Subgroups sg;
                 try
                 {
-                    sg = (SubGroup) SerializationManager.deserializeObject(f.getAbsolutePath());
+                    sg = (Subgroups) SerializationManager.deserializeObject(f.getAbsolutePath());
                 }
                 catch (IOException | ClassNotFoundException e)
                 {
@@ -614,7 +614,7 @@ public class GroupFrame extends JFrame
             }
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
-            this.currentGroups = new SubGroup(name, list, true);
+            this.currentGroups = new Subgroups(name, list, true);
             return;
         }
         else if (pNbrGroups.isRadioSelected())
@@ -777,7 +777,7 @@ public class GroupFrame extends JFrame
             }
         }
 
-        this.currentGroups = new SubGroup(name, list, false);
+        this.currentGroups = new Subgroups(name, list, false);
     }
 
     /**
@@ -831,7 +831,7 @@ public class GroupFrame extends JFrame
      *
      * @return the current groups.
      * */
-    public SubGroup getCurrentGroups()
+    public Subgroups getCurrentGroups()
     {
         return this.currentGroups;
     }

@@ -3,7 +3,7 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.manager.GroupManager;
-import se.skorup.main.objects.SubGroup;
+import se.skorup.main.objects.Subgroups;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
@@ -27,13 +27,13 @@ public class SubgroupPanel extends JPanel implements Scrollable
     private final GroupFrame gf;
 
     /** The GroupManager in use. */
-    private GroupManager gm;
+    private final GroupManager gm;
 
     /** The font metrics of the font. */
     private FontMetrics fm;
 
     /** The current groups. */
-    private SubGroup currentGroups;
+    private Subgroups currentGroups;
 
     /**
      * Creates a new SubGroupPanel.
@@ -68,6 +68,16 @@ public class SubgroupPanel extends JPanel implements Scrollable
 
     }
 
+    /**
+     * Setter for: currentGroups.
+     *
+     * @param sg the new set of groups.
+     * */
+    public void setCurrentGroups(Subgroups sg)
+    {
+        this.currentGroups = sg;
+    }
+
     @Override
     public void paintComponent(Graphics gOld)
     {
@@ -81,8 +91,9 @@ public class SubgroupPanel extends JPanel implements Scrollable
     @Override
     public Dimension getPreferredSize()
     {
-        var height = currentGroups.groups().size() / 2 *
-            ((currentGroups.groups().size() != 0) ? currentGroups.groups().get(0).size() : 5) *
+        var height =
+            (currentGroups != null ? currentGroups.groups().size() : 2) / 2 *
+            ((currentGroups != null) ? currentGroups.groups().get(0).size() : 5) *
             ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
         return new Dimension(512, height);
     }
@@ -90,8 +101,9 @@ public class SubgroupPanel extends JPanel implements Scrollable
     @Override
     public Dimension getMinimumSize()
     {
-        var height = currentGroups.groups().size() / 2 *
-            ((currentGroups.groups().size() != 0) ? currentGroups.groups().get(0).size() : 5) *
+        var height =
+            (currentGroups != null ? currentGroups.groups().size() : 2) / 2 *
+            ((currentGroups != null) ? currentGroups.groups().get(0).size() : 5) *
             ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
         return new Dimension(512, height);
     }

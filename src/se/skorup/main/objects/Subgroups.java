@@ -11,4 +11,4 @@ import java.util.Set;
  * @param groups the generated groups.
  * @param isLeaderMode if {@code true} the group, was paired with the leaders.
  * */
-public record SubGroup(String name, List<Set<Integer>> groups, boolean isLeaderMode) implements Serializable {}
+public record Subgroups(String name, List<Set<Integer>> groups, boolean isLeaderMode) implements Serializable {}
