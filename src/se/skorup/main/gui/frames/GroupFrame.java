@@ -11,6 +11,7 @@ import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.panels.SettingPanel;
+import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
@@ -171,7 +172,7 @@ public class GroupFrame extends JFrame
         new JLabel("<html><br><br><br></html>"); // Not hacky at all, good practice :)
 
     /** The scroll pane for the result. */
-    private final JScrollPane scrLabelGroup = new JScrollPane(pLabelContainer);
+    private final JScrollPane scrLabelGroup /* = new JScrollPane(pLabelContainer); */;
 
     /**
      * Creates a new group frame.
@@ -185,6 +186,7 @@ public class GroupFrame extends JFrame
         this.randomCreator = new RandomGroupCreator(gm);
         this.wishlistCreator = new WishlistGroupCreator(gm);
         this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), gm.getName());
+        this.scrLabelGroup = new JScrollPane(new SubgroupPanel(this, gm));
 
         this.setProperties();
         this.addComponents();

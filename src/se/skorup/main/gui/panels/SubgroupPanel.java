@@ -1,14 +1,20 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.ImmutableArray;
+import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
+import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -22,8 +28,11 @@ public class SubgroupPanel extends JPanel implements Scrollable
     /** The instance of the GroupFrame. */
     private final GroupFrame gf;
 
+    /** The GroupManager in use. */
+    private GroupManager gm;
+
     /** The font metrics of the font. */
-    private final FontMetrics fm;
+    private FontMetrics fm;
 
     /** The sub groups being displayed. */
     private ImmutableArray<Set<Integer>> subgroups;
@@ -32,26 +41,54 @@ public class SubgroupPanel extends JPanel implements Scrollable
      * Creates a new SubGroupPanel.
      *
      * @param gf the instance of the GroupFrame in use.
-     * @param fm the FontMetrics to operate off of.
+     * @param gm the instance of the GroupManager that
+     *           holds the persons with the IDs.
      * */
-    public SubgroupPanel(GroupFrame gf, FontMetrics fm)
+    public SubgroupPanel(GroupFrame gf, GroupManager gm)
     {
         this.gf = gf;
-        this.fm = fm;
-        subgroups = ImmutableArray.fromCollection(gf.getLastSubgroups());
+        this.gm = gm;
+        this.subgroups = ImmutableArray.fromCollection(
+            gf.getLastSubgroups() != null ? gf.getLastSubgroups() : new ArrayList<>()
+        );
+
+        this.setProperties();
+    }
+
+    /**
+     * Sets the properties.
+     * */
+    private void setProperties()
+    {
+        this.setBackground(Utils.BACKGROUND_COLOR);
+        this.setForeground(Utils.FOREGROUND_COLOR);
+    }
+
+    @Override
+    public void paintComponent(Graphics gOld)
+    {
+        var g = (Graphics2D) gOld;
+        fm = g.getFontMetrics();
+
+        g.setColor(Color.GREEN);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
     }
 
     @Override
     public Dimension getPreferredSize()
     {
-        var height = subgroups.size() / 2 * subgroups.get(0).size() * (fm.getHeight() + VERTICAL_SPACER);
+        var height = subgroups.size() / 2 *
+            ((subgroups.size() != 0) ? subgroups.get(0).size() : 5) *
+            ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
         return new Dimension(512, height);
     }
 
     @Override
     public Dimension getMinimumSize()
     {
-        var height = subgroups.size() / 2 * subgroups.get(0).size() * (fm.getHeight() + VERTICAL_SPACER);
+        var height = subgroups.size() / 2 *
+            ((subgroups.size() != 0) ? subgroups.get(0).size() : 5) *
+            ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
         return new Dimension(512, height);
     }
 
