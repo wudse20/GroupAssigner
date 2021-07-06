@@ -1,9 +1,9 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.ImmutableArray;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.SubGroup;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
@@ -14,8 +14,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * The panel that draws the SubGroups.
@@ -34,8 +32,8 @@ public class SubgroupPanel extends JPanel implements Scrollable
     /** The font metrics of the font. */
     private FontMetrics fm;
 
-    /** The sub groups being displayed. */
-    private ImmutableArray<Set<Integer>> subgroups;
+    /** The current groups. */
+    private SubGroup currentGroups;
 
     /**
      * Creates a new SubGroupPanel.
@@ -48,10 +46,7 @@ public class SubgroupPanel extends JPanel implements Scrollable
     {
         this.gf = gf;
         this.gm = gm;
-        this.subgroups = ImmutableArray.fromCollection(
-            gf.getLastSubgroups() != null ? gf.getLastSubgroups() : new ArrayList<>()
-        );
-
+        this.currentGroups = gf.getCurrentGroups();
         this.setProperties();
     }
 
@@ -70,12 +65,7 @@ public class SubgroupPanel extends JPanel implements Scrollable
      * */
     public void drawGroups()
     {
-        this.subgroups = ImmutableArray.fromCollection(
-            gf.getLastSubgroups() != null ? gf.getLastSubgroups() : new ArrayList<>()
-        );
 
-        if (subgroups.size() <= 0)
-            return;
     }
 
     @Override
@@ -91,8 +81,8 @@ public class SubgroupPanel extends JPanel implements Scrollable
     @Override
     public Dimension getPreferredSize()
     {
-        var height = subgroups.size() / 2 *
-            ((subgroups.size() != 0) ? subgroups.get(0).size() : 5) *
+        var height = currentGroups.groups().size() / 2 *
+            ((currentGroups.groups().size() != 0) ? currentGroups.groups().get(0).size() : 5) *
             ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
         return new Dimension(512, height);
     }
@@ -100,8 +90,8 @@ public class SubgroupPanel extends JPanel implements Scrollable
     @Override
     public Dimension getMinimumSize()
     {
-        var height = subgroups.size() / 2 *
-            ((subgroups.size() != 0) ? subgroups.get(0).size() : 5) *
+        var height = currentGroups.groups().size() / 2 *
+            ((currentGroups.groups().size() != 0) ? currentGroups.groups().get(0).size() : 5) *
             ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
         return new Dimension(512, height);
     }

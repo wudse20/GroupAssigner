@@ -2,7 +2,6 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
-import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
@@ -44,7 +43,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -69,14 +67,6 @@ public class GroupFrame extends JFrame
 
     /** The current SubGroups. */
     private SubGroup currentGroups;
-
-    /** The groups that were generated last. */
-    @Deprecated
-    private List<Set<Integer>> lastGroups;
-
-    /** {@code true} = last generation was generated with leaders, else not. */
-    @Deprecated
-    private boolean lastWerePairWithLeaders = false;
 
     /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
@@ -347,8 +337,6 @@ public class GroupFrame extends JFrame
                     return;
                 }
 
-                lastGroups = sg.groups();
-                lastWerePairWithLeaders = sg.isLeaderMode();
                 currentGroups = sg;
             });
         });
@@ -409,18 +397,18 @@ public class GroupFrame extends JFrame
             var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
 
             // Formats the text to the file format.
-            for (int i = 0; i < lastGroups.size(); i++)
+            for (int i = 0; i < currentGroups.groups().size(); i++)
             {
-                if (lastWerePairWithLeaders)
+                if (currentGroups.isLeaderMode())
                     sb.append(leaders.remove(0).getName()).append(":\n");
                 else
                     sb.append("Grupp ").append(i + 1).append(':').append('\n');
 
-                for (var id : lastGroups.get(i))
+                for (var id : currentGroups.groups().get(i))
                     sb.append('\t').append(gm.getPersonFromId(id).getName()).append('\n');
             }
 
-            for (var g : lastGroups)
+            for (var g : currentGroups.groups())
             {
                 sb.append('\n');
 
@@ -475,7 +463,7 @@ public class GroupFrame extends JFrame
      * */
     private void print()
     {
-        if (lastGroups == null)
+        if (currentGroups == null)
         {
             JOptionPane.showMessageDialog(
                 this, "Det finns inga skapade grupper!",
@@ -488,9 +476,10 @@ public class GroupFrame extends JFrame
         var canvas = new JTextArea();
         var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
         var groups =
-            lastGroups.stream()
-                      .map(x -> new ArrayList<>(x.stream().map(gm::getPersonFromId).collect(Collectors.toList())))
-                      .collect(Collectors.toCollection(ArrayList::new));
+            currentGroups.groups()
+                         .stream()
+                         .map(x -> new ArrayList<>(x.stream().map(gm::getPersonFromId).collect(Collectors.toList())))
+                         .collect(Collectors.toCollection(ArrayList::new));
 
         canvas.setTabSize(4);
         canvas.setLineWrap(true);
@@ -500,8 +489,9 @@ public class GroupFrame extends JFrame
         {
             canvas.append(
                 "%s:\n"
-                .formatted(lastWerePairWithLeaders ? leaders.remove(0).getName() : "Grupp %d".formatted(i + 1))
-            );
+                .formatted(
+                    currentGroups.isLeaderMode() ? leaders.remove(0).getName() : "Grupp %d".formatted(i + 1)
+            ));
 
             for (var p : groups.get(i))
                 canvas.append("\t%s\n".formatted(p.getName()));
@@ -575,7 +565,6 @@ public class GroupFrame extends JFrame
 
         var gc = (GroupCreator) cbCreator.getSelectedItem();
         List<Set<Integer>> list = null; // Just to have initialized.
-        lastWerePairWithLeaders = pLeaders.isRadioSelected();
 
         // Checks for leader mode
         if (pLeaders.isRadioSelected())
@@ -596,7 +585,10 @@ public class GroupFrame extends JFrame
 
             try
             {
-                list = tryGenerateGroup(() -> gc.generateGroup((short) groups, boxOverflow.isSelected()));
+                list = tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup((short) groups, boxOverflow.isSelected());
+                });
             }
             catch (IllegalArgumentException e)
             {
@@ -622,7 +614,6 @@ public class GroupFrame extends JFrame
             }
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
-            this.lastGroups = list;
             this.currentGroups = new SubGroup(name, list, true);
             return;
         }
@@ -648,7 +639,10 @@ public class GroupFrame extends JFrame
 
             try
             {
-                list = tryGenerateGroup(() -> gc.generateGroup((short) groups, boxOverflow.isSelected()));
+                list = tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup((short) groups, boxOverflow.isSelected());
+                });
             }
             catch (IllegalArgumentException e)
             {
@@ -697,7 +691,10 @@ public class GroupFrame extends JFrame
 
             try
             {
-                list = tryGenerateGroup(() -> gc.generateGroup((byte) persons, boxOverflow.isSelected()));
+                list = tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup((byte) persons, boxOverflow.isSelected());
+                });
             }
             catch (IllegalArgumentException e)
             {
@@ -751,7 +748,10 @@ public class GroupFrame extends JFrame
             try
             {
                 final var finalSizes = sizes; // Since it has to be final or effectively final.
-                list = tryGenerateGroup(() -> gc.generateGroup(finalSizes));
+                list = tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup(finalSizes);
+                });
             }
             catch (IllegalArgumentException e)
             {
@@ -777,7 +777,6 @@ public class GroupFrame extends JFrame
             }
         }
 
-        this.lastGroups = list;
         this.currentGroups = new SubGroup(name, list, false);
     }
 
@@ -828,16 +827,13 @@ public class GroupFrame extends JFrame
     }
 
     /**
-     * TODO: REMOVE
+     * Getter for: currentGroups.
      *
-     * Getter for: lastSubGroups
-     *
-     * @return the list containing the last subgroups.
+     * @return the current groups.
      * */
-    @Deprecated
-    public List<Set<Integer>> getLastSubgroups()
+    public SubGroup getCurrentGroups()
     {
-        return lastGroups;
+        return this.currentGroups;
     }
 
     @Override
