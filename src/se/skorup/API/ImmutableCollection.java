@@ -179,4 +179,18 @@ public interface ImmutableCollection<E>
      *         the item, otherwise {@code false}.
      * */
     boolean contains(E e);
+
+    /**
+     * Uses linear search to find the first
+     * matching element to the predicate p
+     * and returns it. If there are no elements
+     * matching it will return {@code null}.
+     *
+     * @param p the predicate the elements will
+     *          be tested against.
+     * @return the first element matching, if no
+     *         elements are matching then it will
+     *         return {@code null}.
+     * */
+    E getFirstMatch(Predicate<E> p);
 }

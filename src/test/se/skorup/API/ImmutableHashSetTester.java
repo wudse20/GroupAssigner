@@ -415,4 +415,18 @@ public class ImmutableHashSetTester
         assertFalse(ctr.contains(123));
         assertTrue(ctr.contains(2));
     }
+
+    /**
+     * Tests the find first method.
+     * */
+    @Test
+    public void testFindFirst()
+    {
+        var set = new ImmutableHashSet<>("Anton", "Kalle", "Linnea", "Alexandra");
+        assertNotNull(set.getFirstMatch(x -> x.length() != 0));
+        assertNull(set.getFirstMatch(x -> x.length() == 0));
+        assertNull(new ImmutableHashSet<Integer>().getFirstMatch(x -> x == 123));
+
+        assertEquals("Alexandra", set.getFirstMatch(x -> x.length() == 9));
+    }
 }

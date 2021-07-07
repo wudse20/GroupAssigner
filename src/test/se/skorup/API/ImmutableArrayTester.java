@@ -759,4 +759,18 @@ public class ImmutableArrayTester
                 assertEquals(arr.get(i), arr2.get(i));
         }
     }
+
+    /**
+     * Tests the find first method.
+     * */
+    @Test
+    public void testFindFirst()
+    {
+        var arr = new ImmutableArray<>("Anton", "Kalle", "Linnea", "Alexandra", "Sebastian");
+        assertNotNull(arr.getFirstMatch(x -> x.length() != 0));
+        assertNull(arr.getFirstMatch(x -> x.length() == 0));
+        assertNull(new ImmutableArray<Integer>().getFirstMatch(x -> x == 123));
+
+        assertEquals("Alexandra", arr.getFirstMatch(x -> x.length() == 9));
+    }
 }

@@ -311,6 +311,32 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
         return set.contains(e);
     }
 
+    /**
+     * Uses linear search to find the first
+     * matching element to the predicate p
+     * and returns it. If there are no elements
+     * matching it will return {@code null}. <br><br>
+     *
+     * Since there's is no way to determine the order
+     * it will just give any element match the predicate
+     * if it exists.
+     *
+     * @param p the predicate the elements will
+     *          be tested against.
+     * @return the first element matching, if no
+     *         elements are matching then it will
+     *         return {@code null}.
+     * */
+    @Override
+    public E getFirstMatch(Predicate<E> p)
+    {
+        for (var e : this)
+            if (p.test(e))
+                return e;
+
+        return null;
+    }
+
     @Override
     public Iterator<E> iterator()
     {
