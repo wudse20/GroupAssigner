@@ -98,10 +98,6 @@ public class GroupFrame extends JFrame
     /** The checkbox used for overflow. */
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
 
-    /** The label for displaying the groups.*/
-    @Deprecated(forRemoval = true)
-    private final JLabel lblGroup = new JLabel("");
-
     /** The button group for the settings. */
     private final ButtonGroup bgSettings = new ButtonGroup();
 
@@ -168,7 +164,7 @@ public class GroupFrame extends JFrame
         new JLabel("<html><br><br><br></html>"); // Not hacky at all, good practice :)
 
     /** The scroll pane for the result. */
-    private final JScrollPane scrLabelGroup /* = new JScrollPane(pLabelContainer); */;
+    private final JScrollPane scrLabelGroup;
 
     /** The SubgroupPanel. */
     private final SubgroupPanel sgp;
@@ -262,9 +258,6 @@ public class GroupFrame extends JFrame
         pLabelContainer.setLayout(pLabelContainerLayout);
         pLabelContainer.setBackground(Utils.BACKGROUND_COLOR);
 
-        lblGroup.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
-        lblGroup.setForeground(Utils.FOREGROUND_COLOR);
-
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
 
@@ -303,8 +296,6 @@ public class GroupFrame extends JFrame
         pButtons.add(btnSave);
         pButtons.add(btnPrint);
         pButtons.add(btnCreate);
-
-        pLabelContainer.add(lblGroup);
 
         this.add(pTop, BorderLayout.PAGE_START);
         this.add(scrLabelGroup, BorderLayout.CENTER);
@@ -799,7 +790,7 @@ public class GroupFrame extends JFrame
         }
 
         sgp.setCurrentGroups(currentGroups);
-        sgp.drawGroups();
+        sgp.initGroups();
     }
 
     /**

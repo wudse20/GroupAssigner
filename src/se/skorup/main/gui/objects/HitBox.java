@@ -1,5 +1,6 @@
 package se.skorup.main.gui.objects;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
@@ -19,7 +20,11 @@ public record HitBox(int x, int y, int width, int height)
      * */
     public void drawHitBox(Graphics2D g)
     {
+        var oldColor = g.getColor();
+
+        g.setColor(Color.GREEN);
         g.drawRect(x, y, width, height);
+        g.setColor(oldColor);
     }
 
     /**

@@ -1,5 +1,6 @@
 package se.skorup.main.gui.objects;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
@@ -8,7 +9,16 @@ import java.awt.Graphics2D;
 public class TextBox
 {
     /** The text of the TextBox. */
-    private String text;
+    private final String text;
+
+    /** The x-position of the text box. */
+    private final int x;
+
+    /** The y-position of the text box. */
+    private final int y;
+
+    /** The color of the text box. */
+    private final Color c;
 
     /** The graphics object drawing. */
     private final Graphics2D g;
@@ -18,27 +28,37 @@ public class TextBox
 
     /**
      * Creates a new TextBox.
-     *go
+     *
      * @param text the text of the text box.
      * @param g the graphics object drawing.
+     * @param x the x-position.
+     * @param y the y-position.
+     * @param c the default color of the TextBox.
      * */
-    public TextBox(String text, Graphics2D g)
+    public TextBox(String text, Graphics2D g, int x, int y, Color c)
     {
         this.text = text;
         this.g = g;
+        this.x = x;
+        this.y = y;
+        this.c = c;
     }
 
     /**
      * Draws the text.
      * */
-    public void draw(int x, int y)
+    public void draw()
     {
         var fm = g.getFontMetrics();
         var textWidth = fm.stringWidth(text);
         var textHeight = fm.getHeight();
+        var oldColor = g.getColor();
 
         hb = new HitBox(x, y, textWidth, textHeight);
+
+        g.setColor(c);
         g.drawString(text, x, y);
+        g.setColor(oldColor);
     }
 
     /**
@@ -63,16 +83,6 @@ public class TextBox
     public String getText()
     {
         return text;
-    }
-
-    /**
-     * Setter for: text.
-     *
-     * @param text the new text of the TextBox.
-     * */
-    public void setText(String text)
-    {
-        this.text = text;
     }
 
     /**

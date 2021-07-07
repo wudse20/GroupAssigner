@@ -1,9 +1,11 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.DebugMethods;
+import se.skorup.API.ImmutableArray;
 import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
+import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
@@ -20,8 +22,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Set;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,9 @@ public class SubgroupPanel extends JPanel implements Scrollable
 
     /** The current groups. */
     private Subgroups currentGroups;
+
+    /** The text boxes in the GUI. */
+    private ImmutableArray<TextBox> textBoxes;
 
     /**
      * Creates a new SubGroupPanel.
@@ -69,13 +74,14 @@ public class SubgroupPanel extends JPanel implements Scrollable
     }
 
     /**
-     * Draws the groups, if they're
-     * created.
+     * Prepares the drawing of the Groups.
      *
      * @param g the Graphics2D instance drawing.
      * */
-    private void drawGroups(Graphics2D g)
+    private void initGroups(Graphics2D g)
     {
+        var tb = new Vector<TextBox>();
+
         var groups =
             currentGroups.groups()
                          .stream()
@@ -99,9 +105,7 @@ public class SubgroupPanel extends JPanel implements Scrollable
             if (!currentGroups.isLeaderMode())
                 x -= fm.stringWidth(groupName) / 2;
 
-            g.setColor(Utils.GROUP_NAME_COLOR);
-            g.drawString(groupName, x, y);
-            g.setColor(Utils.FOREGROUND_COLOR);
+            tb.add(new TextBox(groupName, g, x, y, Utils.GROUP_NAME_COLOR));
 
             var gr = groups.get(i);
             for (var p : gr)
@@ -118,9 +122,11 @@ public class SubgroupPanel extends JPanel implements Scrollable
                     p.getName();
 
                 y += VERTICAL_SPACER / 5 + fm.getHeight();
-                g.drawString(name, x, y);
+                tb.add(new TextBox(name, g, x, y, Utils.FOREGROUND_COLOR));
             }
         }
+
+        textBoxes = ImmutableArray.fromList(tb);
     }
 
     /**
@@ -180,7 +186,7 @@ public class SubgroupPanel extends JPanel implements Scrollable
     /**
      * Draws the current group.
      * */
-    public void drawGroups()
+    public void initGroups()
     {
         this.revalidate();
         this.repaint();
@@ -207,7 +213,11 @@ public class SubgroupPanel extends JPanel implements Scrollable
         fm = g.getFontMetrics();
 
         if (currentGroups != null)
-            drawGroups(g);
+        {
+            initGroups(g);
+            textBoxes.forEach(TextBox::draw);
+//            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
+        }
     }
 
     @Override
