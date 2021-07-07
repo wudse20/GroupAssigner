@@ -1,5 +1,7 @@
 package se.skorup.main.gui.objects;
 
+import se.skorup.API.DebugMethods;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -45,9 +47,22 @@ public class TextBox
     }
 
     /**
-     * Draws the text.
+     * Draws the text, with the
+     * default color the object
+     * was instantiated with.
      * */
     public void draw()
+    {
+        draw(c);
+    }
+
+    /**
+     * Draws the text with the
+     * passed color.
+     *
+     * @param c the color the text will be drawn in.
+     * */
+    public void draw(Color c)
     {
         var fm = g.getFontMetrics();
         var textWidth = fm.stringWidth(text);
@@ -72,7 +87,12 @@ public class TextBox
      * */
     public boolean isCollision(int x, int y)
     {
-        return hb.isCollison(x, y);
+        var res = hb.isCollision(x, y);
+
+        if (res)
+            DebugMethods.log("Detected hit on %s".formatted(text), DebugMethods.LogType.DEBUG);
+
+        return res;
     }
 
     /**

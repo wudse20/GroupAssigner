@@ -33,8 +33,11 @@ public record HitBox(int x, int y, int width, int height)
      * @param x the x position.
      * @param y the y position.
      * */
-    public boolean isCollison(int x, int y)
+    public boolean isCollision(int x, int y)
     {
-        return (y >= this.y - this.height && y <= this.y) && (x <= this.x + this.width && x >= this.x);
+        return this.x + this.width >= x  &&
+               x >= this.x               &&
+               this.y + this.height >= y &&
+               this.y <= y;
     }
 }

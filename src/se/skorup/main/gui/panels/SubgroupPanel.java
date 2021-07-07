@@ -13,12 +13,15 @@ import se.skorup.main.objects.Subgroups;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * The panel that draws the SubGroups.
  * */
-public class SubgroupPanel extends JPanel implements Scrollable
+public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 {
     /** The vertical spacer. */
     private static final int VERTICAL_SPACER = 50;
@@ -71,6 +74,8 @@ public class SubgroupPanel extends JPanel implements Scrollable
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
+
+        this.addMouseListener(this);
     }
 
     /**
@@ -216,7 +221,7 @@ public class SubgroupPanel extends JPanel implements Scrollable
         {
             initGroups(g);
             textBoxes.forEach(TextBox::draw);
-//            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
+            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
         }
     }
 
@@ -267,4 +272,33 @@ public class SubgroupPanel extends JPanel implements Scrollable
     {
         return getPreferredSize().height <= getParent().getSize().height;
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        DebugMethods.log(
+            "Mouse clicked at: %d, %d".formatted(e.getX(), e.getY()),
+            DebugMethods.LogType.DEBUG
+        );
+
+        if (textBoxes != null)
+        {
+            var text = textBoxes.getFirstMatch(tb -> tb.isCollision(e.getX(), e.getY()));
+
+            if (text != null)
+                text.draw(Color.PINK);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }
