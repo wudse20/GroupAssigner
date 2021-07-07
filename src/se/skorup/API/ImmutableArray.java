@@ -387,6 +387,27 @@ public class ImmutableArray<E> implements ImmutableCollection<E>, Iterable<E>
         return null;
     }
 
+
+    /**
+     * Uses linear search to find the index
+     * of an element. It will return -1 if
+     * there are no matching element. This
+     * will find the first occurrence.
+     *
+     * @param e the item that's being searched for.
+     * @return the index of the if no such element
+     *         exists it will return -1
+     * */
+    @Override
+    public int indexOf(E e)
+    {
+        for (var i = 0; i < size(); i++)
+            if (elems[i].equals(e))
+                return i;
+
+        return -1;
+    }
+
     @Override
     public Iterator<E> iterator()
     {

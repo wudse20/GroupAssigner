@@ -773,4 +773,16 @@ public class ImmutableArrayTester
 
         assertEquals("Alexandra", arr.getFirstMatch(x -> x.length() == 9));
     }
+
+    /**
+     * Tests the indexOf method.
+     * */
+    @Test
+    public void testIndexOf()
+    {
+        var arr = new ImmutableArray<>("Anton", "Kalle", "Linnea", "Alexandra", "Sebastian");
+        assertEquals(-1, arr.indexOf(null));
+        assertEquals(-1, arr.indexOf("Jim"));
+        assertEquals(3, arr.indexOf("Alexandra"));
+    }
 }

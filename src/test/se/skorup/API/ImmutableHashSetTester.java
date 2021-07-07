@@ -429,4 +429,15 @@ public class ImmutableHashSetTester
 
         assertEquals("Alexandra", set.getFirstMatch(x -> x.length() == 9));
     }
+
+    /**
+     * Tests the indexOf method.
+     * */
+    @Test
+    public void testIndexOf()
+    {
+        var set = new ImmutableHashSet<>("APA", "KAKA", "LATTE");
+        assertEquals(-1, set.indexOf("APA"));
+        assertEquals(-1, set.indexOf("KROKODIL"));
+    }
 }

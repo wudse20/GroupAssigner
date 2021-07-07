@@ -193,4 +193,17 @@ public interface ImmutableCollection<E>
      *         return {@code null}.
      * */
     E getFirstMatch(Predicate<E> p);
+
+
+    /**
+     * Uses linear search to find the index
+     * of an element. It will return -1 if
+     * there are no matching element. This
+     * will find the first occurrence.
+     *
+     * @param e the item that's being searched for.
+     * @return the index of the if no such element
+     *         exists it will return -1
+     * */
+    int indexOf(E e);
 }

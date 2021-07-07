@@ -337,6 +337,20 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
         return null;
     }
 
+    /**
+     * THIS WILL ALWAYS RETURN -1,
+     * SINCE THERE'S NO INDICES IN
+     * THE SET.
+     *
+     * @param e {@link ImmutableCollection#indexOf}
+     * @return {@link ImmutableCollection#indexOf}
+     * */
+    @Override
+    public int indexOf(E e)
+    {
+        return -1;
+    }
+
     @Override
     public Iterator<E> iterator()
     {
