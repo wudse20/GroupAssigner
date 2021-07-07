@@ -1,5 +1,7 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
+import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.manager.GroupManager;
@@ -16,7 +18,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -102,8 +106,19 @@ public class SubgroupPanel extends JPanel implements Scrollable
             var gr = groups.get(i);
             for (var p : gr)
             {
+                var wishes =
+                    new ImmutableHashSet<>(
+                        currentGroups.groups().get(i)).intersection(
+                            Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet())
+                    ).size();
+
+                var name =
+                    currentGroups.isWishListMode() ?
+                    "%s (Önskningar: %d)".formatted(p.getName(), wishes) :
+                    p.getName();
+
                 y += VERTICAL_SPACER / 5 + fm.getHeight();
-                g.drawString(p.getName(), x, y);
+                g.drawString(name, x, y);
             }
         }
     }
@@ -127,6 +142,39 @@ public class SubgroupPanel extends JPanel implements Scrollable
 
         var max = Collections.max(currentGroups.groups().stream().map(Set::size).collect(Collectors.toList()));
         return VERTICAL_SPACER + VERTICAL_SPACER * ((groups.size() - 1 % groups.size()) / 2) * (max + 4);
+    }
+
+    /**
+     * Calculates the width of the panel.
+     *
+     * @return the width of the panel.
+     * */
+    private int width()
+    {
+        if (currentGroups == null)
+            return this.getWidth();
+
+        var groups =
+            currentGroups.groups()
+                .stream()
+                .map(x -> x.stream().map(gm::getPersonFromId))
+                .flatMap(x -> x.map(p -> currentGroups.isWishListMode() ? p.getName() + " (Önskningar: 10)" : p.getName()))
+                .collect(Collectors.toList());
+
+        groups.sort((s1, s2) -> Integer.compare(s2.length(), s1.length()));
+
+        var width = this.getWidth() / 4;
+
+        if (!currentGroups.isLeaderMode())
+            width -= fm.stringWidth("Grupp x") / 2;
+
+        DebugMethods.log(width, DebugMethods.LogType.DEBUG);
+        width += fm.stringWidth(groups.get(0)) * 3;
+
+        DebugMethods.log("Longest entry: %s".formatted(groups.get(0)), DebugMethods.LogType.DEBUG);
+        DebugMethods.log(width, DebugMethods.LogType.DEBUG);
+
+        return width;
     }
 
     /**
@@ -165,37 +213,37 @@ public class SubgroupPanel extends JPanel implements Scrollable
     @Override
     public Dimension getPreferredSize()
     {
-        return new Dimension(gf.getWidth(), height());
+        return new Dimension(width(), height());
     }
 
     @Override
     public Dimension getMinimumSize()
     {
-        return new Dimension(gf.getWidth(), height());
+        return new Dimension(width(), height());
     }
 
     @Override
     public Dimension getMaximumSize()
     {
-        return new Dimension(gf.getWidth(), height());
+        return new Dimension(width(), height());
     }
 
     @Override
     public Dimension getPreferredScrollableViewportSize()
     {
-        return new Dimension(gf.getWidth(), this.getHeight());
+        return new Dimension(this.getWidth(), this.getHeight());
     }
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
     {
-        return 32;
+        return 16;
     }
 
     @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
     {
-        return 32;
+        return 16;
     }
 
     @Override

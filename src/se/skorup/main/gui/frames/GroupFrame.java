@@ -271,7 +271,6 @@ public class GroupFrame extends JFrame
         scrLabelGroup.getViewport().setBackground(Utils.BACKGROUND_COLOR);
         scrLabelGroup.getViewport().setForeground(Utils.FOREGROUND_COLOR);
         scrLabelGroup.setBorder(BorderFactory.createEmptyBorder());
-        scrLabelGroup.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         btnToFile.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnToFile.setForeground(Utils.FOREGROUND_COLOR);
