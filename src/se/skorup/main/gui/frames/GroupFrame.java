@@ -343,6 +343,29 @@ public class GroupFrame extends JFrame
      * */
     private void saveLastGroup()
     {
+        var name =
+                JOptionPane.showInputDialog(
+                        this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+                );
+
+        if (name == null)
+            return;
+
+        while (name.trim().length() < 3)
+        {
+            JOptionPane.showMessageDialog(
+                    this, "Namnet måste vara minst tre tecken långt.",
+                    "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+
+            name = JOptionPane.showInputDialog(
+                    this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (name == null)
+                return;
+        }
+
         // If no groups error msg + return
         if (currentGroups == null)
         {
@@ -359,7 +382,7 @@ public class GroupFrame extends JFrame
         try
         {
             SerializationManager.createFileIfNotExists(new File(path));
-            SerializationManager.serializeObject(path, currentGroups);
+            SerializationManager.serializeObject(path, currentGroups.changeName(name));
 
             JOptionPane.showMessageDialog(
                 this, "Du har sparat undergruppen!",
@@ -536,29 +559,6 @@ public class GroupFrame extends JFrame
      * */
     private void generateGroups()
     {
-        var name =
-                JOptionPane.showInputDialog(
-                        this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
-                );
-
-        if (name == null)
-            return;
-
-        while (name.trim().length() < 3)
-        {
-            JOptionPane.showMessageDialog(
-                    this, "Namnet måste vara minst tre tecken långt.",
-                    "För kort namn!", JOptionPane.ERROR_MESSAGE
-            );
-
-            name = JOptionPane.showInputDialog(
-                    this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
-            );
-
-            if (name == null)
-                return;
-        }
-
         var gc = (GroupCreator) cbCreator.getSelectedItem();
         List<Set<Integer>> list = null; // Just to have initialized.
 
@@ -611,7 +611,7 @@ public class GroupFrame extends JFrame
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
             this.currentGroups = new Subgroups(
-                name, list, true,
+                null, list, true,
                 cbCreator.getSelectedItem() instanceof WishlistGroupCreator
             );
         }
@@ -666,7 +666,7 @@ public class GroupFrame extends JFrame
             }
 
             this.currentGroups = new Subgroups(
-                name, list, false,
+                null, list, false,
                 cbCreator.getSelectedItem() instanceof WishlistGroupCreator
             );
 
@@ -723,7 +723,7 @@ public class GroupFrame extends JFrame
             }
 
             this.currentGroups = new Subgroups(
-                name, list, false,
+                null, list, false,
                 cbCreator.getSelectedItem() instanceof WishlistGroupCreator
             );
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
@@ -784,7 +784,7 @@ public class GroupFrame extends JFrame
             }
 
             this.currentGroups = new Subgroups(
-                name, list, false,
+                null, list, false,
                 cbCreator.getSelectedItem() instanceof WishlistGroupCreator
             );
         }

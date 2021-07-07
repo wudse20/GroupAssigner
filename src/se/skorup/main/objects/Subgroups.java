@@ -14,4 +14,16 @@ import java.util.Set;
  *                       {@link se.skorup.main.groups.WishlistGroupCreator GroupCreator}.
  * */
 public record Subgroups(String name, List<Set<Integer>> groups, boolean isLeaderMode, boolean isWishListMode)
-        implements Serializable {}
+        implements Serializable
+{
+    /**
+     * Changes the name of the Subgroups.
+     *
+     * @param name the new name of the Subgroups.
+     * @return a new subgroups object with a new name.
+     * */
+    public Subgroups changeName(String name)
+    {
+        return new Subgroups(name, groups, isLeaderMode, isWishListMode);
+    }
+}
