@@ -20,10 +20,7 @@ public class TextBox
     private final int y;
 
     /** The color of the text box. */
-    private final Color c;
-
-    /** The graphics object drawing. */
-    private final Graphics2D g;
+    private Color c;
 
     /** The hit box of this text box. */
     private HitBox hb;
@@ -32,15 +29,13 @@ public class TextBox
      * Creates a new TextBox.
      *
      * @param text the text of the text box.
-     * @param g the graphics object drawing.
      * @param x the x-position.
      * @param y the y-position.
      * @param c the default color of the TextBox.
      * */
-    public TextBox(String text, Graphics2D g, int x, int y, Color c)
+    public TextBox(String text, int x, int y, Color c)
     {
         this.text = text;
-        this.g = g;
         this.x = x;
         this.y = y;
         this.c = c;
@@ -50,10 +45,12 @@ public class TextBox
      * Draws the text, with the
      * default color the object
      * was instantiated with.
+     *
+     * @param g the instance of the Graphics object drawing.
      * */
-    public void draw()
+    public void draw(Graphics2D g)
     {
-        draw(c);
+        draw(this.c, g);
     }
 
     /**
@@ -61,8 +58,9 @@ public class TextBox
      * passed color.
      *
      * @param c the color the text will be drawn in.
+     * @param g the instance of the Graphics object drawing.
      * */
-    public void draw(Color c)
+    public void draw(Color c, Graphics2D g)
     {
         var fm = g.getFontMetrics();
         var textWidth = fm.stringWidth(text);
@@ -113,5 +111,21 @@ public class TextBox
     public HitBox getHitBox()
     {
         return hb;
+    }
+
+    /**
+     * Setter for: color.
+     *
+     * @param c the new color.
+     * */
+    public void setColor(Color c)
+    {
+        this.c = c;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[text = " + text + ", color = " + c + "]";
     }
 }

@@ -85,6 +85,9 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
      * */
     private void initGroups(Graphics2D g)
     {
+        if (textBoxes != null)
+            return;
+
         var tb = new Vector<TextBox>();
 
         var groups =
@@ -110,7 +113,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             if (!currentGroups.isLeaderMode())
                 x -= fm.stringWidth(groupName) / 2;
 
-            tb.add(new TextBox(groupName, g, x, y, Utils.GROUP_NAME_COLOR));
+            tb.add(new TextBox(groupName, x, y, Utils.GROUP_NAME_COLOR));
 
             var gr = groups.get(i);
             for (var p : gr)
@@ -127,7 +130,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                     p.getName();
 
                 y += VERTICAL_SPACER / 5 + fm.getHeight();
-                tb.add(new TextBox(name, g, x, y, Utils.FOREGROUND_COLOR));
+                tb.add(new TextBox(name, x, y, Utils.FOREGROUND_COLOR));
             }
         }
 
@@ -193,6 +196,8 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
      * */
     public void initGroups()
     {
+        textBoxes = null;
+
         this.revalidate();
         this.repaint();
         gf.repaint();
@@ -210,17 +215,22 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     }
 
     @Override
-    public void paintComponent(Graphics gOld)
+    public void paintComponent(final Graphics gOld)
     {
         super.paintComponent(gOld);
+
         var g = (Graphics2D) gOld;
         g.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
         fm = g.getFontMetrics();
 
+        g.setColor(Utils.BACKGROUND_COLOR);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g.setColor(Color.WHITE);
+
         if (currentGroups != null)
         {
             initGroups(g);
-            textBoxes.forEach(TextBox::draw);
+            textBoxes.forEach(tb -> tb.draw(g));
             textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
         }
     }
@@ -292,7 +302,11 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             var text = textBoxes.getFirstMatch(tb -> tb.isCollision(e.getX(), e.getY()));
 
             if (text != null)
-                text.draw(Color.PINK);
+            {
+                text.setColor(Color.PINK);
+                repaint();
+            }
+
         }
     }
 
