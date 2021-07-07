@@ -123,9 +123,33 @@ public class TextBox
         this.c = c;
     }
 
+    /**
+     * Getter for: color.
+     *
+     * @return the current color.
+     * */
+    public Color getColor()
+    {
+        return this.c;
+    }
+
     @Override
     public String toString()
     {
         return "[text = " + text + ", color = " + c + "]";
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return text.hashCode() + c.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return o instanceof TextBox t &&
+               text.equals(t.text)    &&
+               c.equals(t.c);
     }
 }

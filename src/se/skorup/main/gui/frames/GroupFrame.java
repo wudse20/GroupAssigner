@@ -790,7 +790,7 @@ public class GroupFrame extends JFrame
         }
 
         sgp.setCurrentGroups(currentGroups);
-        sgp.initGroups();
+        sgp.drawGroups();
     }
 
     /**

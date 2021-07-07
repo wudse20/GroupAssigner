@@ -21,6 +21,12 @@ public class Utils
     /** The color for the group names. */
     public static final Color GROUP_NAME_COLOR = Color.RED;
 
+    /** The color used to show selection. */
+    public static final Color SELECTED_COLOR = Color.PINK;
+
+    /** The flashing color. */
+    public static final Color FLASH_COLOR = Color.BLUE;
+
     // About
     /** The version of the program. */
     public static final String VERSION = "0.2-INDEV";

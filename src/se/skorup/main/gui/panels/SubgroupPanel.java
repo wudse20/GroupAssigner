@@ -5,6 +5,7 @@ import se.skorup.API.ImmutableArray;
 import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
+import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
@@ -12,6 +13,7 @@ import se.skorup.main.objects.Subgroups;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
+import javax.swing.Timer;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,6 +22,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -51,6 +55,9 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
     /** The text boxes in the GUI. */
     private ImmutableArray<TextBox> textBoxes;
+
+    /** The timer used for flashing the boxes. */
+    private Timer t;
 
     /**
      * Creates a new SubGroupPanel.
@@ -130,7 +137,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                     p.getName();
 
                 y += VERTICAL_SPACER / 5 + fm.getHeight();
-                tb.add(new TextBox(name, x, y, Utils.FOREGROUND_COLOR));
+                tb.add(new PersonBox(name, x, y, Utils.FOREGROUND_COLOR, p.getId()));
             }
         }
 
@@ -192,9 +199,44 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     }
 
     /**
+     * Flashes the group boxed the person can
+     * be swapped into.
+     * */
+    private void flashGroupBoxes()
+    {
+        if (t != null)
+            t.stop();
+
+        final var tbs =
+            textBoxes.toList()
+                     .stream()
+                     .filter(x -> !(x instanceof PersonBox))
+                     .collect(Collectors.toList());
+
+        // No lambda since need to keep track of value.
+        t = new Timer(500, new ActionListener() {
+            /** The counter. */
+            private int counter = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (counter++ % 2 == 1)
+                    tbs.forEach(x -> x.setColor(Utils.FLASH_COLOR));
+                else
+                    tbs.forEach(x -> x.setColor(Utils.GROUP_NAME_COLOR));
+
+                repaint();
+            }
+        });
+
+        t.start();
+    }
+
+    /**
      * Draws the current group.
      * */
-    public void initGroups()
+    public void drawGroups()
     {
         textBoxes = null;
 
@@ -231,7 +273,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         {
             initGroups(g);
             textBoxes.forEach(tb -> tb.draw(g));
-            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
+//            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
         }
     }
 
@@ -301,12 +343,42 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         {
             var text = textBoxes.getFirstMatch(tb -> tb.isCollision(e.getX(), e.getY()));
 
-            if (text != null)
+            if (text instanceof PersonBox && !text.getColor().equals(Utils.SELECTED_COLOR)) // Name selected.
             {
-                text.setColor(Color.PINK);
+                // Resets previous selection.
+                textBoxes.forEach(tb -> {
+                    if (tb instanceof PersonBox)
+                        tb.setColor(Utils.FOREGROUND_COLOR);
+                    else
+                        tb.setColor(Utils.GROUP_NAME_COLOR);
+                });
+
+                text.setColor(Utils.SELECTED_COLOR);
+                flashGroupBoxes();
                 repaint();
             }
+            else if (text != null && text.getColor().equals(Utils.SELECTED_COLOR)) // Deselection
+            {
+                // Resets previous selection.
+                textBoxes.forEach(tb -> {
+                    if (tb instanceof PersonBox)
+                        tb.setColor(Utils.FOREGROUND_COLOR);
+                    else
+                        tb.setColor(Utils.GROUP_NAME_COLOR);
+                });
 
+                if (t != null)
+                    t.stop();
+
+                text.setColor(Utils.FOREGROUND_COLOR);
+
+                repaint();
+            }
+            else if (text != null) // Name selected.
+            {
+                if (t != null)
+                    t.stop();
+            }
         }
     }
 
