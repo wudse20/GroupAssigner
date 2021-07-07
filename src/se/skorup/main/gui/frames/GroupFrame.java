@@ -849,6 +849,16 @@ public class GroupFrame extends JFrame
         return this.currentGroups;
     }
 
+    /**
+     * Setter for: currentGroups.
+     *
+     * @param currentGroups the new set of groups.
+     * */
+    public void setCurrentGroups(Subgroups currentGroups)
+    {
+        this.currentGroups = currentGroups;
+    }
+
     @Override
     public void dispose()
     {

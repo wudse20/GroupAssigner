@@ -10,6 +10,7 @@ import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
+import se.skorup.main.objects.Tuple;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
@@ -29,6 +30,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -58,6 +60,9 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
     /** The timer used for flashing the boxes. */
     private Timer t;
+
+    /** The last tuple generated from the list. */
+    private Tuple lastTuple;
 
     /**
      * Creates a new SubGroupPanel.
@@ -234,6 +239,119 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     }
 
     /**
+     * Converts a TextBox to a tuple,
+     * where the first index is the
+     * group index and the second index
+     * is the index in the the group. <br><br>
+     *
+     * If there are no corresponding index then
+     * it will return (-1; -1). <br><br>
+     *
+     * Format: (group number, index in group)
+     *
+     * @param tb the text box to be converted.
+     * @return a tuple, where the first index is the
+     *         group index and the second index
+     *         is the index in the the group. If there
+     *         are no corresponding index then it will
+     *         return (-1; -1).
+     * */
+    private Tuple textBoxToPerson(TextBox tb)
+    {
+        var index = textBoxes.indexOf(tb);
+
+        // If there are no such text box it
+        // will return (-1; -1).
+        if (index == -1)
+            return new Tuple(-1, -1);
+
+        var group = 0;
+        var i = 0;
+        while (index >= 0)
+        {
+            var text = textBoxes.get(i++);
+            if (!(text instanceof PersonBox))
+                group++;
+
+            index--;
+        }
+
+        return new Tuple(
+            group - 1,
+            currentGroups.groups()
+                         .stream()
+                         .map(ArrayList::new)
+                         .collect(Collectors.toList())
+                         .get(group - 1)
+                         .indexOf(((PersonBox) tb).getId())
+        );
+    }
+
+    /**
+     * Gets the selected index of the group of
+     * the provided text box. If the text box
+     * cannot be found it will return -1.
+     *
+     * @param tb the text box to convert the group
+     *           number to.
+     * @return the index of the group number. -1 iff
+     *         the text box cannot be found.
+     * */
+    private int getSelectedGroup(TextBox tb)
+    {
+        var index = textBoxes.indexOf(tb);
+
+        // If there are no such text box it
+        // will return (-1; -1).
+        if (index == -1)
+            return -1;
+
+        var group = 0;
+        var i = 0;
+        while (index >= 0)
+        {
+            var text = textBoxes.get(i++);
+            if (!(text instanceof PersonBox))
+                group++;
+
+            index--;
+        }
+
+        return group - 1;
+    }
+
+    /**
+     * Updates the provided group with the
+     * member from the lastTuple.
+     *
+     * @param groupIndex The group index of the current person.
+     * */
+    private void updateGroups(int groupIndex)
+    {
+        // If null => do nothing.
+        if (lastTuple == null)
+            return;
+
+        // No need to do anything if the group
+        // isn't changed.
+        if (lastTuple.a() == groupIndex)
+            return;
+
+        var groups = currentGroups.groups().stream().map(ArrayList::new).collect(Collectors.toList());
+        int id = groups.get(lastTuple.a()).remove(lastTuple.b());
+        groups.get(groupIndex).add(id);
+
+        var sg = new Subgroups(
+            currentGroups.name(), groups.stream().map(HashSet::new).collect(Collectors.toList()),
+            currentGroups.isLeaderMode(), currentGroups.isWishListMode()
+        );
+
+        currentGroups = sg;
+        gf.setCurrentGroups(sg);
+        drawGroups();
+    }
+
+    /**
      * Draws the current group.
      * */
     public void drawGroups()
@@ -351,8 +469,11 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                         tb.setColor(Utils.FOREGROUND_COLOR);
                     else
                         tb.setColor(Utils.GROUP_NAME_COLOR);
+
+                    repaint();
                 });
 
+                lastTuple = textBoxToPerson(text);
                 text.setColor(Utils.SELECTED_COLOR);
                 flashGroupBoxes();
                 repaint();
@@ -365,19 +486,43 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                         tb.setColor(Utils.FOREGROUND_COLOR);
                     else
                         tb.setColor(Utils.GROUP_NAME_COLOR);
+
+                    repaint();
                 });
 
                 if (t != null)
                     t.stop();
 
                 text.setColor(Utils.FOREGROUND_COLOR);
-
+                lastTuple = null;
                 repaint();
             }
             else if (text != null) // Name selected.
             {
+                // Resets previous selection.
+                textBoxes.forEach(tb -> {
+                    if (tb instanceof PersonBox)
+                        tb.setColor(Utils.FOREGROUND_COLOR);
+                    else
+                        tb.setColor(Utils.GROUP_NAME_COLOR);
+
+                    repaint();
+                });
+
                 if (t != null)
                     t.stop();
+
+                var groupIndex = getSelectedGroup(text);
+
+                DebugMethods.log(
+                    "Detected click on group index %d".formatted(groupIndex),
+                    DebugMethods.LogType.DEBUG
+                );
+
+                updateGroups(groupIndex);
+                lastTuple = null;
+
+                repaint();
             }
         }
     }
