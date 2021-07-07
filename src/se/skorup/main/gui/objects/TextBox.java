@@ -54,7 +54,7 @@ public class TextBox
         var textHeight = fm.getHeight();
         var oldColor = g.getColor();
 
-        hb = new HitBox(x, y, textWidth, textHeight);
+        hb = new HitBox(x, y - textHeight, textWidth, textHeight);
 
         g.setColor(c);
         g.drawString(text, x, y);
