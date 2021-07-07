@@ -99,6 +99,7 @@ public class GroupFrame extends JFrame
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
 
     /** The label for displaying the groups.*/
+    @Deprecated(forRemoval = true)
     private final JLabel lblGroup = new JLabel("");
 
     /** The button group for the settings. */
@@ -169,6 +170,9 @@ public class GroupFrame extends JFrame
     /** The scroll pane for the result. */
     private final JScrollPane scrLabelGroup /* = new JScrollPane(pLabelContainer); */;
 
+    /** The SubgroupPanel. */
+    private final SubgroupPanel sgp;
+
     /**
      * Creates a new group frame.
      *
@@ -181,7 +185,8 @@ public class GroupFrame extends JFrame
         this.randomCreator = new RandomGroupCreator(gm);
         this.wishlistCreator = new WishlistGroupCreator(gm);
         this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), gm.getName());
-        this.scrLabelGroup = new JScrollPane(new SubgroupPanel(this, gm));
+        this.sgp = new SubgroupPanel(this, gm);
+        this.scrLabelGroup = new JScrollPane(sgp);
 
         this.setProperties();
         this.addComponents();
@@ -266,6 +271,7 @@ public class GroupFrame extends JFrame
         scrLabelGroup.getViewport().setBackground(Utils.BACKGROUND_COLOR);
         scrLabelGroup.getViewport().setForeground(Utils.FOREGROUND_COLOR);
         scrLabelGroup.setBorder(BorderFactory.createEmptyBorder());
+        scrLabelGroup.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         btnToFile.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnToFile.setForeground(Utils.FOREGROUND_COLOR);
@@ -614,8 +620,10 @@ public class GroupFrame extends JFrame
             }
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
-            this.currentGroups = new Subgroups(name, list, true);
-            return;
+            this.currentGroups = new Subgroups(
+                name, list, true,
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+            );
         }
         else if (pNbrGroups.isRadioSelected())
         {
@@ -666,6 +674,11 @@ public class GroupFrame extends JFrame
 
                 return;
             }
+
+            this.currentGroups = new Subgroups(
+                name, list, false,
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+            );
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
         }
@@ -719,6 +732,10 @@ public class GroupFrame extends JFrame
                 return;
             }
 
+            this.currentGroups = new Subgroups(
+                name, list, false,
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+            );
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
         }
         else
@@ -775,9 +792,15 @@ public class GroupFrame extends JFrame
 
                 return;
             }
+
+            this.currentGroups = new Subgroups(
+                name, list, false,
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+            );
         }
 
-        this.currentGroups = new Subgroups(name, list, false);
+        sgp.setCurrentGroups(currentGroups);
+        sgp.drawGroups();
     }
 
     /**

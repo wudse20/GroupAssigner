@@ -3,17 +3,22 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The panel that draws the SubGroups.
@@ -21,7 +26,7 @@ import java.awt.Rectangle;
 public class SubgroupPanel extends JPanel implements Scrollable
 {
     /** The vertical spacer. */
-    private static final int VERTICAL_SPACER = 25;
+    private static final int VERTICAL_SPACER = 50;
 
     /** The instance of the GroupFrame. */
     private final GroupFrame gf;
@@ -62,10 +67,77 @@ public class SubgroupPanel extends JPanel implements Scrollable
     /**
      * Draws the groups, if they're
      * created.
+     *
+     * @param g the Graphics2D instance drawing.
+     * */
+    private void drawGroups(Graphics2D g)
+    {
+        var groups =
+            currentGroups.groups()
+                         .stream()
+                         .map(x -> x.stream().map(gm::getPersonFromId))
+                         .map(x -> x.collect(Collectors.toList()))
+                         .collect(Collectors.toList());
+
+        var max = Collections.max(currentGroups.groups().stream().map(Set::size).collect(Collectors.toList()));
+        var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
+
+        for (var i = 0; i < groups.size(); i++)
+        {
+            var x = (i % 2 == 0) ? this.getWidth() / 4 : 3 * (this.getWidth() / 4);
+            var y = VERTICAL_SPACER + VERTICAL_SPACER * (i % groups.size() / 2) * (max + 2);
+
+            var groupName =
+                currentGroups.isLeaderMode() ?
+                leaders.remove(0).getName() :
+                "Grupp %d:".formatted(i + 1);
+
+            if (!currentGroups.isLeaderMode())
+                x -= fm.stringWidth(groupName) / 2;
+
+            g.setColor(Utils.GROUP_NAME_COLOR);
+            g.drawString(groupName, x, y);
+            g.setColor(Utils.FOREGROUND_COLOR);
+
+            var gr = groups.get(i);
+            for (var p : gr)
+            {
+                y += VERTICAL_SPACER / 5 + fm.getHeight();
+                g.drawString(p.getName(), x, y);
+            }
+        }
+    }
+
+    /**
+     * Calculates the height of the panel.
+     *
+     * @return the height of the panel.
+     * */
+    private int height()
+    {
+        if (currentGroups == null)
+            return this.getHeight();
+
+        var groups =
+                currentGroups.groups()
+                        .stream()
+                        .map(x -> x.stream().map(gm::getPersonFromId))
+                        .map(x -> x.collect(Collectors.toList()))
+                        .collect(Collectors.toList());
+
+        var max = Collections.max(currentGroups.groups().stream().map(Set::size).collect(Collectors.toList()));
+        return VERTICAL_SPACER + VERTICAL_SPACER * ((groups.size() - 1 % groups.size()) / 2) * (max + 4);
+    }
+
+    /**
+     * Draws the current group.
      * */
     public void drawGroups()
     {
-
+        this.revalidate();
+        this.repaint();
+        gf.repaint();
+        gf.revalidate();
     }
 
     /**
@@ -81,49 +153,49 @@ public class SubgroupPanel extends JPanel implements Scrollable
     @Override
     public void paintComponent(Graphics gOld)
     {
+        super.paintComponent(gOld);
         var g = (Graphics2D) gOld;
+        g.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
         fm = g.getFontMetrics();
 
-        g.setColor(Color.GREEN);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        if (currentGroups != null)
+            drawGroups(g);
     }
 
     @Override
     public Dimension getPreferredSize()
     {
-        var height =
-            (currentGroups != null ? currentGroups.groups().size() : 2) / 2 *
-            ((currentGroups != null) ? currentGroups.groups().get(0).size() : 5) *
-            ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
-        return new Dimension(512, height);
+        return new Dimension(gf.getWidth(), height());
     }
 
     @Override
     public Dimension getMinimumSize()
     {
-        var height =
-            (currentGroups != null ? currentGroups.groups().size() : 2) / 2 *
-            ((currentGroups != null) ? currentGroups.groups().get(0).size() : 5) *
-            ((fm != null ? fm.getHeight() : 0) + VERTICAL_SPACER);
-        return new Dimension(512, height);
+        return new Dimension(gf.getWidth(), height());
+    }
+
+    @Override
+    public Dimension getMaximumSize()
+    {
+        return new Dimension(gf.getWidth(), height());
     }
 
     @Override
     public Dimension getPreferredScrollableViewportSize()
     {
-        return new Dimension(512, 256);
+        return new Dimension(gf.getWidth(), this.getHeight());
     }
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
     {
-        return 128;
+        return 32;
     }
 
     @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
     {
-        return 128;
+        return 32;
     }
 
     @Override

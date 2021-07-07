@@ -18,6 +18,9 @@ public class Utils
     /** The foreground color. */
     public static final Color FOREGROUND_COLOR = (Math.random() < 0.01) ? new Color(156, 95, 9) : Color.WHITE;
 
+    /** The color for the group names. */
+    public static final Color GROUP_NAME_COLOR = Color.RED;
+
     // About
     /** The version of the program. */
     public static final String VERSION = "0.2-INDEV";
