@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 public class TextBox
 {
     /** The text of the TextBox. */
-    private final String text;
+    private String text;
 
     /** The x-position of the text box. */
     private final int x;
@@ -101,6 +101,16 @@ public class TextBox
     public String getText()
     {
         return text;
+    }
+
+    /**
+     * Setter for: text
+     *
+     * @param text the new text of the TextBox.
+     * */
+    public void setText(String text)
+    {
+        this.text = text;
     }
 
     /**

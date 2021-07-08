@@ -12,6 +12,7 @@ import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 import se.skorup.main.objects.Tuple;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.Timer;
@@ -351,6 +352,42 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     }
 
     /**
+     * Changes the label of the TextBox,
+     * i.e. the text of the TextBox.
+     *
+     * @param tb the text box to be affected.
+     * */
+    private void changeLabel(TextBox tb)
+    {
+        var input = JOptionPane.showInputDialog(
+            gf, "Vilken är den nya ettiketen?",
+            "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
+        );
+
+        if (input == null)
+            return;
+
+        while (input.trim().length() < 3)
+        {
+            JOptionPane.showMessageDialog(
+                gf, "Ettiekten måste vara minst tre tecken lång.",
+                "För kort!", JOptionPane.ERROR_MESSAGE
+            );
+
+            input = JOptionPane.showInputDialog(
+                gf, "Vilken är den nya ettiketen?",
+                "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (input == null)
+                return;
+        }
+
+        tb.setText(input);
+        repaint();
+    }
+
+    /**
      * Draws the current group.
      * */
     public void drawGroups()
@@ -498,6 +535,13 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             }
             else if (text != null) // Name selected.
             {
+                // To change the label.
+                if (lastTuple == null)
+                {
+                    changeLabel(text);
+                    return;
+                }
+
                 // Resets previous selection.
                 textBoxes.forEach(tb -> {
                     if (tb instanceof PersonBox)
