@@ -167,7 +167,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                         .collect(Collectors.toList());
 
         var max = Collections.max(currentGroups.groups().stream().map(Set::size).collect(Collectors.toList()));
-        return VERTICAL_SPACER + VERTICAL_SPACER * ((groups.size() - 1 % groups.size()) / 2) * (max + 4);
+        return VERTICAL_SPACER + VERTICAL_SPACER * ((groups.size() - 1 % groups.size()) / 2) * (max + 10);
     }
 
     /**
@@ -348,7 +348,6 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
         currentGroups = sg;
         gf.setCurrentGroups(sg);
-        drawGroups();
     }
 
     /**
@@ -522,7 +521,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                 updateGroups(groupIndex);
                 lastTuple = null;
 
-                repaint();
+                drawGroups();
             }
         }
     }
