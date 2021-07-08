@@ -13,9 +13,13 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -129,10 +133,19 @@ public class ButtonPanel extends JPanel implements ActionListener
         }
         else if (cmd.equals(Buttons.HELP.toString()))
         {
-            JOptionPane.showMessageDialog(
-                this, "Not Yet Implemented",
-                "Not Yet Implemented", JOptionPane.ERROR_MESSAGE
-            );
+            try
+            {
+                Desktop.getDesktop().browse(new URI("https://www.help.skorup.se/"));
+            }
+            catch (IOException | URISyntaxException ex)
+            {
+                ex.printStackTrace();
+
+                JOptionPane.showMessageDialog(
+                    mf, "Kunde inte öppna webläsaren!\nFel: %s".formatted(ex),
+                    "Kunde inte öppna webläsaren!", JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
         else if (cmd.equals(Buttons.CREATE_GROUPS.toString()))
         {
