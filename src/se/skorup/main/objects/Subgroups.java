@@ -12,9 +12,12 @@ import java.util.Set;
  * @param isLeaderMode if {@code true} the group, was paired with the leaders.
  * @param isWishListMode if {@code true} the groups where generated using this
  *                       {@link se.skorup.main.groups.WishlistGroupCreator GroupCreator}.
+ * @param labels the labels of the groups.
  * */
-public record Subgroups(String name, List<Set<Integer>> groups, boolean isLeaderMode, boolean isWishListMode)
-        implements Serializable
+public record Subgroups(
+        String name, List<Set<Integer>> groups,
+        boolean isLeaderMode, boolean isWishListMode,
+        List<String> labels) implements Serializable
 {
     /**
      * Changes the name of the Subgroups.
@@ -24,6 +27,6 @@ public record Subgroups(String name, List<Set<Integer>> groups, boolean isLeader
      * */
     public Subgroups changeName(String name)
     {
-        return new Subgroups(name, groups, isLeaderMode, isWishListMode);
+        return new Subgroups(name, groups, isLeaderMode, isWishListMode, labels);
     }
 }

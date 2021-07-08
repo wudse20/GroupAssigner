@@ -612,7 +612,7 @@ public class GroupFrame extends JFrame
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
             this.currentGroups = new Subgroups(
                 null, list, true,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
             );
         }
         else if (pNbrGroups.isRadioSelected())
@@ -667,7 +667,7 @@ public class GroupFrame extends JFrame
 
             this.currentGroups = new Subgroups(
                 null, list, false,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
             );
 
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
@@ -724,7 +724,7 @@ public class GroupFrame extends JFrame
 
             this.currentGroups = new Subgroups(
                 null, list, false,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
             );
             DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
         }
@@ -785,7 +785,7 @@ public class GroupFrame extends JFrame
 
             this.currentGroups = new Subgroups(
                 null, list, false,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator
+                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
             );
         }
 

@@ -93,10 +93,8 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
     /**
      * Prepares the drawing of the Groups.
-     *
-     * @param g the Graphics2D instance drawing.
-     * */
-    private void initGroups(Graphics2D g)
+     *  */
+    private void initGroups()
     {
         if (textBoxes != null)
             return;
@@ -118,13 +116,30 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             var x = (i % 2 == 0) ? this.getWidth() / 4 : 3 * (this.getWidth() / 4);
             var y = VERTICAL_SPACER + VERTICAL_SPACER * (i % groups.size() / 2) * (max + 2);
 
-            var groupName =
-                currentGroups.isLeaderMode() ?
-                leaders.remove(0).getName() :
-                "Grupp %d:".formatted(i + 1);
+            String groupName = "";
+            if (currentGroups.labels().size() == 0)
+            {
+                groupName = currentGroups.isLeaderMode() ?
+                            leaders.remove(0).getName() :
+                            "Grupp %d:".formatted(i + 1);
 
-            if (!currentGroups.isLeaderMode())
-                x -= fm.stringWidth(groupName) / 2;
+                currentGroups.labels().add(groupName);
+            }
+            else
+            {
+                try
+                {
+                    groupName = currentGroups.labels().get(i);
+                }
+                catch (IndexOutOfBoundsException e)
+                {
+                    groupName = currentGroups.isLeaderMode() ?
+                            leaders.remove(0).getName() :
+                            "Grupp %d:".formatted(i + 1);
+
+                    currentGroups.labels().add(groupName);
+                }
+            }
 
             tb.add(new TextBox(groupName, x, y, Utils.GROUP_NAME_COLOR));
 
@@ -344,7 +359,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
         var sg = new Subgroups(
             currentGroups.name(), groups.stream().map(HashSet::new).collect(Collectors.toList()),
-            currentGroups.isLeaderMode(), currentGroups.isWishListMode()
+            currentGroups.isLeaderMode(), currentGroups.isWishListMode(), currentGroups.labels()
         );
 
         currentGroups = sg;
@@ -383,6 +398,12 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                 return;
         }
 
+        // Updates the groups.
+        var groupIndex = getSelectedGroup(tb);
+        currentGroups.labels().remove(groupIndex);
+        currentGroups.labels().add(groupIndex, input);
+
+        // Updates the labels in the GUI.s
         tb.setText(input);
         repaint();
     }
@@ -425,7 +446,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
         if (currentGroups != null)
         {
-            initGroups(g);
+            initGroups();
             textBoxes.forEach(tb -> tb.draw(g));
 //            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
         }
