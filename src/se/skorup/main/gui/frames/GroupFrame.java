@@ -506,11 +506,29 @@ public class GroupFrame extends JFrame
         // Fist the overview
         for (var i = 0; i < groups.size(); i++)
         {
-            canvas.append(
-                "%s:\n"
-                .formatted(
-                    currentGroups.isLeaderMode() ? leaders.remove(0).getName() : "Grupp %d".formatted(i + 1)
-            ));
+            if (currentGroups.labels().size() == 0)
+            {
+                canvas.append(
+                    "%s:\n".formatted(
+                        currentGroups.isLeaderMode() ? leaders.remove(0).getName() : "Grupp %d".formatted(i + 1)
+                ));
+            }
+            else
+            {
+                try
+                {
+                    canvas.append(currentGroups.labels().get(i) + '\n');
+                }
+                catch (IndexOutOfBoundsException e)
+                {
+                    canvas.append(
+                        "%s:\n".formatted(
+                            currentGroups.isLeaderMode() ?
+                            leaders.remove(0).getName() :
+                            "Grupp %d".formatted(i + 1)
+                    ));
+                }
+            }
 
             for (var p : groups.get(i))
                 canvas.append("\t%s\n".formatted(p.getName()));
