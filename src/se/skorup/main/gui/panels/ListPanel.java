@@ -19,6 +19,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -319,50 +320,62 @@ public class ListPanel extends JPanel implements ActionListener
 
         if (cmd.equals(Buttons.ADD.toString()))
         {
-            var index = listNotAdded.getSelectedIndex();
-            DebugMethods.log("ADD, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
+            // Needs boxing to be able to sort with custom comparator and not the natural ordering.
+            var indices = Arrays.stream(listNotAdded.getSelectedIndices()).boxed().toArray(Integer[]::new);
+            Arrays.sort(indices, (i1, i2) -> Integer.compare(i2, i1));
 
-            if (index != -1 && modelNotAdded.getSize() != 0)
+            for (var index : indices)
             {
-                var p = modelNotAdded.getElementAt(index);
+                DebugMethods.log("ADD, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
 
-                added.add(p);
-                notAdded.remove(p);
+                if (index != -1 && modelNotAdded.getSize() != 0)
+                {
+                    var p = modelNotAdded.getElementAt(index);
 
-                modelAdded.addItem(p);
-                modelNotAdded.removeItem(p);
+                    added.add(p);
+                    notAdded.remove(p);
 
-                listAdded.clearSelection();
-                listNotAdded.clearSelection();
+                    modelAdded.addItem(p);
+                    modelNotAdded.removeItem(p);
 
-                // Invokes the callbacks.
-                callbacks.forEach(ActionCallback::callback);
+                    listAdded.clearSelection();
+                    listNotAdded.clearSelection();
 
-                DebugMethods.log("Adding person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+                    // Invokes the callbacks.
+                    callbacks.forEach(ActionCallback::callback);
+
+                    DebugMethods.log("Adding person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+                }
             }
         }
         else
         {
-            var index = listAdded.getSelectedIndex();
-            DebugMethods.log("REMOVE, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
+            // Needs boxing to be able to sort with custom comparator and not the natural ordering.
+            var indices = Arrays.stream(listAdded.getSelectedIndices()).boxed().toArray(Integer[]::new);
+            Arrays.sort(indices, (i1, i2) -> Integer.compare(i2, i1));
 
-            if (index != -1 && modelAdded.getSize() != 0)
+            for (var index : indices)
             {
-                var p = modelAdded.getElementAt(index);
+                DebugMethods.log("REMOVE, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
 
-                notAdded.add(p);
-                added.remove(p);
+                if (index != -1 && modelAdded.getSize() != 0)
+                {
+                    var p = modelAdded.getElementAt(index);
 
-                modelNotAdded.addItem(p);
-                modelAdded.removeItem(p);
+                    notAdded.add(p);
+                    added.remove(p);
 
-                listAdded.clearSelection();
-                listNotAdded.clearSelection();
+                    modelNotAdded.addItem(p);
+                    modelAdded.removeItem(p);
 
-                // Invokes the callbacks.
-                callbacks.forEach(ActionCallback::callback);
+                    listAdded.clearSelection();
+                    listNotAdded.clearSelection();
 
-                DebugMethods.log("Removing person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+                    // Invokes the callbacks.
+                    callbacks.forEach(ActionCallback::callback);
+
+                    DebugMethods.log("Removing person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+                }
             }
         }
     }
