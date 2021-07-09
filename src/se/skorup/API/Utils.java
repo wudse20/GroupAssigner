@@ -54,7 +54,7 @@ public class Utils
         else
         {
             DebugMethods.log("Is not windows", DebugMethods.LogType.DEBUG);
-            return "./.group_assigner";
+            return "./.group_assigner/";
         }
     }
 }
