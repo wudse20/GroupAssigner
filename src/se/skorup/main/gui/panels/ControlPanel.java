@@ -180,6 +180,16 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         }
         else if (cmd.equals(Buttons.DELETE.toString()))
         {
+            if (mf.getCurrentGroup() == null)
+            {
+                JOptionPane.showMessageDialog(
+                    mf, "Det finns inga grupper att tabort",
+                    "Inga grupper!", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
             var input =
                 JOptionPane.showConfirmDialog(
                     mf, "Är du säker på att du vill tabort gruppen?",
