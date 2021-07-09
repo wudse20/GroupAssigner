@@ -190,6 +190,15 @@ public class ButtonPanel extends JPanel implements ActionListener
         }
         else if (cmd.equals(Buttons.SIZES.toString()))
         {
+            if (mf.getCurrentGroup() == null)
+            {
+                JOptionPane.showMessageDialog(
+                    mf, "Det finns inga grupper",
+                    "Inga grupper!", JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
             var size = mf.getCurrentGroup().getMemberCountOfRole(Person.Role.CANDIDATE);
             var res = new ArrayList<Integer>();
 
