@@ -548,6 +548,7 @@ public class GroupFrame extends JFrame
         catch (PrinterException e)
         {
             DebugMethods.log(e, DebugMethods.LogType.ERROR);
+            return;
         }
 
         // Then print the big group signs.
@@ -565,6 +566,7 @@ public class GroupFrame extends JFrame
             catch (PrinterException e)
             {
                 DebugMethods.log(e, DebugMethods.LogType.ERROR);
+                return;
             }
         }
     }
