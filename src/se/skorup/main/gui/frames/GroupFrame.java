@@ -334,6 +334,8 @@ public class GroupFrame extends JFrame
                 }
 
                 currentGroups = sg;
+                sgp.setCurrentGroups(sg);
+                sgp.drawGroups();
             });
         });
     }
@@ -376,6 +378,9 @@ public class GroupFrame extends JFrame
 
             return;
         }
+
+        currentGroups = currentGroups.changeName(name);
+        sgp.setCurrentGroups(currentGroups);
 
         var path = "%s%s".formatted(BASE_GROUP_PATH, "%s.data".formatted(currentGroups.name()));
 
