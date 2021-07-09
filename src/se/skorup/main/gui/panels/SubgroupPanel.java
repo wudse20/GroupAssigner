@@ -375,7 +375,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     private void changeLabel(TextBox tb)
     {
         var input = JOptionPane.showInputDialog(
-            gf, "Vilken är den nya ettiketen?",
+            gf, "Vilken är den nya ettiketten?",
             "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
         );
 
@@ -390,7 +390,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             );
 
             input = JOptionPane.showInputDialog(
-                gf, "Vilken är den nya ettiketen?",
+                gf, "Vilken är den nya ettiketten?",
                 "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
             );
 
