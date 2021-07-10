@@ -333,6 +333,11 @@ public class GroupFrame extends JFrame
                     return;
                 }
 
+                if (sg.isWishListMode())
+                    cbCreator.setSelectedItem(wishlistCreator);
+                else
+                    cbCreator.setSelectedItem(randomCreator);
+
                 currentGroups = sg;
                 sgp.setCurrentGroups(sg);
                 sgp.drawGroups();

@@ -269,4 +269,17 @@ public class WishlistGroupCreator implements GroupCreator
     {
         return "Skapa grupper efter önskelista";
     }
+
+    @Override
+    public int hashCode()
+    {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return o instanceof WishlistGroupCreator gc &&
+               gc.toString().equals(gc.toString());
+    }
 }

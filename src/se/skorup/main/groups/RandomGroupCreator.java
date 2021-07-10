@@ -175,4 +175,17 @@ public class RandomGroupCreator implements GroupCreator
     {
         return "Slumpmässig grupp";
     }
+
+    @Override
+    public int hashCode()
+    {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return o instanceof RandomGroupCreator gc &&
+                gc.toString().equals(gc.toString());
+    }
 }
