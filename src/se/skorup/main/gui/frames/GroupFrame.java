@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -241,7 +242,7 @@ public class GroupFrame extends JFrame
 
         btnCreate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCreate.setForeground(Utils.FOREGROUND_COLOR);
-        btnCreate.addActionListener((e) -> generateGroups());
+        btnCreate.addActionListener((e) -> waitCursorAction(this::generateGroups));
 
         btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnPrint.setForeground(Utils.FOREGROUND_COLOR);
@@ -582,6 +583,23 @@ public class GroupFrame extends JFrame
     private void invokeCallbacks()
     {
         callbacks.forEach(ActionCallback::callback);
+    }
+
+    /**
+     * Runs an action with the spiny, spiny
+     * cursor.
+     *
+     * @param r the action to be ran.
+     * */
+    private void waitCursorAction(Runnable r)
+    {
+        for (var c : this.getComponents())
+            c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        r.run();
+
+        for (var c : this.getComponents())
+            c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     /**
