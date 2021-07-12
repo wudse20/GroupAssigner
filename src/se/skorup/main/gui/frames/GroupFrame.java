@@ -44,6 +44,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -603,240 +604,133 @@ public class GroupFrame extends JFrame
     }
 
     /**
+     * Gets the user input from the program,
+     * to determine sizes.
+     *
+     * @return a list containing the sizes of
+     *         the groups.
+     * */
+    private List<Integer> getUserInput()
+    {
+        try
+        {
+            // Leader mode
+            if (pLeaders.isRadioSelected())
+                return Collections.singletonList(gm.getAllOfRoll(Person.Role.LEADER).size());
+
+            // Number of groups mode
+            if (pNbrGroups.isRadioSelected())
+                return Collections.singletonList(Integer.parseInt(pNbrGroups.getTextFieldData()));
+
+            // Number of members mode
+            if (pNbrMembers.isRadioSelected())
+                return Collections.singletonList(Integer.parseInt(pNbrMembers.getTextFieldData()));
+
+            // Different sizes mode.
+            return Arrays.stream(pDifferentSizes.getTextFieldData().split(",")) // Splitting
+                    .map(String::trim) // Trimming
+                    .map(Integer::parseInt) // Parsing
+                    .collect(Collectors.toList()); // Convert stream into list.
+        }
+        catch (NumberFormatException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.DEBUG);
+
+            JOptionPane.showMessageDialog(
+                    this, "Felaktig indata: %s".formatted(e.getLocalizedMessage()),
+                    "Felaktig indata", JOptionPane.ERROR_MESSAGE
+            );
+
+            return null;
+        }
+    }
+
+    /**
+     * Does the actual group generation.
+     *
+     * @param gc the group creator in use.
+     * @param sizes the sizes of the groups.
+     * @return the generated groups.
+     * */
+    private List<Set<Integer>> createGroups(GroupCreator gc, List<Integer> sizes)
+    {
+        try
+        {
+            if (pLeaders.isRadioSelected())
+                return tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup((short) ((int) sizes.get(0)), boxOverflow.isSelected());
+                });
+
+            if (pNbrMembers.isRadioSelected())
+                return tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup((byte) ((int) sizes.get(0)), boxOverflow.isSelected());
+                });
+
+            if (pNbrGroups.isRadioSelected())
+            {
+                return tryGenerateGroup(() -> {
+                    assert gc != null;
+                    return gc.generateGroup((short) ((int) sizes.get(0)), boxOverflow.isSelected());
+                });
+            }
+
+            return tryGenerateGroup(() -> {
+                assert gc != null;
+                return gc.generateGroup(sizes);
+            });
+        }
+        catch (IllegalArgumentException e)
+        {
+            DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                    this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
+                    "Felaktig indata", JOptionPane.ERROR_MESSAGE
+            );
+
+            return null;
+        }
+        catch (NoGroupAvailableException e)
+        {
+            DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                    this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
+                    "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
+            );
+
+            return null;
+        }
+    }
+
+    /**
      * Generates a group.
      * */
     private void generateGroups()
     {
         var gc = (GroupCreator) cbCreator.getSelectedItem();
-        List<Set<Integer>> list = null; // Just to have initialized.
 
-        // Checks for leader mode
-        if (pLeaders.isRadioSelected())
-        {
-            var leaders = gm.getAllOfRoll(Person.Role.LEADER);
-            var groups = leaders.size();
+        // Input
+        var sizes = getUserInput();
 
-            // If there are to few groups.
-            if (groups < 2)
-            {
-                JOptionPane.showMessageDialog(
-                    this, "Det finns för få leadare. Det finns bara %d leadare.".formatted(groups),
-                    "För få grupper!", JOptionPane.ERROR_MESSAGE
-                );
+        if (sizes == null || sizes.size() == 0)
+            return;
 
-                return;
-            }
+        // Generation
+        var groups = createGroups(gc, sizes);
 
-            try
-            {
-                list = tryGenerateGroup(() -> {
-                    assert gc != null;
-                    return gc.generateGroup((short) groups, boxOverflow.isSelected());
-                });
-            }
-            catch (IllegalArgumentException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+        if (groups == null)
+            return;
 
-                JOptionPane.showMessageDialog(
-                    this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
-                    "Felaktig indata", JOptionPane.ERROR_MESSAGE
-                );
+        // Saving
+        currentGroups = new Subgroups(
+                null, groups, pLeaders.isRadioSelected(),
+                gc instanceof WishlistGroupCreator, new Vector<>()
+        );
 
-                return;
-            }
-            catch (NoGroupAvailableException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                    this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
-                    "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
-            this.currentGroups = new Subgroups(
-                null, list, true,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
-            );
-        }
-        else if (pNbrGroups.isRadioSelected())
-        {
-            int groups;
-
-            try
-            {
-                groups = Integer.parseInt(pNbrGroups.getTextFieldData());
-            }
-            catch (NumberFormatException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                    this, "Antalet grupper är inget nummer fel: %s".formatted(e.getLocalizedMessage()),
-                    "Inget nummer", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            try
-            {
-                list = tryGenerateGroup(() -> {
-                    assert gc != null;
-                    return gc.generateGroup((short) groups, boxOverflow.isSelected());
-                });
-            }
-            catch (IllegalArgumentException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Felaktig indata", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-            catch (NoGroupAvailableException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            this.currentGroups = new Subgroups(
-                null, list, false,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
-            );
-
-            DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
-        }
-        else if (pNbrMembers.isRadioSelected())
-        {
-            int persons;
-
-            try
-            {
-                persons = Integer.parseInt(pNbrMembers.getTextFieldData());
-            }
-            catch (NumberFormatException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Antalet personer är inget nummer fel: %s".formatted(e.getLocalizedMessage()),
-                        "Inget nummer", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            try
-            {
-                list = tryGenerateGroup(() -> {
-                    assert gc != null;
-                    return gc.generateGroup((byte) persons, boxOverflow.isSelected());
-                });
-            }
-            catch (IllegalArgumentException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Felaktig indata", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-            catch (NoGroupAvailableException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            this.currentGroups = new Subgroups(
-                null, list, false,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
-            );
-            DebugMethods.log("Created groups: %s".formatted(list), DebugMethods.LogType.DEBUG);
-        }
-        else
-        {
-            var strSizes = new ArrayList<>(Arrays.asList(pDifferentSizes.getTextFieldData().split(",")));
-            List<Integer> sizes;
-
-            try
-            {
-                sizes = strSizes.stream()
-                                .map(String::trim)
-                                .map(Integer::parseInt)
-                                .collect(Collectors.toCollection(ArrayList::new));
-            }
-            catch (NumberFormatException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Felaktig indata", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            try
-            {
-                final var finalSizes = sizes; // Since it has to be final or effectively final.
-                list = tryGenerateGroup(() -> {
-                    assert gc != null;
-                    return gc.generateGroup(finalSizes);
-                });
-            }
-            catch (IllegalArgumentException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Felaktig indata", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-            catch (NoGroupAvailableException e)
-            {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
-
-                JOptionPane.showMessageDialog(
-                        this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
-                        "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
-            this.currentGroups = new Subgroups(
-                null, list, false,
-                cbCreator.getSelectedItem() instanceof WishlistGroupCreator, new Vector<>()
-            );
-        }
-
+        // Drawing
         sgp.setCurrentGroups(currentGroups);
         sgp.drawGroups();
     }
