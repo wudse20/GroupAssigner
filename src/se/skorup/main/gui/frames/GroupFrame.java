@@ -34,7 +34,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ComponentEvent;
@@ -197,11 +196,10 @@ public class GroupFrame extends JFrame implements ComponentListener
      * */
     private void setProperties()
     {
-        this.setSize(new Dimension(1200, 685));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
-
         this.addComponentListener(this);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setLayout(layout);
