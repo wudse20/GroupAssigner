@@ -317,4 +317,23 @@ public class GroupManagerTester
 
         assertEquals(ctr, gm.getDenyGraph());
     }
+
+    /**
+     * Tests the getAllOfRoleAndMainGroup method.
+     * */
+    @Test
+    public void testGetMainGroup()
+    {
+        var gm = new GroupManager("");
+
+        var p1 = gm.registerPerson("Anton", Person.Role.CANDIDATE);
+        var p2 = gm.registerPerson("Sebbe", Person.Role.CANDIDATE);
+        gm.registerPerson("Sebbe 2", Person.Role.CANDIDATE);
+
+        p1.setMainGroup(Person.MainGroup.MAIN_GROUP_2);
+        p2.setMainGroup(Person.MainGroup.MAIN_GROUP_2);
+
+        assertEquals(2, gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2).size());
+        assertEquals(1, gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1).size());
+    }
 }

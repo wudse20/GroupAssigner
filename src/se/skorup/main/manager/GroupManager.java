@@ -168,6 +168,21 @@ public class GroupManager implements Serializable
     }
 
     /**
+     * Gets all members of a given role and main group.
+     *
+     * @param r the role sought after.
+     * @param mg the main group sought after.
+     * @return a set containing all the persons of the
+     *         passed role and main group.
+     * */
+    public Set<Person> getAllOfMainGroupAndRoll(Person.Role r, Person.MainGroup mg)
+    {
+        return getAllOfRoll(r).stream()
+                              .filter(p -> p.getMainGroup().equals(mg))
+                              .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    /**
      * Gets a person from a given id.<br><br>
      *
      * Time: O(1)
