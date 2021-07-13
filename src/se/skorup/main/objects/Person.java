@@ -1,5 +1,7 @@
 package se.skorup.main.objects;
 
+import se.skorup.main.Main;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +24,18 @@ public abstract class Person implements Serializable, Comparable<Person>
         LEADER
     }
 
+    /**
+     * The enum that keeps track of the
+     * different main groups.
+     * */
+    public enum MainGroup
+    {
+        /** The first main group. */
+        MAIN_GROUP_1,
+        /** The second main group. */
+        MAIN_GROUP_2
+    }
+
     /** The name of the person. */
     protected final String name;
 
@@ -33,6 +47,9 @@ public abstract class Person implements Serializable, Comparable<Person>
 
     /** The wishes of the person. */
     protected Set<Integer> wishlist = new HashSet<>();
+
+    /** The main group of this person. */
+    protected MainGroup mg = MainGroup.MAIN_GROUP_1;
 
     /**
      * Creates a new person with a name.
@@ -156,6 +173,26 @@ public abstract class Person implements Serializable, Comparable<Person>
             return;
 
         this.wishlist = persons.stream().map(Person::getId).collect(Collectors.toSet());
+    }
+
+    /**
+     * Getter for: MainGroup
+     *
+     * @return the main group of this person.
+     * */
+    public MainGroup getMainGroup()
+    {
+        return this.mg;
+    }
+
+    /**
+     * Setter for: MainGroup
+     *
+     * @param mg the new MainGroup of this person.
+     * */
+    public void setMainGroup(MainGroup mg)
+    {
+        this.mg = mg;
     }
 
     @Override
