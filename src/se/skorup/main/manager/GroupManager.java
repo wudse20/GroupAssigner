@@ -56,6 +56,24 @@ public class GroupManager implements Serializable
      * */
     public Person registerPerson(String name, Person.Role r) throws IllegalArgumentException
     {
+        return registerPerson(name, r, getNextId());
+    }
+
+    /**
+     * Registers a person, with a decided id. If
+     * the ID is in use it will override the previous
+     * person.
+     *
+     * @param name the name of the person.
+     * @param r the role of the person.
+     * @param id the id of the person, if the id is in use
+     *           then it will override the previous person.
+     * @return the created person.
+     * @throws IllegalArgumentException iff the name or the role is {@code null}
+     *                                  and the name is shorter than 3 chars.
+     * */
+    public Person registerPerson(String name, Person.Role r, int id) throws IllegalArgumentException
+    {
         if (name == null)
             throw new IllegalArgumentException("The provided name cannot be null.");
         else if (r == null)
@@ -66,7 +84,6 @@ public class GroupManager implements Serializable
                     .formatted(name.trim().length())
             );
 
-        var id = getNextId();
         var p = (r.equals(Person.Role.LEADER)) ? new Leader(name, id) : new Candidate(name, id);
         group.put(id, p);
         members++;
