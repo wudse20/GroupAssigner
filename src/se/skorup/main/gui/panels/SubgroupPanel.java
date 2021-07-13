@@ -147,15 +147,12 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             var gr = groups.get(i);
             for (var p : gr)
             {
-                var wishes =
-                    new ImmutableHashSet<>(
-                        currentGroups.groups().get(i)).intersection(
-                            Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet())
-                    ).size();
+                var wishes = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet());
+                var nbrWishes = new ImmutableHashSet<>(currentGroups.groups().get(i)).intersection(wishes).size();
 
                 var name =
                     currentGroups.isWishListMode() ?
-                    "%s (Önskningar: %d)".formatted(p.getName(), wishes) :
+                    "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
                     p.getName();
 
                 y += VERTICAL_SPACER / 5 + fm.getHeight();
