@@ -201,6 +201,7 @@ public class MainFrame extends JFrame
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(new Dimension(1200, 685));
+        this.setResizable(false);
         this.addWindowStateListener(sidePanel);
         this.addWindowStateListener(personPanel);
         this.addComponentListener(personPanel);
