@@ -8,10 +8,13 @@ import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -67,6 +70,14 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     /** The ListPanel for the denylist. */
     private final ListPanel denylist;
 
+    /** The radio button for the first main group. */
+    private final JRadioButton radioMG1 = new JRadioButton("Huvudgrupp 1");
+
+    /** The radio button for the second main group. */
+    private final JRadioButton radioMG2 = new JRadioButton("Huvudgrupp 2");
+
+    private final ButtonGroup bgMainGroup = new ButtonGroup();
+
     /** Spacer */
     private final JLabel lblSpacer1 = new JLabel(" ");
 
@@ -121,6 +132,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pName.add(lblName);
 
         pCheckBox.add(cbShowOnlySameRole);
+        pCheckBox.add(radioMG1);
+        pCheckBox.add(radioMG2);
         pCheckBox.add(btnChangeRole);
 
         pContainer.add(pName);
@@ -172,6 +185,17 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
                 BorderFactory.createEmptyBorder(3, 15, 5, 15)
             )
         );
+
+        radioMG1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        radioMG1.setForeground(Utils.FOREGROUND_COLOR);
+        radioMG1.addActionListener(e -> p.setMainGroup(Person.MainGroup.MAIN_GROUP_1));
+
+        radioMG2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        radioMG2.setForeground(Utils.FOREGROUND_COLOR);
+        radioMG2.addActionListener(e -> p.setMainGroup(Person.MainGroup.MAIN_GROUP_2));
+
+        bgMainGroup.add(radioMG1);
+        bgMainGroup.add(radioMG2);
     }
 
     /**
@@ -241,6 +265,11 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
                 p = null;
                 setup();
             });
+
+            if (p.getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1))
+                radioMG1.setSelected(true);
+            else
+                radioMG2.setSelected(true);
         }
 
         this.addComponents();
