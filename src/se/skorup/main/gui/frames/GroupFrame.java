@@ -37,6 +37,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.print.PrinterException;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,7 +55,7 @@ import java.util.stream.Collectors;
 /**
  * The frame used to create the groups.
  * */
-public class GroupFrame extends JFrame
+public class GroupFrame extends JFrame implements ComponentListener
 {
     /** The common path of all subgroups. */
     private final String BASE_GROUP_PATH;
@@ -198,6 +200,8 @@ public class GroupFrame extends JFrame
         this.setSize(new Dimension(1200, 685));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
+
+        this.addComponentListener(this);
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setLayout(layout);
@@ -808,4 +812,24 @@ public class GroupFrame extends JFrame
         invokeCallbacks();
         super.dispose();
     }
+
+    @Override
+    public void componentResized(ComponentEvent e)
+    {
+        if (sgp != null)
+            sgp.drawGroups();
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {}
+
+    @Override
+    public void componentShown(ComponentEvent e)
+    {
+        if (sgp != null)
+            sgp.drawGroups();
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {}
 }
