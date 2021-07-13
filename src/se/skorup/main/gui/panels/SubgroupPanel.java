@@ -195,18 +195,14 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             return this.getWidth();
 
         var groups =
-            currentGroups.groups()
-                .stream()
-                .map(x -> x.stream().map(gm::getPersonFromId))
-                .flatMap(x -> x.map(p -> currentGroups.isWishListMode() ? p.getName() + " (Önskningar: 10)" : p.getName()))
-                .collect(Collectors.toList());
-
-        groups.sort((s1, s2) -> Integer.compare(s2.length(), s1.length()));
+                currentGroups.groups()
+                    .stream()
+                    .map(x -> x.stream().map(gm::getPersonFromId))
+                    .flatMap(x -> x.map(p -> currentGroups.isWishListMode() ? p.getName() + " (Önskningar: 10)" : p.getName()))
+                    .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
+                    .collect(Collectors.toList());
 
         var width = this.getWidth() / 4;
-
-        if (!currentGroups.isLeaderMode())
-            width -= fm.stringWidth("Grupp x") / 2;
 
         DebugMethods.log(width, DebugMethods.LogType.DEBUG);
         width += fm.stringWidth(groups.get(0)) * 3;
