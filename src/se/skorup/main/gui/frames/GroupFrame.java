@@ -352,9 +352,21 @@ public class GroupFrame extends JFrame
      * */
     private void saveLastGroup()
     {
+        // If no groups error msg + return
+        if (currentGroups == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga grupper att spara",
+                "INGA GRUPPER!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
         var name =
                 JOptionPane.showInputDialog(
-                        this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+                    this, "Vad heter gruppen?",
+                    "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
                 );
 
         if (name == null)
@@ -373,17 +385,6 @@ public class GroupFrame extends JFrame
 
             if (name == null)
                 return;
-        }
-
-        // If no groups error msg + return
-        if (currentGroups == null)
-        {
-            JOptionPane.showMessageDialog(
-                this, "Det finns inga grupper att spara",
-                "INGA GRUPPER!", JOptionPane.ERROR_MESSAGE
-            );
-
-            return;
         }
 
         currentGroups = currentGroups.changeName(name);
@@ -726,8 +727,8 @@ public class GroupFrame extends JFrame
 
         // Saving
         currentGroups = new Subgroups(
-                null, groups, pLeaders.isRadioSelected(),
-                gc instanceof WishlistGroupCreator, new Vector<>()
+            null, groups, pLeaders.isRadioSelected(),
+            gc instanceof WishlistGroupCreator, new Vector<>()
         );
 
         // Drawing
