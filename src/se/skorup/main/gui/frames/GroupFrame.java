@@ -27,6 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -71,6 +72,9 @@ public class GroupFrame extends JFrame implements ComponentListener
     /** The current SubGroups. */
     private Subgroups currentGroups;
 
+    /** The currently selected MainGroup. */
+    private Person.MainGroup mainGroup = Person.MainGroup.MAIN_GROUP_1;
+
     /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
 
@@ -98,11 +102,23 @@ public class GroupFrame extends JFrame implements ComponentListener
     /** The button for saving to a file. */
     private final JButton btnToFile = new JButton("Till fil");
 
+    /** The radio button for the first main group. */
+    private final JRadioButton radioMainGroup1 = new JRadioButton("Huvudgrupp 1");
+
+    /** The radio button for the first main group. */
+    private final JRadioButton radioMainGroup2 = new JRadioButton("Huvudgrupp 2");
+
     /** The checkbox used for overflow. */
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
 
+    /** The checkbox used for the MainGroups. */
+    private final JCheckBox boxMainGroups = new JCheckBox("Använd huvudgrupper");
+
     /** The button group for the settings. */
     private final ButtonGroup bgSettings = new ButtonGroup();
+
+    /** The button group for the MainGroups selectors. */
+    private final ButtonGroup bgMainGroups = new ButtonGroup();
 
     /** The panel for pairing a group with the leaders. */
     private final SettingPanel pLeaders =
@@ -265,6 +281,28 @@ public class GroupFrame extends JFrame implements ComponentListener
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
 
+        boxMainGroups.setBackground(Utils.BACKGROUND_COLOR);
+        boxMainGroups.setForeground(Utils.FOREGROUND_COLOR);
+        boxMainGroups.addActionListener(e -> {
+            radioMainGroup1.setEnabled(boxMainGroups.isSelected());
+            radioMainGroup2.setEnabled(boxMainGroups.isSelected());
+        });
+
+        radioMainGroup1.setSelected(true);
+        radioMainGroup1.setEnabled(false);
+        radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
+        radioMainGroup1.setBackground(Utils.BACKGROUND_COLOR);
+        radioMainGroup1.addActionListener(e -> mainGroup = Person.MainGroup.MAIN_GROUP_1);
+
+        radioMainGroup2.setSelected(false);
+        radioMainGroup2.setEnabled(false);
+        radioMainGroup2.setForeground(Utils.FOREGROUND_COLOR);
+        radioMainGroup2.setBackground(Utils.BACKGROUND_COLOR);
+        radioMainGroup2.addActionListener(e -> mainGroup = Person.MainGroup.MAIN_GROUP_2);
+
+        bgMainGroups.add(radioMainGroup1);
+        bgMainGroups.add(radioMainGroup2);
+
         scrLabelGroup.getViewport().setBackground(Utils.BACKGROUND_COLOR);
         scrLabelGroup.getViewport().setForeground(Utils.FOREGROUND_COLOR);
         scrLabelGroup.setBorder(BorderFactory.createEmptyBorder());
@@ -293,6 +331,9 @@ public class GroupFrame extends JFrame implements ComponentListener
         pTop.add(lblSpacer1);
         pTop.add(pSettings);
 
+        pButtons.add(radioMainGroup1);
+        pButtons.add(radioMainGroup2);
+        pButtons.add(boxMainGroups);
         pButtons.add(boxOverflow);
         pButtons.add(btnClose);
         pButtons.add(btnToFile);
