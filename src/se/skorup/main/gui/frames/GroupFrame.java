@@ -763,7 +763,21 @@ public class GroupFrame extends JFrame implements ComponentListener
             return;
 
         // Generation
-        var groups = createGroups(gc, sizes);
+        List<Set<Integer>> groups;
+
+        if (boxMainGroups.isSelected())
+        {
+            var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, mainGroup);
+            var gm = new GroupManager(mainGroup.toString());
+            persons.forEach(p -> gm.registerPerson(p.getName(), Person.Role.CANDIDATE, p.getId()));
+            groups = createGroups(
+                gc instanceof RandomGroupCreator ? new RandomGroupCreator(gm) : new WishlistGroupCreator(gm), sizes
+            );
+        }
+        else
+        {
+            groups = createGroups(gc, sizes);
+        }
 
         if (groups == null)
             return;
