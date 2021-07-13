@@ -320,18 +320,6 @@ public class MainFrame extends JFrame
     }
 
     /**
-     * Removes a group manager, if the
-     * gm matches no group manager then nothing
-     * happens.
-     *
-     * @param gm the group manager to be removed.
-     * */
-    public void removeGroupManager(GroupManager gm)
-    {
-        managers.remove(gm);
-    }
-
-    /**
      * Removes the current group manager and
      * updates the GUI accordingly.
      * */
