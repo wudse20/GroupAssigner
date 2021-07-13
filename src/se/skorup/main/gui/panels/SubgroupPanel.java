@@ -114,7 +114,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
         for (var i = 0; i < groups.size(); i++)
         {
-            var x = (i % 2 == 0) ? this.getWidth() / 4 : 3 * (this.getWidth() / 4);
+            var x = (i % 2 == 0) ? this.getWidth() / 10 : 3 * (this.getWidth() / 4);
             var y = VERTICAL_SPACER + VERTICAL_SPACER * (i % groups.size() / 2) * (max + 2);
 
             String groupName = "";
