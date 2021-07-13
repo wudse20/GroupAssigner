@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -234,21 +235,11 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                      .filter(x -> !(x instanceof PersonBox))
                      .collect(Collectors.toList());
 
-        // No lambda since need to keep track of value.
-        t = new Timer(500, new ActionListener() {
-            /** The counter. */
-            private int counter = 0;
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (counter++ % 2 == 1)
-                    tbs.forEach(x -> x.setColor(Utils.FLASH_COLOR));
-                else
-                    tbs.forEach(x -> x.setColor(Utils.GROUP_NAME_COLOR));
-
-                repaint();
-            }
+        final var counter = new AtomicInteger(0);
+        t = new Timer(500, (e) -> {
+            tbs.forEach(x -> x.setColor(counter.get() % 2 == 0 ? Utils.FLASH_COLOR : Utils.GROUP_NAME_COLOR));
+            counter.incrementAndGet();
+            repaint();
         });
 
         t.start();
