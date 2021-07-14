@@ -16,23 +16,11 @@ import java.util.Vector;
 /**
  * The group creator used to create groups
  * based on the wishes of the candidates.
+ *
+ * @param gm the group manager used to create
+ *           the subgroups.
  * */
-public class WishlistGroupCreator implements GroupCreator
-{
-    /** The group manager used to create the groups. */
-    private final GroupManager gm;
-
-    /**
-     * Creates a new wishlist group creator.
-     *
-     * @param gm the group manager used to create
-     *           the subgroups.
-     * */
-    public WishlistGroupCreator(GroupManager gm)
-    {
-        this.gm = gm;
-    }
-
+public record WishlistGroupCreator(GroupManager gm) implements GroupCreator {
     /**
      * Generates the different, groups of size
      * size.
@@ -280,6 +268,6 @@ public class WishlistGroupCreator implements GroupCreator
     public boolean equals(Object o)
     {
         return o instanceof WishlistGroupCreator gc &&
-               gc.toString().equals(gc.toString());
+               this.toString().equals(gc.toString());
     }
 }

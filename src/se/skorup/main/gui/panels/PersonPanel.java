@@ -199,12 +199,60 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     }
 
     /**
+     * The method that initializes a person
+     * and draws it to the GUI.
+     * */
+    private void initPerson()
+    {
+        this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
+        this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+
+        lblName.setText(p.getName());
+
+        this.updateListData();
+
+        denylist.removeAllActionCallbacks();
+        wishlist.removeAllActionCallbacks();
+
+        denylist.addActionCallback(() -> {
+            // Sets the new list data for the denylist.
+            var res = denylist.getLists();
+            p.setDenylist(res.get(ListPanel.ADDED_KEY));
+            updateListData();
+        });
+
+        wishlist.addActionCallback(() -> {
+            var res = wishlist.getLists();
+            p.setWishlist(res.get(ListPanel.ADDED_KEY));
+            updateListData();
+        });
+
+        btnChangeRole.setText((p instanceof Leader) ? "Gör till deltagare" : "Gör till ledare");
+        Arrays.stream(btnChangeRole.getActionListeners()).forEach(btnChangeRole::removeActionListener);
+
+        btnChangeRole.addActionListener((e) -> {
+            mf.getCurrentGroup().removePerson(p.getId());
+            mf.getCurrentGroup().registerPerson(
+                p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
+            );
+            mf.refreshSidePanel();
+
+            p = null;
+            setup();
+        });
+
+        if (p.getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1))
+            radioMG1.setSelected(true);
+        else
+            radioMG2.setSelected(true);
+    }
+
+    /**
      * Setup for the panel
      * */
     private void setup()
     {
-        // If there's no person,
-        // then remove everything.
+        // If there's no person, then remove everything.
         if (p == null)
         {
             this.setBorder(BorderFactory.createEmptyBorder());
@@ -213,63 +261,9 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
             lblName.setText("");
         }
-        else
+        else // Initialize the panel with a person.
         {
-            this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-            this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-
-            lblName.setText(p.getName());
-
-            this.updateListData();
-
-            denylist.removeAllActionCallbacks();
-            wishlist.removeAllActionCallbacks();
-
-            denylist.addActionCallback(() -> {
-                // Sets the new list data for the denylist.
-                var res = denylist.getLists();
-                p.setDenylist(res.get(ListPanel.ADDED_KEY));
-
-                DebugMethods.log(
-                        "New denylist for %s: %s".formatted(p, Arrays.toString(p.getDenylist())),
-                        DebugMethods.LogType.DEBUG
-                );
-
-                updateListData();
-            });
-
-            wishlist.addActionCallback(() -> {
-                var res = wishlist.getLists();
-                p.setWishlist(res.get(ListPanel.ADDED_KEY));
-
-                DebugMethods.log(
-                        "New wishlist for %s: %s".formatted(p, Arrays.toString(p.getWishlist())),
-                        DebugMethods.LogType.DEBUG
-                );
-
-                updateListData();
-            });
-
-            btnChangeRole.setText((p instanceof Leader) ? "Gör till deltagare" : "Gör till ledare");
-
-            for (var a : btnChangeRole.getActionListeners())
-                btnChangeRole.removeActionListener(a);
-
-            btnChangeRole.addActionListener((e) -> {
-                mf.getCurrentGroup().removePerson(p.getId());
-                mf.getCurrentGroup().registerPerson(
-                    p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
-                );
-                mf.refreshSidePanel();
-
-                p = null;
-                setup();
-            });
-
-            if (p.getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1))
-                radioMG1.setSelected(true);
-            else
-                radioMG2.setSelected(true);
+            initPerson();
         }
 
         this.addComponents();

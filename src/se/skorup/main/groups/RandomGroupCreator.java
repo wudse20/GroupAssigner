@@ -11,29 +11,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The class used to generate random groups.
- * 
- * TODO: FIX GROUP SIZE!
+ *
+ * @param gm the group manager in use.
  * */
-public class RandomGroupCreator implements GroupCreator
+public record RandomGroupCreator(GroupManager gm) implements GroupCreator
 {
-    /** The group manager in use. */
-    private final GroupManager gm;
-
-    /**
-     * Creates a new RandomGroup
-     * creator.
-     *
-     * @param gm the group manager in use.
-     * */
-    public RandomGroupCreator(GroupManager gm)
-    {
-        this.gm = gm;
-    }
-
     /**
      * Generates the different, groups of size
      * size.
@@ -99,7 +84,7 @@ public class RandomGroupCreator implements GroupCreator
     {
         if (groupSize < 2)
             throw new IllegalArgumentException(
-                "groupSize needs to greater or equal to 2, your value: %d < 2".formatted(groupSize)
+                    "groupSize needs to greater or equal to 2, your value: %d < 2".formatted(groupSize)
             );
 
         return generateGroup((int) groupSize, overflow); // Cast to int to prevent infinite recursion.
@@ -110,12 +95,12 @@ public class RandomGroupCreator implements GroupCreator
     {
         if (nbrGroups < 2)
             throw new IllegalArgumentException(
-                "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
+                    "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
             );
 
         return generateGroup(
-            (int) Math.ceil((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
-            overflow
+                (int) Math.round((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
+                overflow
         );
     }
 
@@ -126,7 +111,7 @@ public class RandomGroupCreator implements GroupCreator
             throw new IllegalArgumentException("Not enough groups 0");
         else if (sizes.size() == 0)
             throw new IllegalArgumentException(
-                "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
+                "Not enough groups %d".formatted(0)
             );
 
 
@@ -186,6 +171,6 @@ public class RandomGroupCreator implements GroupCreator
     public boolean equals(Object o)
     {
         return o instanceof RandomGroupCreator gc &&
-                gc.toString().equals(gc.toString());
+               this.toString().equals(gc.toString());
     }
 }

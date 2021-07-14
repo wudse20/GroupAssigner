@@ -89,14 +89,6 @@ public class InputPanel extends JPanel implements DocumentListener
     }
 
     /**
-     * Removes all the callbacks.
-     * */
-    public void removeAllActionCallbacks()
-    {
-        callbacks.clear();
-    }
-
-    /**
      * Clears the text field.
      * */
     public void clear()
