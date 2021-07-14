@@ -231,8 +231,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
                 p.setDenylist(res.get(ListPanel.ADDED_KEY));
 
                 DebugMethods.log(
-                        "New denylist for %s: %s".formatted(p, Arrays.toString(p.getDenylist())),
-                        DebugMethods.LogType.DEBUG
+                    "New denylist for %s: %s".formatted(p, Arrays.toString(p.getDenylist())),
+                    DebugMethods.LogType.DEBUG
                 );
 
                 updateListData();

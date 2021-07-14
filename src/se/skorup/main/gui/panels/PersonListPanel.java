@@ -177,8 +177,8 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
 
                 DebugMethods.log("Selected person: %s".formatted(p), DebugMethods.LogType.DEBUG);
                 DebugMethods.log(
-                        "Invoking callbacks from list %s".formatted(lblGroupInfo.getText()),
-                        DebugMethods.LogType.DEBUG
+                    "Invoking callbacks from list %s".formatted(lblGroupInfo.getText()),
+                    DebugMethods.LogType.DEBUG
                 );
 
                 callbacks.forEach(ActionCallback::callback);
