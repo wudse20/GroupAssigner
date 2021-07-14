@@ -15,7 +15,6 @@ import java.util.Set;
 /**
  * The class used to generate random groups.
  *
- * TODO: FIX GROUP SIZE!
  * @param gm the group manager in use.
  * */
 public record RandomGroupCreator(GroupManager gm) implements GroupCreator
@@ -24,7 +23,7 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
      * Generates the different, groups of size
      * size.
      *
-     * @param size     the size of the group.
+     * @param size the size of the group.
      * @param overflow if the groups should overflow or not.
      * @return a List containing the generated groups.
      * @throws NoGroupAvailableException iff there's no way to create a group.
