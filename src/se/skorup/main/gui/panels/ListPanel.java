@@ -17,8 +17,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,22 +30,13 @@ import java.util.stream.Collectors;
  * The panel used for the lists in the person
  * panel.
  * */
-public class ListPanel extends JPanel implements ActionListener
+public class ListPanel extends JPanel
 {
     /** The key for the added set in {@link ListPanel#getLists()} */
     public static final String ADDED_KEY = "added";
 
     /** The key for the not added set in {@link ListPanel#getLists()} */
     public static final String NOT_ADDED_KEY = "notAdded";
-
-    /** The enum used for button action commands. */
-    private enum Buttons
-    {
-        /** The add button. */
-        ADD,
-        /** The remove button. */
-        REMOVE
-    }
 
     /** The persons that aren't added. */
     private final Set<Person> notAdded;
@@ -193,8 +182,7 @@ public class ListPanel extends JPanel implements ActionListener
 
         btnAdd.setForeground(Utils.FOREGROUND_COLOR);
         btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnAdd.setActionCommand(Buttons.ADD.toString());
-        btnAdd.addActionListener(this);
+        btnAdd.addActionListener(e -> addButton());
         btnAdd.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
@@ -204,8 +192,7 @@ public class ListPanel extends JPanel implements ActionListener
 
         btnRemove.setForeground(Utils.FOREGROUND_COLOR);
         btnRemove.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnRemove.setActionCommand(Buttons.REMOVE.toString());
-        btnRemove.addActionListener(this);
+        btnRemove.addActionListener(e -> removeButton());
         btnRemove.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
@@ -228,6 +215,66 @@ public class ListPanel extends JPanel implements ActionListener
         scrNotAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
         lblInfo.setForeground(Utils.FOREGROUND_COLOR);
+    }
+
+    /**
+     * The remove button action.
+     * */
+    private void removeButton()
+    {
+        // Needs boxing to be able to sort with custom comparator and not the natural ordering.
+        var indices = Arrays.stream(listAdded.getSelectedIndices()).boxed().toArray(Integer[]::new);
+        Arrays.sort(indices, (i1, i2) -> Integer.compare(i2, i1));
+
+        for (var index : indices)
+        {
+            if (index != -1 && modelAdded.getSize() != 0)
+            {
+                var p = modelAdded.getElementAt(index);
+
+                notAdded.add(p);
+                added.remove(p);
+
+                modelNotAdded.addItem(p);
+                modelAdded.removeItem(p);
+
+                listAdded.clearSelection();
+                listNotAdded.clearSelection();
+
+                // Invokes the callbacks.
+                callbacks.forEach(ActionCallback::callback);
+            }
+        }
+    }
+
+    /**
+     * The add button action.
+     * */
+    private void addButton()
+    {
+        // Needs boxing to be able to sort with custom comparator and not the natural ordering.
+        var indices = Arrays.stream(listNotAdded.getSelectedIndices()).boxed().toArray(Integer[]::new);
+        Arrays.sort(indices, (i1, i2) -> Integer.compare(i2, i1));
+
+        for (var index : indices)
+        {
+            if (index != -1 && modelNotAdded.getSize() != 0)
+            {
+                var p = modelNotAdded.getElementAt(index);
+
+                added.add(p);
+                notAdded.remove(p);
+
+                modelAdded.addItem(p);
+                modelNotAdded.removeItem(p);
+
+                listAdded.clearSelection();
+                listNotAdded.clearSelection();
+
+                // Invokes the callbacks.
+                callbacks.forEach(ActionCallback::callback);
+            }
+        }
     }
 
     /**
@@ -307,76 +354,5 @@ public class ListPanel extends JPanel implements ActionListener
 
         scrAdded.setPreferredSize(d);
         scrNotAdded.setPreferredSize(d);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        var cmd = e.getActionCommand();
-        DebugMethods.log(
-            "Getting action command: %s".formatted(cmd),
-            DebugMethods.LogType.DEBUG
-        );
-
-        if (cmd.equals(Buttons.ADD.toString()))
-        {
-            // Needs boxing to be able to sort with custom comparator and not the natural ordering.
-            var indices = Arrays.stream(listNotAdded.getSelectedIndices()).boxed().toArray(Integer[]::new);
-            Arrays.sort(indices, (i1, i2) -> Integer.compare(i2, i1));
-
-            for (var index : indices)
-            {
-                DebugMethods.log("ADD, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
-
-                if (index != -1 && modelNotAdded.getSize() != 0)
-                {
-                    var p = modelNotAdded.getElementAt(index);
-
-                    added.add(p);
-                    notAdded.remove(p);
-
-                    modelAdded.addItem(p);
-                    modelNotAdded.removeItem(p);
-
-                    listAdded.clearSelection();
-                    listNotAdded.clearSelection();
-
-                    // Invokes the callbacks.
-                    callbacks.forEach(ActionCallback::callback);
-
-                    DebugMethods.log("Adding person: %s".formatted(p), DebugMethods.LogType.DEBUG);
-                }
-            }
-        }
-        else
-        {
-            // Needs boxing to be able to sort with custom comparator and not the natural ordering.
-            var indices = Arrays.stream(listAdded.getSelectedIndices()).boxed().toArray(Integer[]::new);
-            Arrays.sort(indices, (i1, i2) -> Integer.compare(i2, i1));
-
-            for (var index : indices)
-            {
-                DebugMethods.log("REMOVE, index: %d".formatted(index), DebugMethods.LogType.DEBUG);
-
-                if (index != -1 && modelAdded.getSize() != 0)
-                {
-                    var p = modelAdded.getElementAt(index);
-
-                    notAdded.add(p);
-                    added.remove(p);
-
-                    modelNotAdded.addItem(p);
-                    modelAdded.removeItem(p);
-
-                    listAdded.clearSelection();
-                    listNotAdded.clearSelection();
-
-                    // Invokes the callbacks.
-                    callbacks.forEach(ActionCallback::callback);
-
-                    DebugMethods.log("Removing person: %s".formatted(p), DebugMethods.LogType.DEBUG);
-                }
-            }
-        }
     }
 }
