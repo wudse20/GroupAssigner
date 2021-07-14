@@ -172,6 +172,6 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
     public boolean equals(Object o)
     {
         return o instanceof RandomGroupCreator gc &&
-                gc.toString().equals(gc.toString());
+               this.toString().equals(gc.toString());
     }
 }
