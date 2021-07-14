@@ -128,18 +128,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             }
             else
             {
-                try
-                {
-                    groupName = currentGroups.labels().get(i);
-                }
-                catch (IndexOutOfBoundsException e)
-                {
-                    groupName = currentGroups.isLeaderMode() ?
-                            leaders.remove(0).getName() :
-                            "Grupp %d:".formatted(i + 1);
-
-                    currentGroups.labels().add(groupName);
-                }
+                groupName = currentGroups.labels().get(i);
             }
 
             tb.add(new TextBox(groupName, x, y, Utils.GROUP_NAME_COLOR));
@@ -432,7 +421,6 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         {
             initGroups();
             textBoxes.forEach(tb -> tb.draw(g));
-//            textBoxes.forEach(x -> x.getHitBox().drawHitBox(g)); // Only for debug purposes.
         }
     }
 

@@ -9,7 +9,7 @@ import java.awt.Font;
 
 /**
  * A setting panel is a panel, with
- *
+ * a radiobutton and a text field.
  * */
 public class SettingPanel extends JPanel
 {
