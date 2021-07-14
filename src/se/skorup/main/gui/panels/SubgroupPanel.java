@@ -118,7 +118,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             var y = VERTICAL_SPACER + VERTICAL_SPACER * (i % groups.size() / 2) * (max + 2);
 
             String groupName = "";
-            if (currentGroups.labels().size() == 0)
+            if (currentGroups.labels().size() == 0 || currentGroups.labels().size() <= i)
             {
                 groupName = currentGroups.isLeaderMode() ?
                             leaders.remove(0).getName() :
