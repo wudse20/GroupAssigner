@@ -106,6 +106,9 @@ public class GroupFrame extends JFrame implements ComponentListener
     /** The button for saving to a file. */
     private final JButton btnToFile = new JButton("Spara som textfil");
 
+    /** The help button. */
+    private final JButton btnHelp = new JButton("Hjälp!");
+
     /** The radio button for the first main group. */
     private final JRadioButton radioMainGroup1 = new JRadioButton("Huvudgrupp 1");
 
@@ -267,19 +270,23 @@ public class GroupFrame extends JFrame implements ComponentListener
 
         btnCreate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCreate.setForeground(Utils.FOREGROUND_COLOR);
-        btnCreate.addActionListener((e) -> waitCursorAction(this::generateGroups));
+        btnCreate.addActionListener(e -> waitCursorAction(this::generateGroups));
 
         btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnPrint.setForeground(Utils.FOREGROUND_COLOR);
-        btnPrint.addActionListener((e) -> print());
+        btnPrint.addActionListener(e -> print());
 
         btnSave.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnSave.setForeground(Utils.FOREGROUND_COLOR);
-        btnSave.addActionListener((e) -> saveLastGroup());
+        btnSave.addActionListener(e -> saveLastGroup());
 
         btnLoad.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnLoad.setForeground(Utils.FOREGROUND_COLOR);
-        btnLoad.addActionListener((e) -> loadGroups());
+        btnLoad.addActionListener(e -> loadGroups());
+
+        btnHelp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnHelp.setForeground(Utils.FOREGROUND_COLOR);
+        btnHelp.addActionListener(e -> Utils.openHelpPages());
 
         pLabelContainer.setLayout(pLabelContainerLayout);
         pLabelContainer.setBackground(Utils.BACKGROUND_COLOR);
@@ -315,7 +322,7 @@ public class GroupFrame extends JFrame implements ComponentListener
 
         btnToFile.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnToFile.setForeground(Utils.FOREGROUND_COLOR);
-        btnToFile.addActionListener((e) -> toFile());
+        btnToFile.addActionListener(e -> toFile());
     }
 
     /**
@@ -342,6 +349,7 @@ public class GroupFrame extends JFrame implements ComponentListener
         pButtons.add(boxMainGroups);
         pButtons.add(boxOverflow);
         pButtons.add(btnClose);
+        pButtons.add(btnHelp);
         pButtons.add(btnToFile);
         pButtons.add(btnLoad);
         pButtons.add(btnSave);

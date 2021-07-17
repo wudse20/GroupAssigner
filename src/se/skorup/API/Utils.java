@@ -1,6 +1,11 @@
 package se.skorup.API;
 
+import javax.swing.JOptionPane;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Some util methods
@@ -55,6 +60,26 @@ public class Utils
         {
             DebugMethods.log("Is not windows", DebugMethods.LogType.DEBUG);
             return "./.group_assigner/";
+        }
+    }
+
+    /**
+     * Opens the help pages: https://www.help.skorup.se/
+     * */
+    public static void openHelpPages()
+    {
+        try
+        {
+            Desktop.getDesktop().browse(new URI("https://www.help.skorup.se/"));
+        }
+        catch (IOException | URISyntaxException ex)
+        {
+            ex.printStackTrace();
+
+            JOptionPane.showMessageDialog(
+                null, "Kunde inte öppna webläsaren!\nFel: %s".formatted(ex),
+                "Kunde inte öppna webläsaren!", JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 }
