@@ -53,7 +53,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     private final JButton btnEdit = new JButton("Ändra denna grupp");
 
     /** The button for deleting a group. */
-    private final JButton btnDelete = new JButton("Tabort denna grupp");
+    private final JButton btnDelete = new JButton("Ta bort denna grupp");
 
     /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);

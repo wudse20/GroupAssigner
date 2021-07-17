@@ -3,8 +3,6 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
 import se.skorup.API.Utils;
-import se.skorup.main.groups.RandomGroupCreator;
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.objects.Person;
@@ -61,7 +59,7 @@ public class ButtonPanel extends JPanel implements ActionListener
     private final JButton btnHelp = new JButton("Hjälp!");
 
     /** The button for displaying the even group constellations. */
-    private final JButton btnSizes = new JButton("Jämna konstalationer");
+    private final JButton btnSizes = new JButton("Jämna konstellationer");
 
     /**
      * Creates a new ButtonPanel.
@@ -207,7 +205,8 @@ public class ButtonPanel extends JPanel implements ActionListener
                     res.add(i);
 
             JOptionPane.showMessageDialog(
-                mf, "Jämna storlekar: %s".formatted(ImmutableArray.fromList(res).mkString(", ")),
+                mf, "Jämna storlekar gruppstolekar (antal personer): %s"
+                    .formatted(ImmutableArray.fromList(res).map("%s personer"::formatted).mkString(", ")),
                 "Jämna storlekar", JOptionPane.INFORMATION_MESSAGE
             );
         }

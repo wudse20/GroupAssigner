@@ -16,11 +16,22 @@ import java.util.Vector;
 /**
  * The group creator used to create groups
  * based on the wishes of the candidates.
- *
- * @param gm the group manager used to create
- *           the subgroups.
- * */
-public record WishlistGroupCreator(GroupManager gm) implements GroupCreator {
+ *  */
+public class WishlistGroupCreator implements GroupCreator
+{
+    private final GroupManager gm;
+
+    /**
+     * Creates a wishlist group creator.
+     *
+     * @param gm the group manager used to create
+     *           the subgroups.
+     */
+    public WishlistGroupCreator(GroupManager gm)
+    {
+        this.gm = gm;
+    }
+
     /**
      * Generates the different, groups of size
      * size.
@@ -174,34 +185,25 @@ public record WishlistGroupCreator(GroupManager gm) implements GroupCreator {
         int ii = 0;
         Set<Integer> current = new HashSet<>();
         Person p = null; // Just to have it initialized.
-        while (candidates.size() != 0)
-        {
-            if (current.size() == 0)
-            {
+        while (candidates.size() != 0) {
+            if (current.size() == 0) {
                 p = candidates.remove(random.nextInt(candidates.size()));
-            }
-            else
-            {
+            } else {
                 var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
 
-                if (wishes.isEmpty())
-                {
+                if (wishes.isEmpty()) {
                     p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
 
                     int count = 0;
-                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                    {
+                    while (Tuple.imageOfSet(deny, current).contains(p.getId())) {
                         if (++count == 1000)
                             throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
 
                         candidates.add(p);
                         p = candidates.remove(random.nextInt(candidates.size()));
                     }
-                }
-                else
-                {
-                    for (int j : wishes)
-                    {
+                } else {
+                    for (int j : wishes) {
                         p = gm.getPersonFromId(j);
 
                         if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
@@ -210,24 +212,20 @@ public record WishlistGroupCreator(GroupManager gm) implements GroupCreator {
                         p = null;
                     }
 
-                    if (p == null)
-                    {
+                    if (p == null) {
                         // No wishes; that aren't blocked so resorts to random group
                         // generation.
                         p = candidates.remove(random.nextInt(candidates.size()));
 
                         int count = 0;
-                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                        {
+                        while (Tuple.imageOfSet(deny, current).contains(p.getId())) {
                             if (++count == 1000)
                                 throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
 
                             candidates.add(p);
                             p = candidates.remove(random.nextInt(candidates.size()));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         candidates.remove(p);
                     }
                 }
@@ -236,8 +234,7 @@ public record WishlistGroupCreator(GroupManager gm) implements GroupCreator {
             current.add(p.getId());
             added.add(p.getId());
 
-            if (sizes.get(i) == ++ii)
-            {
+            if (sizes.get(i) == ++ii) {
                 ii = 0;
                 i++;
 
@@ -268,6 +265,12 @@ public record WishlistGroupCreator(GroupManager gm) implements GroupCreator {
     public boolean equals(Object o)
     {
         return o instanceof WishlistGroupCreator gc &&
-               this.toString().equals(gc.toString());
+                this.toString().equals(gc.toString());
     }
+
+    public GroupManager gm()
+    {
+        return gm;
+    }
+
 }

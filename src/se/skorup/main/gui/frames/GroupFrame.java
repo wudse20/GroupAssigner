@@ -100,7 +100,7 @@ public class GroupFrame extends JFrame implements ComponentListener
     private final JButton btnLoad = new JButton("Ladda");
 
     /** The button for saving to a file. */
-    private final JButton btnToFile = new JButton("Till fil");
+    private final JButton btnToFile = new JButton("Spara som textfil");
 
     /** The radio button for the first main group. */
     private final JRadioButton radioMainGroup1 = new JRadioButton("Huvudgrupp 1");
