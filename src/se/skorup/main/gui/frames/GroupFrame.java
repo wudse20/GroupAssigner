@@ -3,6 +3,7 @@ package se.skorup.main.gui.frames;
 import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
 import se.skorup.API.Utils;
+import se.skorup.main.groups.AlternateWishlistGroupCreator;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
 import se.skorup.main.groups.WishlistGroupCreator;
@@ -68,6 +69,9 @@ public class GroupFrame extends JFrame implements ComponentListener
 
     /** The wishlist group creator. */
     private final GroupCreator wishlistCreator;
+
+    /** The alt. wishlist group creator. */
+    private final GroupCreator altWishlistCreator;
 
     /** The current SubGroups. */
     private Subgroups currentGroups;
@@ -199,6 +203,7 @@ public class GroupFrame extends JFrame implements ComponentListener
         this.gm = gm;
         this.randomCreator = new RandomGroupCreator(gm);
         this.wishlistCreator = new WishlistGroupCreator(gm);
+        this.altWishlistCreator = new AlternateWishlistGroupCreator(gm);
         this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), gm.getName());
         this.sgp = new SubgroupPanel(this, gm);
         this.scrLabelGroup = new JScrollPane(sgp);
@@ -224,6 +229,7 @@ public class GroupFrame extends JFrame implements ComponentListener
         cbCreator.setForeground(Utils.FOREGROUND_COLOR);
         cbCreator.addItem(randomCreator);
         cbCreator.addItem(wishlistCreator);
+        cbCreator.addItem(altWishlistCreator);
         cbCreator.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         pSettings.setBackground(Utils.BACKGROUND_COLOR);
