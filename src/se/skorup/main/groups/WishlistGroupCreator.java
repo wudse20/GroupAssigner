@@ -19,7 +19,7 @@ import java.util.Vector;
  *  */
 public class WishlistGroupCreator implements GroupCreator
 {
-    private final GroupManager gm;
+    protected final GroupManager gm;
 
     /**
      * Creates a wishlist group creator.
@@ -41,7 +41,7 @@ public class WishlistGroupCreator implements GroupCreator
      * @return a List containing the generated groups.
      * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
-    private List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
+    protected List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
         var result = new ArrayList<Set<Integer>>();
         var random = new Random();
