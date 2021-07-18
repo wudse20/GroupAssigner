@@ -149,6 +149,53 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
         return union(other.set);
     }
 
+    /**
+     * Computes the difference of two sets.<br><br>
+     *
+     * A diff B = A &#8745; B<sup>c</sup>, i.e.
+     * all elements that are in A but not in B. <br><br>
+     *
+     * The set A is this instance and B is the
+     * param other.
+     *
+     * @param other the set B.
+     * @return A set containing all elements in A but
+     *         not in B.
+     * @throws IllegalArgumentException iff other is null.
+     * */
+    public ImmutableHashSet<E> diff(Set<E> other) throws IllegalArgumentException
+    {
+        if (other == null)
+            throw new IllegalArgumentException("Other cannot be null");
+
+        var res = new HashSet<E>();
+
+        for (var e : this)
+            if (!other.contains(e))
+                res.add(e);
+
+        return new ImmutableHashSet<E>(res);
+    }
+
+    /**
+     * Computes the difference of two sets.<br><br>
+     *
+     * A diff B = A &#8745; B<sup>c</sup>, i.e.
+     * all elements that are in A but not in B. <br><br>
+     *
+     * The set A is this instance and B is the
+     * param other.
+     *
+     * @param other the set B.
+     * @return A set containing all elements in A but
+     *         not in B.
+     * @throws IllegalArgumentException iff other is null.
+     * */
+    public ImmutableHashSet<E> diff(ImmutableHashSet<E> other) throws IllegalArgumentException
+    {
+        return diff(other.set);
+    }
+
     @Override
     public int size()
     {

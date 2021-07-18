@@ -440,4 +440,27 @@ public class ImmutableHashSetTester
         assertEquals(-1, set.indexOf("APA"));
         assertEquals(-1, set.indexOf("KROKODIL"));
     }
+
+    /**
+     * Tests the diff method.
+     * */
+    @Test
+    public void testDiff()
+    {
+        var a = new ImmutableHashSet<>("A", "B", "C", "D");
+        var b = new ImmutableHashSet<>("C", "D", "E");
+        var ctr = new ImmutableHashSet<>("A", "B");
+        assertEquals(ctr, a.diff(b));
+
+        var a2 = new ImmutableHashSet<>(10, 12, 14, 16, 18);
+        var b2 = new ImmutableHashSet<>(15, 16, 17, 18, 19);
+        var ctr2 = new ImmutableHashSet<>(10, 12, 14);
+        assertEquals(ctr2, a2.diff(b2));
+
+        var b3 = new ImmutableHashSet<>('c', 'd', 'e');
+        assertEquals(new ImmutableHashSet<Character>(), new ImmutableHashSet<Character>().diff(b3));
+
+        // Cast to not confuse compiler
+        assertThrows(IllegalArgumentException.class, () -> a2.diff((Set<Integer>) null));
+    }
 }
