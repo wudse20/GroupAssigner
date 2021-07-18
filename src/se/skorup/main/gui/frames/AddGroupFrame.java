@@ -390,38 +390,47 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     /**
      * Reads a file and return its content.
      *
-     * @param f the file to be read.
-     * @return the content of the file,
-     *         if it cannot be read then
-     *         it will return an empty
-     *         String.
+     * @param files the files to be read.
+     * @return the contents of the files
+     *         in an array.
      * */
-    private String readFile(File f)
+    private ImmutableArray<String> readFiles(File[] files)
     {
-        if (!f.exists())
-            return "";
+        var res = new ArrayList<String>();
 
-        try
+        for (var f : files)
         {
-            var fr = new FileReader(f, StandardCharsets.UTF_8);
-            var br = new BufferedReader(fr);
+            if (!f.exists())
+                continue;
 
-            var lines = new StringBuilder();
+            try
+            {
+                var fr = new FileReader(f, StandardCharsets.UTF_8);
+                var br = new BufferedReader(fr);
 
-            String tmp;
+                var lines = new StringBuilder();
 
-            while ((tmp = br.readLine()) != null)
-                lines.append(tmp).append("\n");
+                String tmp;
+                while ((tmp = br.readLine()) != null)
+                    lines.append(tmp).append("\n");
 
-            fr.close();
-            br.close();
+                fr.close();
+                br.close();
 
-            return lines.toString();
+                res.add(lines.toString());
+            }
+            catch (IOException e)
+            {
+                DebugMethods.log(e, DebugMethods.LogType.ERROR);
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Kunde inte läsa fil: %s\nFelmeddelande%s".formatted(f.getName(), e.getLocalizedMessage()),
+                    "Kunde inte läsa fil", JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
-        catch (IOException e)
-        {
-            return "";
-        }
+
+        return ImmutableArray.fromList(res);
     }
 
     /**
@@ -450,62 +459,48 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     private void importFromDocs()
     {
         var fc = new JFileChooser(".");
+        fc.setMultiSelectionEnabled(true);
         var selection = fc.showDialog(this, "Välj");
 
         if (selection == JFileChooser.APPROVE_OPTION)
         {
-            var data = toNameCase(readFile(fc.getSelectedFile()).trim());
+            var sb = new StringBuilder();
+            for (var f : fc.getSelectedFiles())
+                sb.append(f.getName()).append(" + ");
 
-            data = ImmutableArray.fromArray(data.split("")).dropMatching("\"").mkString("");
-
-            if (data.equals(""))
+            result = new GroupManager(sb.substring(0, sb.length() - 3));
+            for (var str : readFiles(fc.getSelectedFiles()))
             {
-                JOptionPane.showMessageDialog(
-                this, "The content of the file %s cannot be read.".formatted(fc.getSelectedFile()),
-                "Error", JOptionPane.ERROR_MESSAGE
-                );
+                var data = toNameCase(str).trim();
+                data = ImmutableArray.fromArray(data.split("")).dropMatching("\"").mkString("");
 
-                return;
-            }
+                if (data.equals(""))
+                    return;
 
-            var lines = data.split("\n");
-            var processedData =
-                ImmutableArray.fromArray(lines)
-                              .drop(1) // Drops the header.
-                              .map(x -> x.split(",")) // Splits at ','.
-                              .map(ImmutableArray::fromArray) // Converts to immutable arrays.
-                              .map(x -> x.drop(1)) // drops the time info.
-                              .map(x -> x.map(String::trim)); // Trims the strings to shape.
 
-            DebugMethods.log(processedData.toString(), DebugMethods.LogType.DEBUG);
+                var lines = data.split("\n");
+                var processedData =
+                        ImmutableArray.fromArray(lines)
+                                .drop(1) // Drops the header.
+                                .map(x -> x.split(",")) // Splits at ','.
+                                .map(ImmutableArray::fromArray) // Converts to immutable arrays.
+                                .map(x -> x.drop(1)) // drops the time info.
+                                .map(x -> x.map(String::trim)); // Trims the strings to shape.
 
-            result = new GroupManager(fc.getSelectedFile().getName());
-            for (int i = 0; i < processedData.size(); i++)
-            {
-                var curArr = processedData.get(i);
-                Person p = null;
+                DebugMethods.log(processedData.toString(), DebugMethods.LogType.DEBUG);
 
-                for (int ii = 0; ii < curArr.size(); ii++)
+                for (int i = 0; i < processedData.size(); i++)
                 {
-                    var s = curArr.get(ii);
-                    var names = result.getNames();
-
-                    if (!names.contains(s))
+                    var curArr = processedData.get(i);
+                    Person p = null;
+                    for (int ii = 0; ii < curArr.size(); ii++)
                     {
-                        var person = result.registerPerson(s, Person.Role.CANDIDATE);
+                        var s = curArr.get(ii);
+                        var names = result.getNames();
 
-                        if (ii == 0)
-                        {
-                            p = person;
-                            continue;
-                        }
-
-                        assert p != null;
-                        p.addWishlistId(person.getId());
-                    }
-                    else
-                    {
-                        var person = result.getPersonFromName(s).get(0);
+                        var person = !names.contains(s) ?
+                            result.registerPerson(s, Person.Role.CANDIDATE) :
+                            result.getPersonFromName(s).get(0);
 
                         if (ii == 0)
                         {
@@ -518,6 +513,9 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
                     }
                 }
             }
+
+
+
 
             invokeAddListeners();
         }
