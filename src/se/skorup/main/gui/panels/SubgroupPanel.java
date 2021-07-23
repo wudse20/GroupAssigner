@@ -419,6 +419,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
         if (currentGroups != null)
         {
+            lastTuple = null;
             initGroups();
             textBoxes.forEach(tb -> tb.draw(g));
         }
