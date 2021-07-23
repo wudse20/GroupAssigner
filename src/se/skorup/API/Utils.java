@@ -82,4 +82,27 @@ public class Utils
             );
         }
     }
+
+    /**
+     * Converts a String to name case.
+     *
+     * anton s -> Anton S
+     * ANTON S -> Anton S
+     * AnToN s -> Anton S
+     *
+     * @param input the string to be converted.
+     * @return the converted string.
+     * */
+    public static String toNameCase(String input)
+    {
+        var names = input.split(" ");
+        var sb = new StringBuilder();
+
+        for (var name : names)
+            sb.append(new StringBuilder(
+                name.toLowerCase()).replace(0, 1, Character.toString(name.charAt(0)).toUpperCase()
+            )).append(' ');
+
+        return sb.toString().trim();
+    }
 }
