@@ -109,6 +109,9 @@ public class GroupFrame extends JFrame implements ComponentListener
     /** The help button. */
     private final JButton btnHelp = new JButton("Hjälp!");
 
+    /** The to denylist button. */
+    private final JButton btnToDenylist = new JButton("Grupper till denylista");
+
     /** The radio button for the first main group. */
     private final JRadioButton radioMainGroup1 = new JRadioButton("Huvudgrupp 1");
 
@@ -323,6 +326,10 @@ public class GroupFrame extends JFrame implements ComponentListener
         btnToFile.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnToFile.setForeground(Utils.FOREGROUND_COLOR);
         btnToFile.addActionListener(e -> toFile());
+
+        btnToDenylist.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnToDenylist.setForeground(Utils.FOREGROUND_COLOR);
+        btnToDenylist.addActionListener(e -> toDenylist());
     }
 
     /**
@@ -349,6 +356,7 @@ public class GroupFrame extends JFrame implements ComponentListener
         pButtons.add(boxMainGroups);
         pButtons.add(boxOverflow);
         pButtons.add(btnClose);
+        pButtons.add(btnToDenylist);
         pButtons.add(btnHelp);
         pButtons.add(btnToFile);
         pButtons.add(btnLoad);
@@ -359,6 +367,37 @@ public class GroupFrame extends JFrame implements ComponentListener
         this.add(pTop, BorderLayout.PAGE_START);
         this.add(scrLabelGroup, BorderLayout.CENTER);
         this.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * The action for the
+     * to denylist button.
+     * */
+    private void toDenylist()
+    {
+        if (currentGroups == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga genreade grupper",
+                "Inga genererade grupper", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        for (var group : currentGroups.groups())
+        {
+            for (var id : group)
+            {
+                var p = gm.getPersonFromId(id);
+                group.forEach(x -> { if (x != p.getId()) p.addDenylistId(x); });
+            }
+        }
+
+        JOptionPane.showMessageDialog(
+            this, "Nu finns varje persons gruppmeddlämmar på denylistan",
+            "Denylistor uppdaterad", JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     /**
