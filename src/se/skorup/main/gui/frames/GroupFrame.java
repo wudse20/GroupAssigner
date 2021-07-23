@@ -655,7 +655,17 @@ public class GroupFrame extends JFrame implements ComponentListener
         for (var c : this.getComponents())
             c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        r.run();
+        try
+        {
+            r.run();
+        }
+        catch (Exception e)
+        {
+            for (var c : this.getComponents())
+                c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+            throw e;
+        }
 
         for (var c : this.getComponents())
             c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
