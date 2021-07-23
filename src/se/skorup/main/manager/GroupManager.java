@@ -91,6 +91,22 @@ public class GroupManager implements Serializable
     }
 
     /**
+     * Registers an new person.
+     *
+     * @param p the person to be registered.
+     * @throws IllegalArgumentException iff p is null or the id of p is taken.
+     * */
+    public void registerPerson(Person p)
+    {
+        if (p == null)
+            throw new IllegalArgumentException("The provided person is null.");
+        else if (group.containsKey(p.getId()))
+            throw new IllegalArgumentException("The ID is already in use.");
+
+        group.put(p.getId(), p);
+    }
+
+    /**
      * Removes a person from the group.
      *
      * @param id the id of the person to be

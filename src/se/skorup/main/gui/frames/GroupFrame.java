@@ -754,8 +754,8 @@ public class GroupFrame extends JFrame implements ComponentListener
             DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
 
             JOptionPane.showMessageDialog(
-                    this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
-                    "Felaktig indata", JOptionPane.ERROR_MESSAGE
+                this, "Felaktig indata, fel: %s".formatted(e.getLocalizedMessage()),
+                "Felaktig indata", JOptionPane.ERROR_MESSAGE
             );
 
             return null;
@@ -765,8 +765,8 @@ public class GroupFrame extends JFrame implements ComponentListener
             DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
 
             JOptionPane.showMessageDialog(
-                    this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
-                    "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
+                this, "Kunde inte skapa grupper, fel: %s".formatted(e.getLocalizedMessage()),
+                "Kunde inte skapa grupper", JOptionPane.ERROR_MESSAGE
             );
 
             return null;
@@ -793,7 +793,7 @@ public class GroupFrame extends JFrame implements ComponentListener
         {
             var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, mainGroup);
             var gm = new GroupManager(mainGroup.toString());
-            persons.forEach(p -> gm.registerPerson(p.getName(), Person.Role.CANDIDATE, p.getId()));
+            persons.forEach(gm::registerPerson);
             groups = createGroups(
                 gc instanceof RandomGroupCreator ? new RandomGroupCreator(gm) : new WishlistGroupCreator(gm), sizes
             );
