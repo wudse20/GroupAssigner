@@ -779,7 +779,7 @@ public class GroupFrame extends JFrame implements ComponentListener
             {
                 return tryGenerateGroup(() -> {
                     assert gc != null;
-                    return gc.generateGroup((short) ((int) sizes.get(0)), boxOverflow.isSelected());
+                    return gc.generateGroup((short) ((int) sizes.get(0)), boxOverflow.isSelected(), gm);
                 });
             }
 

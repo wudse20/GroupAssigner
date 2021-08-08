@@ -8,7 +8,6 @@ import se.skorup.main.objects.Tuple;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -19,16 +18,8 @@ import java.util.Set;
  * */
 public record RandomGroupCreator(GroupManager gm) implements GroupCreator
 {
-    /**
-     * Generates the different, groups of size
-     * size.
-     *
-     * @param size the size of the group.
-     * @param overflow if the groups should overflow or not.
-     * @return a List containing the generated groups.
-     * @throws NoGroupAvailableException iff there's no way to create a group.
-     * */
-    private List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
+    @Override
+    public List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
         var deny = gm.getDenyGraph();
         var result = new ArrayList<Set<Integer>>();
@@ -77,31 +68,6 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
             result.add(current);
 
         return result;
-    }
-
-    @Override
-    public List<Set<Integer>> generateGroup(byte groupSize, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
-    {
-        if (groupSize < 2)
-            throw new IllegalArgumentException(
-                    "groupSize needs to greater or equal to 2, your value: %d < 2".formatted(groupSize)
-            );
-
-        return generateGroup((int) groupSize, overflow); // Cast to int to prevent infinite recursion.
-    }
-
-    @Override
-    public List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow) throws IllegalArgumentException, NoGroupAvailableException
-    {
-        if (nbrGroups < 2)
-            throw new IllegalArgumentException(
-                    "nbrGroups needs to greater or equal to 2, your value: %d < 2".formatted(nbrGroups)
-            );
-
-        return generateGroup(
-                (int) Math.round((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
-                overflow
-        );
     }
 
     @Override
