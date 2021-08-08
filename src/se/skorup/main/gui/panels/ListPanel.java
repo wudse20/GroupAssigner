@@ -17,6 +17,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -203,6 +205,21 @@ public class ListPanel extends JPanel
         listAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listAdded.setForeground(Utils.FOREGROUND_COLOR);
         listAdded.setModel(modelAdded);
+        listAdded.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {}
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                if (e.getKeyCode() == 10) // Enter was released
+                    removeButton();
+            }
+        });
+
 
         scrAdded.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         scrAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -210,6 +227,20 @@ public class ListPanel extends JPanel
         listNotAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         listNotAdded.setForeground(Utils.FOREGROUND_COLOR);
         listNotAdded.setModel(modelNotAdded);
+        listNotAdded.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {}
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                if (e.getKeyCode() == 10) // Enter was released
+                    addButton();
+            }
+        });
 
         scrNotAdded.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         scrNotAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
