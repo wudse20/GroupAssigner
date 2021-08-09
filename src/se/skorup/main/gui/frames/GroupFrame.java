@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import java.util.List;
 import java.util.Vector;
 
-
 /**
  * The frame used to create the groups.
  * */
