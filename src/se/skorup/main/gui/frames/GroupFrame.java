@@ -1,10 +1,17 @@
 package se.skorup.main.gui.frames;
 
+import se.skorup.API.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
+import se.skorup.main.gui.panels.SubgroupPanel;
+import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.util.List;
 import java.util.Vector;
 
@@ -13,17 +20,85 @@ import java.util.Vector;
  * */
 public class GroupFrame extends JFrame
 {
+    /** The common path of all subgroups. */
+    public final String BASE_GROUP_PATH;
+
     /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
+
+    /** The current group. */
+    private final GroupManager manager;
+
+    /** The container of the frame. */
+    private final Container cp = this.getContentPane();
+
+    /** The tabs. */
+    private final JTabbedPane tabs = new JTabbedPane();
+
+    /** The layout of the frame. */
+    private final BorderLayout layout = new BorderLayout();
+
+    /** The settings panel. */
+    private final SubgroupSettingsPanel sgsp;
+
+    /** The subgroup panel. */
+    private final SubgroupPanel sgp;
 
     /**
      * Creates a new group frame.
      *
-     * @param gm the group manager in use.
+     * @param manager the group manager in use.
      * */
-    public GroupFrame(GroupManager gm)
+    public GroupFrame(GroupManager manager)
     {
         super("Skapa undergrupper!");
+
+        this.manager = manager;
+        this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), manager.getName());
+        this.sgsp = new SubgroupSettingsPanel(this);
+        this.sgp = new SubgroupPanel(this);
+
+        this.setProperties();
+        this.addComponents();
+    }
+
+    /**
+     * Sets the properties.
+     * */
+    private void setProperties()
+    {
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setSize(new Dimension(400, 300));
+        this.setVisible(true);
+
+        cp.setLayout(layout);
+        cp.setBackground(Utils.BACKGROUND_COLOR);
+        cp.setForeground(Utils.FOREGROUND_COLOR);
+
+        tabs.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        tabs.setForeground(Utils.FOREGROUND_COLOR);
+    }
+
+    /**
+     * Adds the components.
+     * */
+    private void addComponents()
+    {
+        tabs.addTab("Inställningar", sgsp);
+        tabs.addTab("Undergrupper", sgp);
+
+        this.add(tabs, BorderLayout.CENTER);
+    }
+
+    /**
+     * Invokes the action callbacks.
+     * */
+    private void invokeActionCallbacks()
+    {
+        for (var c : callbacks)
+            if (c != null)
+                c.callback();
     }
 
     /**
@@ -38,5 +113,12 @@ public class GroupFrame extends JFrame
             return;
 
         callbacks.add(ac);
+    }
+
+    @Override
+    public void dispose()
+    {
+        this.invokeActionCallbacks();
+        super.dispose();
     }
 }
