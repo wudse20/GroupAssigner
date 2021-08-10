@@ -8,6 +8,8 @@ import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -33,7 +35,7 @@ public class GroupFrame extends JFrame
     private final Container cp = this.getContentPane();
 
     /** The tabs. */
-    private final JTabbedPane tabs = new JTabbedPane();
+    private JTabbedPane tabs;
 
     /** The layout of the frame. */
     private final BorderLayout layout = new BorderLayout();
@@ -76,7 +78,12 @@ public class GroupFrame extends JFrame
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setForeground(Utils.FOREGROUND_COLOR);
 
-        tabs.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource(Utils.FOREGROUND_COLOR));
+        UIManager.put("TabbedPane.darkShadow", new ColorUIResource(Utils.FOREGROUND_COLOR));
+        UIManager.put("TabbedPane.selected", new ColorUIResource(Utils.COMPONENT_BACKGROUND_COLOR));
+
+        tabs = new JTabbedPane();
+        tabs.setBackground(Utils.BACKGROUND_COLOR);
         tabs.setForeground(Utils.FOREGROUND_COLOR);
     }
 
