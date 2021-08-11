@@ -1,5 +1,6 @@
 package se.skorup.main.gui.frames;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.panels.SubgroupPanel;
@@ -9,6 +10,8 @@ import se.skorup.main.manager.GroupManager;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ColorUIResource;
 
 import java.awt.BorderLayout;
@@ -20,7 +23,7 @@ import java.util.Vector;
 /**
  * The frame used to create the groups.
  * */
-public class GroupFrame extends JFrame
+public class GroupFrame extends JFrame implements ChangeListener
 {
     /** The common path of all subgroups. */
     public final String BASE_GROUP_PATH;
@@ -70,21 +73,22 @@ public class GroupFrame extends JFrame
     private void setProperties()
     {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setSize(new Dimension(400, 300));
+        this.setSize(new Dimension(424, 416));
         this.setVisible(true);
+        this.setResizable(false);
 
         cp.setLayout(layout);
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setForeground(Utils.FOREGROUND_COLOR);
 
-        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource(Utils.FOREGROUND_COLOR));
+        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource(Utils.FOREGROUND_COLOR)); // TYPO in JAVA???
         UIManager.put("TabbedPane.darkShadow", new ColorUIResource(Utils.FOREGROUND_COLOR));
         UIManager.put("TabbedPane.selected", new ColorUIResource(Utils.COMPONENT_BACKGROUND_COLOR));
 
         tabs = new JTabbedPane();
         tabs.setBackground(Utils.BACKGROUND_COLOR);
         tabs.setForeground(Utils.FOREGROUND_COLOR);
+        tabs.addChangeListener(this);
     }
 
     /**
@@ -127,5 +131,24 @@ public class GroupFrame extends JFrame
     {
         this.invokeActionCallbacks();
         super.dispose();
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e)
+    {
+        if (tabs.getSelectedComponent() instanceof SubgroupSettingsPanel)
+        {
+            DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
+            this.setSize(new Dimension(424, 416));
+        }
+        else if (tabs.getSelectedComponent() instanceof SubgroupPanel)
+        {
+            DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
+            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+        else
+        {
+            DebugMethods.log("Selected no panel bug", DebugMethods.LogType.ERROR);
+        }
     }
 }

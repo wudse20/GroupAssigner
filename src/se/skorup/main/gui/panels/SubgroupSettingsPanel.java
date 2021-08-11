@@ -10,8 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 /**
@@ -30,6 +29,9 @@ public class SubgroupSettingsPanel extends JPanel
 
     /** The checkbox used for overflow. TODO: CHANGE LABEL */
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
+
+    /** The checkbox used for the MainGroups. */
+    private final JCheckBox boxMainGroups = new JCheckBox("Använd huvudgrupper");
 
     /** The panel containing the MainGroup's settings. */
     private final JPanel pMainGroups = new JPanel();
@@ -73,21 +75,41 @@ public class SubgroupSettingsPanel extends JPanel
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setLayout(new BorderLayout());
 
         var settingsBorder = BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(Color.WHITE), "Inställningar"
+            BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Inställningar"
         );
 
         settingsBorder.setTitleColor(Utils.FOREGROUND_COLOR);
+
+        var mainGroupsBorder = BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Huvudgrupper"
+        );
+
+        mainGroupsBorder.setTitleColor(Utils.FOREGROUND_COLOR);
 
         pSettings.setLayout(new BoxLayout(pSettings, BoxLayout.Y_AXIS));
         pSettings.setForeground(Utils.FOREGROUND_COLOR);
         pSettings.setBackground(Utils.BACKGROUND_COLOR);
         pSettings.setBorder(settingsBorder);
 
+        pMainGroups.setLayout(new FlowLayout(FlowLayout.LEFT));
+        pMainGroups.setForeground(Utils.FOREGROUND_COLOR);
+        pMainGroups.setBackground(Utils.BACKGROUND_COLOR);
+        pMainGroups.setBorder(mainGroupsBorder);
+
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
+
+        boxMainGroups.setBackground(Utils.BACKGROUND_COLOR);
+        boxMainGroups.setForeground(Utils.FOREGROUND_COLOR);
+
+        radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
+        radioMainGroup1.setBackground(Utils.BACKGROUND_COLOR);
+
+        radioMainGroup2.setForeground(Utils.FOREGROUND_COLOR);
+        radioMainGroup2.setBackground(Utils.BACKGROUND_COLOR);
     }
 
     /**
@@ -100,6 +122,10 @@ public class SubgroupSettingsPanel extends JPanel
         p.setLayout(new FlowLayout(FlowLayout.CENTER));
         p.add(boxOverflow);
 
+        var p2 = new JPanel();
+        p2.setBackground(Utils.BACKGROUND_COLOR);
+        p2.setLayout(new BoxLayout(p2, BoxLayout.Y_AXIS));
+
         pSettings.add(pNbrGroups);
         pSettings.add(pNbrMembers);
         pSettings.add(pDifferentSizes);
@@ -108,6 +134,18 @@ public class SubgroupSettingsPanel extends JPanel
         pSettings.add(new JLabel(" "));
         pSettings.add(p);
 
-        this.add(pSettings);
+        pMainGroups.add(boxMainGroups);
+        pMainGroups.add(radioMainGroup1);
+        pMainGroups.add(radioMainGroup2);
+
+        p2.add(pSettings);
+        p2.add(new JLabel(" "));
+        p2.add(pMainGroups);
+
+        this.add(new JLabel("   "), BorderLayout.PAGE_START);
+        this.add(new JLabel("   "), BorderLayout.LINE_START);
+        this.add(p2, BorderLayout.CENTER);
+        this.add(new JLabel("   "), BorderLayout.LINE_END);
+        this.add(new JLabel("   "), BorderLayout.PAGE_END);
     }
 }
