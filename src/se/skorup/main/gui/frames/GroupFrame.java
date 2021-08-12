@@ -17,6 +17,7 @@ import javax.swing.plaf.ColorUIResource;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.List;
 import java.util.Vector;
 
@@ -25,8 +26,26 @@ import java.util.Vector;
  * */
 public class GroupFrame extends JFrame implements ChangeListener
 {
+    /** The state of the size setting. */
+    public enum State
+    {
+        NUMBER_PERSONS,
+        NUMBER_GROUPS,
+        DIFFERENT_GROUP_SIZES,
+        PAIR_WITH_LEADERS
+    }
+
     /** The common path of all subgroups. */
     public final String BASE_GROUP_PATH;
+
+    /** If {@code true} then it will use main groups, else it won't. */
+    private boolean shouldUseMainGroups = false;
+
+    /** If {@code true} it will overflow and create more groups, else it will make one group larger. */
+    private boolean shouldOverflow = false;
+
+    /** The size state, which the groups are generated from. */
+    private State sizeState = State.NUMBER_GROUPS;
 
     /** The list with all the callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
@@ -72,10 +91,16 @@ public class GroupFrame extends JFrame implements ChangeListener
      * */
     private void setProperties()
     {
+        var dim = Toolkit.getDefaultToolkit().getScreenSize();
+
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(424, 416));
         this.setVisible(true);
         this.setResizable(false);
+        this.setLocation(
+            dim.width / 2 - this.getSize().width / 2,
+            dim.height / 2 - this.getSize().height / 2
+        );
 
         cp.setLayout(layout);
         cp.setBackground(Utils.BACKGROUND_COLOR);
@@ -150,5 +175,65 @@ public class GroupFrame extends JFrame implements ChangeListener
         {
             DebugMethods.log("Selected no panel bug", DebugMethods.LogType.ERROR);
         }
+    }
+
+    /**
+     * Getter for: shouldUseMainGroups
+     *
+     * @return the value of shouldUseMainGroups.
+     * */
+    public boolean shouldUseMainGroups()
+    {
+        return shouldUseMainGroups;
+    }
+
+    /**
+     * Setter for: shouldUseMainGroups
+     *
+     * @param shouldUseMainGroups the new value of shouldUseMainGroups.
+     * */
+    public void shouldUseMainGroups(boolean shouldUseMainGroups)
+    {
+        this.shouldUseMainGroups = shouldUseMainGroups;
+    }
+
+    /**
+     * Getter for: stateSize
+     *
+     * @return the current state setting.
+     * */
+    public State getSizeState()
+    {
+        return sizeState;
+    }
+
+    /**
+     * Setter for: stateSize
+     *
+     * @param sizeState the new state setting.
+     * */
+    public void setSizeState(State sizeState)
+    {
+        this.sizeState = sizeState;
+    }
+
+    /**
+     * Getter for: shouldOverflow.
+     *
+     * @return the value of overflow.
+     * */
+    public boolean shouldOverflow()
+    {
+        return shouldOverflow;
+    }
+
+    /**
+     * Setter for: shouldOverflow.
+     *
+     * @param shouldOverflow the new value for shouldOverflow.
+     * */
+    public void setOverflow(boolean shouldOverflow)
+    {
+        this.shouldOverflow = shouldOverflow;
     }
 }

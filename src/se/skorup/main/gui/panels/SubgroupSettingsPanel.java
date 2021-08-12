@@ -5,6 +5,7 @@ import se.skorup.main.gui.frames.GroupFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,6 +27,12 @@ public class SubgroupSettingsPanel extends JPanel
 
     /** The radio button for the first main group. */
     private final JRadioButton radioMainGroup2 = new JRadioButton("Huvudgrupp 2");
+
+    /** The button group for the MainGroups. */
+    private final ButtonGroup bgMainGroups = new ButtonGroup();
+
+    /** The button group for the settings. */
+    private final ButtonGroup bgSettings = new ButtonGroup();
 
     /** The checkbox used for overflow. TODO: CHANGE LABEL */
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
@@ -56,7 +63,7 @@ public class SubgroupSettingsPanel extends JPanel
         new SettingPanel("%-35s".formatted("Olika antal personer/grupp"), null, 4, true);
 
     /**
-     * Creates a new SubgroupSettingsPanel..
+     * Creates a new SubgroupSettingsPanel.
      *
      * @param gf the instance of the GroupFrame in use.
      * */
@@ -101,15 +108,39 @@ public class SubgroupSettingsPanel extends JPanel
 
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
+        boxOverflow.addActionListener(e -> gf.setOverflow(boxOverflow.isSelected()));
 
         boxMainGroups.setBackground(Utils.BACKGROUND_COLOR);
         boxMainGroups.setForeground(Utils.FOREGROUND_COLOR);
+        boxMainGroups.addActionListener(e -> {
+            radioMainGroup1.setEnabled(boxMainGroups.isSelected());
+            radioMainGroup2.setEnabled(boxMainGroups.isSelected());
+            gf.shouldUseMainGroups(boxMainGroups.isSelected());
+        });
 
         radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
         radioMainGroup1.setBackground(Utils.BACKGROUND_COLOR);
+        radioMainGroup1.setEnabled(false);
+        radioMainGroup1.setSelected(true);
 
         radioMainGroup2.setForeground(Utils.FOREGROUND_COLOR);
         radioMainGroup2.setBackground(Utils.BACKGROUND_COLOR);
+        radioMainGroup2.setEnabled(false);
+
+        pNbrGroups.setRadioSelected(true);
+
+        pNbrGroups.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.NUMBER_GROUPS));
+        pNbrMembers.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.NUMBER_PERSONS));
+        pLeaders.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.PAIR_WITH_LEADERS));
+        pDifferentSizes.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.DIFFERENT_GROUP_SIZES));
+
+        bgMainGroups.add(radioMainGroup1);
+        bgMainGroups.add(radioMainGroup2);
+
+        bgSettings.add(pNbrGroups.getRadio());
+        bgSettings.add(pNbrMembers.getRadio());
+        bgSettings.add(pLeaders.getRadio());
+        bgSettings.add(pDifferentSizes.getRadio());
     }
 
     /**
