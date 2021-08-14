@@ -19,46 +19,26 @@ import java.awt.FlowLayout;
  * */
 public class SubgroupSettingsPanel extends JPanel
 {
-    /** The instance of the GroupFrame this panel is a part off. */
     private final GroupFrame gf;
 
-    /** The radio button for the first main group. */
     private final JRadioButton radioMainGroup1 = new JRadioButton("Huvudgrupp 1");
-
-    /** The radio button for the first main group. */
     private final JRadioButton radioMainGroup2 = new JRadioButton("Huvudgrupp 2");
 
-    /** The button group for the MainGroups. */
     private final ButtonGroup bgMainGroups = new ButtonGroup();
-
-    /** The button group for the settings. */
     private final ButtonGroup bgSettings = new ButtonGroup();
 
-    /** The checkbox used for overflow. TODO: CHANGE LABEL */
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
-
-    /** The checkbox used for the MainGroups. */
     private final JCheckBox boxMainGroups = new JCheckBox("Använd huvudgrupper");
 
-    /** The panel containing the MainGroup's settings. */
     private final JPanel pMainGroups = new JPanel();
-
-    /** The panel containing the settings of the group generation. */
     private final JPanel pSettings = new JPanel();
 
-    /** The panel for pairing a group with the leaders. */
     private final SettingPanel pLeaders =
         new SettingPanel("Para grupper med ledare", null, 0, false);
-
-    /** The panel for setting number of groups. */
     private final SettingPanel pNbrGroups =
         new SettingPanel("%-35s".formatted("Antal grupper"), null, 4, true);
-
-    /** The panel for setting persons/group. */
     private final SettingPanel pNbrMembers =
         new SettingPanel("%-35s".formatted("Antal personer/grupp"), null, 4, true);
-
-    /** The panel for setting different sizes. */
     private final SettingPanel pDifferentSizes =
         new SettingPanel("%-35s".formatted("Olika antal personer/grupp"), null, 4, true);
 
