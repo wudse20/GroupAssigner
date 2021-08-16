@@ -105,6 +105,9 @@ public class GroupFrame extends JFrame implements ChangeListener
         tabs.setBackground(Utils.BACKGROUND_COLOR);
         tabs.setForeground(Utils.FOREGROUND_COLOR);
         tabs.addChangeListener(this);
+
+        gbp.addActionListener(e -> this.dispose(), GroupButtonPanel.Buttons.CLOSE);
+        gbp.addActionListener(e -> Utils.openHelpPages(), GroupButtonPanel.Buttons.HELP);
     }
 
     /**

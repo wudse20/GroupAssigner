@@ -23,7 +23,6 @@ public class SubgroupPanel extends JPanel
         this.gf = gf;
 
         this.setProperties();
-        this.addComponents();
     }
 
     /**
@@ -33,13 +32,5 @@ public class SubgroupPanel extends JPanel
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
-    }
-
-    /**
-     * Adds the components.
-     * */
-    private void addComponents()
-    {
-
     }
 }
