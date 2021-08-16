@@ -9,6 +9,7 @@ import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -17,6 +18,7 @@ import javax.swing.plaf.ColorUIResource;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
@@ -57,6 +59,8 @@ public class GroupFrame extends JFrame implements ChangeListener
 
     private final SubgroupPanel sgp;
 
+    private final JScrollPane scrSgp;
+
     private final GroupButtonPanel gbp = new GroupButtonPanel();
 
     /**
@@ -72,6 +76,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), manager.getName());
         this.sgsp = new SubgroupSettingsPanel(this);
         this.sgp = new SubgroupPanel(this);
+        this.scrSgp = new JScrollPane(sgp);
 
         this.setProperties();
         this.addComponents();
@@ -106,6 +111,10 @@ public class GroupFrame extends JFrame implements ChangeListener
         tabs.setForeground(Utils.FOREGROUND_COLOR);
         tabs.addChangeListener(this);
 
+        scrSgp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrSgp.setForeground(Utils.FOREGROUND_COLOR);
+        scrSgp.setBackground(Utils.BACKGROUND_COLOR);
+
         gbp.addActionListener(e -> this.dispose(), GroupButtonPanel.Buttons.CLOSE);
         gbp.addActionListener(e -> Utils.openHelpPages(), GroupButtonPanel.Buttons.HELP);
     }
@@ -116,7 +125,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     private void addComponents()
     {
         tabs.addTab("Inställningar", sgsp);
-        tabs.addTab("Undergrupper", sgp);
+        tabs.addTab("Undergrupper", scrSgp);
 
         this.add(tabs, BorderLayout.CENTER);
         this.add(gbp, BorderLayout.PAGE_END);
@@ -131,6 +140,34 @@ public class GroupFrame extends JFrame implements ChangeListener
             if (c != null)
                 c.callback();
     }
+
+    /**
+     * Runs an action with the spiny, spiny
+     * cursor.
+     *
+     * @param r the action to be ran.
+     * */
+    public void waitCursorAction(Runnable r)
+    {
+        for (var c : this.getComponents())
+            c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        try
+        {
+            r.run();
+        }
+        catch (Exception e)
+        {
+            for (var c : this.getComponents())
+                c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+            throw e;
+        }
+
+        for (var c : this.getComponents())
+            c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+
 
     /**
      * Adds an action callback to the frame.
@@ -230,6 +267,16 @@ public class GroupFrame extends JFrame implements ChangeListener
         return gbp;
     }
 
+    /**
+     * Getter for: Manager
+     *
+     * @return the current group manager.
+     * */
+    public GroupManager getManager()
+    {
+        return manager;
+    }
+
     @Override
     public void dispose()
     {
@@ -246,7 +293,7 @@ public class GroupFrame extends JFrame implements ChangeListener
             this.setSize(new Dimension(424, 452));
             gbp.populateButtons(sgsp);
         }
-        else if (tabs.getSelectedComponent() instanceof SubgroupPanel)
+        else if (tabs.getSelectedComponent() instanceof JScrollPane)
         {
             DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
