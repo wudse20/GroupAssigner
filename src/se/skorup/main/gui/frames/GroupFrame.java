@@ -2,11 +2,13 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
+import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.panels.GroupButtonPanel;
 import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Person;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -275,6 +277,37 @@ public class GroupFrame extends JFrame implements ChangeListener
     public GroupManager getManager()
     {
         return manager;
+    }
+
+    /**
+     * Gets the current group selector.
+     *
+     * @return the currently selected group selector.
+     * */
+    public GroupCreator getGroupSelectedGroupCreator()
+    {
+        return sgsp.getGroupSelectedGroupCreator();
+    }
+
+    /**
+     * Gets the currently selected MainGroup.
+     *
+     * @return the currently selected MainGroup;
+     * */
+    public Person.MainGroup getMainGroup()
+    {
+        return sgsp.getMainGroup();
+    }
+
+    /**
+     * Gets the user input from the selected size setting.
+     *
+     * @return a list containing all the different sizes
+     *         of the groups. If it isn't the first
+     * */
+    public List<Integer> getUserInput()
+    {
+        return sgsp.getUserInput();
     }
 
     @Override

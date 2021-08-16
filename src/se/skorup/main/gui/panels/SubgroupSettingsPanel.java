@@ -7,6 +7,7 @@ import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
 import se.skorup.main.groups.WishlistGroupCreator;
 import se.skorup.main.gui.frames.GroupFrame;
+import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -14,11 +15,16 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The settings for the subgroup generation.
@@ -188,5 +194,69 @@ public class SubgroupSettingsPanel extends JPanel
         this.add(p2, BorderLayout.CENTER);
         this.add(new JLabel("   "), BorderLayout.LINE_END);
         this.add(new JLabel("   "), BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Gets the current group selector.
+     *
+     * @return the currently selected group selector.
+     * */
+    public GroupCreator getGroupSelectedGroupCreator()
+    {
+        return (GroupCreator) cbCreators.getSelectedItem();
+    }
+
+    /**
+     * Gets the currently selected MainGroup.
+     *
+     * @return the currently selected MainGroup;
+     * */
+    public Person.MainGroup getMainGroup()
+    {
+        return radioMainGroup1.isSelected()  ?
+               Person.MainGroup.MAIN_GROUP_1 :
+               Person.MainGroup.MAIN_GROUP_2;
+    }
+
+    /**
+     * Gets the user input from the program,
+     * to determine sizes.
+     *
+     * @return a list containing the sizes of
+     *         the groups.
+     * */
+    public List<Integer> getUserInput()
+    {
+        try
+        {
+            // Leader mode
+            if (pLeaders.isRadioSelected())
+                return Collections.singletonList(gf.getManager().getAllOfRoll(Person.Role.LEADER).size());
+
+            // Number of groups mode
+            if (pNbrGroups.isRadioSelected())
+                return Collections.singletonList(Integer.parseInt(pNbrGroups.getTextFieldData()));
+
+            // Number of members mode
+            if (pNbrMembers.isRadioSelected())
+                return Collections.singletonList(Integer.parseInt(pNbrMembers.getTextFieldData()));
+
+            // Different sizes mode.
+            return Arrays.stream(pDifferentSizes.getTextFieldData().split(",")) // Splitting
+                         .map(String::trim) // Trimming
+                         .map(Integer::parseInt) // Parsing
+                         .collect(Collectors.toList()); // Convert stream into list.
+        }
+        catch (NumberFormatException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.DEBUG);
+
+            JOptionPane.showMessageDialog(
+                this, "Felaktig indata: %s".formatted(e.getLocalizedMessage()),
+                "Felaktig indata", JOptionPane.ERROR_MESSAGE
+            );
+
+            return null;
+        }
     }
 }
