@@ -1,12 +1,18 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.Utils;
+import se.skorup.main.groups.AlternateWishlistGroupCreator;
+import se.skorup.main.groups.GroupCreator;
+import se.skorup.main.groups.RandomGroupCreator;
+import se.skorup.main.groups.WishlistGroupCreator;
 import se.skorup.main.gui.frames.GroupFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -30,8 +36,11 @@ public class SubgroupSettingsPanel extends JPanel
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
     private final JCheckBox boxMainGroups = new JCheckBox("Använd huvudgrupper");
 
+    private final JComboBox<GroupCreator> cbCreators = new JComboBox<>();
+
     private final JPanel pMainGroups = new JPanel();
     private final JPanel pSettings = new JPanel();
+    private final JPanel pGroupCreator = new JPanel();
 
     private final SettingPanel pLeaders =
         new SettingPanel("Para grupper med ledare", null, 0, false);
@@ -76,6 +85,12 @@ public class SubgroupSettingsPanel extends JPanel
 
         mainGroupsBorder.setTitleColor(Utils.FOREGROUND_COLOR);
 
+        var groupCreatorBorder = BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Gruppgenerator"
+        );
+
+        groupCreatorBorder.setTitleColor(Utils.FOREGROUND_COLOR);
+
         pSettings.setLayout(new BoxLayout(pSettings, BoxLayout.Y_AXIS));
         pSettings.setForeground(Utils.FOREGROUND_COLOR);
         pSettings.setBackground(Utils.BACKGROUND_COLOR);
@@ -85,6 +100,17 @@ public class SubgroupSettingsPanel extends JPanel
         pMainGroups.setForeground(Utils.FOREGROUND_COLOR);
         pMainGroups.setBackground(Utils.BACKGROUND_COLOR);
         pMainGroups.setBorder(mainGroupsBorder);
+
+        pGroupCreator.setLayout(new FlowLayout(FlowLayout.CENTER));
+        pGroupCreator.setForeground(Utils.FOREGROUND_COLOR);
+        pGroupCreator.setBackground(Utils.BACKGROUND_COLOR);
+        pGroupCreator.setBorder(groupCreatorBorder);
+
+        cbCreators.setForeground(Utils.FOREGROUND_COLOR);
+        cbCreators.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        cbCreators.addItem(new RandomGroupCreator(gf.getManager()));
+        cbCreators.addItem(new WishlistGroupCreator(gf.getManager()));
+        cbCreators.addItem(new AlternateWishlistGroupCreator(gf.getManager()));
 
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
@@ -149,6 +175,10 @@ public class SubgroupSettingsPanel extends JPanel
         pMainGroups.add(radioMainGroup1);
         pMainGroups.add(radioMainGroup2);
 
+        pGroupCreator.add(cbCreators);
+
+        p2.add(pGroupCreator);
+        p2.add(new JLabel(" "));
         p2.add(pSettings);
         p2.add(new JLabel(" "));
         p2.add(pMainGroups);

@@ -90,7 +90,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         var dim = Toolkit.getDefaultToolkit().getScreenSize();
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setSize(new Dimension(424, 452));
+        this.setSize(new Dimension(424, 527));
         this.setVisible(true);
         this.setResizable(false);
         this.setLocation(
@@ -290,7 +290,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         if (tabs.getSelectedComponent() instanceof SubgroupSettingsPanel)
         {
             DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
-            this.setSize(new Dimension(424, 452));
+            this.setSize(new Dimension(424, 527));
             gbp.populateButtons(sgsp);
         }
         else if (tabs.getSelectedComponent() instanceof JScrollPane)
