@@ -27,35 +27,19 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     /** The enum for the different buttons. */
     private enum Buttons
     {
-        /** The label for the add button. */
-        ADD,
-
-        /** The label for the edit button. */
-        EDIT,
-
-        /** The label for the delete button. */
-        DELETE
+        ADD, EDIT, DELETE
     }
 
-    /** The reference to the managers. */
     private final List<GroupManager> managers;
 
-    /** The instance of the MainFrame in use. */
     private final MainFrame mf;
 
-    /** The combo box holding the group managers. */
     private final JComboBox<GroupManager> cbManagers = new JComboBox<>();
 
-    /** The button used in adding. */
     private final JButton btnAdd = new JButton("Skapa en ny grupp");
-
-    /** The button used for editing. */
     private final JButton btnEdit = new JButton("Ändra denna grupp");
-
-    /** The button for deleting a group. */
     private final JButton btnDelete = new JButton("Ta bort denna grupp");
 
-    /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
     /**
