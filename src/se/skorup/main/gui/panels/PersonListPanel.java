@@ -23,28 +23,20 @@ import java.util.Vector;
  * */
 public class PersonListPanel extends JPanel implements ListSelectionListener
 {
-    /** The set of persons in the list. */
     private Set<Person> persons;
 
-    /** The current person. */
     private Person p;
 
-    /** The action callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
 
-    /** The label. */
     private final JLabel lblGroupInfo;
 
-    /** The list. */
     private final JList<Person> listPersons = new JList<>();
 
-    /** The list model. */
     private final PersonListModel model;
 
-    /** The scroller for the list. */
     private final JScrollPane scrListPersons = new JScrollPane(listPersons);
 
-    /** The layout of the panel. */
     private final BorderLayout layout = new BorderLayout();
 
     /**
@@ -83,7 +75,7 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
     }
 
     /**
-     * Updates the the list with a new
+     * Updates the list with a new
      * set of persons.
      *
      * @param persons the new set of persons.

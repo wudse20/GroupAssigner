@@ -19,16 +19,12 @@ import java.util.Vector;
  * */
 public class InputPanel extends JPanel implements DocumentListener
 {
-    /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
-    /** The input field. */
     private final JTextField txfInput;
 
-    /** The info label. */
     private final JLabel lblInfo;
 
-    /** The list containing all the ActionCallbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
 
     /**

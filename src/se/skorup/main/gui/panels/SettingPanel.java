@@ -13,16 +13,12 @@ import java.awt.Font;
  * */
 public class SettingPanel extends JPanel
 {
-    /** If the input should be shown or not. */
     private final boolean shouldHaveInput;
 
-    /** The radio button of this panel. */
     private final JRadioButton radio;
 
-    /** The input panel that holds the text field and it's label. */
     private final InputPanel pInput;
 
-    /** The layout of this panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.CENTER);
 
     /**

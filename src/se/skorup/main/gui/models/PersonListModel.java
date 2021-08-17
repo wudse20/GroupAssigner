@@ -1,6 +1,5 @@
 package se.skorup.main.gui.models;
 
-import se.skorup.API.ImmutableArray;
 import se.skorup.main.objects.Person;
 
 import javax.swing.AbstractListModel;
@@ -75,16 +74,6 @@ public class PersonListModel extends AbstractListModel<Person>
         this.persons.clear();
         // Index1 is 0, since persons will be cleared.
         fireContentsChanged(this, 0, 0);
-    }
-
-    /**
-     * Returns all items as an immutable array.
-     *
-     * @return an ImmutableArray with all items.
-     * */
-    public ImmutableArray<Person> getAllItems()
-    {
-        return ImmutableArray.fromList(persons);
     }
 
     /**

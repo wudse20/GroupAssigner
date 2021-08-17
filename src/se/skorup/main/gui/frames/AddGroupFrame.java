@@ -40,61 +40,32 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The frame used to add groups.
  * */
 public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionListener
 {
-    /** The resulting group. */
     private GroupManager result;
 
-    /** The add listeners of the frame. */
     private final List<AddListener> addListeners = new ArrayList<>();
 
-    /** The removed names in edit mode. */
     private final Set<String> removed = new HashSet<>();
 
-    /** The container of the frame. */
     private final Container cp = this.getContentPane();
 
-    /** The container panel. */
     private final JPanel pContainer = new JPanel();
-
-    /** The container panel for the inputs.*/
     private final JPanel pInputContainer = new JPanel();
-
-    /** The container for the JList. */
     private final JPanel pListContainer = new JPanel();
-
-    /** The input panel for the group name. */
-    private final InputPanel pName = new InputPanel("Grupp: ", 24);
-
-    /** The input panel for the group members. */
-    private final InputPanel pInputGroupMember = new InputPanel("Namn: ", 24);
-
-    /** The button panel. */
     private final JPanel pButtons = new JPanel();
 
-    /** The layout of the button panel. */
-    private final FlowLayout pButtonsLayout = new FlowLayout(FlowLayout.RIGHT);
+    private final InputPanel pName = new InputPanel("Grupp: ", 24);
+    private final InputPanel pInputGroupMember = new InputPanel("Namn: ", 24);
 
-    /** The JList for the persons. */
     private final JList<String> names = new JList<>();
-
-    /** The layout for the input container. */
-    private final BoxLayout pInputContainerLayout =
-        new BoxLayout(pInputContainer, BoxLayout.Y_AXIS);
 
     /** The layout of the frame. */
     private final BorderLayout layout = new BorderLayout();
-
-    /** The layout of the frame. */
-    private final BorderLayout pContainerLayout = new BorderLayout();
-
-    /** The layout of the frame. */
-    private final BorderLayout pListContainerLayout = new BorderLayout();
 
     /** The model of the list. */
     private final NameListModel nameModel = new NameListModel(new HashSet<>());
@@ -102,40 +73,12 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     /** The label for the list. */
     private final JLabel lblList = new JLabel("  Medlämmar:");
 
-    /** Spacer */
-    private final JLabel lblSpacer1 = new JLabel(" ");
 
-    /** Spacer */
-    private final JLabel lblSpacer2 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer3 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer4 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer5 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer6 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer7 = new JLabel("   ");
-
-    /** The button for applying. */
     private final JButton btnApply = new JButton("Lägg till");
-
-    /** The button for canceling. */
     private final JButton btnCancel = new JButton("Avbryt");
-
-    /** The button for importing from google forms. */
     private final JButton btnImport = new JButton("Importera från google forms");
-
-    /** The button for removing names. */
     private final JButton btnRemove = new JButton("Tabort");
 
-    /** The list scroller. */
     private final JScrollPane scrList = new JScrollPane(names);
 
     /**
@@ -179,7 +122,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
     {
         pInputContainer.add(pName);
         pInputContainer.add(pInputGroupMember);
-        pInputContainer.add(lblSpacer5);
+        pInputContainer.add(new JLabel(" "));
 
         pButtons.add(btnRemove);
 
@@ -190,18 +133,18 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
         pButtons.add(btnApply);
 
         pListContainer.add(lblList, BorderLayout.PAGE_START);
-        pListContainer.add(lblSpacer6, BorderLayout.LINE_START);
+        pListContainer.add(new JLabel("   "), BorderLayout.LINE_START);
         pListContainer.add(scrList, BorderLayout.CENTER);
-        pListContainer.add(lblSpacer7, BorderLayout.LINE_END);
+        pListContainer.add(new JLabel("   "), BorderLayout.LINE_END);
 
         pContainer.add(pInputContainer, BorderLayout.PAGE_START);
         pContainer.add(pListContainer, BorderLayout.CENTER);
-        pContainer.add(lblSpacer4, BorderLayout.PAGE_END);
+        pContainer.add(new JLabel(" "), BorderLayout.PAGE_END);
 
-        cp.add(lblSpacer1, BorderLayout.PAGE_START);
-        cp.add(lblSpacer2, BorderLayout.LINE_START);
+        cp.add(new JLabel(" "), BorderLayout.PAGE_START);
+        cp.add(new JLabel("   "), BorderLayout.LINE_START);
         cp.add(pContainer, BorderLayout.CENTER);
-        cp.add(lblSpacer3, BorderLayout.LINE_END);
+        cp.add(new JLabel("   "), BorderLayout.LINE_END);
         cp.add(pButtons, BorderLayout.PAGE_END);
     }
 
@@ -220,7 +163,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
         cp.setLayout(layout);
 
         pInputContainer.setBackground(Utils.BACKGROUND_COLOR);
-        pInputContainer.setLayout(pInputContainerLayout);
+        pInputContainer.setLayout(new BoxLayout(pInputContainer, BoxLayout.Y_AXIS));
 
         names.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         names.setForeground(Utils.FOREGROUND_COLOR);
@@ -229,10 +172,10 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
         names.addListSelectionListener(this);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
-        pContainer.setLayout(pContainerLayout);
+        pContainer.setLayout(new BorderLayout());
 
         pButtons.setBackground(Utils.BACKGROUND_COLOR);
-        pButtons.setLayout(pButtonsLayout);
+        pButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         btnApply.setForeground(Utils.FOREGROUND_COLOR);
         btnApply.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -246,7 +189,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
         btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnImport.addActionListener((e) -> importFromDocs());
 
-        pListContainer.setLayout(pListContainerLayout);
+        pListContainer.setLayout(new BorderLayout());
         pListContainer.setBackground(Utils.BACKGROUND_COLOR);
 
         lblList.setForeground(Utils.FOREGROUND_COLOR);
@@ -407,7 +350,6 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
             {
                 var fr = new FileReader(f, StandardCharsets.UTF_8);
                 var br = new BufferedReader(fr);
-
                 var lines = new StringBuilder();
 
                 String tmp;

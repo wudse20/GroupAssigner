@@ -18,9 +18,7 @@ public abstract class Person implements Serializable, Comparable<Person>
      * */
     public enum Role
     {
-        /** The candidate role, TODO: find new name. */
         CANDIDATE,
-        /** The leader role. */
         LEADER
     }
 
@@ -30,25 +28,17 @@ public abstract class Person implements Serializable, Comparable<Person>
      * */
     public enum MainGroup
     {
-        /** The first main group. */
         MAIN_GROUP_1,
-        /** The second main group. */
         MAIN_GROUP_2
     }
 
-    /** The name of the person. */
     protected final String name;
 
-    /** The id of the person. */
     protected int id;
 
-    /** The denylist of the person. */
     protected Set<Integer> denylist = new HashSet<>();
-
-    /** The wishes of the person. */
     protected Set<Integer> wishlist = new HashSet<>();
 
-    /** The main group of this person. */
     protected MainGroup mg = MainGroup.MAIN_GROUP_1;
 
     /**
