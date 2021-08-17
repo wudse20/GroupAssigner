@@ -40,73 +40,29 @@ public class ListPanel extends JPanel
     /** The key for the not added set in {@link ListPanel#getLists()} */
     public static final String NOT_ADDED_KEY = "notAdded";
 
-    /** The persons that aren't added. */
     private final Set<Person> notAdded;
-
-    /** The persons that are added. */
     private final Set<Person> added;
 
-    /** All the action callbacks. */
     private final List<ActionCallback> callbacks = new Vector<>();
 
-    /** The panel holding the buttons. */
     private final JPanel btnPanel = new JPanel();
-
-    /** The panel for the btnPanel. */
     private final JPanel buttonContainer = new JPanel();
-
-    /** The container holding the main items. */
     private final JPanel container = new JPanel();
 
-    /** The button for removing. */
     private final JButton btnRemove = new JButton("<html>&larr;</html>");
-
-    /** The button for adding. */
     private final JButton btnAdd = new JButton("<html>&rarr;</html>");
 
-    /** The spacer label. */
-    private final JLabel lblSpacer1 = new JLabel(" ");
-
-    /** The spacer label. */
-    private final JLabel lblSpacer2 = new JLabel(" ");
-
-    /** The spacer label. */
-    private final JLabel lblSpacer3 = new JLabel("        ");
-
-    /** The spacer label. */
-    private final JLabel lblSpacer4 = new JLabel("        ");
-
-    /** The info label. */
     private final JLabel lblInfo;
 
-    /** The layout of the panel. */
     private final BorderLayout layout = new BorderLayout();
 
-    /** The layout of the container. */
-    private final GridLayout containerLayout = new GridLayout(1, 3);
-
-    /** The layout of the btnPanel. */
-    private final BoxLayout btnPanelLayout = new BoxLayout(btnPanel, BoxLayout.Y_AXIS);
-
-    /** The layout of the button container.*/
-    private final FlowLayout buttonContainerLayout = new FlowLayout(FlowLayout.CENTER);
-
-    /** The list of the added persons. */
     private final JList<Person> listAdded = new JList<>();
-
-    /** The list of the not added persons. */
     private final JList<Person> listNotAdded = new JList<>();
 
-    /** The scroller for the added persons. */
     private final JScrollPane scrAdded = new JScrollPane(listAdded);
-
-    /** The scroller for the not added persons. */
     private final JScrollPane scrNotAdded = new JScrollPane(listNotAdded);
 
-    /** The list model of the added persons. */
     private final PersonListModel modelAdded = new PersonListModel(null);
-
-    /** The list model of the not added persons. */
     private final PersonListModel modelNotAdded = new PersonListModel(null);
 
     /**
@@ -135,14 +91,14 @@ public class ListPanel extends JPanel
      * */
     private void addComponents()
     {
-        btnPanel.add(lblSpacer1);
+        btnPanel.add(new JLabel(" "));
         btnPanel.add(btnAdd);
-        btnPanel.add(lblSpacer2);
+        btnPanel.add(new JLabel(" "));
         btnPanel.add(btnRemove);
 
-        buttonContainer.add(lblSpacer3);
+        buttonContainer.add(new JLabel("        "));
         buttonContainer.add(btnPanel);
-        buttonContainer.add(lblSpacer4);
+        buttonContainer.add(new JLabel("        "));
 
         container.add(scrNotAdded);
         container.add(buttonContainer);
@@ -174,13 +130,13 @@ public class ListPanel extends JPanel
         this.setLayout(layout);
 
         container.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        container.setLayout(containerLayout);
+        container.setLayout(new GridLayout(1, 3));
 
         btnPanel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnPanel.setLayout(btnPanelLayout);
+        btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.Y_AXIS));
 
         buttonContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        buttonContainer.setLayout(buttonContainerLayout);
+        buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         btnAdd.setForeground(Utils.FOREGROUND_COLOR);
         btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
