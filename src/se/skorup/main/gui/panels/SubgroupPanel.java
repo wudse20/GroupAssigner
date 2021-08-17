@@ -21,6 +21,7 @@ import se.skorup.main.objects.Tuple;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,6 +32,7 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,6 +89,50 @@ public class SubgroupPanel extends JPanel implements MouseListener
         gf.addActionListener(e -> gf.waitCursorAction(this::generateGroups), GroupButtonPanel.Buttons.CREATE);
         gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
         gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
+        gf.addActionListener(e -> print(), GroupButtonPanel.Buttons.PRINT);
+    }
+
+    /**
+     * Prints the groups.
+     * */
+    private void print()
+    {
+        if (current == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga skapade grupper!",
+                "Inga skapade grupper!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        var canvas = new JTextArea();
+        var groups =
+                current.groups()
+                       .stream()
+                       .map(x -> new ArrayList<>(x.stream().map(gm::getPersonFromId).collect(Collectors.toList())))
+                       .collect(Collectors.toCollection(ArrayList::new));
+
+        canvas.setTabSize(4);
+        canvas.setLineWrap(true);
+
+        // Fist the overview
+        for (var i = 0; i < groups.size(); i++)
+        {
+            canvas.append("%s:\n".formatted(current.getLabel(i)));
+            groups.get(i).forEach(p -> canvas.append("\t%s\n".formatted(p.getName())));
+            canvas.append("\n");
+        }
+
+        try
+        {
+            canvas.print();
+        }
+        catch (PrinterException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+        }
     }
 
     /**
