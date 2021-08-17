@@ -18,8 +18,8 @@ public class GroupButtonPanel extends JPanel
      * */
     public enum Buttons
     {
-        CLOSE, HELP, LOAD,
-        SAVE, TO_FILE, CREATE
+        CLOSE, HELP, LOAD, SAVE,
+        TO_FILE, CREATE, TO_DENYLIST
     }
 
     private final JButton btnClose = new JButton("Stäng");
@@ -28,6 +28,7 @@ public class GroupButtonPanel extends JPanel
     private final JButton btnSave = new JButton("Spara");
     private final JButton btnToFile = new JButton("Spara som textfil");
     private final JButton btnCreate = new JButton("Genrera grupper");
+    private final JButton btnToDenylist = new JButton("Till denylista");
 
     /**
      * Creates a new GroupButtonPanel.
@@ -63,6 +64,9 @@ public class GroupButtonPanel extends JPanel
 
         btnToFile.setForeground(Utils.FOREGROUND_COLOR);
         btnToFile.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+
+        btnToDenylist.setForeground(Utils.FOREGROUND_COLOR);
+        btnToDenylist.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
     }
 
     /**
@@ -90,6 +94,7 @@ public class GroupButtonPanel extends JPanel
             this.add(btnLoad);
             this.add(btnSave);
             this.add(btnToFile);
+            this.add(btnToDenylist);
             this.add(btnCreate);
         }
         else
@@ -126,6 +131,7 @@ public class GroupButtonPanel extends JPanel
             case SAVE -> btnSave.addActionListener(al);
             case CREATE -> btnCreate.addActionListener(al);
             case TO_FILE -> btnToFile.addActionListener(al);
+            case TO_DENYLIST -> btnToDenylist.addActionListener(al);
         }
     }
 }

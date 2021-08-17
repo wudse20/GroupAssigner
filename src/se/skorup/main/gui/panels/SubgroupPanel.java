@@ -84,6 +84,37 @@ public class SubgroupPanel extends JPanel implements MouseListener
         this.addMouseListener(this);
 
         gf.addActionListener(e -> gf.waitCursorAction(this::generateGroups), GroupButtonPanel.Buttons.CREATE);
+        gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
+    }
+
+    /**
+     * The action for the toDenylist-button.
+     * */
+    private void toDenylist()
+    {
+        if (current == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga genreade grupper",
+                "Inga genererade grupper", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        for (var group : current.groups())
+        {
+            for (var id : group)
+            {
+                var p = gm.getPersonFromId(id);
+                group.forEach(x -> { if (x != p.getId()) p.addDenylistId(x); });
+            }
+        }
+
+        JOptionPane.showMessageDialog(
+            this, "Nu finns varje persons gruppmeddlämmar på denylistan.",
+            "Denylistor uppdaterad", JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     /**
