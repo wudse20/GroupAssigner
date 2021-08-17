@@ -21,23 +21,12 @@ import java.util.HashSet;
  * */
 public class SidePanel extends JPanel implements ComponentListener, WindowStateListener
 {
-    /** The instance of the MainFrame. */
     private final MainFrame mf;
 
-    /** The layout of the frame. */
     private final BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 
-    /** The PersonPanel for the leaders. */
     private final PersonListPanel pLeaders;
-
-    /** The PersonPanel for the candidates. */
     private final PersonListPanel pCandidates;
-
-    /** The spacer between the panels. */
-    private final JLabel lblSpacer1 = new JLabel(" ");
-
-    /** The spacer between the panels. */
-    private final JLabel lblSpacer2 = new JLabel(" ");
 
     /**
      * Creates a new SidePane.
@@ -70,9 +59,9 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
      * */
     private void addComponents()
     {
-        this.add(lblSpacer1);
+        this.add(new JLabel(" "));
         this.add(pLeaders);
-        this.add(lblSpacer2);
+        this.add(new JLabel(" "));
         this.add(pCandidates);
     }
 
