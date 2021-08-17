@@ -411,12 +411,12 @@ public class SubgroupPanel extends JPanel implements MouseListener
         {
             groups = tryGenerateGroups(gg);
         }
-        catch (NoGroupAvailableException e)
+        catch (NoGroupAvailableException | IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(
                 this,
                 "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
-                "Gruppskapande misslyckades", JOptionPane.ERROR_MESSAGE
+                "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
             );
             return;
         }
