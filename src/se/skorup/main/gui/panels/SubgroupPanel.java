@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * */
 public class SubgroupPanel extends JPanel implements MouseListener
 {
-    private static final int VERTICAL_SPACER = 50;
+    private static final int SPACER = 50;
 
     private final GroupFrame gf;
 
@@ -110,7 +110,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
         for (var i = 0; i < groups.size(); i++)
         {
             var x = (i % 2 == 0) ? this.getWidth() / 10 : 3 * (this.getWidth() / 4);
-            var y = VERTICAL_SPACER + VERTICAL_SPACER * (i % groups.size() / 2) * (max + 2);
+            var y = 3 * SPACER + SPACER * (i % groups.size() / 2) * (max + 2);
 
             tb.add(new TextBox(current.getLabel(i), x, y, Utils.GROUP_NAME_COLOR));
 
@@ -125,7 +125,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
                                 "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
                                 p.getName();
 
-                y += VERTICAL_SPACER / 5 + fm.getHeight();
+                y += SPACER / 5 + fm.getHeight();
                 tb.add(new PersonBox(name, x, y, Utils.FOREGROUND_COLOR, p.getId()));
             }
         }
@@ -417,13 +417,17 @@ public class SubgroupPanel extends JPanel implements MouseListener
     }
 
     /**
-     * Calculates the height of the panel. TODO: IMPLEMENT
+     * Calculates the height of the panel.
      *
      * @return the calculated height of the panel.
      * */
     private int height()
     {
-        return 0;
+        if (current == null || fm == null)
+            return 0;
+
+        int max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
+        return (int) ((3 * SPACER + SPACER * current.groups().size() + max * (SPACER + fm.getHeight())) * 1.5F);
     }
 
     @Override
@@ -444,6 +448,8 @@ public class SubgroupPanel extends JPanel implements MouseListener
             initGroups();
             textBoxes.forEach(tb -> tb.draw(g));
         }
+
+        this.setSize(this.getMaximumSize());
     }
 
     @Override
