@@ -19,19 +19,11 @@ import java.util.stream.Collectors;
  * */
 public class GroupManager implements Serializable
 {
-    /** The next id that will be used. */
     private int nextId = 0;
-
-    /** The number of members. */
     private int members = 0;
 
-    /**
-     * The map that keeps track of all the persons,
-     * key is the id of the person.
-     * */
     private final Map<Integer, Person> group;
 
-    /** The name of the group. */
     private String name;
 
     /**
