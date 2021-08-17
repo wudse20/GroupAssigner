@@ -34,75 +34,29 @@ import java.util.stream.Collectors;
  * */
 public class PersonPanel extends JPanel implements ActionListener, WindowStateListener, ComponentListener
 {
-    /** The instance of the MainFrame in use. */
     private final MainFrame mf;
 
-    /** The person that is being shown at the moment. */
     private Person p;
 
-    /** The panel for the name. */
     private final JPanel pName = new JPanel();
-
-    /** The container panel. */
     private final JPanel pContainer = new JPanel();
-
-    /** The checkbox panel. */
     private final JPanel pCheckBox = new JPanel();
 
-    /** The layout of the name panel. */
-    private final FlowLayout pNameLayout = new FlowLayout(FlowLayout.LEFT);
 
-    /** The layout of the checkbox panel. */
-    private final FlowLayout pCheckBoxLayout = new FlowLayout(FlowLayout.LEFT);
-
-    /** The layout of the container. */
-    private final BoxLayout pContainerLayout = new BoxLayout(pContainer, BoxLayout.Y_AXIS);
-
-    /** The layout of the panel. */
     private final BorderLayout layout = new BorderLayout();
 
-    /** The label with the persons name. */
     private final JLabel lblName = new JLabel();
 
-    /** The ListPanel for the wishlist. */
     private final ListPanel wishlist;
-
-    /** The ListPanel for the denylist. */
     private final ListPanel denylist;
 
-    /** The radio button for the first main group. */
     private final JRadioButton radioMG1 = new JRadioButton("Huvudgrupp 1");
-
-    /** The radio button for the second main group. */
     private final JRadioButton radioMG2 = new JRadioButton("Huvudgrupp 2");
 
     private final ButtonGroup bgMainGroup = new ButtonGroup();
 
-    /** Spacer */
-    private final JLabel lblSpacer1 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer2 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer3 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer4 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer5 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer6 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer7 = new JLabel(" ");
-
-    /** The check box for checking only candidates. */
     private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
 
-    /** The button for changing roll. */
     private final JButton btnChangeRole = new JButton("Byt roll");
 
     /**
@@ -137,18 +91,18 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pCheckBox.add(btnChangeRole);
 
         pContainer.add(pName);
-        pContainer.add(lblSpacer5);
+        pContainer.add(new JLabel(" "));
         pContainer.add(wishlist);
-        pContainer.add(lblSpacer6);
+        pContainer.add(new JLabel(" "));
         pContainer.add(denylist);
-        pContainer.add(lblSpacer7);
+        pContainer.add(new JLabel(" "));
         pContainer.add(pCheckBox);
 
-        this.add(lblSpacer1, BorderLayout.PAGE_START);
-        this.add(lblSpacer2, BorderLayout.LINE_START);
+        this.add(new JLabel(" "), BorderLayout.PAGE_START);
+        this.add(new JLabel("   "), BorderLayout.LINE_START);
         this.add(pContainer, BorderLayout.CENTER);
-        this.add(lblSpacer3, BorderLayout.LINE_END);
-        this.add(lblSpacer4, BorderLayout.PAGE_END);
+        this.add(new JLabel("   "), BorderLayout.LINE_END);
+        this.add(new JLabel(" "), BorderLayout.PAGE_END);
     }
 
     /**
@@ -164,7 +118,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         lblName.setForeground(Utils.FOREGROUND_COLOR);
         lblName.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
 
-        pName.setLayout(pNameLayout);
+        pName.setLayout(new FlowLayout(FlowLayout.LEFT));
         pName.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
         cbShowOnlySameRole.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -172,9 +126,9 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         cbShowOnlySameRole.addActionListener(this);
 
         pCheckBox.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        pCheckBox.setLayout(pCheckBoxLayout);
+        pCheckBox.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        pContainer.setLayout(pContainerLayout);
+        pContainer.setLayout(new BoxLayout(pContainer, BoxLayout.Y_AXIS));
         pContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
         btnChangeRole.setForeground(Utils.FOREGROUND_COLOR);
