@@ -78,16 +78,6 @@ public class PersonListModel extends AbstractListModel<Person>
     }
 
     /**
-     * Returns all items as an immutable array.
-     *
-     * @return an ImmutableArray with all items.
-     * */
-    public ImmutableArray<Person> getAllItems()
-    {
-        return ImmutableArray.fromList(persons);
-    }
-
-    /**
      * Removes an item from the List and
      * then sorts the list.
      *

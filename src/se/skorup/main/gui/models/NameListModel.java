@@ -31,17 +31,6 @@ public class NameListModel extends AbstractListModel<String>
     }
 
     /**
-     * Adds all the items to the list.
-     *
-     * @param names the persons to be added.
-     * */
-    public void addItems(Collection<String> names)
-    {
-        this.names.addAll(names);
-        fireContentsChanged(this, 0, names.size());
-    }
-
-    /**
      * Adds an item to the list.
      *
      * @param name the new item added.
@@ -61,18 +50,6 @@ public class NameListModel extends AbstractListModel<String>
     {
         this.names.remove(name);
         fireContentsChanged(this, 0, names.size());
-    }
-
-    /**
-     * Removes all the items.
-     * */
-    public void removeAll()
-    {
-        this.names.clear();
-
-        // fireContentsChange(..., 0, 0) since the size of the list will
-        // always be zero, no other possibilities.
-        fireContentsChanged(this, 0, 0);
     }
 
     /**
