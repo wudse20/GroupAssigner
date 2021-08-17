@@ -24,37 +24,18 @@ public class ButtonPanel extends JPanel implements ActionListener
     /** The different button types. */
     private enum Buttons
     {
-        /** The save button. */
-        SAVE,
-        /** The create groups button. */
-        CREATE_GROUPS,
-        /** The about button.*/
-        ABOUT,
-        /** The help button.*/
-        HELP,
-        /** The button for displaying different sizes. */
-        SIZES
+        SAVE, CREATE_GROUPS, ABOUT,
+        HELP, SIZES
     }
 
-    /** The instance of the MainFrame. */
     private final MainFrame mf;
 
-    /** The layout of the panel. */
     private final FlowLayout layout = new FlowLayout(FlowLayout.RIGHT);
 
-    /** The button for saving. */
     private final JButton btnSave = new JButton("Spara");
-
-    /** The button for creating groups. */
     private final JButton btnCreateGroup = new JButton("Skapa grupper");
-
-    /** The button for the about information. */
     private final JButton btnAbout = new JButton("Om");
-
-    /** The button for the help information. */
     private final JButton btnHelp = new JButton("Hjälp!");
-
-    /** The button for displaying the even group constellations. */
     private final JButton btnSizes = new JButton("Jämna konstellationer");
 
     /**
