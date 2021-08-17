@@ -1,6 +1,5 @@
 package se.skorup.main.gui.models;
 
-import se.skorup.API.ImmutableArray;
 import se.skorup.main.objects.Person;
 
 import javax.swing.AbstractListModel;
