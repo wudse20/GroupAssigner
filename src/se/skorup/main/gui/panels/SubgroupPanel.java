@@ -162,7 +162,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
      * Converts a TextBox to a tuple,
      * where the first index is the
      * group index and the second index
-     * is the index in the the group. <br><br>
+     * is the index in the group. <br><br>
      *
      * If there are no corresponding index then
      * it will return (-1; -1). <br><br>
@@ -399,6 +399,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
         DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
         DebugMethods.log(current, DebugMethods.LogType.DEBUG);
 
+        textBoxes = null;
         this.repaint();
     }
 

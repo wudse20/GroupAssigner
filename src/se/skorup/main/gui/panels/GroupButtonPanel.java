@@ -79,8 +79,9 @@ public class GroupButtonPanel extends JPanel
 
         if (panel instanceof SubgroupSettingsPanel)
         {
-            this.add(btnHelp);
             this.add(btnClose);
+            this.add(btnHelp);
+            this.add(btnCreate);
         }
         else if (panel instanceof SubgroupPanel)
         {
