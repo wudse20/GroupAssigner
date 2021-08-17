@@ -18,6 +18,7 @@ import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 import se.skorup.main.objects.Tuple;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -85,6 +86,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
 
         gf.addActionListener(e -> gf.waitCursorAction(this::generateGroups), GroupButtonPanel.Buttons.CREATE);
         gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
+        gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
     }
 
     /**
@@ -95,7 +97,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
         if (current == null)
         {
             JOptionPane.showMessageDialog(
-                this, "Det finns inga genreade grupper",
+                this, "Det finns inga genreade grupper.",
                 "Inga genererade grupper", JOptionPane.ERROR_MESSAGE
             );
 
@@ -115,6 +117,32 @@ public class SubgroupPanel extends JPanel implements MouseListener
             this, "Nu finns varje persons gruppmeddlämmar på denylistan.",
             "Denylistor uppdaterad", JOptionPane.INFORMATION_MESSAGE
         );
+    }
+
+    /**
+     * Prints the groups to a file.
+     * */
+    private void toFile()
+    {
+        var fc = new JFileChooser(".");
+        var selection = fc.showDialog(this, "Välj");
+
+        if (selection == JFileChooser.APPROVE_OPTION)
+        {
+            var file = fc.getSelectedFile();
+            var sb = new StringBuilder();
+
+            // Formats the text to the file format.
+            for (int i = 0; i < current.groups().size(); i++)
+            {
+                sb.append(current.getLabel(i)).append(":\n");
+
+                for (var id : current.groups().get(i))
+                    sb.append('\t').append(gm.getPersonFromId(id).getName()).append('\n');
+            }
+
+            Utils.writeToFile(sb.toString(), file);
+        }
     }
 
     /**

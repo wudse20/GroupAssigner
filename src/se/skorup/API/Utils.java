@@ -3,6 +3,9 @@ package se.skorup.API;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -104,5 +107,43 @@ public class Utils
             )).append(' ');
 
         return sb.toString().trim();
+    }
+
+    /**
+     * Writes a string to a file.
+     *
+     * @param data the data to be written.
+     * @param file the file to be written to.
+     * */
+    public static void writeToFile(String data, File file)
+    {
+        BufferedWriter bw = null;
+
+        try
+        {
+            bw = new BufferedWriter(new FileWriter(file));
+            bw.write(data);
+        }
+        catch (IOException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                null, "Kunde inte spara filen!\nFel: %s".formatted(e.getLocalizedMessage()),
+                "Sparning misslyckades", JOptionPane.ERROR_MESSAGE
+            );
+        }
+        finally
+        {
+            try
+            {
+                if (bw != null)
+                    bw.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 }
