@@ -27,74 +27,25 @@ import java.util.List;
  * */
 public class MainFrame extends JFrame
 {
-    /** The path to the save file. */
     private static final String savePath =
         "%ssaves/save.data".formatted(Utils.getFolderName());
 
-    /** The group managers. */
     private final List<GroupManager> managers = new ArrayList<>();
 
-    /** The currently used group manager. */
     private GroupManager currentGroupManager;
 
-    /** Adds a demo group iff {@code true}. */
-    private final boolean debug = false;
-
-    /** The frame's container. */
     private final Container cp = this.getContentPane();
 
-    /** The control panel of this frame. */
     private ControlPanel ctrPanel;
-
-    /** The button panel of this frame. */
     private ButtonPanel btnPanel;
-
-    /** The side panel. */
     private SidePanel sidePanel;
-
-    /** The panel for persons. */
     private PersonPanel personPanel;
 
-    /** The container for the person panel. */
     private final JPanel pPersonContainer = new JPanel();
-
-    /** The container for the person container panel. */
     private final JPanel pPersonContainerContainer = new JPanel();
-
-    /** The container panel. */
     private final JPanel pContainer = new JPanel();
 
-    /** The layout for pPersonContainerContainer. */
-    private final BoxLayout pPersonContainerContainerLayout =
-        new BoxLayout(pPersonContainerContainer, BoxLayout.Y_AXIS);
-
-    /** The layout of the frame. */
     private final BorderLayout layout = new BorderLayout();
-
-    /** The layout of the container. */
-    private final BorderLayout pContainerLayout = new BorderLayout();
-
-    /** The layout for the person container. */
-    private final FlowLayout pPersonContainerLayout = new FlowLayout(FlowLayout.LEFT);
-
-    /** Spacer */
-    private final JLabel lblSpacer1 = new JLabel(" ");
-
-    /** Spacer */
-    private final JLabel lblSpacer2 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer3 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer4 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer5 = new JLabel("   ");
-
-    /** Spacer */
-    private final JLabel lblSpacer6 = // Not hacky at all :)
-            new JLabel("<html><br><br><br></html>");
 
     /**
      * Creates a new MainFrame.
@@ -111,40 +62,17 @@ public class MainFrame extends JFrame
      * */
     private void addGroups()
     {
-        if (debug)
+        try
         {
-            var gm = new GroupManager("DEMO - Grupp");
-            gm.registerPerson("Anton", Person.Role.LEADER);
-            gm.registerPerson("Sebbe", Person.Role.LEADER);
-            gm.registerPerson("Victoria", Person.Role.LEADER);
-
-            gm.registerPerson("Adina", Person.Role.CANDIDATE);
-            gm.registerPerson("Pernilla", Person.Role.CANDIDATE);
-            gm.registerPerson("Alexandra", Person.Role.CANDIDATE);
-            gm.registerPerson("Erica", Person.Role.CANDIDATE);
-            gm.registerPerson("Kristin", Person.Role.CANDIDATE);
-            gm.registerPerson("Gunnel", Person.Role.CANDIDATE);
-            gm.registerPerson("Sebastian", Person.Role.CANDIDATE);
-            gm.registerPerson("Felix", Person.Role.CANDIDATE);
-            gm.registerPerson("Ami", Person.Role.CANDIDATE);
-            gm.registerPerson("Susann", Person.Role.CANDIDATE);
-
-            managers.add(gm);
+            managers.addAll((List<GroupManager>) SerializationManager.deserializeObject(savePath));
         }
-        else
+        catch (Exception e)
         {
-            try
-            {
-                managers.addAll((List<GroupManager>) SerializationManager.deserializeObject(savePath));
-            }
-            catch (Exception e)
-            {
-                // TODO: Handle Error
-                DebugMethods.log(
-                    "Failed to load save: %s".formatted(e.getLocalizedMessage()),
-                    DebugMethods.LogType.ERROR
-                );
-            }
+            // TODO: Handle Error
+            DebugMethods.log(
+                "Failed to load save: %s".formatted(e.getLocalizedMessage()),
+                DebugMethods.LogType.ERROR
+            );
         }
     }
 
@@ -170,10 +98,10 @@ public class MainFrame extends JFrame
      * */
     private void addComponents()
     {
-        pPersonContainer.add(lblSpacer5);
+        pPersonContainer.add(new JLabel("   "));
         pPersonContainer.add(personPanel);
 
-        pPersonContainerContainer.add(lblSpacer6);
+        pPersonContainerContainer.add(new JLabel("<html><br><br><br></html>")); // Not hacky at all :)
         pPersonContainerContainer.add(pPersonContainer);
 
         pContainer.add(ctrPanel, BorderLayout.PAGE_START);
@@ -181,11 +109,11 @@ public class MainFrame extends JFrame
         pContainer.add(pPersonContainerContainer, BorderLayout.CENTER);
         pContainer.add(btnPanel, BorderLayout.PAGE_END);
 
-        cp.add(lblSpacer1, BorderLayout.PAGE_START);
-        cp.add(lblSpacer2, BorderLayout.LINE_START);
+        cp.add(new JLabel(" "), BorderLayout.PAGE_START);
+        cp.add(new JLabel("   "), BorderLayout.LINE_START);
         cp.add(pContainer, BorderLayout.CENTER);
-        cp.add(lblSpacer3, BorderLayout.LINE_END);
-        cp.add(lblSpacer4, BorderLayout.PAGE_END);
+        cp.add(new JLabel("   "), BorderLayout.LINE_END);
+        cp.add(new JLabel(" "), BorderLayout.PAGE_END);
     }
 
     /**
@@ -210,13 +138,13 @@ public class MainFrame extends JFrame
         cp.setLayout(layout);
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
-        pContainer.setLayout(pContainerLayout);
+        pContainer.setLayout(new BorderLayout());
 
         pPersonContainer.setBackground(Utils.BACKGROUND_COLOR);
-        pPersonContainer.setLayout(pPersonContainerLayout);
+        pPersonContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         pPersonContainerContainer.setBackground(Utils.BACKGROUND_COLOR);
-        pPersonContainerContainer.setLayout(pPersonContainerContainerLayout);
+        pPersonContainerContainer.setLayout(new BoxLayout(pPersonContainerContainer, BoxLayout.Y_AXIS));
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveGroupManagers));
     }
@@ -228,32 +156,27 @@ public class MainFrame extends JFrame
      * */
     public boolean saveGroupManagers()
     {
-        if (!debug)
+        try
         {
-            try
-            {
-                DebugMethods.log("Starting saving process.", DebugMethods.LogType.DEBUG);
-                SerializationManager.createFileIfNotExists(new File(savePath));
-                SerializationManager.serializeObject(savePath, managers);
-                DebugMethods.log("Saving process finished correctly.", DebugMethods.LogType.DEBUG);
+            DebugMethods.log("Starting saving process.", DebugMethods.LogType.DEBUG);
+            SerializationManager.createFileIfNotExists(new File(savePath));
+            SerializationManager.serializeObject(savePath, managers);
+            DebugMethods.log("Saving process finished correctly.", DebugMethods.LogType.DEBUG);
 
-                return true;
-            }
-            catch (Exception e)
-            {
-                // TODO: handle error
-                e.printStackTrace();
-
-                DebugMethods.log(
-                    "Saving process failed: %s".formatted(e.getLocalizedMessage()),
-                    DebugMethods.LogType.ERROR
-                );
-
-                return false;
-            }
+            return true;
         }
+        catch (Exception e)
+        {
+            // TODO: handle error
+            e.printStackTrace();
 
-        return false;
+            DebugMethods.log(
+                "Saving process failed: %s".formatted(e.getLocalizedMessage()),
+                DebugMethods.LogType.ERROR
+            );
+
+            return false;
+        }
     }
 
     /**
