@@ -4,34 +4,45 @@ import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
 import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
+import se.skorup.main.groups.AlternateWishlistGroupCreator;
+import se.skorup.main.groups.GroupCreator;
+import se.skorup.main.groups.RandomGroupCreator;
+import se.skorup.main.groups.WishlistGroupCreator;
+import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
+import se.skorup.main.gui.frames.SubgroupListFrame;
+import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 import se.skorup.main.objects.Tuple;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.Scrollable;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.print.PrinterException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,44 +51,34 @@ import java.util.stream.Collectors;
 /**
  * The panel that draws the SubGroups.
  * */
-public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
+public class SubgroupPanel extends JPanel implements MouseListener
 {
-    /** The vertical spacer. */
-    private static final int VERTICAL_SPACER = 50;
+    private static final int SPACER = 50;
 
-    /** The instance of the GroupFrame. */
     private final GroupFrame gf;
 
-    /** The GroupManager in use. */
     private final GroupManager gm;
 
-    /** The font metrics of the font. */
-    private FontMetrics fm;
+    private Subgroups current;
 
-    /** The current groups. */
-    private Subgroups currentGroups;
-
-    /** The text boxes in the GUI. */
     private ImmutableArray<TextBox> textBoxes;
 
-    /** The timer used for flashing the boxes. */
-    private Timer t;
+    private FontMetrics fm;
 
-    /** The last tuple generated from the list. */
     private Tuple lastTuple;
 
+    private Timer flashingTimer;
+
     /**
-     * Creates a new SubGroupPanel.
+     * Creates a new SubgroupSettingsPanel.
      *
      * @param gf the instance of the GroupFrame in use.
-     * @param gm the instance of the GroupManager that
-     *           holds the persons with the IDs.
      * */
-    public SubgroupPanel(GroupFrame gf, GroupManager gm)
+    public SubgroupPanel(GroupFrame gf)
     {
         this.gf = gf;
-        this.gm = gm;
-        this.currentGroups = gf.getCurrentGroups();
+        this.gm = gf.getManager();
+
         this.setProperties();
     }
 
@@ -88,8 +89,216 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
-
         this.addMouseListener(this);
+
+        gf.addActionListener(e -> gf.waitCursorAction(this::generateGroups), GroupButtonPanel.Buttons.CREATE);
+        gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
+        gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
+        gf.addActionListener(e -> print(), GroupButtonPanel.Buttons.PRINT);
+        gf.addActionListener(e -> saveLastGroup(), GroupButtonPanel.Buttons.SAVE);
+        gf.addActionListener(e -> loadGroups(), GroupButtonPanel.Buttons.LOAD);
+    }
+
+    /**
+     * Loads the different groups; that are
+     * saved under this GroupManager.
+     * */
+    private void loadGroups()
+    {
+        SwingUtilities.invokeLater(() -> {
+            var frame = new SubgroupListFrame(gf.BASE_GROUP_PATH);
+
+            frame.addActionCallback(() -> {
+                var f = frame.getSelectedFile();
+                frame.dispose();
+
+                Subgroups sg;
+                try
+                {
+                    sg = (Subgroups) SerializationManager.deserializeObject(f.getAbsolutePath());
+                }
+                catch (IOException | ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                    DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+                    JOptionPane.showMessageDialog(
+                        this, "Kunde inte läsa gruppen!\nFel: %s".formatted(e.getLocalizedMessage()),
+                        "Misslyckades att läsa från fil.", JOptionPane.ERROR_MESSAGE
+                    );
+
+                    return;
+                }
+
+                gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 2 : 0);
+                current = sg;
+                drawGroups();
+            });
+        });
+    }
+
+    /**
+     * Saves the last group.
+     * */
+    private void saveLastGroup()
+    {
+        // If no groups error msg + return
+        if (current == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga grupper att spara.",
+                "INGA GRUPPER!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        var name =
+                JOptionPane.showInputDialog(
+                    this, "Vad heter gruppen?",
+                    "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+                );
+
+        if (name == null)
+            return;
+
+        while (name.trim().length() < 3)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Namnet måste vara minst tre tecken långt.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+
+            name = JOptionPane.showInputDialog(
+                this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (name == null)
+                return;
+        }
+
+        current = current.changeName(name);
+        var path = "%s%s".formatted(gf.BASE_GROUP_PATH, "%s.data".formatted(current.name()));
+
+        try
+        {
+            SerializationManager.createFileIfNotExists(new File(path));
+            SerializationManager.serializeObject(path, current.changeName(name));
+
+            JOptionPane.showMessageDialog(
+                this, "Du har sparat undergruppen!",
+                "Du har sparat!", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                this, "Fel vid sparning!\nFel: %s".formatted(e.getLocalizedMessage()),
+                "Sparningen misslyckades!", JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    /**
+     * Prints the groups.
+     * */
+    private void print()
+    {
+        if (current == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga skapade grupper!",
+                "Inga skapade grupper!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        var canvas = new JTextArea();
+        var groups =
+                current.groups()
+                       .stream()
+                       .map(x -> new ArrayList<>(x.stream().map(gm::getPersonFromId).collect(Collectors.toList())))
+                       .collect(Collectors.toCollection(ArrayList::new));
+
+        canvas.setTabSize(4);
+        canvas.setLineWrap(true);
+
+        // Fist the overview
+        for (var i = 0; i < groups.size(); i++)
+        {
+            canvas.append("%s:\n".formatted(current.getLabel(i)));
+            groups.get(i).forEach(p -> canvas.append("\t%s\n".formatted(p.getName())));
+            canvas.append("\n");
+        }
+
+        try
+        {
+            canvas.print();
+        }
+        catch (PrinterException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+        }
+    }
+
+    /**
+     * The action for the toDenylist-button.
+     * */
+    private void toDenylist()
+    {
+        if (current == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga genreade grupper.",
+                "Inga genererade grupper", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        for (var group : current.groups())
+        {
+            for (var id : group)
+            {
+                var p = gm.getPersonFromId(id);
+                group.forEach(x -> { if (x != p.getId()) p.addDenylistId(x); });
+            }
+        }
+
+        JOptionPane.showMessageDialog(
+            this, "Nu finns varje persons gruppmeddlämmar på denylistan.",
+            "Denylistor uppdaterad", JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    /**
+     * Prints the groups to a file.
+     * */
+    private void toFile()
+    {
+        var fc = new JFileChooser(".");
+        var selection = fc.showDialog(this, "Välj");
+
+        if (selection == JFileChooser.APPROVE_OPTION)
+        {
+            var file = fc.getSelectedFile();
+            var sb = new StringBuilder();
+
+            // Formats the text to the file format.
+            for (int i = 0; i < current.groups().size(); i++)
+            {
+                sb.append(current.getLabel(i)).append(":\n");
+
+                for (var id : current.groups().get(i))
+                    sb.append('\t').append(gm.getPersonFromId(id).getName()).append('\n');
+            }
+
+            Utils.writeToFile(sb.toString(), file);
+        }
     }
 
     /**
@@ -100,51 +309,38 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         if (textBoxes != null)
             return;
 
+        lastTuple = null;
+
         var tb = new Vector<TextBox>();
 
         var groups =
-            currentGroups.groups()
-                         .stream()
-                         .map(x -> x.stream().map(gm::getPersonFromId))
-                         .map(x -> x.collect(Collectors.toList()))
-                         .collect(Collectors.toList());
+                current.groups()
+                       .stream()
+                       .map(x -> x.stream().map(gm::getPersonFromId))
+                       .map(x -> x.collect(Collectors.toList()))
+                       .collect(Collectors.toList());
 
-        var max = Collections.max(currentGroups.groups().stream().map(Set::size).collect(Collectors.toList()));
-        var leaders = new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER));
+        var max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
 
         for (var i = 0; i < groups.size(); i++)
         {
             var x = (i % 2 == 0) ? this.getWidth() / 10 : 3 * (this.getWidth() / 4);
-            var y = VERTICAL_SPACER + VERTICAL_SPACER * (i % groups.size() / 2) * (max + 2);
+            var y = 3 * SPACER + SPACER * (i % groups.size() / 2) * (max + 2);
 
-            String groupName = "";
-            if (currentGroups.labels().size() == 0 || currentGroups.labels().size() <= i)
-            {
-                groupName = currentGroups.isLeaderMode() ?
-                            leaders.remove(0).getName() :
-                            "Grupp %d:".formatted(i + 1);
-
-                currentGroups.labels().add(groupName);
-            }
-            else
-            {
-                groupName = currentGroups.labels().get(i);
-            }
-
-            tb.add(new TextBox(groupName, x, y, Utils.GROUP_NAME_COLOR));
+            tb.add(new TextBox(current.getLabel(i), x, y, Utils.GROUP_NAME_COLOR));
 
             var gr = groups.get(i);
             for (var p : gr)
             {
                 var wishes = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet());
-                var nbrWishes = new ImmutableHashSet<>(currentGroups.groups().get(i)).intersection(wishes).size();
+                var nbrWishes = new ImmutableHashSet<>(current.groups().get(i)).intersection(wishes).size();
 
                 var name =
-                    currentGroups.isWishListMode() ?
-                    "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
-                    p.getName();
+                        current.isWishListMode() ?
+                                "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
+                                p.getName();
 
-                y += VERTICAL_SPACER / 5 + fm.getHeight();
+                y += SPACER / 5 + fm.getHeight();
                 tb.add(new PersonBox(name, x, y, Utils.FOREGROUND_COLOR, p.getId()));
             }
         }
@@ -153,85 +349,35 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     }
 
     /**
-     * Calculates the height of the panel.
-     *
-     * @return the height of the panel.
-     * */
-    private int height()
-    {
-        if (currentGroups == null)
-            return this.getHeight();
-
-        var groups =
-                currentGroups.groups()
-                        .stream()
-                        .map(x -> x.stream().map(gm::getPersonFromId))
-                        .map(x -> x.collect(Collectors.toList()))
-                        .collect(Collectors.toList());
-
-        var max = Collections.max(currentGroups.groups().stream().map(Set::size).collect(Collectors.toList()));
-        return VERTICAL_SPACER + VERTICAL_SPACER * ((groups.size() - 1 % groups.size()) / 2) * (max + 10);
-    }
-
-    /**
-     * Calculates the width of the panel.
-     *
-     * @return the width of the panel.
-     * */
-    private int width()
-    {
-        if (currentGroups == null)
-            return this.getWidth();
-
-        var groups =
-                currentGroups.groups()
-                    .stream()
-                    .map(x -> x.stream().map(gm::getPersonFromId))
-                    .flatMap(x -> x.map(p -> currentGroups.isWishListMode() ? p.getName() + " (Önskningar: 10)" : p.getName()))
-                    .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
-                    .collect(Collectors.toList());
-
-        var width = this.getWidth() / 4;
-
-        DebugMethods.log(width, DebugMethods.LogType.DEBUG);
-        width += fm.stringWidth(groups.get(0)) * 3;
-
-        DebugMethods.log("Longest entry: %s".formatted(groups.get(0)), DebugMethods.LogType.DEBUG);
-        DebugMethods.log(width, DebugMethods.LogType.DEBUG);
-
-        return width;
-    }
-
-    /**
      * Flashes the group boxed the person can
      * be swapped into.
      * */
     private void flashGroupBoxes()
     {
-        if (t != null)
-            t.stop();
+        if (flashingTimer != null)
+            flashingTimer.stop();
 
         final var tbs =
-            textBoxes.toList()
-                     .stream()
-                     .filter(x -> !(x instanceof PersonBox))
-                     .collect(Collectors.toList());
+                textBoxes.toList()
+                        .stream()
+                        .filter(x -> !(x instanceof PersonBox))
+                        .collect(Collectors.toList());
 
         final var counter = new AtomicInteger(0);
-        t = new Timer(500, (e) -> {
+        flashingTimer = new Timer(500, (e) -> {
             tbs.forEach(x -> x.setColor(counter.get() % 2 == 0 ? Utils.FLASH_COLOR : Utils.GROUP_NAME_COLOR));
             counter.incrementAndGet();
             repaint();
         });
 
-        t.start();
+        flashingTimer.start();
     }
 
     /**
      * Converts a TextBox to a tuple,
      * where the first index is the
      * group index and the second index
-     * is the index in the the group. <br><br>
+     * is the index in the group. <br><br>
      *
      * If there are no corresponding index then
      * it will return (-1; -1). <br><br>
@@ -266,13 +412,13 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         }
 
         return new Tuple(
-            group - 1,
-            currentGroups.groups()
-                         .stream()
-                         .map(ArrayList::new)
-                         .collect(Collectors.toList())
-                         .get(group - 1)
-                         .indexOf(((PersonBox) tb).getId())
+                group - 1,
+                current.groups()
+                        .stream()
+                        .map(ArrayList::new)
+                        .collect(Collectors.toList())
+                        .get(group - 1)
+                        .indexOf(((PersonBox) tb).getId())
         );
     }
 
@@ -326,17 +472,14 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         if (lastTuple.a() == groupIndex)
             return;
 
-        var groups = currentGroups.groups().stream().map(ArrayList::new).collect(Collectors.toList());
+        var groups = current.groups().stream().map(ArrayList::new).collect(Collectors.toList());
         int id = groups.get(lastTuple.a()).remove(lastTuple.b());
         groups.get(groupIndex).add(id);
 
-        var sg = new Subgroups(
-            currentGroups.name(), groups.stream().map(HashSet::new).collect(Collectors.toList()),
-            currentGroups.isLeaderMode(), currentGroups.isWishListMode(), currentGroups.labels()
+        current = new Subgroups(
+            current.name(), groups.stream().map(HashSet::new).collect(Collectors.toList()),
+            current.isLeaderMode(), current.isWishListMode(), current.labels(), current.leaders()
         );
-
-        currentGroups = sg;
-        gf.setCurrentGroups(sg);
     }
 
     /**
@@ -348,8 +491,8 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     private void changeLabel(TextBox tb)
     {
         var input = JOptionPane.showInputDialog(
-            gf, "Vilken är den nya ettiketten?",
-            "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
+                gf, "Vilken är den nya ettiketten?",
+                "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
         );
 
         if (input == null)
@@ -358,13 +501,13 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         while (input.trim().length() < 3)
         {
             JOptionPane.showMessageDialog(
-                gf, "Ettiekten måste vara minst tre tecken lång.",
-                "För kort!", JOptionPane.ERROR_MESSAGE
+                    gf, "Ettiekten måste vara minst tre tecken lång.",
+                    "För kort!", JOptionPane.ERROR_MESSAGE
             );
 
             input = JOptionPane.showInputDialog(
-                gf, "Vilken är den nya ettiketten?",
-                "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
+                    gf, "Vilken är den nya ettiketten?",
+                    "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
             );
 
             if (input == null)
@@ -373,12 +516,106 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
 
         // Updates the groups.
         var groupIndex = getSelectedGroup(tb);
-        currentGroups.labels().remove(groupIndex);
-        currentGroups.labels().add(groupIndex, input);
+        current.labels()[groupIndex] = input;
 
         // Updates the labels in the GUI.s
         tb.setText(input);
         repaint();
+    }
+
+    /**
+     * Gets the correct group generator,
+     * based on all inputs.
+     * */
+    private GroupCreator getGroupGenerator()
+    {
+        var gc = gf.getGroupSelectedGroupCreator();
+
+        if (gf.shouldUseMainGroups())
+        {
+            var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, gf.getMainGroup());
+            var gm = new GroupManager(gf.getMainGroup().toString());
+            persons.forEach(gm::registerPerson);
+
+            return gc instanceof RandomGroupCreator   ?
+                   new RandomGroupCreator(gm)         :
+                   gc instanceof WishlistGroupCreator ?
+                   new WishlistGroupCreator(gm)       :
+                   new AlternateWishlistGroupCreator(gm);
+        }
+
+        return gf.getGroupSelectedGroupCreator();
+    }
+
+    /**
+     * Tries to generate groups. It will try to generate the group 1000 times,
+     * if it fails then NoGroupAvailableException will be thrown.
+     *
+     * @param gg the generator that generates the groups.
+     * @return the generated groups.
+     * @throws NoGroupAvailableException iff the group creation failed.
+     * */
+    private List<Set<Integer>> tryGenerateGroups(GroupGenerator gg) throws NoGroupAvailableException
+    {
+        for (int i = 0; i < 1000; i++)
+        {
+            try
+            {
+                return gg.generate();
+            }
+            catch (NoGroupAvailableException e)
+            {
+                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+            }
+        }
+
+        throw new NoGroupAvailableException("There are no possible groups, too many denylist items.");
+    }
+
+    /**
+     * Generates the group.
+     * */
+    private void generateGroups()
+    {
+        final var gc = getGroupGenerator();
+        final var sizes = gf.getUserInput();
+
+        if (sizes == null)
+            return;
+
+        GroupGenerator gg = switch (gf.getSizeState()) {
+            case NUMBER_GROUPS -> () -> gc.generateGroup((short) ((int) sizes.get(0)), gf.shouldOverflow(), gm);
+            case NUMBER_PERSONS -> () -> gc.generateGroup((byte) ((int) sizes.get(0)), gf.shouldOverflow());
+            case PAIR_WITH_LEADERS -> () -> gc.generateGroup((short) ((int) sizes.get(0)), gf.shouldOverflow());
+            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroup(sizes);
+        };
+
+        List<Set<Integer>> groups;
+        try
+        {
+            groups = tryGenerateGroups(gg);
+        }
+        catch (NoGroupAvailableException | IllegalArgumentException e)
+        {
+            JOptionPane.showMessageDialog(
+                this,
+                "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
+                "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        current = new Subgroups(
+            null, groups, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
+            gc instanceof WishlistGroupCreator, new String[groups.size()],
+            new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+        );
+
+        DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
+        DebugMethods.log(current, DebugMethods.LogType.DEBUG);
+
+        textBoxes = null;
+        this.repaint();
     }
 
     /**
@@ -395,13 +632,17 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     }
 
     /**
-     * Setter for: currentGroups.
+     * Calculates the height of the panel.
      *
-     * @param sg the new set of groups.
+     * @return the calculated height of the panel.
      * */
-    public void setCurrentGroups(Subgroups sg)
+    private int height()
     {
-        this.currentGroups = sg;
+        if (current == null || fm == null)
+            return 0;
+
+        int max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
+        return (int) ((3 * SPACER + SPACER * current.groups().size() + max * (SPACER + fm.getHeight())) * 1.5F);
     }
 
     @Override
@@ -417,61 +658,36 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         g.setColor(Color.WHITE);
 
-        if (currentGroups != null)
+        if (current != null)
         {
-            lastTuple = null;
             initGroups();
             textBoxes.forEach(tb -> tb.draw(g));
         }
+
+        this.setSize(this.getMaximumSize());
     }
 
     @Override
     public Dimension getPreferredSize()
     {
-        return new Dimension(width(), height());
+        var dim = Toolkit.getDefaultToolkit().getScreenSize();
+        return new Dimension((int) dim.getWidth(), Math.max((int) dim.getHeight(), height()));
     }
 
     @Override
     public Dimension getMinimumSize()
     {
-        return new Dimension(width(), height());
+        var dim = Toolkit.getDefaultToolkit().getScreenSize();
+        return new Dimension((int) dim.getWidth(), Math.max((int) dim.getHeight(), height()));
     }
 
     @Override
     public Dimension getMaximumSize()
     {
-        return new Dimension(width(), height());
+        var dim = Toolkit.getDefaultToolkit().getScreenSize();
+        return new Dimension((int) dim.getWidth(), Math.max((int) dim.getHeight(), height()));
     }
 
-    @Override
-    public Dimension getPreferredScrollableViewportSize()
-    {
-        return new Dimension(this.getWidth(), this.getHeight());
-    }
-
-    @Override
-    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
-    {
-        return 16;
-    }
-
-    @Override
-    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
-    {
-        return 16;
-    }
-
-    @Override
-    public boolean getScrollableTracksViewportWidth()
-    {
-        return getPreferredSize().width <= getParent().getSize().width;
-    }
-
-    @Override
-    public boolean getScrollableTracksViewportHeight()
-    {
-        return getPreferredSize().height <= getParent().getSize().height;
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {}
@@ -483,8 +699,8 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
     public void mouseReleased(MouseEvent e)
     {
         DebugMethods.log(
-            "Mouse clicked at: %d, %d".formatted(e.getX(), e.getY()),
-            DebugMethods.LogType.DEBUG
+                "Mouse clicked at: %d, %d".formatted(e.getX(), e.getY()),
+                DebugMethods.LogType.DEBUG
         );
 
         if (textBoxes != null)
@@ -520,8 +736,8 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                     repaint();
                 });
 
-                if (t != null)
-                    t.stop();
+                if (flashingTimer != null)
+                    flashingTimer.stop();
 
                 text.setColor(Utils.FOREGROUND_COLOR);
                 lastTuple = null;
@@ -530,7 +746,7 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
             else if (text != null) // Name selected.
             {
                 // To change the label.
-                if (lastTuple == null)
+                if (flashingTimer == null || !flashingTimer.isRunning())
                 {
                     changeLabel(text);
                     return;
@@ -546,14 +762,14 @@ public class SubgroupPanel extends JPanel implements Scrollable, MouseListener
                     repaint();
                 });
 
-                if (t != null)
-                    t.stop();
+                if (flashingTimer != null)
+                    flashingTimer.stop();
 
                 var groupIndex = getSelectedGroup(text);
 
                 DebugMethods.log(
-                    "Detected click on group index %d".formatted(groupIndex),
-                    DebugMethods.LogType.DEBUG
+                        "Detected click on group index %d".formatted(groupIndex),
+                        DebugMethods.LogType.DEBUG
                 );
 
                 updateGroups(groupIndex);

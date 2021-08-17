@@ -13,11 +13,12 @@ import java.util.Set;
  * @param isWishListMode if {@code true} the groups where generated using this
  *                       {@link se.skorup.main.groups.WishlistGroupCreator GroupCreator}.
  * @param labels the labels of the groups.
+ * @param leaders the leaders of the group.
  * */
 public record Subgroups(
         String name, List<Set<Integer>> groups,
         boolean isLeaderMode, boolean isWishListMode,
-        List<String> labels) implements Serializable
+        String[] labels, List<Person> leaders) implements Serializable
 {
     /**
      * Changes the name of the Subgroups.
@@ -27,6 +28,24 @@ public record Subgroups(
      * */
     public Subgroups changeName(String name)
     {
-        return new Subgroups(name, groups, isLeaderMode, isWishListMode, labels);
+        return new Subgroups(name, groups, isLeaderMode, isWishListMode, labels, leaders);
+    }
+
+    /**
+     * Gets the label of the specific index for the
+     * group. If there exists no label, then it will
+     * create one.
+     *
+     * @param index the index of the group in the list.
+     * @return the label of the group.
+     * */
+    public String getLabel(int index)
+    {
+        if (labels[index] == null)
+            labels[index] = isLeaderMode ?
+            leaders.get(index).getName() :
+            "Grupp %d".formatted(index + 1);
+
+        return labels[index];
     }
 }
