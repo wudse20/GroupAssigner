@@ -259,4 +259,14 @@ public class SubgroupSettingsPanel extends JPanel
             return null;
         }
     }
+
+    /**
+     * Getter for: cbCreators
+     *
+     * @return the instance of the cbCreators.
+     * */
+    public JComboBox<GroupCreator> getCbCreators()
+    {
+        return cbCreators;
+    }
 }

@@ -10,10 +10,12 @@ import se.skorup.main.groups.RandomGroupCreator;
 import se.skorup.main.groups.WishlistGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
+import se.skorup.main.gui.frames.SubgroupListFrame;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 import se.skorup.main.objects.Tuple;
@@ -22,6 +24,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,6 +36,8 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.print.PrinterException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,6 +95,111 @@ public class SubgroupPanel extends JPanel implements MouseListener
         gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
         gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
         gf.addActionListener(e -> print(), GroupButtonPanel.Buttons.PRINT);
+        gf.addActionListener(e -> saveLastGroup(), GroupButtonPanel.Buttons.SAVE);
+        gf.addActionListener(e -> loadGroups(), GroupButtonPanel.Buttons.LOAD);
+    }
+
+    /**
+     * Loads the different groups; that are
+     * saved under this GroupManager.
+     * */
+    private void loadGroups()
+    {
+        SwingUtilities.invokeLater(() -> {
+            var frame = new SubgroupListFrame(gf.BASE_GROUP_PATH);
+
+            frame.addActionCallback(() -> {
+                var f = frame.getSelectedFile();
+                frame.dispose();
+
+                Subgroups sg;
+                try
+                {
+                    sg = (Subgroups) SerializationManager.deserializeObject(f.getAbsolutePath());
+                }
+                catch (IOException | ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                    DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+                    JOptionPane.showMessageDialog(
+                        this, "Kunde inte läsa gruppen!\nFel: %s".formatted(e.getLocalizedMessage()),
+                        "Misslyckades att läsa från fil.", JOptionPane.ERROR_MESSAGE
+                    );
+
+                    return;
+                }
+
+                gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 2 : 0);
+                current = sg;
+                drawGroups();
+            });
+        });
+    }
+
+    /**
+     * Saves the last group.
+     * */
+    private void saveLastGroup()
+    {
+        // If no groups error msg + return
+        if (current == null)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Det finns inga grupper att spara.",
+                "INGA GRUPPER!", JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        var name =
+                JOptionPane.showInputDialog(
+                    this, "Vad heter gruppen?",
+                    "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+                );
+
+        if (name == null)
+            return;
+
+        while (name.trim().length() < 3)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Namnet måste vara minst tre tecken långt.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
+            );
+
+            name = JOptionPane.showInputDialog(
+                this, "Vad heter gruppen?", "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (name == null)
+                return;
+        }
+
+        current = current.changeName(name);
+        var path = "%s%s".formatted(gf.BASE_GROUP_PATH, "%s.data".formatted(current.name()));
+
+        try
+        {
+            SerializationManager.createFileIfNotExists(new File(path));
+            SerializationManager.serializeObject(path, current.changeName(name));
+
+            JOptionPane.showMessageDialog(
+                this, "Du har sparat undergruppen!",
+                "Du har sparat!", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+
+            JOptionPane.showMessageDialog(
+                this, "Fel vid sparning!\nFel: %s".formatted(e.getLocalizedMessage()),
+                "Sparningen misslyckades!", JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -312,6 +313,17 @@ public class GroupFrame extends JFrame implements ChangeListener
     public List<Integer> getUserInput()
     {
         return sgsp.getUserInput();
+    }
+
+
+    /**
+     * Getter for: cbCreators
+     *
+     * @return the instance of the cbCreators.
+     * */
+    public JComboBox<GroupCreator> getCbCreators()
+    {
+        return sgsp.getCbCreators();
     }
 
     @Override

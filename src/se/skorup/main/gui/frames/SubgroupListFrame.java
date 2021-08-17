@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * The SubGroupListFrame used in seeing
  * the saved SubGroups.
  * */
-public class SubGroupListFrame extends JFrame implements ActionListener
+public class SubgroupListFrame extends JFrame implements ActionListener
 {
     /** The path of this frame. */
     private final String path;
@@ -73,7 +73,7 @@ public class SubGroupListFrame extends JFrame implements ActionListener
      *
      * @param path the path of the frame.
      * */
-    public SubGroupListFrame(String path)
+    public SubgroupListFrame(String path)
     {
         super("Undergrupper!");
         this.path = path;
