@@ -1,3 +1,4 @@
+
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.DebugMethods;
@@ -42,7 +43,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JPanel pContainer = new JPanel();
     private final JPanel pCheckBox = new JPanel();
 
-
     private final BorderLayout layout = new BorderLayout();
 
     private final JLabel lblName = new JLabel();
@@ -55,8 +55,15 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
     private final ButtonGroup bgMainGroup = new ButtonGroup();
 
-    private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
+    private final JLabel lblSpacer1 = new JLabel(" ");
+    private final JLabel lblSpacer2 = new JLabel("   ");
+    private final JLabel lblSpacer3 = new JLabel("   ");
+    private final JLabel lblSpacer4 = new JLabel(" ");
+    private final JLabel lblSpacer5 = new JLabel(" ");
+    private final JLabel lblSpacer6 = new JLabel(" ");
+    private final JLabel lblSpacer7 = new JLabel(" ");
 
+    private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
     private final JButton btnChangeRole = new JButton("Byt roll");
 
     /**
@@ -91,18 +98,18 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pCheckBox.add(btnChangeRole);
 
         pContainer.add(pName);
-        pContainer.add(new JLabel(" "));
+        pContainer.add(lblSpacer5);
         pContainer.add(wishlist);
-        pContainer.add(new JLabel(" "));
+        pContainer.add(lblSpacer6);
         pContainer.add(denylist);
-        pContainer.add(new JLabel(" "));
+        pContainer.add(lblSpacer7);
         pContainer.add(pCheckBox);
 
-        this.add(new JLabel(" "), BorderLayout.PAGE_START);
-        this.add(new JLabel("   "), BorderLayout.LINE_START);
+        this.add(lblSpacer1, BorderLayout.PAGE_START);
+        this.add(lblSpacer2, BorderLayout.LINE_START);
         this.add(pContainer, BorderLayout.CENTER);
-        this.add(new JLabel("   "), BorderLayout.LINE_END);
-        this.add(new JLabel(" "), BorderLayout.PAGE_END);
+        this.add(lblSpacer3, BorderLayout.LINE_END);
+        this.add(lblSpacer4, BorderLayout.PAGE_END);
     }
 
     /**
@@ -187,7 +194,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         btnChangeRole.addActionListener((e) -> {
             mf.getCurrentGroup().removePerson(p.getId());
             mf.getCurrentGroup().registerPerson(
-                p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
+                    p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
             );
             mf.refreshSidePanel();
 
@@ -259,13 +266,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         notAddedWish.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
 
         denylist.setListData(
-            denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
-            notAddedDeny
+                denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+                notAddedDeny
         );
 
         wishlist.setListData(
-            wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
-            notAddedWish
+                wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+                notAddedWish
         );
     }
 
