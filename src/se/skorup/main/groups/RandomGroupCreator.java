@@ -105,7 +105,7 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
 
             current.add(p.getId());
 
-            if (sizes.get(i) == ++ii)
+            if (i != sizes.size() && sizes.get(i) == ++ii)
             {
                 ii = 0;
                 i++;

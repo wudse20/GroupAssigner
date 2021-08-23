@@ -217,7 +217,7 @@ public class WishlistGroupCreator implements GroupCreator
             current.add(p.getId());
             added.add(p.getId());
 
-            if (sizes.get(i) == ++ii)
+            if (i != sizes.size() && sizes.get(i) == ++ii)
             {
                 ii = 0;
                 i++;

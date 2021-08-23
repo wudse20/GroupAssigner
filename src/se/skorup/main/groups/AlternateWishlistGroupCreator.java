@@ -275,7 +275,7 @@ public class AlternateWishlistGroupCreator extends WishlistGroupCreator
             added.add(p.getId());
             current.add(p.getId());
 
-            if (sizes.get(i) == ++ii)
+            if (i != sizes.size() && sizes.get(i) == ++ii)
             {
                 ii = 0;
                 i++;
