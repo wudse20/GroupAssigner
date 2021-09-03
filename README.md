@@ -11,7 +11,7 @@ JUnit: 6.14.3 (maven: org.testng:testng:6.14.3)
 ## Compile and run
 ### Windows: <br>
 ```powershell
-javac -encoding utf-8 (Get-ChildItem -Name *.java - Path . -Recurse)
+javac -encoding utf-8 (Get-ChildItem -Name *.java -Path . -Recurse)
 java se.skorup.main.Main
 ```
 
