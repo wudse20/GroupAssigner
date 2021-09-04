@@ -36,256 +36,75 @@ public class AlternateWishlistGroupCreator extends WishlistGroupCreator
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
+    protected Person getPerson(
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
+    ) throws NoGroupAvailableException
     {
-        var result = new ArrayList<Set<Integer>>();
-        var random = new Random();
-        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
-        var wish = gm.getWishGraph();
-        var deny = gm.getDenyGraph();
-        var added = new HashSet<Integer>();
-
-        int i = 0;
-        Set<Integer> current = null; // Null to have it initialized, with a value.
-        Person p = null; // Null to have it initialized, with a value.
-        while (candidates.size() != 0)
+        if (current.size() == 0)
         {
-            if (i++ % size == 0)
+            if (added.size() == 0)
             {
-                if (current == null && !overflow)
-                    current = new HashSet<>();
-
-                if (!overflow && candidates.size() >= size && current.size() != 0)
-                {
-                    result.add(current);
-                    current = new HashSet<>();
-                }
-                else if (overflow)
-                {
-                    if (current != null)
-                        result.add(current);
-
-                    current = new HashSet<>();
-                }
-            }
-
-            if (current.size() == 0)
-            {
-                if (added.size() == 0)
-                {
-                    p = candidates.remove(random.nextInt(candidates.size()));
-                }
-                else
-                {
-                    var arr = ImmutableArray.fromList(candidates).map(x -> {
-                        var wishes =
-                            new ImmutableHashSet<>(Arrays.stream(x.getWishlist()).boxed().collect(Collectors.toSet()));
-                        // first value: id, second value: nbrWishes
-                        return new Tuple(x.getId(), wishes.diff(added).size());
-                    }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a)
-                      .dropMatching(added.toArray(new Integer[0])).map(gm::getPersonFromId);
-
-                    p = arr.get(0); // Gets person with fewest wishes left.
-                    candidates.remove(p);
-                }
+                p = getRandomPerson(candidates);
             }
             else
             {
-                var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
+                var arr = ImmutableArray.fromList(candidates).map(x -> {
+                    var wishes =
+                        new ImmutableHashSet<>(Arrays.stream(x.getWishlist()).boxed().collect(Collectors.toSet()));
+                    return new Tuple(x.getId(), wishes.diff(added).size()); // first value: id, second value: nbrWishes
+                }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a)
+                  .dropMatching(added.toArray(new Integer[0])).map(gm::getPersonFromId);
 
-                if (wishes.isEmpty())
-                {
-                    p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
-
-                    int count = 0;
-                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                    {
-                        if (++count == 1000)
-                            throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                        candidates.add(p);
-                        p = candidates.remove(random.nextInt(candidates.size()));
-                    }
-                }
-                else
-                {
-                    var arr = ImmutableArray.fromList(wishes).map(x -> {
-                        var d = new ImmutableHashSet<>(Tuple.imageOf(wish, x)).diff(added);
-                        return new Tuple(x, d.size()); // a is id and b is the amount of wishes.
-                    }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a).dropMatching(added.toArray(new Integer[0]));
-
-                    // Tries to get person with fewest wishes left
-                    // and the goes throw the ascending order of
-                    // wishes left.
-                    for (var j : arr.toList())
-                    {
-                        p = gm().getPersonFromId(j);
-
-                        if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
-                            break;
-
-                        p = null;
-                    }
-
-                    // Resets iff there are no free wishes.
-                    if (arr.size() == 0)
-                        p = null;
-
-                    if (p == null)
-                    {
-                        // No wishes; that aren't blocked so resorts to random group
-                        // generation.
-                        p = candidates.remove(random.nextInt(candidates.size()));
-
-                        int count = 0;
-                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                        {
-                            if (++count == 1000)
-                                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                            candidates.add(p);
-                            p = candidates.remove(random.nextInt(candidates.size()));
-                        }
-                    }
-                    else
-                    {
-                        candidates.remove(p);
-                    }
-                }
+                p = arr.get(0); // Gets person with fewest wishes left.
+                candidates.remove(p);
             }
-
-            added.add(p.getId());
-            current.add(p.getId());
         }
-
-        if (current != null)
-            result.add(current);
-
-        return result;
-    }
-
-    @Override
-    public List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
-    {
-        if (sizes == null)
-            throw new IllegalArgumentException("Not enough groups 0");
-        else if (sizes.size() < 2)
-            throw new IllegalArgumentException(
-                "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
-            );
-
-        var result = new ArrayList<Set<Integer>>();
-        var random = new Random();
-        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
-        var wish = gm.getWishGraph();
-        var deny = gm.getDenyGraph();
-        var added = new HashSet<Integer>();
-
-        int i = 0;
-        int ii = 0;
-        Set<Integer> current = new HashSet<>();
-        Person p = null; // Null to have it initialized, with a value.
-        while (candidates.size() != 0)
+        else
         {
-            if (current.size() == 0)
-            {
-                if (added.size() == 0)
-                {
-                    p = candidates.remove(random.nextInt(candidates.size()));
-                }
-                else
-                {
-                    var arr = ImmutableArray.fromList(candidates).map(x -> {
-                        var wishes =
-                                new ImmutableHashSet<>(Arrays.stream(x.getWishlist()).boxed().collect(Collectors.toSet()));
-                        // first value: id, second value: nbrWishes
-                        return new Tuple(x.getId(), wishes.diff(added).size());
-                    }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a)
-                            .dropMatching(added.toArray(new Integer[0])).map(gm::getPersonFromId);
+            var wishes = getWishes(wish, p.getId());
 
-                    p = arr.get(0); // Gets person with fewest wishes left.
-                    candidates.remove(p);
-                }
+            if (wishes.isEmpty())
+            {
+                p = getAllowedPerson(deny, current, candidates, p);
             }
             else
             {
-                var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
+                var arr = ImmutableArray.fromList(wishes).map(x -> {
+                    var d = new ImmutableHashSet<>(Tuple.imageOf(wish, x)).diff(added);
+                    return new Tuple(x, d.size()); // a is id and b is the amount of wishes.
+                }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a).dropMatching(added.toArray(new Integer[0]));
 
-                if (wishes.isEmpty())
+                // Tries to get person with fewest wishes left
+                // and the goes throw the ascending order of
+                // wishes left.
+                for (var j : arr.toList())
                 {
-                    p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
+                    p = gm().getPersonFromId(j);
 
-                    int count = 0;
-                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                    {
-                        if (++count == 1000)
-                            throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+                    if (!added.contains(j) && !isPersonDisallowed(deny, current, p.getId()))
+                        break;
 
-                        candidates.add(p);
-                        p = candidates.remove(random.nextInt(candidates.size()));
-                    }
+                    p = null;
+                }
+
+                // Resets iff there are no free wishes.
+                if (arr.size() == 0)
+                    p = null;
+
+                if (p == null)
+                {
+                    // No wishes; that aren't blocked so resorts to random group generation.
+                    p = getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
                 }
                 else
                 {
-                    var arr = ImmutableArray.fromList(wishes).map(x -> {
-                        var d = new ImmutableHashSet<>(Tuple.imageOf(wish, x)).diff(added);
-                        return new Tuple(x, d.size()); // a is id and b is the amount of wishes.
-                    }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a).dropMatching(added.toArray(new Integer[0]));
-
-                    // Tries to get person with fewest wishes left
-                    // and the goes throw the ascending order of
-                    // wishes left.
-                    for (var j : arr.toList())
-                    {
-                        p = gm().getPersonFromId(j);
-
-                        if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
-                            break;
-
-                        p = null;
-                    }
-
-                    // Resets iff there are no free wishes.
-                    if (arr.size() == 0)
-                        p = null;
-
-                    if (p == null)
-                    {
-                        // No wishes; that aren't blocked so resorts to random group
-                        // generation.
-                        p = candidates.remove(random.nextInt(candidates.size()));
-
-                        int count = 0;
-                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                        {
-                            if (++count == 1000)
-                                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                            candidates.add(p);
-                            p = candidates.remove(random.nextInt(candidates.size()));
-                        }
-                    }
-                    else
-                    {
-                        candidates.remove(p);
-                    }
+                    candidates.remove(p);
                 }
-            }
-
-            added.add(p.getId());
-            current.add(p.getId());
-
-            if (i != sizes.size() && sizes.get(i) == ++ii)
-            {
-                ii = 0;
-                i++;
-
-                result.add(current);
-                current = new HashSet<>();
             }
         }
 
-        return result;
+        return p;
     }
 
     @Override
