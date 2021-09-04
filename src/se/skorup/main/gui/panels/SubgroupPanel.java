@@ -14,6 +14,7 @@ import se.skorup.main.gui.frames.SubgroupListFrame;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
+import se.skorup.main.gui.panels.helper.GroupDrawer;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
@@ -53,11 +54,14 @@ import java.util.stream.Collectors;
  * */
 public class SubgroupPanel extends JPanel implements MouseListener
 {
-    private static final int SPACER = 50;
+    /** The spacer in the SubgroupPanelGUI. */
+    public static final int SPACER = 50;
 
     private final GroupFrame gf;
 
     private final GroupManager gm;
+
+    private GroupDrawer groupDrawer;
 
     private Subgroups current;
 
@@ -299,53 +303,6 @@ public class SubgroupPanel extends JPanel implements MouseListener
 
             Utils.writeToFile(sb.toString(), file);
         }
-    }
-
-    /**
-     * Prepares the drawing of the Groups.
-     *  */
-    private void initGroups()
-    {
-        if (textBoxes != null)
-            return;
-
-        lastTuple = null;
-
-        var tb = new Vector<TextBox>();
-
-        var groups =
-                current.groups()
-                       .stream()
-                       .map(x -> x.stream().map(gm::getPersonFromId))
-                       .map(x -> x.collect(Collectors.toList()))
-                       .collect(Collectors.toList());
-
-        var max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
-
-        for (var i = 0; i < groups.size(); i++)
-        {
-            var x = (i % 2 == 0) ? this.getWidth() / 10 : 3 * (this.getWidth() / 4);
-            var y = 3 * SPACER + SPACER * (i % groups.size() / 2) * (max + 2);
-
-            tb.add(new TextBox(current.getLabel(i), x, y, Utils.GROUP_NAME_COLOR));
-
-            var gr = groups.get(i);
-            for (var p : gr)
-            {
-                var wishes = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toSet());
-                var nbrWishes = new ImmutableHashSet<>(current.groups().get(i)).intersection(wishes).size();
-
-                var name =
-                        current.isWishListMode() ?
-                                "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
-                                p.getName();
-
-                y += SPACER / 5 + fm.getHeight();
-                tb.add(new PersonBox(name, x, y, Utils.FOREGROUND_COLOR, p.getId()));
-            }
-        }
-
-        textBoxes = ImmutableArray.fromList(tb);
     }
 
     /**
@@ -631,20 +588,6 @@ public class SubgroupPanel extends JPanel implements MouseListener
         gf.revalidate();
     }
 
-    /**
-     * Calculates the height of the panel.
-     *
-     * @return the calculated height of the panel.
-     * */
-    private int height()
-    {
-        if (current == null || fm == null)
-            return 0;
-
-        int max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
-        return (int) ((3 * SPACER + SPACER * current.groups().size() + max * (SPACER + fm.getHeight())) * 1.5F);
-    }
-
     @Override
     public void paintComponent(final Graphics gOld)
     {
@@ -660,7 +603,14 @@ public class SubgroupPanel extends JPanel implements MouseListener
 
         if (current != null)
         {
-            initGroups();
+            groupDrawer = new GroupDrawer(this, gm, current, fm);
+
+            if (textBoxes == null)
+            {
+                textBoxes = groupDrawer.initGroups();
+                lastTuple = null;
+            }
+
             textBoxes.forEach(tb -> tb.draw(g));
         }
 
@@ -671,21 +621,27 @@ public class SubgroupPanel extends JPanel implements MouseListener
     public Dimension getPreferredSize()
     {
         var dim = Toolkit.getDefaultToolkit().getScreenSize();
-        return new Dimension((int) dim.getWidth(), Math.max((int) dim.getHeight(), height()));
+        return new Dimension(
+            (int) dim.getWidth(), Math.max((int) dim.getHeight(), groupDrawer == null ? 0 : groupDrawer.height())
+        );
     }
 
     @Override
     public Dimension getMinimumSize()
     {
         var dim = Toolkit.getDefaultToolkit().getScreenSize();
-        return new Dimension((int) dim.getWidth(), Math.max((int) dim.getHeight(), height()));
+        return new Dimension(
+            (int) dim.getWidth(), Math.max((int) dim.getHeight(), groupDrawer == null ? 0 : groupDrawer.height())
+        );
     }
 
     @Override
     public Dimension getMaximumSize()
     {
         var dim = Toolkit.getDefaultToolkit().getScreenSize();
-        return new Dimension((int) dim.getWidth(), Math.max((int) dim.getHeight(), height()));
+        return new Dimension(
+            (int) dim.getWidth(), Math.max((int) dim.getHeight(), groupDrawer == null ? 0 : groupDrawer.height())
+        );
     }
 
 
@@ -768,8 +724,8 @@ public class SubgroupPanel extends JPanel implements MouseListener
                 var groupIndex = getSelectedGroup(text);
 
                 DebugMethods.log(
-                        "Detected click on group index %d".formatted(groupIndex),
-                        DebugMethods.LogType.DEBUG
+                    "Detected click on group index %d".formatted(groupIndex),
+                    DebugMethods.LogType.DEBUG
                 );
 
                 updateGroups(groupIndex);
