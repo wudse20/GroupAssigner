@@ -3,8 +3,11 @@ package se.skorup.main.groups;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.Tuple;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -81,6 +84,82 @@ public interface GroupCreator
                 (int) Math.round((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
                 overflow
         );
+    }
+
+    /**
+     * Tests if there should be a new group or
+     * if the group isn't full.
+     *
+     * @param i the current index the creator is on.
+     * @param size the size of the group.
+     * @return {@code true} iff it should create a new group<br>
+     *         {@code false} otherwise.
+     * */
+    default boolean shouldCreateNewGroup(int i, int size)
+    {
+        return i % size == 0;
+    }
+
+    /**
+     * Adds a group to the result in the correct way. This only works
+     * for the same size group.
+     *
+     * @param result the list of all the finished groups.
+     * @param current the current group.
+     * @param candidates the candidates of the big group, that are unused.
+     * @param overflow the overflow boolean, if true it will overflow else
+     *                 it will create one extra group.
+     * @param size the size of the groups.
+     * @return the set that's supposed to be the current group.
+     * */
+    default Set<Integer> addGroup(
+        List<Set<Integer>> result, Set<Integer> current,
+        List<Person> candidates, boolean overflow, int size
+    )
+    {
+        if (current == null && !overflow)
+            return new HashSet<>();
+
+        if (!overflow && candidates.size() >= size && current.size() != 0)
+        {
+            result.add(current);
+            return new HashSet<>();
+        }
+        else if (overflow)
+        {
+            if (current != null)
+                result.add(current);
+
+            return new HashSet<>();
+        }
+
+        return current;
+    }
+
+    /**
+     * Gets a random person from the list. It
+     * will remove the person from the list.
+     *
+     * @param candidates the candidates that are unused.
+     * @return the randomly chosen person.
+     * */
+    default Person getRandomPerson(List<Person> candidates)
+    {
+        return candidates.remove(new Random().nextInt(candidates.size()));
+    }
+
+    /**
+     * Checks if a person is disallowed in the Group.
+     *
+     * @param deny the deny graph of the person.
+     * @param current the currently worked on group.
+     * @param id the id of the person being checked.
+     * @return {@code true} iff the person is disallowed. <br>
+     *         {@code false} otherwise.
+     * */
+    default boolean isPersonDisallowed(Set<Tuple> deny, Set<Integer> current, int id)
+    {
+        return Tuple.imageOfSet(deny, current).contains(id);
     }
 
     /**

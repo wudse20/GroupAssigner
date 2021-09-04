@@ -3,12 +3,10 @@ package se.skorup.main.groups;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
-import se.skorup.main.objects.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -23,44 +21,28 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
     {
         var deny = gm.getDenyGraph();
         var result = new ArrayList<Set<Integer>>();
-        var random = new Random();
         var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
 
         int i = 0;
         Set<Integer> current = null; // Just to have it initialized.
         while (candidates.size() != 0)
         {
-            if (i++ % size == 0)
-            {
-                if (current == null && !overflow)
-                    current = new HashSet<>();
+            if (shouldCreateNewGroup(i++, size))
+                current = addGroup(result, current, candidates, overflow, size);
 
-                if (!overflow && candidates.size() >= size && current.size() != 0)
-                {
-                    result.add(current);
-                    current = new HashSet<>();
-                }
-                else if (overflow)
-                {
-                    if (current != null)
-                        result.add(current);
-
-                    current = new HashSet<>();
-                }
-            }
-
-            var p = candidates.remove(random.nextInt(candidates.size()));
+            var p = getRandomPerson(candidates);
 
             int count = 0;
-            while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+            while (isPersonDisallowed(deny, current, p.getId()))
             {
                 if (++count == 1000)
                     throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
 
                 candidates.add(p);
-                p = candidates.remove(random.nextInt(candidates.size()));
+                p = getRandomPerson(candidates);
             }
 
+            assert current != null; // To stop it from complaining.
             current.add(p.getId());
         }
 
@@ -76,14 +58,11 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
         if (sizes == null)
             throw new IllegalArgumentException("Not enough groups 0");
         else if (sizes.size() == 0)
-            throw new IllegalArgumentException(
-                "Not enough groups %d".formatted(0)
-            );
+            throw new IllegalArgumentException("Not enough groups 0");
 
 
         var deny = gm.getDenyGraph();
         var result = new ArrayList<Set<Integer>>();
-        var random = new Random();
         var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
 
         int i = 0;
@@ -91,16 +70,16 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
         var current = new HashSet<Integer>();
         while (candidates.size() != 0)
         {
-            var p = candidates.remove(random.nextInt(candidates.size()));
+            var p = getRandomPerson(candidates);
 
             int count = 0;
-            while (Tuple.imageOfSet(deny, current).contains(p.getId()))
+            while (isPersonDisallowed(deny, current, p.getId()))
             {
                 if (++count == 1000)
                     throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
 
                 candidates.add(p);
-                p = candidates.remove(random.nextInt(candidates.size()));
+                p = getRandomPerson(candidates);
             }
 
             current.add(p.getId());
