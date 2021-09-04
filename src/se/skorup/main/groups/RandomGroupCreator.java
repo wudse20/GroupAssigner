@@ -30,20 +30,8 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
             if (shouldCreateNewGroup(i++, size))
                 current = addGroup(result, current, candidates, overflow, size);
 
-            var p = getRandomPerson(candidates);
-
-            int count = 0;
-            while (isPersonDisallowed(deny, current, p.getId()))
-            {
-                if (++count == 1000)
-                    throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                candidates.add(p);
-                p = getRandomPerson(candidates);
-            }
-
             assert current != null; // To stop it from complaining.
-            current.add(p.getId());
+            current.add(getAllowedPerson(deny, current, candidates, getRandomPerson(candidates)).getId());
         }
 
         if (current != null && !result.contains(current))
@@ -70,19 +58,7 @@ public record RandomGroupCreator(GroupManager gm) implements GroupCreator
         var current = new HashSet<Integer>();
         while (candidates.size() != 0)
         {
-            var p = getRandomPerson(candidates);
-
-            int count = 0;
-            while (isPersonDisallowed(deny, current, p.getId()))
-            {
-                if (++count == 1000)
-                    throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                candidates.add(p);
-                p = getRandomPerson(candidates);
-            }
-
-            current.add(p.getId());
+            current.add(getAllowedPerson(deny, current, candidates, getRandomPerson(candidates)).getId());
 
             if (i != sizes.size() && sizes.get(i) == ++ii)
             {

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * The interface holding the methods
@@ -160,6 +161,46 @@ public interface GroupCreator
     default boolean isPersonDisallowed(Set<Tuple> deny, Set<Integer> current, int id)
     {
         return Tuple.imageOfSet(deny, current).contains(id);
+    }
+
+    /**
+     * Gets the wishes for a given id.
+     *
+     * @param wishes the set containing all the wishes.
+     * @param id the id of the persons wishes.
+     * @return a list containing the wishes.
+     * */
+    default List<Integer> getWishes(Set<Tuple> wishes, int id)
+    {
+        return new Vector<>(Tuple.imageOf(wishes, id));
+    }
+
+    /**
+     * Finds a allowed person.
+     *
+     * @param deny the deny graph of the person.
+     * @param current the current group in progress.
+     * @param candidates the unused persons.
+     * @param p the person that's being checked at the start.
+     * @return the the first found allowed person.
+     * @throws NoGroupAvailableException iff there are no person that's allowed.
+     * */
+    default Person getAllowedPerson(
+        Set<Tuple> deny, Set<Integer> current,
+        List<Person> candidates, Person p
+    ) throws NoGroupAvailableException
+    {
+        int count = 0;
+        while (isPersonDisallowed(deny, current, p.getId()))
+        {
+            if (++count == 1000)
+                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
+
+            candidates.add(p);
+            p = getRandomPerson(candidates);
+        }
+
+        return p;
     }
 
     /**

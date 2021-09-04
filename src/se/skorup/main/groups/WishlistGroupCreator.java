@@ -32,11 +32,61 @@ public class WishlistGroupCreator implements GroupCreator
         this.gm = gm;
     }
 
+    /**
+     * Gets the next person.
+     *
+     * @param current the currently worked on group.
+     * @param candidates the unused candidates.
+     * @param wish the wishes of this group.
+     * @param deny the denylist of this group.
+     * @param added the persons that are already used.
+     * @param p the current person.
+     * @throws NoGroupAvailableException iff there are no possible groups.
+     * */
+    protected Person getPerson(
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
+    ) throws NoGroupAvailableException
+    {
+        assert current != null; // Just to stop it from complaining.
+        if (p == null)
+        {
+            return getRandomPerson(candidates);
+        }
+        else
+        {
+            var wishes = getWishes(wish, p.getId());
+
+            if (wishes.isEmpty())
+            {
+                p = getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
+            }
+            else
+            {
+                for (int j : wishes)
+                {
+                    p = gm.getPersonFromId(j);
+
+                    if (!added.contains(j) && !isPersonDisallowed(deny, current, p.getId()))
+                        break;
+
+                    p = null;
+                }
+
+                if (p == null) // No wishes; that aren't blocked so resorts to random group generation.
+                    p = getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
+                else
+                    candidates.remove(p);
+            }
+        }
+
+        return p;
+    }
+
     @Override
     public List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
         var result = new ArrayList<Set<Integer>>();
-        var random = new Random();
         var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
         var wish = gm.getWishGraph();
         var deny = gm.getDenyGraph();
@@ -47,82 +97,11 @@ public class WishlistGroupCreator implements GroupCreator
         Person p = null; // Just to have it initialized.
         while (candidates.size() != 0)
         {
-            if (i++ % size == 0)
-            {
-                if (current == null && !overflow)
-                    current = new HashSet<>();
+            if (shouldCreateNewGroup(i++, size))
+                current = addGroup(result, current, candidates, overflow, size);
 
-                if (!overflow && candidates.size() >= size && current.size() != 0)
-                {
-                    result.add(current);
-                    current = new HashSet<>();
-                }
-                else if (overflow)
-                {
-                    if (current != null)
-                        result.add(current);
-
-                    current = new HashSet<>();
-                }
-            }
-
-            if (current.size() == 0)
-            {
-                p = candidates.remove(random.nextInt(candidates.size()));
-            }
-            else
-            {
-                var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
-
-                if (wishes.isEmpty())
-                {
-                    p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
-
-                    int count = 0;
-                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                    {
-                        if (++count == 1000)
-                            throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                        candidates.add(p);
-                        p = candidates.remove(random.nextInt(candidates.size()));
-                    }
-                }
-                else
-                {
-                    for (int j : wishes)
-                    {
-                        p = gm.getPersonFromId(j);
-
-                        if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
-                            break;
-
-                        p = null;
-                    }
-
-                    if (p == null)
-                    {
-                        // No wishes; that aren't blocked so resorts to random group
-                        // generation.
-                        p = candidates.remove(random.nextInt(candidates.size()));
-
-                        int count = 0;
-                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                        {
-                            if (++count == 1000)
-                                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                            candidates.add(p);
-                            p = candidates.remove(random.nextInt(candidates.size()));
-                        }
-                    }
-                    else
-                    {
-                        candidates.remove(p);
-                    }
-                }
-            }
-
+            assert current != null; // To stop it from complaining.
+            p = getPerson(current, candidates, wish, deny, added, p);
             current.add(p.getId());
             added.add(p.getId());
         }
@@ -143,9 +122,7 @@ public class WishlistGroupCreator implements GroupCreator
                     "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
             );
 
-
         var result = new ArrayList<Set<Integer>>();
-        var random = new Random();
         var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
         var wish = gm.getWishGraph();
         var deny = gm.getDenyGraph();
@@ -157,63 +134,7 @@ public class WishlistGroupCreator implements GroupCreator
         Person p = null; // Just to have it initialized.
         while (candidates.size() != 0)
         {
-            if (current.size() == 0)
-            {
-                p = candidates.remove(random.nextInt(candidates.size()));
-            }
-            else
-            {
-                var wishes = new Vector<>(Tuple.imageOf(wish, p.getId()));
-
-                if (wishes.isEmpty())
-                {
-                    p = candidates.remove(random.nextInt(candidates.size())); // No wishes grab random person.
-
-                    int count = 0;
-                    while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                    {
-                        if (++count == 1000)
-                            throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                        candidates.add(p);
-                        p = candidates.remove(random.nextInt(candidates.size()));
-                    }
-                }
-                else
-                {
-                    for (int j : wishes)
-                    {
-                        p = gm.getPersonFromId(j);
-
-                        if (!added.contains(j) && !Tuple.imageOfSet(deny, current).contains(j))
-                            break;
-
-                        p = null;
-                    }
-
-                    if (p == null)
-                    {
-                        // No wishes; that aren't blocked so resorts to random group
-                        // generation.
-                        p = candidates.remove(random.nextInt(candidates.size()));
-
-                        int count = 0;
-                        while (Tuple.imageOfSet(deny, current).contains(p.getId()))
-                        {
-                            if (++count == 1000)
-                                throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
-
-                            candidates.add(p);
-                            p = candidates.remove(random.nextInt(candidates.size()));
-                        }
-                    }
-                    else
-                    {
-                        candidates.remove(p);
-                    }
-                }
-            }
-
+            p = getPerson(current, candidates, wish, deny, added, p);
             current.add(p.getId());
             added.add(p.getId());
 
