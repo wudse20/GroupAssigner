@@ -1,6 +1,5 @@
 package se.skorup.main.groups;
 
-import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
 import se.skorup.API.ImmutableHashSet;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
@@ -8,15 +7,10 @@ import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
