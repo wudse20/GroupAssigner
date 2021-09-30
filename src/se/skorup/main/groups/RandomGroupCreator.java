@@ -26,8 +26,8 @@ public class RandomGroupCreator extends GroupCreatorTemplate
 
     @Override
     protected Person getPerson(
-            Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-            Set<Tuple> deny, Set<Integer> added, Person p
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
     ) throws NoGroupAvailableException
     {
         return getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));

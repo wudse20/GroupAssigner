@@ -39,8 +39,8 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      * @throws NoGroupAvailableException iff there are no possible groups.
      * */
     protected abstract Person getPerson(
-            Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-            Set<Tuple> deny, Set<Integer> added, Person p
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
     ) throws NoGroupAvailableException;
 
     @Override
