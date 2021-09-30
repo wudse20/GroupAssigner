@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * An alternate GroupCreator for wishlist generation.
  * */
-public class AlternateWishlistGroupCreator extends WishlistGroupCreator
+public final class AlternateWishlistGroupCreator extends WishlistGroupCreator
 {
     /**
      * Creates a new GroupCreator.

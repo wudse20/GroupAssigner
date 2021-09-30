@@ -15,10 +15,8 @@ import java.util.Set;
  * The group creator used to create groups
  * based on the wishes of the candidates.
  *  */
-public class WishlistGroupCreator implements GroupCreator
+public sealed class WishlistGroupCreator extends GroupCreatorTemplate permits AlternateWishlistGroupCreator
 {
-    protected final GroupManager gm;
-
     /**
      * Creates a wishlist group creator.
      *
@@ -27,7 +25,7 @@ public class WishlistGroupCreator implements GroupCreator
      */
     public WishlistGroupCreator(GroupManager gm)
     {
-        this.gm = gm;
+        super(gm);
     }
 
     /**
@@ -79,77 +77,6 @@ public class WishlistGroupCreator implements GroupCreator
         }
 
         return p;
-    }
-
-    @Override
-    public List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
-    {
-        var result = new ArrayList<Set<Integer>>();
-        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
-        var wish = gm.getWishGraph();
-        var deny = gm.getDenyGraph();
-        var added = new HashSet<Integer>();
-
-        int i = 0;
-        Set<Integer> current = null; // Just to have it initialized.
-        Person p = null; // Just to have it initialized.
-        while (candidates.size() != 0)
-        {
-            if (shouldCreateNewGroup(i++, size))
-                current = addGroup(result, current, candidates, overflow, size);
-
-            assert current != null; // To stop it from complaining.
-            p = getPerson(current, candidates, wish, deny, added, p);
-            current.add(p.getId());
-            added.add(p.getId());
-        }
-
-        if (current != null)
-            result.add(current);
-
-        return result;
-    }
-
-    @Override
-    public List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
-    {
-        if (sizes == null)
-            throw new IllegalArgumentException("Not enough groups 0");
-        else if (sizes.size() < 2)
-            throw new IllegalArgumentException(
-                    "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
-            );
-
-        var result = new ArrayList<Set<Integer>>();
-        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
-        var wish = gm.getWishGraph();
-        var deny = gm.getDenyGraph();
-        var added = new HashSet<Integer>();
-
-        int i = 0;
-        int ii = 0;
-        Set<Integer> current = new HashSet<>();
-        Person p = null; // Just to have it initialized.
-        while (candidates.size() != 0)
-        {
-            p = getPerson(current, candidates, wish, deny, added, p);
-            current.add(p.getId());
-            added.add(p.getId());
-
-            if (i != sizes.size() && sizes.get(i) == ++ii)
-            {
-                ii = 0;
-                i++;
-
-                result.add(current);
-                current = new HashSet<>();
-            }
-        }
-
-        if (current.size() != 0 && !result.contains(current))
-            result.add(current);
-
-        return result;
     }
 
     @Override
