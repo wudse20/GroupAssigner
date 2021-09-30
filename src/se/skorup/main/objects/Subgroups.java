@@ -1,6 +1,7 @@
 package se.skorup.main.objects;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +19,8 @@ import java.util.Set;
 public record Subgroups(
         String name, List<Set<Integer>> groups,
         boolean isLeaderMode, boolean isWishListMode,
-        String[] labels, List<Person> leaders) implements Serializable
+        String[] labels, List<Person> leaders
+) implements Serializable
 {
     /**
      * Changes the name of the Subgroups.
@@ -47,5 +49,12 @@ public record Subgroups(
             "Grupp %d".formatted(index + 1);
 
         return labels[index];
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Subgroups[name=%s, groups=%s, isLeaderMode=%b, isWishListMode=%b, labels=%s, leaders=%s]"
+                .formatted(name, groups, isLeaderMode, isWishListMode, Arrays.toString(labels), leaders);
     }
 }
