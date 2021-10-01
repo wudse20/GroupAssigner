@@ -577,6 +577,12 @@ public class SubgroupPanel extends JPanel implements MouseListener
         }
     }
 
+    /**
+     * Used to generate two sets of groups at the
+     * same time and concatenating them.
+     *
+     * @return the generated groups.
+     * */
     private List<Set<Integer>> generateMultipleSubgroup()
     {
         final var sizes = gf.getUserInput();
@@ -601,9 +607,9 @@ public class SubgroupPanel extends JPanel implements MouseListener
         catch (NoGroupAvailableException | IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(
-                    this,
-                    "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
-                    "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
+                this,
+                "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
+                "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
             );
             return List.of();
         }
