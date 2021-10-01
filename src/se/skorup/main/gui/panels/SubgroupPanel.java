@@ -2,7 +2,6 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
-import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
 import se.skorup.main.groups.AlternateWishlistGroupCreator;
 import se.skorup.main.groups.GroupCreator;
@@ -40,8 +39,6 @@ import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -483,15 +480,20 @@ public class SubgroupPanel extends JPanel implements MouseListener
     /**
      * Gets the correct group generator,
      * based on all inputs.
+     *
+     * @param shouldUseOneMainGroup if {code true} it will create a new GroupCreator with
+     *                              only the provided main group, else it keep the selected
+     *                              GroupCreator.
+     * @param mg the main group.
      * */
-    private GroupCreator getGroupGenerator()
+    private GroupCreator getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
     {
         var gc = gf.getGroupSelectedGroupCreator();
 
-        if (gf.shouldUseMainGroups())
+        if (shouldUseOneMainGroup)
         {
-            var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, gf.getMainGroup());
-            var gm = new GroupManager(gf.getMainGroup().toString());
+            var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, mg);
+            var gm = new GroupManager(mg.toString());
             persons.forEach(gm::registerPerson);
 
             return gc instanceof RandomGroupCreator   ?
@@ -501,7 +503,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
                    new AlternateWishlistGroupCreator(gm);
         }
 
-        return gf.getGroupSelectedGroupCreator();
+        return gc;
     }
 
     /**
@@ -530,27 +532,39 @@ public class SubgroupPanel extends JPanel implements MouseListener
     }
 
     /**
-     * Generates the group.
+     * Figures out which group generator to use.
+     *
+     * @param gc the group creator in use.
+     * @param sizes the sizes of the groups.
+     * @return the correct GroupGenerator.
      * */
-    private void generateGroups()
+    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes)
     {
-        final var gc = getGroupGenerator();
-        final var sizes = gf.getUserInput();
-
-        if (sizes == null)
-            return;
-
-        GroupGenerator gg = switch (gf.getSizeState()) {
+        return switch (gf.getSizeState()) {
             case NUMBER_GROUPS -> () -> gc.generateGroup((short) ((int) sizes.get(0)), gf.shouldOverflow(), gm);
             case NUMBER_PERSONS -> () -> gc.generateGroup((byte) ((int) sizes.get(0)), gf.shouldOverflow());
             case PAIR_WITH_LEADERS -> () -> gc.generateGroup((short) ((int) sizes.get(0)), gf.shouldOverflow());
             case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroup(sizes);
         };
+    }
 
-        List<Set<Integer>> groups;
+    /**
+     * Generates a singe subgroup.
+     *
+     * @param gc the group creator that should be used.
+     * @return the List of Sets consisting of
+     *         the newly created subgroups.
+     * */
+    private List<Set<Integer>> generateSingleSubgroup(GroupCreator gc)
+    {
+        final var sizes = gf.getUserInput();
+
+        if (sizes.size() == 0)
+            return List.of();
+
         try
         {
-            groups = tryGenerateGroups(gg);
+            return tryGenerateGroups(getGroupGenerator(gc, sizes));
         }
         catch (NoGroupAvailableException | IllegalArgumentException e)
         {
@@ -559,11 +573,58 @@ public class SubgroupPanel extends JPanel implements MouseListener
                 "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
                 "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
             );
-            return;
+            return List.of();
         }
+    }
+
+    private List<Set<Integer>> generateMultipleSubgroup()
+    {
+        final var sizes = gf.getUserInput();
+
+        if (sizes.size() == 0)
+            return List.of();
+
+        try
+        {
+            var groups =
+               tryGenerateGroups(
+                   getGroupGenerator(
+                       getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1), sizes));
+
+            groups.addAll(
+                tryGenerateGroups(
+                    getGroupGenerator(
+                        getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2), sizes)));
+
+            return groups;
+        }
+        catch (NoGroupAvailableException | IllegalArgumentException e)
+        {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
+                    "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
+            );
+            return List.of();
+        }
+    }
+
+    /**
+     * Generates the group.
+     * */
+    private void generateGroups()
+    {
+        final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup());
+        var groups =
+            gf.shouldUseMainGroups()   ?
+            generateMultipleSubgroup() :
+            generateSingleSubgroup(gc);
+
+        if (groups.size() == 0)
+            return;
 
         current = new Subgroups(
-            null, groups, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
+           null, groups, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
             gc instanceof WishlistGroupCreator, new String[groups.size()],
             new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
         );

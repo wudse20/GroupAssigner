@@ -21,6 +21,7 @@ import javax.swing.JRadioButton;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +41,8 @@ public class SubgroupSettingsPanel extends JPanel
     private final ButtonGroup bgSettings = new ButtonGroup();
 
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
-    private final JCheckBox boxMainGroups = new JCheckBox("Använd huvudgrupper");
+    private final JCheckBox boxOneMainGroup = new JCheckBox("Använd en huvudgrupp");
+    private final JCheckBox boxMainGroups = new JCheckBox("Använd Huvudgrupper");
 
     private final JComboBox<GroupCreator> cbCreators = new JComboBox<>();
 
@@ -102,7 +104,7 @@ public class SubgroupSettingsPanel extends JPanel
         pSettings.setBackground(Utils.BACKGROUND_COLOR);
         pSettings.setBorder(settingsBorder);
 
-        pMainGroups.setLayout(new FlowLayout(FlowLayout.LEFT));
+        pMainGroups.setLayout(new BoxLayout(pMainGroups, BoxLayout.Y_AXIS));
         pMainGroups.setForeground(Utils.FOREGROUND_COLOR);
         pMainGroups.setBackground(Utils.BACKGROUND_COLOR);
         pMainGroups.setBorder(mainGroupsBorder);
@@ -122,12 +124,29 @@ public class SubgroupSettingsPanel extends JPanel
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
         boxOverflow.addActionListener(e -> gf.setOverflow(boxOverflow.isSelected()));
 
+        boxOneMainGroup.setBackground(Utils.BACKGROUND_COLOR);
+        boxOneMainGroup.setForeground(Utils.FOREGROUND_COLOR);
+        boxOneMainGroup.addActionListener(e -> {
+            radioMainGroup1.setEnabled(boxOneMainGroup.isSelected());
+            radioMainGroup2.setEnabled(boxOneMainGroup.isSelected());
+            gf.shouldUseOneMainGroup(boxOneMainGroup.isSelected());
+            boxMainGroups.setSelected(false);
+        });
+
         boxMainGroups.setBackground(Utils.BACKGROUND_COLOR);
         boxMainGroups.setForeground(Utils.FOREGROUND_COLOR);
         boxMainGroups.addActionListener(e -> {
-            radioMainGroup1.setEnabled(boxMainGroups.isSelected());
-            radioMainGroup2.setEnabled(boxMainGroups.isSelected());
+            radioMainGroup1.setEnabled(false);
+            radioMainGroup2.setEnabled(false);
             gf.shouldUseMainGroups(boxMainGroups.isSelected());
+            boxOneMainGroup.setSelected(false);
+            pDifferentSizes.setEnabled(!boxMainGroups.isSelected());
+
+            if (pDifferentSizes.isRadioSelected())
+            {
+                pDifferentSizes.setRadioSelected(false);
+                pNbrGroups.setRadioSelected(true);
+            }
         });
 
         radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
@@ -167,27 +186,36 @@ public class SubgroupSettingsPanel extends JPanel
 
         var p2 = new JPanel();
         p2.setBackground(Utils.BACKGROUND_COLOR);
-        p2.setLayout(new BoxLayout(p2, BoxLayout.Y_AXIS));
+        p2.setLayout(new BorderLayout());
+
+        var p3 = new JPanel();
+        p3.setLayout(new FlowLayout(FlowLayout.LEFT));
+        p3.setBackground(Utils.BACKGROUND_COLOR);
+
+        var p4 = new JPanel();
+        p4.setLayout(new FlowLayout(FlowLayout.LEFT));
+        p4.setBackground(Utils.BACKGROUND_COLOR);
 
         pSettings.add(pNbrGroups);
         pSettings.add(pNbrMembers);
         pSettings.add(pDifferentSizes);
-        pSettings.add(new JLabel(" "));
         pSettings.add(pLeaders);
-        pSettings.add(new JLabel(" "));
         pSettings.add(p);
 
-        pMainGroups.add(boxMainGroups);
-        pMainGroups.add(radioMainGroup1);
-        pMainGroups.add(radioMainGroup2);
+        p3.add(boxOneMainGroup);
+        p3.add(radioMainGroup1);
+        p3.add(radioMainGroup2);
+
+        p4.add(boxMainGroups);
+
+        pMainGroups.add(p3);
+        pMainGroups.add(p4);
 
         pGroupCreator.add(cbCreators);
 
-        p2.add(pGroupCreator);
-        p2.add(new JLabel(" "));
-        p2.add(pSettings);
-        p2.add(new JLabel(" "));
-        p2.add(pMainGroups);
+        p2.add(pGroupCreator, BorderLayout.PAGE_START);
+        p2.add(pSettings, BorderLayout.CENTER);
+        p2.add(pMainGroups, BorderLayout.PAGE_END);
 
         this.add(new JLabel("   "), BorderLayout.PAGE_START);
         this.add(new JLabel("   "), BorderLayout.LINE_START);
@@ -256,7 +284,7 @@ public class SubgroupSettingsPanel extends JPanel
                 "Felaktig indata", JOptionPane.ERROR_MESSAGE
             );
 
-            return null;
+            return List.of();
         }
     }
 

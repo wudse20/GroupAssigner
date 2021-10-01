@@ -105,4 +105,11 @@ public class SettingPanel extends JPanel
     {
         return radio;
     }
+
+    @Override
+    public void setEnabled(boolean status)
+    {
+        radio.setEnabled(status);
+        pInput.setEnabled(status);
+    }
 }

@@ -152,4 +152,10 @@ public class InputPanel extends JPanel implements DocumentListener
 
     @Override
     public void changedUpdate(DocumentEvent e) {}
+
+    @Override
+    public void setEnabled(boolean status)
+    {
+        txfInput.setEnabled(status);
+    }
 }

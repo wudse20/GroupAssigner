@@ -44,6 +44,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     public final String BASE_GROUP_PATH;
 
     private boolean shouldUseMainGroups = false;
+    private boolean shouldUseOneMainGroup = false;
     private boolean shouldOverflow = false;
 
     private State sizeState = State.NUMBER_GROUPS;
@@ -93,7 +94,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         var dim = Toolkit.getDefaultToolkit().getScreenSize();
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setSize(new Dimension(424, 527));
+        this.setSize(new Dimension(450, 550));
         this.setVisible(true);
         this.setResizable(false);
         this.setLocation(
@@ -209,9 +210,9 @@ public class GroupFrame extends JFrame implements ChangeListener
      *
      * @return the value of shouldUseMainGroups.
      * */
-    public boolean shouldUseMainGroups()
+    public boolean shouldUseOneMainGroup()
     {
-        return shouldUseMainGroups;
+        return shouldUseOneMainGroup;
     }
 
     /**
@@ -219,9 +220,9 @@ public class GroupFrame extends JFrame implements ChangeListener
      *
      * @param shouldUseMainGroups the new value of shouldUseMainGroups.
      * */
-    public void shouldUseMainGroups(boolean shouldUseMainGroups)
+    public void shouldUseOneMainGroup(boolean shouldUseMainGroups)
     {
-        this.shouldUseMainGroups = shouldUseMainGroups;
+        this.shouldUseOneMainGroup = shouldUseMainGroups;
     }
 
     /**
@@ -326,6 +327,26 @@ public class GroupFrame extends JFrame implements ChangeListener
         return sgsp.getCbCreators();
     }
 
+    /**
+     * Setter for: shouldUseMainGroups
+     *
+     * @return the state of shouldUseMainGroups.
+     * */
+    public boolean shouldUseMainGroups()
+    {
+        return shouldUseMainGroups;
+    }
+
+    /**
+     * Getter for: shouldUseMainGroups
+     *
+     * @param shouldUseMainGroups the new state of shouldUseMainGroups.
+     * */
+    public void shouldUseMainGroups(boolean shouldUseMainGroups)
+    {
+        this.shouldUseMainGroups = shouldUseMainGroups;
+    }
+
     @Override
     public void dispose()
     {
@@ -339,7 +360,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         if (tabs.getSelectedComponent() instanceof SubgroupSettingsPanel)
         {
             DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
-            this.setSize(new Dimension(424, 527));
+            this.setSize(new Dimension(450, 550));
             gbp.populateButtons(sgsp);
         }
         else if (tabs.getSelectedComponent() instanceof JScrollPane)
