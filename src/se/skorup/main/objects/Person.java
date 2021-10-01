@@ -200,7 +200,9 @@ public abstract class Person implements Serializable, Comparable<Person>
     @Override
     public boolean equals(Object o)
     {
-        return o instanceof Person p && id == p.id;
+        return !(o instanceof Candidate && this instanceof Leader  ||
+                 o instanceof Leader && this instanceof Candidate) &&
+                 o instanceof Person p && id == p.id;
     }
 
     @Override
