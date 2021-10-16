@@ -14,6 +14,7 @@ import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.gui.panels.helper.GroupDrawer;
+import se.skorup.main.gui.panels.helper.SingleColumnGroupDrawer;
 import se.skorup.main.gui.panels.helper.TwoColumnGroupDrawer;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
@@ -55,7 +56,7 @@ import java.util.stream.Collectors;
 public class SubgroupPanel extends JPanel implements MouseListener, ComponentListener
 {
     /** If {@code true}, then it will draw debug lines. */
-    private static final boolean debug = true;
+    private static final boolean debug = false;
 
     private final GroupFrame gf;
 
@@ -671,7 +672,9 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
 
         if (current != null)
         {
-            groupDrawer = new TwoColumnGroupDrawer(this, gm, current, fm);
+            groupDrawer = gf.getWidth() >= 1200 ?
+                new TwoColumnGroupDrawer(this, gm, current, fm) :
+                new SingleColumnGroupDrawer(this, gm, current, fm);
 
             if (textBoxes == null)
             {
