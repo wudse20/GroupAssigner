@@ -96,7 +96,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(450, 550));
         this.setVisible(true);
-        this.setResizable(false);
+        this.addComponentListener(sgp);
         this.setLocation(
             dim.width / 2 - this.getSize().width / 2,
             dim.height / 2 - this.getSize().height / 2

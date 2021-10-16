@@ -14,6 +14,7 @@ import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.gui.panels.helper.GroupDrawer;
+import se.skorup.main.gui.panels.helper.TwoColumnGroupDrawer;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
@@ -33,6 +34,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.print.PrinterException;
@@ -49,10 +52,10 @@ import java.util.stream.Collectors;
 /**
  * The panel that draws the SubGroups.
  * */
-public class SubgroupPanel extends JPanel implements MouseListener
+public class SubgroupPanel extends JPanel implements MouseListener, ComponentListener
 {
-    /** The spacer in the SubgroupPanelGUI. */
-    public static final int SPACER = 50;
+    /** If {@code true}, then it will draw debug lines. */
+    private static final boolean debug = true;
 
     private final GroupFrame gf;
 
@@ -63,8 +66,6 @@ public class SubgroupPanel extends JPanel implements MouseListener
     private Subgroups current;
 
     private ImmutableArray<TextBox> textBoxes;
-
-    private FontMetrics fm;
 
     private Tuple lastTuple;
 
@@ -662,7 +663,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
 
         var g = (Graphics2D) gOld;
         g.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
-        fm = g.getFontMetrics();
+        FontMetrics fm = g.getFontMetrics();
 
         g.setColor(Utils.BACKGROUND_COLOR);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
@@ -670,7 +671,7 @@ public class SubgroupPanel extends JPanel implements MouseListener
 
         if (current != null)
         {
-            groupDrawer = new GroupDrawer(this, gm, current, fm);
+            groupDrawer = new TwoColumnGroupDrawer(this, gm, current, fm);
 
             if (textBoxes == null)
             {
@@ -681,7 +682,34 @@ public class SubgroupPanel extends JPanel implements MouseListener
             textBoxes.forEach(tb -> tb.draw(g));
         }
 
+        if (debug)
+        {
+            g.setColor(Color.GREEN);
+            g.drawLine(gf.getWidth() / 4, 0, gf.getWidth() / 4, this.getHeight());
+            g.drawLine(3 * gf.getWidth() / 4, 0, 3 * gf.getWidth() / 4, this.getHeight());
+
+            g.setColor(Color.YELLOW);
+            g.drawLine(gf.getWidth() / 2, 0, gf.getWidth() / 2, this.getHeight());
+        }
+
         this.setSize(this.getMaximumSize());
+    }
+
+   /**
+    * Getter for: spacer.
+    *
+    * @return the current spacer value.
+    * */
+    public int getSpacer()
+    {
+        DebugMethods.log("Width: %s".formatted(gf.getWidth()), DebugMethods.LogType.DEBUG);
+        return gf.getWidth() / 25;
+    }
+
+    @Override
+    public int getWidth()
+    {
+        return gf.getWidth();
     }
 
     @Override
@@ -808,4 +836,22 @@ public class SubgroupPanel extends JPanel implements MouseListener
 
     @Override
     public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void componentResized(ComponentEvent e)
+    {
+        textBoxes = null; // Forces Repaint
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {}
+
+    @Override
+    public void componentShown(ComponentEvent e)
+    {
+        textBoxes = null; // Forces Repaint
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {}
 }

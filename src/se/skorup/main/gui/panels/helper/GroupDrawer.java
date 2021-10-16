@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels.helper;
 
+import se.skorup.API.DebugMethods;
 import se.skorup.API.ImmutableArray;
 import se.skorup.API.ImmutableHashSet;
 import se.skorup.API.Utils;
@@ -7,30 +8,32 @@ import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
+import se.skorup.main.objects.Tuple;
 
 import java.awt.FontMetrics;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
-
-import static se.skorup.main.gui.panels.SubgroupPanel.SPACER;
 
 /**
  * A class that draws the subgroups in
  * the SubgroupPanel.
  * */
-public class GroupDrawer
+public abstract class GroupDrawer
 {
-    private final SubgroupPanel sgp;
+    protected final SubgroupPanel sgp;
 
-    private final GroupManager gm;
+    protected final GroupManager gm;
 
-    private final Subgroups current;
+    protected final Subgroups current;
 
-    private final FontMetrics fm;
+    protected final FontMetrics fm;
+
 
     /**
      * Creates a new GroupDrawer.
@@ -49,18 +52,20 @@ public class GroupDrawer
     }
 
     /**
+     * Generates the positions for the text boxes.
+     *
+     * @param groups the groups.
+     * @param max the max size.
+     * @return the positions of the text boxes.
+     * */
+    protected abstract List<Tuple> generatePositions(List<List<Person>> groups, int max);
+
+    /**
      * Calculates the height of the panel.
      *
      * @return the calculated height of the panel.
      * */
-    public int height()
-    {
-        if (current == null || fm == null)
-            return 0;
-
-        int max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
-        return (int) ((3 * SPACER + SPACER * current.groups().size() + max * (SPACER + fm.getHeight())) * 1.5F);
-    }
+    public abstract int height();
 
     /**
      * Prepares the drawing of the Groups.
@@ -69,6 +74,7 @@ public class GroupDrawer
      * */
     public ImmutableArray<TextBox> initGroups()
     {
+        DebugMethods.log("Spacer: %d".formatted(sgp.getSpacer()), DebugMethods.LogType.DEBUG);
         var tb = new Vector<TextBox>();
 
         var groups =
@@ -79,11 +85,12 @@ public class GroupDrawer
                         .collect(Collectors.toList());
 
         var max = Collections.max(current.groups().stream().map(Set::size).collect(Collectors.toList()));
+        var positions = generatePositions(groups, max);
 
         for (var i = 0; i < groups.size(); i++)
         {
-            var x = (i % 2 == 0) ? sgp.getWidth() / 10 : 3 * (sgp.getWidth() / 4);
-            var y = 3 * SPACER + SPACER * (i % groups.size() / 2) * (max + 2);
+            var x = positions.get(i).a();
+            var y = positions.get(i).b();
 
             tb.add(new TextBox(current.getLabel(i), x, y, Utils.GROUP_NAME_COLOR));
 
@@ -94,11 +101,11 @@ public class GroupDrawer
                 var nbrWishes = new ImmutableHashSet<>(current.groups().get(i)).intersection(wishes).size();
 
                 var name =
-                        current.isWishListMode() ?
-                                "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
-                                p.getName();
+                    current.isWishListMode() ?
+                            "%s (Önskningar: %d)".formatted(p.getName(), nbrWishes) :
+                            p.getName();
 
-                y += SPACER / 5 + fm.getHeight();
+                y += sgp.getSpacer() / 5 + fm.getHeight();
                 tb.add(new PersonBox(name, x, y, Utils.FOREGROUND_COLOR, p.getId()));
             }
         }
