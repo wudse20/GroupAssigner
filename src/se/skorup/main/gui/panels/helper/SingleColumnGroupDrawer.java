@@ -31,12 +31,12 @@ public class SingleColumnGroupDrawer extends GroupDrawer {
         var res = new ArrayList<Tuple>();
         var offset =
                 groups.parallelStream()
-                        .flatMapToInt(x ->
-                                x.parallelStream()
-                                        .map(Person::getName)
-                                        .mapToInt(fm::stringWidth))
-                        .max()
-                        .orElse(0);
+                       .flatMapToInt(x ->
+                            x.parallelStream()
+                             .map(Person::getName)
+                             .mapToInt(fm::stringWidth))
+                       .max()
+                       .orElse(0);
 
         offset /= 2;
         var x = sgp.getWidth() / 2 - offset;
