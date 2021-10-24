@@ -1,8 +1,10 @@
 package se.skorup.API.functional_interfaces;
 
+import se.skorup.API.immutable_collections.ImmutableArray;
+
 /**
  * The interface used in: <br>
- *     - {@link se.skorup.API.ImmutableArray#map(MapFunction)}
+ *     - {@link ImmutableArray#map(MapFunction)}
  *
  * @param <E> the type of the elements to be converted
  * @param <T> the new type of the converted elements

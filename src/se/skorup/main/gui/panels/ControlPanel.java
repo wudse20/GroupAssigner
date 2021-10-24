@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.DebugMethods;
-import se.skorup.API.Utils;
+import se.skorup.API.util.DebugMethods;
+import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.AddGroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;

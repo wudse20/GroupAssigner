@@ -1,6 +1,6 @@
 package se.skorup.main.gui.models;
 
-import se.skorup.API.ImmutableArray;
+import se.skorup.API.immutable_collections.ImmutableArray;
 
 import javax.swing.AbstractListModel;
 import java.util.ArrayList;

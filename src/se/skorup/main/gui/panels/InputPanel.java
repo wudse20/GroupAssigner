@@ -1,6 +1,6 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.Utils;
+import se.skorup.API.util.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
 
 import javax.swing.JLabel;

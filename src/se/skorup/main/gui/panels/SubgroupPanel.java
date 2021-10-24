@@ -1,8 +1,8 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.DebugMethods;
-import se.skorup.API.ImmutableArray;
-import se.skorup.API.Utils;
+import se.skorup.API.util.DebugMethods;
+import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.util.Utils;
 import se.skorup.main.groups.AlternateWishlistGroupCreator;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
@@ -705,7 +705,6 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
     * */
     public int getSpacer()
     {
-        DebugMethods.log("Width: %s".formatted(gf.getWidth()), DebugMethods.LogType.DEBUG);
         return gf.getWidth() / 25;
     }
 
@@ -753,8 +752,8 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
     public void mouseReleased(MouseEvent e)
     {
         DebugMethods.log(
-                "Mouse clicked at: %d, %d".formatted(e.getX(), e.getY()),
-                DebugMethods.LogType.DEBUG
+            "Mouse clicked at: %d, %d".formatted(e.getX(), e.getY()),
+            DebugMethods.LogType.DEBUG
         );
 
         if (textBoxes != null)

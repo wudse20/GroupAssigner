@@ -1,6 +1,6 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.Utils;
+import se.skorup.API.util.Utils;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;

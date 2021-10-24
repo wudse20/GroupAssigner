@@ -1,4 +1,4 @@
-package se.skorup.API;
+package se.skorup.API.util;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

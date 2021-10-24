@@ -1,4 +1,4 @@
-package se.skorup.API;
+package se.skorup.API.immutable_collections;
 
 import se.skorup.API.functional_interfaces.FillFunction;
 import se.skorup.API.functional_interfaces.MapFunction;

@@ -1,6 +1,6 @@
 package se.skorup.main.gui.objects;
 
-import se.skorup.API.DebugMethods;
+import se.skorup.API.util.DebugMethods;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

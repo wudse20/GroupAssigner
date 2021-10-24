@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.DebugMethods;
-import se.skorup.API.Utils;
+import se.skorup.API.util.DebugMethods;
+import se.skorup.API.util.Utils;
 import se.skorup.main.groups.AlternateWishlistGroupCreator;
 import se.skorup.main.groups.GroupCreator;
 import se.skorup.main.groups.RandomGroupCreator;
@@ -21,7 +21,6 @@ import javax.swing.JRadioButton;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
