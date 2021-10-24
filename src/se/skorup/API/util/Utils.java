@@ -65,7 +65,6 @@ public class Utils
      * */
     public static String getFolderName()
     {
-
         if (isWindowsSystem())
         {
             DebugMethods.log("Is windows system", DebugMethods.LogType.DEBUG);

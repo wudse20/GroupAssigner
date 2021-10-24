@@ -27,7 +27,13 @@ public class DebugMethods
      * */
     public static void log(String message, LogType type)
     {
+        var oldColor = Console.getColor();
+        if (type.equals(LogType.ERROR))
+            Console.setColor(ConsoleColor.RED);
+
         System.out.printf("[%s/%s] %s%n", getCurrentTime(), type, message);
+
+        Console.setColor(oldColor);
     }
 
     /**
