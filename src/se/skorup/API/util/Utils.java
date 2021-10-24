@@ -46,6 +46,16 @@ public class Utils
             "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
 
     /**
+     * Checks if the code is running on a window system or not.
+     *
+     * @return {@code true} iff it's runing on a windows system.
+     * */
+    public static boolean isWindowsSystem()
+    {
+        return System.getProperty("os.name").startsWith("Windows");
+    }
+
+    /**
      * Gets the folder name of this project,
      * were it saves all its files. <br><br>
      *
@@ -56,7 +66,7 @@ public class Utils
     public static String getFolderName()
     {
 
-        if (System.getProperty("os.name").startsWith("Windows"))
+        if (isWindowsSystem())
         {
             DebugMethods.log("Is windows system", DebugMethods.LogType.DEBUG);
             return "%s\\.%s\\".formatted(System.getenv("APPDATA"), "group-assigner");
