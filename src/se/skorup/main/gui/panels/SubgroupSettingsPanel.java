@@ -276,7 +276,7 @@ public class SubgroupSettingsPanel extends JPanel
         }
         catch (NumberFormatException e)
         {
-            DebugMethods.log(e, DebugMethods.LogType.DEBUG);
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
 
             JOptionPane.showMessageDialog(
                 this, "Felaktig indata: %s".formatted(e.getLocalizedMessage()),

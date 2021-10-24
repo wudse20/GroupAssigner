@@ -1,6 +1,7 @@
 package se.skorup.main.manager;
 
 import org.testng.annotations.Test;
+import se.skorup.API.util.DebugMethods;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
@@ -41,7 +42,10 @@ public class GroupManagerTester
         }
         catch (Exception e)
         {
-            System.out.printf("Unexpected exception: %s%n", e.getLocalizedMessage());
+            DebugMethods.log(
+                "Unexpected exception: %s%n".formatted(e.getLocalizedMessage()),
+                DebugMethods.LogType.ERROR
+            );
             throw new RuntimeException(e.getLocalizedMessage()); // To indicate the test failed.
         }
     }
