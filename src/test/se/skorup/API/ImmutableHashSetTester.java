@@ -2,6 +2,8 @@ package se.skorup.API;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.immutable_collections.ImmutableHashSet;
 
 import java.util.Arrays;
 import java.util.HashSet;

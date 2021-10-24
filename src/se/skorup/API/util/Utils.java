@@ -1,4 +1,6 @@
-package se.skorup.API;
+package se.skorup.API.util;
+
+import se.skorup.API.util.DebugMethods;
 
 import javax.swing.JOptionPane;
 import java.awt.Color;

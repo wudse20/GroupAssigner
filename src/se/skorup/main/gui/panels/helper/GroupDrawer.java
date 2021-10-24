@@ -1,9 +1,8 @@
 package se.skorup.main.gui.panels.helper;
 
-import se.skorup.API.DebugMethods;
-import se.skorup.API.ImmutableArray;
-import se.skorup.API.ImmutableHashSet;
-import se.skorup.API.Utils;
+import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.immutable_collections.ImmutableHashSet;
+import se.skorup.API.util.Utils;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;
 import se.skorup.main.gui.panels.SubgroupPanel;
@@ -74,7 +73,6 @@ public abstract class GroupDrawer
      * */
     public ImmutableArray<TextBox> initGroups()
     {
-        DebugMethods.log("Spacer: %d".formatted(sgp.getSpacer()), DebugMethods.LogType.DEBUG);
         var tb = new Vector<TextBox>();
 
         var groups =
