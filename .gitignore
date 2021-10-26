@@ -23,7 +23,11 @@
 hs_err_pid*
 
 /.idea
-
 .idea/
 
 *.iml
+
+out/
+/out
+
+src/META-INF
