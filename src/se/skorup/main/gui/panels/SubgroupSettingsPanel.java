@@ -37,26 +37,15 @@ public class SubgroupSettingsPanel extends JPanel
     private final JRadioButton radioMainGroup2 = new JRadioButton("Huvudgrupp 2");
 
     private final ButtonGroup bgMainGroups = new ButtonGroup();
-    private final ButtonGroup bgSettings = new ButtonGroup();
 
-    private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
     private final JCheckBox boxOneMainGroup = new JCheckBox("Använd en huvudgrupp");
     private final JCheckBox boxMainGroups = new JCheckBox("Använd Huvudgrupper");
 
     private final JComboBox<GroupCreator> cbCreators = new JComboBox<>();
 
     private final JPanel pMainGroups = new JPanel();
-    private final JPanel pSettings = new JPanel();
+    private final SettingsPanel pSettings;
     private final JPanel pGroupCreator = new JPanel();
-
-    private final SettingPanel pLeaders =
-        new SettingPanel("Para grupper med ledare", null, 0, false);
-    private final SettingPanel pNbrGroups =
-        new SettingPanel("%-35s".formatted("Antal grupper"), null, 4, true);
-    private final SettingPanel pNbrMembers =
-        new SettingPanel("%-35s".formatted("Antal personer/grupp"), null, 4, true);
-    private final SettingPanel pDifferentSizes =
-        new SettingPanel("%-35s".formatted("Olika antal personer/grupp"), null, 4, true);
 
     /**
      * Creates a new SubgroupSettingsPanel.
@@ -66,6 +55,8 @@ public class SubgroupSettingsPanel extends JPanel
     public SubgroupSettingsPanel(GroupFrame gf)
     {
         this.gf = gf;
+
+        pSettings = new SizeSettingsPanel(gf);
 
         this.setProperties();
         this.addComponents();
@@ -80,12 +71,6 @@ public class SubgroupSettingsPanel extends JPanel
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setLayout(new BorderLayout());
 
-        var settingsBorder = BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Inställningar"
-        );
-
-        settingsBorder.setTitleColor(Utils.FOREGROUND_COLOR);
-
         var mainGroupsBorder = BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Huvudgrupper"
         );
@@ -97,11 +82,6 @@ public class SubgroupSettingsPanel extends JPanel
         );
 
         groupCreatorBorder.setTitleColor(Utils.FOREGROUND_COLOR);
-
-        pSettings.setLayout(new BoxLayout(pSettings, BoxLayout.Y_AXIS));
-        pSettings.setForeground(Utils.FOREGROUND_COLOR);
-        pSettings.setBackground(Utils.BACKGROUND_COLOR);
-        pSettings.setBorder(settingsBorder);
 
         pMainGroups.setLayout(new BoxLayout(pMainGroups, BoxLayout.Y_AXIS));
         pMainGroups.setForeground(Utils.FOREGROUND_COLOR);
@@ -119,10 +99,6 @@ public class SubgroupSettingsPanel extends JPanel
         cbCreators.addItem(new WishlistGroupCreator(gf.getManager()));
         cbCreators.addItem(new AlternateWishlistGroupCreator(gf.getManager()));
 
-        boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
-        boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
-        boxOverflow.addActionListener(e -> gf.setOverflow(boxOverflow.isSelected()));
-
         boxOneMainGroup.setBackground(Utils.BACKGROUND_COLOR);
         boxOneMainGroup.setForeground(Utils.FOREGROUND_COLOR);
         boxOneMainGroup.addActionListener(e -> {
@@ -139,13 +115,7 @@ public class SubgroupSettingsPanel extends JPanel
             radioMainGroup2.setEnabled(false);
             gf.shouldUseMainGroups(boxMainGroups.isSelected());
             boxOneMainGroup.setSelected(false);
-            pDifferentSizes.setEnabled(!boxMainGroups.isSelected());
-
-            if (pDifferentSizes.isRadioSelected())
-            {
-                pDifferentSizes.setRadioSelected(false);
-                pNbrGroups.setRadioSelected(true);
-            }
+            // TODO: SWAP presentation for the sizes.
         });
 
         radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
@@ -157,20 +127,8 @@ public class SubgroupSettingsPanel extends JPanel
         radioMainGroup2.setBackground(Utils.BACKGROUND_COLOR);
         radioMainGroup2.setEnabled(false);
 
-        pNbrGroups.setRadioSelected(true);
-
-        pNbrGroups.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.NUMBER_GROUPS));
-        pNbrMembers.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.NUMBER_PERSONS));
-        pLeaders.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.PAIR_WITH_LEADERS));
-        pDifferentSizes.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.DIFFERENT_GROUP_SIZES));
-
         bgMainGroups.add(radioMainGroup1);
         bgMainGroups.add(radioMainGroup2);
-
-        bgSettings.add(pNbrGroups.getRadio());
-        bgSettings.add(pNbrMembers.getRadio());
-        bgSettings.add(pLeaders.getRadio());
-        bgSettings.add(pDifferentSizes.getRadio());
     }
 
     /**
@@ -178,11 +136,6 @@ public class SubgroupSettingsPanel extends JPanel
      * */
     private void addComponents()
     {
-        var p = new JPanel();
-        p.setBackground(Utils.BACKGROUND_COLOR);
-        p.setLayout(new FlowLayout(FlowLayout.CENTER));
-        p.add(boxOverflow);
-
         var p2 = new JPanel();
         p2.setBackground(Utils.BACKGROUND_COLOR);
         p2.setLayout(new BorderLayout());
@@ -194,12 +147,6 @@ public class SubgroupSettingsPanel extends JPanel
         var p4 = new JPanel();
         p4.setLayout(new FlowLayout(FlowLayout.LEFT));
         p4.setBackground(Utils.BACKGROUND_COLOR);
-
-        pSettings.add(pNbrGroups);
-        pSettings.add(pNbrMembers);
-        pSettings.add(pDifferentSizes);
-        pSettings.add(pLeaders);
-        pSettings.add(p);
 
         p3.add(boxOneMainGroup);
         p3.add(radioMainGroup1);
@@ -254,37 +201,7 @@ public class SubgroupSettingsPanel extends JPanel
      * */
     public List<Integer> getUserInput()
     {
-        try
-        {
-            // Leader mode
-            if (pLeaders.isRadioSelected())
-                return Collections.singletonList(gf.getManager().getAllOfRoll(Person.Role.LEADER).size());
-
-            // Number of groups mode
-            if (pNbrGroups.isRadioSelected())
-                return Collections.singletonList(Integer.parseInt(pNbrGroups.getTextFieldData()));
-
-            // Number of members mode
-            if (pNbrMembers.isRadioSelected())
-                return Collections.singletonList(Integer.parseInt(pNbrMembers.getTextFieldData()));
-
-            // Different sizes mode.
-            return Arrays.stream(pDifferentSizes.getTextFieldData().split(",")) // Splitting
-                         .map(String::trim) // Trimming
-                         .map(Integer::parseInt) // Parsing
-                         .collect(Collectors.toList()); // Convert stream into list.
-        }
-        catch (NumberFormatException e)
-        {
-            DebugMethods.log(e, DebugMethods.LogType.ERROR);
-
-            JOptionPane.showMessageDialog(
-                this, "Felaktig indata: %s".formatted(e.getLocalizedMessage()),
-                "Felaktig indata", JOptionPane.ERROR_MESSAGE
-            );
-
-            return List.of();
-        }
+        return pSettings.getUserInput();
     }
 
     /**
