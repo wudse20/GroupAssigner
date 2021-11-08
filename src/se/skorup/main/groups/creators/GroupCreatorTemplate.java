@@ -1,4 +1,4 @@
-package se.skorup.main.groups;
+package se.skorup.main.groups.creators;
 
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;

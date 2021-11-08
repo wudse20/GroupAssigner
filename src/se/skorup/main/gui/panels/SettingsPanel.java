@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * The
  * */
-public sealed abstract class SettingsPanel extends JPanel permits SizeSettingsPanel
+public sealed abstract class SettingsPanel extends JPanel permits SizeSettingsPanel, SubgroupSettingsPanel
 {
     public SettingsPanel()
     {

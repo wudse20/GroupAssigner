@@ -1,4 +1,4 @@
-package se.skorup.main.groups;
+package se.skorup.main.groups.creators;
 
 import se.skorup.API.immutable_collections.ImmutableArray;
 import se.skorup.API.immutable_collections.ImmutableHashSet;

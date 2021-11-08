@@ -3,10 +3,10 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.AlternateWishlistGroupCreator;
-import se.skorup.main.groups.GroupCreator;
-import se.skorup.main.groups.RandomGroupCreator;
-import se.skorup.main.groups.WishlistGroupCreator;
+import se.skorup.main.groups.creators.AlternateWishlistGroupCreator;
+import se.skorup.main.groups.creators.GroupCreator;
+import se.skorup.main.groups.creators.RandomGroupCreator;
+import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
@@ -587,6 +587,7 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
      * */
     private List<Set<Integer>> generateMultipleSubgroup()
     {
+        // TODO: Implement splitting of list. After GUI support.
         final var sizes = gf.getUserInput();
 
         if (sizes.size() == 0)

@@ -1,11 +1,10 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.AlternateWishlistGroupCreator;
-import se.skorup.main.groups.GroupCreator;
-import se.skorup.main.groups.RandomGroupCreator;
-import se.skorup.main.groups.WishlistGroupCreator;
+import se.skorup.main.groups.creators.AlternateWishlistGroupCreator;
+import se.skorup.main.groups.creators.GroupCreator;
+import se.skorup.main.groups.creators.RandomGroupCreator;
+import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.objects.Person;
 
@@ -15,21 +14,17 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The settings for the subgroup generation.
  * */
-public class SubgroupSettingsPanel extends JPanel
+public final class SubgroupSettingsPanel extends SettingsPanel
 {
     private final GroupFrame gf;
 
@@ -54,6 +49,8 @@ public class SubgroupSettingsPanel extends JPanel
      * */
     public SubgroupSettingsPanel(GroupFrame gf)
     {
+        super();
+
         this.gf = gf;
 
         pSettings = new SizeSettingsPanel(gf);
@@ -199,6 +196,7 @@ public class SubgroupSettingsPanel extends JPanel
      * @return a list containing the sizes of
      *         the groups.
      * */
+    @Override
     public List<Integer> getUserInput()
     {
         return pSettings.getUserInput();
