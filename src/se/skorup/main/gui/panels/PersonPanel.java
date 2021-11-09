@@ -147,12 +147,18 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         );
 
         radioMG1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        radioMG1.setForeground(Utils.FOREGROUND_COLOR);
-        radioMG1.addActionListener(e -> p.setMainGroup(Person.MainGroup.MAIN_GROUP_1));
+        radioMG1.setForeground(Utils.MAIN_GROUP_1_COLOR);
+        radioMG1.addActionListener(e ->{
+            p.setMainGroup(Person.MainGroup.MAIN_GROUP_1);
+            lblName.setForeground(Utils.MAIN_GROUP_1_COLOR);
+        });
 
         radioMG2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        radioMG2.setForeground(Utils.FOREGROUND_COLOR);
-        radioMG2.addActionListener(e -> p.setMainGroup(Person.MainGroup.MAIN_GROUP_2));
+        radioMG2.setForeground(Utils.MAIN_GROUP_2_COLOR);
+        radioMG2.addActionListener(e -> {
+            p.setMainGroup(Person.MainGroup.MAIN_GROUP_2);
+            lblName.setForeground(Utils.MAIN_GROUP_2_COLOR);
+        });
 
         bgMainGroup.add(radioMG1);
         bgMainGroup.add(radioMG2);
@@ -168,6 +174,10 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
         lblName.setText(p.getName());
+        lblName.setForeground(
+            p.getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1) ?
+            Utils.MAIN_GROUP_1_COLOR : Utils.MAIN_GROUP_2_COLOR
+        );
 
         this.updateListData();
 
