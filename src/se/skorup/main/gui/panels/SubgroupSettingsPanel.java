@@ -122,12 +122,12 @@ public final class SubgroupSettingsPanel extends SettingsPanel
             displayCorrectSizeSettingsPanel();
         });
 
-        radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
+        radioMainGroup1.setForeground(Utils.MAIN_GROUP_1_COLOR);
         radioMainGroup1.setBackground(Utils.BACKGROUND_COLOR);
         radioMainGroup1.setEnabled(false);
         radioMainGroup1.setSelected(true);
 
-        radioMainGroup2.setForeground(Utils.FOREGROUND_COLOR);
+        radioMainGroup2.setForeground(Utils.MAIN_GROUP_2_COLOR);
         radioMainGroup2.setBackground(Utils.BACKGROUND_COLOR);
         radioMainGroup2.setEnabled(false);
 
