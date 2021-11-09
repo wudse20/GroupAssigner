@@ -3,6 +3,7 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.MainFrame;
+import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
 
@@ -89,11 +90,21 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         if (p == null)
             return;
 
+        pName.removeAll();
+        pCheckBox.removeAll();
+        pContainer.removeAll();
+
         pName.add(lblName);
 
         pCheckBox.add(cbShowOnlySameRole);
-        pCheckBox.add(radioMG1);
-        pCheckBox.add(radioMG2);
+
+        // Don't want MainGroups for leaders.
+        if (p instanceof Candidate)
+        {
+            pCheckBox.add(radioMG1);
+            pCheckBox.add(radioMG2);
+        }
+
         pCheckBox.add(btnChangeRole);
 
         pContainer.add(pName);
@@ -109,6 +120,10 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         this.add(pContainer, BorderLayout.CENTER);
         this.add(lblSpacer3, BorderLayout.LINE_END);
         this.add(lblSpacer4, BorderLayout.PAGE_END);
+
+        pContainer.revalidate();
+        pName.revalidate();
+        pCheckBox.revalidate();
     }
 
     /**
@@ -174,10 +189,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
         lblName.setText(p.getName());
-        lblName.setForeground(
-            p.getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1) ?
-            Utils.MAIN_GROUP_1_COLOR : Utils.MAIN_GROUP_2_COLOR
-        );
+        if (p instanceof Candidate)
+            lblName.setForeground(
+                p.getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1) ?
+                Utils.MAIN_GROUP_1_COLOR : Utils.MAIN_GROUP_2_COLOR
+            );
+        else
+            lblName.setForeground(Utils.FOREGROUND_COLOR);
 
         this.updateListData();
 
@@ -203,7 +221,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         btnChangeRole.addActionListener((e) -> {
             mf.getCurrentGroup().removePerson(p.getId());
             mf.getCurrentGroup().registerPerson(
-                    p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
+                p.getName(), (p instanceof Leader) ? Person.Role.CANDIDATE : Person.Role.LEADER
             );
             mf.refreshSidePanel();
 
@@ -275,13 +293,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         notAddedWish.removeAll(denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()));
 
         denylist.setListData(
-                denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
-                notAddedDeny
+            denies.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+            notAddedDeny
         );
 
         wishlist.setListData(
-                wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
-                notAddedWish
+            wishes.stream().map(group::getPersonFromId).collect(Collectors.toSet()),
+            notAddedWish
         );
     }
 
