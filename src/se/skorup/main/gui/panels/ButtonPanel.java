@@ -107,9 +107,6 @@ public class ButtonPanel extends JPanel implements ActionListener
         if (cmd.equals(Buttons.ABOUT.toString()))
         {
             JOptionPane.showMessageDialog(mf, Utils.ABOUT, "Om programet!", JOptionPane.INFORMATION_MESSAGE);
-            Console.clear();
-            Console.setColor(ConsoleColor.RED);
-            DebugMethods.log("HEJ", DebugMethods.LogType.DEBUG);
         }
         else if (cmd.equals(Buttons.HELP.toString()))
         {
