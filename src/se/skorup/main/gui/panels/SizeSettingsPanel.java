@@ -5,7 +5,6 @@ import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.objects.Person;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -23,8 +22,6 @@ import java.util.stream.Collectors;
  * */
 public final class SizeSettingsPanel extends SettingsPanel
 {
-    private final GroupFrame gf;
-
     private final ButtonGroup bgSettings = new ButtonGroup();
 
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
@@ -43,8 +40,7 @@ public final class SizeSettingsPanel extends SettingsPanel
      * */
     public SizeSettingsPanel(GroupFrame gf)
     {
-        super();
-        this.gf = gf;
+        super(gf);
 
         this.setProperties();
         this.addComponents();
@@ -55,16 +51,10 @@ public final class SizeSettingsPanel extends SettingsPanel
      * */
     private void setProperties()
     {
-        var settingsBorder = BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Inställningar"
-        );
-
-        settingsBorder.setTitleColor(Utils.FOREGROUND_COLOR);
-
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setBackground(Utils.BACKGROUND_COLOR);
-        this.setBorder(settingsBorder);
+        this.setBorder(this.getSettingsBorder());
 
         pNbrGroups.setRadioSelected(true);
         pNbrGroups.getRadio().addActionListener(e -> gf.setSizeState(GroupFrame.State.NUMBER_GROUPS));
@@ -127,11 +117,18 @@ public final class SizeSettingsPanel extends SettingsPanel
             DebugMethods.log(e, DebugMethods.LogType.ERROR);
 
             JOptionPane.showMessageDialog(
-                    this, "Felaktig indata: %s".formatted(e.getLocalizedMessage()),
-                    "Felaktig indata", JOptionPane.ERROR_MESSAGE
+                this, "Felaktig indata: %s".formatted(e.getLocalizedMessage()),
+                "Felaktig indata", JOptionPane.ERROR_MESSAGE
             );
 
             return List.of();
         }
+    }
+
+    @Override
+    public void reset()
+    {
+        pNbrGroups.getRadio().setSelected(true);
+        gf.setSizeState(GroupFrame.State.NUMBER_GROUPS);
     }
 }

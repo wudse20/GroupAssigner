@@ -26,8 +26,6 @@ import java.util.List;
  * */
 public final class SubgroupSettingsPanel extends SettingsPanel
 {
-    private final GroupFrame gf;
-
     private final JRadioButton radioMainGroup1 = new JRadioButton("Huvudgrupp 1");
     private final JRadioButton radioMainGroup2 = new JRadioButton("Huvudgrupp 2");
 
@@ -39,8 +37,16 @@ public final class SubgroupSettingsPanel extends SettingsPanel
     private final JComboBox<GroupCreator> cbCreators = new JComboBox<>();
 
     private final JPanel pMainGroups = new JPanel();
-    private final SettingsPanel pSettings;
     private final JPanel pGroupCreator = new JPanel();
+
+    // Bad names I know and will regret sometime in the future.
+    private final JPanel p1 = new JPanel();
+    private final JPanel p2 = new JPanel();
+    private final JPanel p3 = new JPanel();
+
+    private SettingsPanel pSettings;
+    private final SettingsPanel mainGroupSettings;
+    private final SettingsPanel defaultSettings;
 
     /**
      * Creates a new SubgroupSettingsPanel.
@@ -49,11 +55,11 @@ public final class SubgroupSettingsPanel extends SettingsPanel
      * */
     public SubgroupSettingsPanel(GroupFrame gf)
     {
-        super();
+        super(gf);
 
-        this.gf = gf;
-
-        pSettings = new SizeSettingsPanel(gf);
+        mainGroupSettings = new MainGroupSizeSettingsPanel(gf);
+        defaultSettings = new SizeSettingsPanel(gf);
+        pSettings = defaultSettings;
 
         this.setProperties();
         this.addComponents();
@@ -103,6 +109,7 @@ public final class SubgroupSettingsPanel extends SettingsPanel
             radioMainGroup2.setEnabled(boxOneMainGroup.isSelected());
             gf.shouldUseOneMainGroup(boxOneMainGroup.isSelected());
             boxMainGroups.setSelected(false);
+            displayCorrectSizeSettingsPanel();
         });
 
         boxMainGroups.setBackground(Utils.BACKGROUND_COLOR);
@@ -112,7 +119,7 @@ public final class SubgroupSettingsPanel extends SettingsPanel
             radioMainGroup2.setEnabled(false);
             gf.shouldUseMainGroups(boxMainGroups.isSelected());
             boxOneMainGroup.setSelected(false);
-            // TODO: SWAP presentation for the sizes.
+            displayCorrectSizeSettingsPanel();
         });
 
         radioMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
@@ -126,6 +133,15 @@ public final class SubgroupSettingsPanel extends SettingsPanel
 
         bgMainGroups.add(radioMainGroup1);
         bgMainGroups.add(radioMainGroup2);
+
+        p1.setBackground(Utils.BACKGROUND_COLOR);
+        p1.setLayout(new BorderLayout());
+
+        p2.setLayout(new FlowLayout(FlowLayout.LEFT));
+        p2.setBackground(Utils.BACKGROUND_COLOR);
+
+        p3.setLayout(new FlowLayout(FlowLayout.LEFT));
+        p3.setBackground(Utils.BACKGROUND_COLOR);
     }
 
     /**
@@ -133,38 +149,53 @@ public final class SubgroupSettingsPanel extends SettingsPanel
      * */
     private void addComponents()
     {
-        var p2 = new JPanel();
-        p2.setBackground(Utils.BACKGROUND_COLOR);
-        p2.setLayout(new BorderLayout());
+        p1.removeAll();
+        p2.removeAll();
+        p3.removeAll();
 
-        var p3 = new JPanel();
-        p3.setLayout(new FlowLayout(FlowLayout.LEFT));
-        p3.setBackground(Utils.BACKGROUND_COLOR);
+        p2.add(boxOneMainGroup);
+        p2.add(radioMainGroup1);
+        p2.add(radioMainGroup2);
 
-        var p4 = new JPanel();
-        p4.setLayout(new FlowLayout(FlowLayout.LEFT));
-        p4.setBackground(Utils.BACKGROUND_COLOR);
+        p3.add(boxMainGroups);
 
-        p3.add(boxOneMainGroup);
-        p3.add(radioMainGroup1);
-        p3.add(radioMainGroup2);
-
-        p4.add(boxMainGroups);
-
+        pMainGroups.add(p2);
         pMainGroups.add(p3);
-        pMainGroups.add(p4);
 
         pGroupCreator.add(cbCreators);
 
-        p2.add(pGroupCreator, BorderLayout.PAGE_START);
-        p2.add(pSettings, BorderLayout.CENTER);
-        p2.add(pMainGroups, BorderLayout.PAGE_END);
+        p1.add(pGroupCreator, BorderLayout.PAGE_START);
+        p1.add(pSettings, BorderLayout.CENTER);
+        p1.add(pMainGroups, BorderLayout.PAGE_END);
 
         this.add(new JLabel("   "), BorderLayout.PAGE_START);
         this.add(new JLabel("   "), BorderLayout.LINE_START);
-        this.add(p2, BorderLayout.CENTER);
+        this.add(p1, BorderLayout.CENTER);
         this.add(new JLabel("   "), BorderLayout.LINE_END);
         this.add(new JLabel("   "), BorderLayout.PAGE_END);
+
+        p1.revalidate();
+        p2.revalidate();
+        p3.revalidate();
+    }
+
+    /**
+     * Displays the correct size settings
+     * in the GUI.
+     * */
+    private void displayCorrectSizeSettingsPanel()
+    {
+        if (boxMainGroups.isSelected())
+            pSettings = mainGroupSettings;
+        else
+            pSettings = defaultSettings;
+
+        pSettings.reset();
+
+        removeAll();
+        addComponents();
+        revalidate();
+        repaint();
     }
 
     /**

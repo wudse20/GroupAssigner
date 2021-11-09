@@ -37,6 +37,12 @@ public class Utils
     /** The flashing color. */
     public static final Color FLASH_COLOR = Color.BLUE;
 
+    /** The MainGroup 1 color. */
+    public static final Color MAIN_GROUP_1_COLOR = Color.GREEN;
+
+    /** The MainGroup 2 color. */
+    public static final Color MAIN_GROUP_2_COLOR = Color.CYAN;
+
     // About
     /** The version of the program. */
     public static final String VERSION = "0.3.0.2";

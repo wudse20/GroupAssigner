@@ -587,23 +587,26 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
      * */
     private List<Set<Integer>> generateMultipleSubgroup()
     {
-        // TODO: Implement splitting of list. After GUI support.
         final var sizes = gf.getUserInput();
 
         if (sizes.size() == 0)
             return List.of();
+
+        var splitIndex = sizes.indexOf(Integer.MIN_VALUE);
+        var mg1Sizes = sizes.subList(0, splitIndex);
+        var mg2Sizes = sizes.subList(splitIndex + 1, sizes.size());
 
         try
         {
             var groups =
                tryGenerateGroups(
                    getGroupGenerator(
-                       getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1), sizes));
+                       getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1), mg1Sizes));
 
             groups.addAll(
                 tryGenerateGroups(
                     getGroupGenerator(
-                        getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2), sizes)));
+                        getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2), mg2Sizes)));
 
             return groups;
         }
