@@ -1,4 +1,4 @@
-package se.skorup.API.parser.expression;
+package se.skorup.API.expression_evalutator.expression;
 
 /**
  * Represents a number, it's called NumberExpression

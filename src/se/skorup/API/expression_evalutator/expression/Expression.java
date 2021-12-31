@@ -1,4 +1,4 @@
-package se.skorup.API.parser.expression;
+package se.skorup.API.expression_evalutator.expression;
 
 /**
  * The interface representing an Expression.

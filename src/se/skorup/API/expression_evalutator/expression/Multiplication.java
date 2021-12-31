@@ -1,14 +1,14 @@
-package se.skorup.API.parser.expression;
+package se.skorup.API.expression_evalutator.expression;
 
-public class Division extends BinaryOperator
+public class Multiplication extends BinaryOperator
 {
     /**
-     * Creates a new Division.
+     * Creates a new multiplication.
      *
      * @param left  the left hand side of the operator.
      * @param right the right hand side of the operator.
      */
-    public Division(Expression left, Expression right)
+    public Multiplication(Expression left, Expression right)
     {
         super(left, right);
     }
@@ -16,6 +16,6 @@ public class Division extends BinaryOperator
     @Override
     protected double value(double lhs, double rhs)
     {
-        return lhs / rhs;
+        return lhs * rhs;
     }
 }

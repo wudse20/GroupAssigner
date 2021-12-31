@@ -1,14 +1,14 @@
-package se.skorup.API.immutable_collections.parser.expression;
+package se.skorup.API.immutable_collections.expression_evalutator.expression;
 
 import org.testng.annotations.Test;
-import se.skorup.API.parser.expression.Division;
-import se.skorup.API.parser.expression.Minus;
-import se.skorup.API.parser.expression.Multiplication;
-import se.skorup.API.parser.expression.NumberExpression;
-import se.skorup.API.parser.expression.ParenthesizedExpression;
-import se.skorup.API.parser.expression.Plus;
-import se.skorup.API.parser.expression.UnaryMinus;
-import se.skorup.API.parser.expression.UnaryPlus;
+import se.skorup.API.expression_evalutator.expression.Division;
+import se.skorup.API.expression_evalutator.expression.Minus;
+import se.skorup.API.expression_evalutator.expression.Multiplication;
+import se.skorup.API.expression_evalutator.expression.NumberExpression;
+import se.skorup.API.expression_evalutator.expression.ParenthesizedExpression;
+import se.skorup.API.expression_evalutator.expression.Plus;
+import se.skorup.API.expression_evalutator.expression.UnaryMinus;
+import se.skorup.API.expression_evalutator.expression.UnaryPlus;
 
 import static org.testng.Assert.assertEquals;
 
