@@ -1,4 +1,4 @@
-package se.skorup.API;
+package se.skorup.API.immutable_collections;
 
 import org.testng.annotations.Test;
 import se.skorup.API.immutable_collections.ImmutableArray;
