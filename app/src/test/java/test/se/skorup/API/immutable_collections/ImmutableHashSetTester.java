@@ -1,7 +1,7 @@
 package se.skorup.API.immutable_collections;
 
-import org.junit.jupiter.api.Test;
-
+import org.testng.Assert;
+import org.testng.annotations.Test;
 import se.skorup.API.immutable_collections.ImmutableArray;
 import se.skorup.API.immutable_collections.ImmutableHashSet;
 
@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 
 /**
  * Tests the immutable hash set.
@@ -100,7 +100,7 @@ public class ImmutableHashSetTester
     public void testSize1()
     {
         var myStringArray = new ImmutableHashSet<>("Test1", "Test2", "Test3", "Test4");
-        assertEquals(4, myStringArray.size());
+        Assert.assertEquals(4, myStringArray.size());
     }
 
     /**
@@ -110,7 +110,7 @@ public class ImmutableHashSetTester
     public void testSize2()
     {
         var arr = new ImmutableHashSet<String>();
-        assertEquals(0, arr.size());
+        Assert.assertEquals(0, arr.size());
     }
 
     /**
@@ -298,8 +298,7 @@ public class ImmutableHashSetTester
         assertEquals(ctr, set.sorted());
         assertEquals(ctr.size(), set.sorted().size());
 
-//        Don't know why it's here but I'll keep it if i figure it out
-//        assertEquals(new ImmutableHashSet<>(), new ImmutableArray<String>().sorted());
+        assertEquals(new ImmutableHashSet<>(), new ImmutableArray<String>().sorted());
     }
 
     /**

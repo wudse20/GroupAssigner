@@ -1,4 +1,4 @@
-package se.skorup.API.immutable_collections;
+package se.skorup.API;
 
 import org.junit.jupiter.api.Test;
 

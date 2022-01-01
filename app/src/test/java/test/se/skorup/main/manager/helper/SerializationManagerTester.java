@@ -1,14 +1,14 @@
 package se.skorup.main.manager.helper;
 
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 
 /**
  * The class responsible for testing the serialization manager.
@@ -45,18 +45,18 @@ public class SerializationManagerTester
     public void testNull()
     {
         assertThrows(
-            IllegalArgumentException.class,
-            () -> SerializationManager.serializeObject(null, "")
+                IllegalArgumentException.class,
+                () -> SerializationManager.serializeObject(null, "")
         );
 
         assertThrows(
-            IllegalArgumentException.class,
-            () -> SerializationManager.serializeObject("", null)
+                IllegalArgumentException.class,
+                () -> SerializationManager.serializeObject("", null)
         );
 
         assertThrows(
-            IllegalArgumentException.class,
-            () -> SerializationManager.deserializeObject(null)
+                IllegalArgumentException.class,
+                () -> SerializationManager.deserializeObject(null)
         );
     }
 }
