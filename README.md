@@ -6,16 +6,27 @@ The program can be downloaded by following this [link](https://www.skorup.se/dow
 
 ## Versions
 Java: 17 <br>
-JUnit: 6.14.3 (maven: org.testng:testng:6.14.3)
+Juniper JUnit (org.junit.jupiter:junit-jupiter:5.7.2)
 
 ## Compile and run
 ### Windows: <br>
+gradle:
+```powershell
+gradlew run
+```
+old way:
 ```powershell
 javac -encoding utf-8 (Get-ChildItem -Name *.java -Path . -Recurse)
 java se.skorup.main.Main
 ```
 
 ### Unix
+gradle:
+```bash
+chmod +x ./gradlew # Only if you don't have the permissions on the file to run it.
+./gradlew run
+```
+old way:
 ```bash
 javac -encoding utf-8 $(find . -type f -name "*.java") && java se.skorup.main.Main
 ```
