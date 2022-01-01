@@ -26,7 +26,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'se.skorup.main.App'
+    mainClass = 'se.skorup.main.Main'
 }
 
 compileJava.options.encoding = 'UTF-8'
