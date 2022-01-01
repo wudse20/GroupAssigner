@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 /**
  * Some util methods
@@ -162,5 +163,18 @@ public class Utils
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Checks if a string is a valid double.
+     *
+     * @return {@code true} iff str is a valid double.
+     * */
+    public static boolean isValidDouble(String str)
+    {
+        if (str.length() == 1 && str.matches("\\d"))
+            return true;
+
+        return Pattern.matches("(\\d+).?(\\d+)", str);
     }
 }
