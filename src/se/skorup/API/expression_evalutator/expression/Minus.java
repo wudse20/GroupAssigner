@@ -10,7 +10,7 @@ public class Minus extends BinaryOperator
      */
     public Minus(Expression left, Expression right)
     {
-        super(left, right);
+        super(left, right, '-');
     }
 
     @Override

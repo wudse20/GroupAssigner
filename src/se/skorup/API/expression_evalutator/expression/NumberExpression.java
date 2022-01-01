@@ -23,4 +23,10 @@ public class NumberExpression implements Expression
     {
         return value;
     }
+
+    @Override
+    public String toString()
+    {
+        return Double.toString(value);
+    }
 }

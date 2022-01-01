@@ -10,7 +10,7 @@ public class Plus extends BinaryOperator
      */
     public Plus(Expression left, Expression right)
     {
-        super(left, right);
+        super(left, right, '+');
     }
 
     @Override

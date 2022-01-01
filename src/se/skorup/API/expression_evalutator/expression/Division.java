@@ -10,7 +10,7 @@ public class Division extends BinaryOperator
      */
     public Division(Expression left, Expression right)
     {
-        super(left, right);
+        super(left, right, '7');
     }
 
     @Override

@@ -9,7 +9,7 @@ public class UnaryPlus extends UnaryExpression
      */
     public UnaryPlus(Expression expr)
     {
-        super(expr);
+        super(expr, '+');
     }
 
     @Override

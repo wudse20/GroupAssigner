@@ -1,4 +1,4 @@
-package se.skorup.API.immutable_collections.expression_evalutator.lexer;
+package se.skorup.API.expression_evalutator.lexer;
 
 import org.testng.annotations.Test;
 import se.skorup.API.expression_evalutator.lexer.Lexer;

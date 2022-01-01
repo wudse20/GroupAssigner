@@ -22,4 +22,10 @@ public class ParenthesizedExpression implements Expression
     {
         return expr.getValue();
     }
+
+    @Override
+    public String toString()
+    {
+        return "(%s)".formatted(expr);
+    }
 }

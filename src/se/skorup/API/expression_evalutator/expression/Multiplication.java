@@ -10,7 +10,7 @@ public class Multiplication extends BinaryOperator
      */
     public Multiplication(Expression left, Expression right)
     {
-        super(left, right);
+        super(left, right, '*');
     }
 
     @Override

@@ -5,16 +5,16 @@ package se.skorup.API.expression_evalutator.lexer;
  * */
 public enum SyntaxKind
 {
-    EOF(-1, -1),
-    BadToken(-1, -1),
+    EOF(0, 0),
+    BadToken(0, 0),
     NumberToken(0, 0),
     WhitespaceToken(0, 0),
     PlusToken(1, 4),
     MinusToken(1, 4),
     AstrixToken(2, 0),
     SlashToken(2, 0),
-    OpenParenthesisToken(3, 0),
-    CloseParenthesisToken(3, 0);
+    OpenParenthesisToken(0, 0),
+    CloseParenthesisToken(0, 0);
 
     private final int binaryPrecedence;
     private final int unaryPrecedence;
