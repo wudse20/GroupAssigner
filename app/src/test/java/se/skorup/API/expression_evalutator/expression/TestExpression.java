@@ -1,16 +1,9 @@
 package se.skorup.API.expression_evalutator.expression;
 
-import org.testng.annotations.Test;
-import se.skorup.API.expression_evalutator.expression.Division;
-import se.skorup.API.expression_evalutator.expression.Minus;
-import se.skorup.API.expression_evalutator.expression.Multiplication;
-import se.skorup.API.expression_evalutator.expression.NumberExpression;
-import se.skorup.API.expression_evalutator.expression.ParenthesizedExpression;
-import se.skorup.API.expression_evalutator.expression.Plus;
-import se.skorup.API.expression_evalutator.expression.UnaryMinus;
-import se.skorup.API.expression_evalutator.expression.UnaryPlus;
+import org.junit.jupiter.api.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * The tests for the Expressions.

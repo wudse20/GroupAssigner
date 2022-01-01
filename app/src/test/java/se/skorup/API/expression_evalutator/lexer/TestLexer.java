@@ -1,11 +1,9 @@
 package se.skorup.API.expression_evalutator.lexer;
 
-import org.testng.annotations.Test;
-import se.skorup.API.expression_evalutator.lexer.Lexer;
-import se.skorup.API.expression_evalutator.lexer.SyntaxKind;
-import se.skorup.API.expression_evalutator.lexer.SyntaxToken;
 
-import static org.testng.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests the lexer class

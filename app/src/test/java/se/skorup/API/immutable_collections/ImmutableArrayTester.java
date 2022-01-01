@@ -1,6 +1,6 @@
 package se.skorup.API.immutable_collections;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 import se.skorup.API.immutable_collections.ImmutableArray;
 
 import java.util.Arrays;
@@ -11,15 +11,15 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertThrows;
-import static org.testng.Assert.assertTrue;
-import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The class that test the {@link ImmutableArray}
@@ -616,10 +616,10 @@ public class ImmutableArrayTester
         var rand2 = new Random(123);
 
         var list = new Vector<Integer>();
-        for (int i = 1; i <= 10000000; i++)
+        for (int i = 1; i <= 1000000; i++)
             list.add(rand1.nextInt());
 
-        var arr = ImmutableArray.fill(10000000, rand2::nextInt);
+        var arr = ImmutableArray.fill(1000000, rand2::nextInt);
         assertEquals(list.size(), arr.size());
         assertEquals(ImmutableArray.fromList(list), arr);
     }
@@ -669,7 +669,8 @@ public class ImmutableArrayTester
     public void testDropMatchingNull()
     {
         var myStringArray = new ImmutableArray<>("Test1", "Test2", "Test3", "Test4");
-        var res = myStringArray.dropMatching(null);
+        String str = null;
+        var res = myStringArray.dropMatching(str);
         assertEquals(myStringArray, res);
         assertEquals(myStringArray.size(), res.size());
     }

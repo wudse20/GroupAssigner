@@ -1,16 +1,18 @@
 package se.skorup.main.objects;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * The class that tests the abstract class person
@@ -62,7 +64,7 @@ public class PersonTester
         for (var i : items)
             assertFalse(p.addWishlistId(i));
 
-        assertTrue(Arrays.equals(items, p.getWishlist()));
+        assertArrayEquals(items, p.getWishlist());
     }
 
     /**
@@ -80,12 +82,13 @@ public class PersonTester
         for (var i : items)
             assertFalse(p.addDenylistId(i));
 
-        assertTrue(Arrays.equals(items, p.getDenylist()));
+        assertArrayEquals(items, p.getDenylist());
     }
 
     /**
      * Tests the clone method.
      * */
+    @Test
     public void testClone()
     {
         var p = new Leader("Anton", 0);
