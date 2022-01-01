@@ -1,12 +1,10 @@
 package se.skorup.main.objects;
 
-
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test the tuple class.
