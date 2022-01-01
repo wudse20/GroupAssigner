@@ -69,7 +69,7 @@ public class SyntaxToken implements Expression
     @Override
     public int hashCode()
     {
-        return (int) (value * pos + text.hashCode() + kind.getPrecedence());
+        return (int) (value + pos + text.hashCode() + kind.getBinaryPrecedence() + kind.getUnaryPrecedence());
     }
 
     @Override
