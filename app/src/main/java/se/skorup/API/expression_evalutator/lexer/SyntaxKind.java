@@ -14,7 +14,8 @@ public enum SyntaxKind
     AstrixToken(2, 0),
     SlashToken(2, 0),
     OpenParenthesisToken(0, 0),
-    CloseParenthesisToken(0, 0);
+    CloseParenthesisToken(0, 0),
+    ConstantToken(0, 0);
 
     private final int binaryPrecedence;
     private final int unaryPrecedence;

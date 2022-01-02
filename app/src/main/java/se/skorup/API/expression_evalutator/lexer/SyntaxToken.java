@@ -5,7 +5,7 @@ import se.skorup.API.expression_evalutator.expression.Expression;
 /**
  * A syntax token.
  * */
-public class SyntaxToken implements Expression
+public class SyntaxToken
 {
     private final SyntaxKind kind;
     private final int pos;
@@ -50,7 +50,11 @@ public class SyntaxToken implements Expression
         return text;
     }
 
-    @Override
+    /**
+     * Getter for the value of the token.
+     *
+     * @return the value of the token.
+     * */
     public double getValue()
     {
         return value;

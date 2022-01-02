@@ -6,6 +6,7 @@ import se.skorup.API.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Lexes a mathematical expression.
@@ -52,6 +53,22 @@ public class Lexer
     }
 
     /**
+     * Lexes all characters that fulfills the predicate.
+     *
+     * @param start the start position.
+     * @param p the predicate to be tested.
+     * @return the lexed string.
+     * */
+    private String lexType(int start, Predicate<Character> p)
+    {
+        while(p.test(current()))
+            lex();
+
+        var length = position - start;
+        return text.substring(start, start + length);
+    }
+
+    /**
      * Lexes the next token.
      *
      * @return the next token.
@@ -64,12 +81,7 @@ public class Lexer
         if (Character.isDigit(current()))
         {
             var start = position;
-
-            while(Character.isDigit(current()) || current() == '.')
-                lex();
-
-            var length = position - start;
-            var t = text.substring(start, start + length);
+            var t = lexType(start, c -> Character.isDigit(c) || c == '.');
 
             if (!Utils.isValidDouble(t))
             {
@@ -83,14 +95,15 @@ public class Lexer
         if (Character.isWhitespace(current()))
         {
             var start = position;
-
-            while(Character.isWhitespace(current()))
-                lex();
-
-            var length = position - start;
-            var t = text.substring(start, start + length);
-
+            var t = lexType(start, Character::isWhitespace);
             return new SyntaxToken(SyntaxKind.WhitespaceToken, start, t, 0);
+        }
+
+        if (Character.isAlphabetic(current()))
+        {
+            var start = position;
+            var t = lexType(start, Character::isAlphabetic);
+            return new SyntaxToken(SyntaxKind.ConstantToken, start, t, 0);
         }
 
         switch (current())

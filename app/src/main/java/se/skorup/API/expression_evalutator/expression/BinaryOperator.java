@@ -1,5 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.expression_evalutator.Environment;
+
 /**
  * A template for a binary operator.
  * */
@@ -30,9 +32,9 @@ public abstract class BinaryOperator implements Expression
     protected abstract double value(double lhs, double rhs);
 
     @Override
-    public final double getValue()
+    public final double getValue(Environment e)
     {
-        return value(left.getValue(), right.getValue());
+        return value(left.getValue(e), right.getValue(e));
     }
 
     @Override

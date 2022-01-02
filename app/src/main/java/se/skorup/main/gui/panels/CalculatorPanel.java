@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
@@ -20,7 +21,7 @@ import java.awt.event.KeyListener;
 /**
  * The panel that holds the calculator.
  * */
-public class CalculatorPanel extends JPanel implements KeyListener
+public class CalculatorPanel extends JPanel implements KeyListener, Environment
 {
     /** The keycode for the enter key. */
     private static final int ENTER = 10;
@@ -93,7 +94,7 @@ public class CalculatorPanel extends JPanel implements KeyListener
 
         if (parser.getDiagnostics().size() == 0)
         {
-            output.appendColoredString("<green>%f</green>".formatted(res.getValue()));
+            output.appendColoredString("<green>%f</green>".formatted(res.getValue(this)));
         }
         else
         {
@@ -114,5 +115,11 @@ public class CalculatorPanel extends JPanel implements KeyListener
     {
         if (e.getKeyCode() == ENTER)
             calculate();
+    }
+
+    @Override
+    public double getValue(String key)
+    {
+        return 0;
     }
 }

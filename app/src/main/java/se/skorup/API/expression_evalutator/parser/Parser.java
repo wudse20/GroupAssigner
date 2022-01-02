@@ -9,6 +9,7 @@ import se.skorup.API.expression_evalutator.expression.ParenthesizedExpression;
 import se.skorup.API.expression_evalutator.expression.Plus;
 import se.skorup.API.expression_evalutator.expression.UnaryMinus;
 import se.skorup.API.expression_evalutator.expression.UnaryPlus;
+import se.skorup.API.expression_evalutator.expression.VariableExpression;
 import se.skorup.API.expression_evalutator.lexer.Lexer;
 import se.skorup.API.expression_evalutator.lexer.SyntaxKind;
 import se.skorup.API.expression_evalutator.lexer.SyntaxToken;
@@ -183,6 +184,11 @@ public class Parser
             var expr = parseExpression(0);
             matchToken(SyntaxKind.CloseParenthesisToken);
             return new ParenthesizedExpression(expr);
+        }
+        else if (current().getKind().equals(SyntaxKind.ConstantToken))
+        {
+            var constant = matchToken(SyntaxKind.ConstantToken);
+            return new VariableExpression(constant.getText());
         }
 
         var number = matchToken(SyntaxKind.NumberToken);

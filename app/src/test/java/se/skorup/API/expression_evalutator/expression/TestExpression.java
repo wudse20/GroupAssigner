@@ -1,6 +1,8 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import se.skorup.API.expression_evalutator.Environment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,6 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * */
 public class TestExpression
 {
+    private Environment alwaysZeroEnv;
+
+    @BeforeEach
+    public void setUp()
+    {
+        this.alwaysZeroEnv = s -> 0;
+    }
+
     @Test
     public void testNumber()
     {
@@ -17,9 +27,9 @@ public class TestExpression
         var n2 = new NumberExpression(-1);
         var n3 = new NumberExpression(-.5d);
 
-        assertEquals(10d, n1.getValue());
-        assertEquals(-1d, n2.getValue());
-        assertEquals(-.5d, n3.getValue());
+        assertEquals(10d, n1.getValue(alwaysZeroEnv));
+        assertEquals(-1d, n2.getValue(alwaysZeroEnv));
+        assertEquals(-.5d, n3.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -30,7 +40,7 @@ public class TestExpression
         var n2 = new NumberExpression(14);
         var plus = new Plus(n1, n2);
 
-        assertEquals(24d, plus.getValue());
+        assertEquals(24d, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -43,7 +53,7 @@ public class TestExpression
         var p1 = new Plus(n1, n2);
         var plus = new Plus(p1, n3);
 
-        assertEquals(22d, plus.getValue());
+        assertEquals(22d, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -54,7 +64,7 @@ public class TestExpression
         var n2 = new NumberExpression(14);
         var minus = new Minus(n1, n2);
 
-        assertEquals(-4d, minus.getValue());
+        assertEquals(-4d, minus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -67,7 +77,7 @@ public class TestExpression
         var p1 = new Plus(n1, n2);
         var minus = new Minus(p1, n3);
 
-        assertEquals(-2d, minus.getValue());
+        assertEquals(-2d, minus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -78,7 +88,7 @@ public class TestExpression
         var n2 = new NumberExpression(14);
         var mul = new Multiplication(n1, n2);
 
-        assertEquals(140d, mul.getValue());
+        assertEquals(140d, mul.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -91,7 +101,7 @@ public class TestExpression
         var mul = new Multiplication(n2, n3);
         var p1 = new Plus(n1, mul);
 
-        assertEquals(54d, p1.getValue());
+        assertEquals(54d, p1.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -102,7 +112,7 @@ public class TestExpression
         var n2 = new NumberExpression(2);
         var div = new Division(n1, n2);
 
-        assertEquals(10d, div.getValue());
+        assertEquals(10d, div.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -115,7 +125,7 @@ public class TestExpression
         var div = new Division(n1, n2);
         var p1 = new Plus(div, n3);
 
-        assertEquals(4.5, p1.getValue());
+        assertEquals(4.5, p1.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -125,7 +135,7 @@ public class TestExpression
         var n1 = new NumberExpression(4);
         var minus = new UnaryMinus(n1);
 
-        assertEquals(-4d, minus.getValue());
+        assertEquals(-4d, minus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -135,7 +145,7 @@ public class TestExpression
         var n1 = new NumberExpression(4);
         var minus = new UnaryMinus(new UnaryMinus(new UnaryMinus(n1)));
 
-        assertEquals(-4d, minus.getValue());
+        assertEquals(-4d, minus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -145,7 +155,7 @@ public class TestExpression
         var n1 = new NumberExpression(4);
         var plus = new UnaryPlus(n1);
 
-        assertEquals(+4d, plus.getValue());
+        assertEquals(+4d, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -155,7 +165,7 @@ public class TestExpression
         var n1 = new NumberExpression(4);
         var plus = new UnaryPlus(new UnaryPlus(new UnaryPlus(n1)));
 
-        assertEquals(+4d, plus.getValue());
+        assertEquals(+4d, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -172,7 +182,7 @@ public class TestExpression
                 )
             );
 
-        assertEquals(4d, plus.getValue());
+        assertEquals(4d, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -193,7 +203,7 @@ public class TestExpression
                 )
             );
 
-        assertEquals(-4d, plus.getValue());
+        assertEquals(-4d, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -207,7 +217,7 @@ public class TestExpression
                     new NumberExpression(5)
                 ));
 
-        assertEquals(9d, p.getValue());
+        assertEquals(9d, p.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -223,7 +233,7 @@ public class TestExpression
 
         var unaryMinus = new UnaryMinus(p);
 
-        assertEquals(-9d, unaryMinus.getValue());
+        assertEquals(-9d, unaryMinus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -239,6 +249,6 @@ public class TestExpression
 
         var unaryPlus = new UnaryPlus(p);
 
-        assertEquals(9d, unaryPlus.getValue());
+        assertEquals(9d, unaryPlus.getValue(alwaysZeroEnv));
     }
 }

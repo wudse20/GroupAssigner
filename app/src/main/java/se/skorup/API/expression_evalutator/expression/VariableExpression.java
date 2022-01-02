@@ -3,22 +3,21 @@ package se.skorup.API.expression_evalutator.expression;
 import se.skorup.API.expression_evalutator.Environment;
 
 /**
- * Represents a number, it's called NumberExpression
- * to remove the collision.
+ * Represents the a variable.
  *
- * @param value the value of the number.
+ * @param identifier The identifier of the variable.
  * */
-public record NumberExpression(double value) implements Expression
+public record VariableExpression(String identifier) implements Expression
 {
     @Override
     public double getValue(Environment e)
     {
-        return value;
+        return e.getValue(identifier);
     }
 
     @Override
     public String toString()
     {
-        return Double.toString(value);
+        return "var(%s)".formatted(identifier);
     }
 }

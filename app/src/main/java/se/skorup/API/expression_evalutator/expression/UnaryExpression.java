@@ -1,5 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.expression_evalutator.Environment;
+
 /**
  * A template for a unary expression.
  * */
@@ -26,9 +28,9 @@ public abstract class UnaryExpression implements Expression
     protected abstract double unary(double value);
 
     @Override
-    public double getValue()
+    public double getValue(Environment e)
     {
-        return unary(expr.getValue());
+        return unary(expr.getValue(e));
     }
 
     @Override
