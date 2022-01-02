@@ -1,9 +1,6 @@
-package se.skorup.API;
+package se.skorup.API.immutable_collections;
 
 import org.junit.jupiter.api.Test;
-
-import se.skorup.API.immutable_collections.ImmutableArray;
-import se.skorup.API.immutable_collections.ImmutableHashSet;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Tests the immutable hash set.
@@ -297,9 +295,6 @@ public class ImmutableHashSetTester
         assertNotNull(set.sorted());
         assertEquals(ctr, set.sorted());
         assertEquals(ctr.size(), set.sorted().size());
-
-//        Don't know why it's here but I'll keep it if i figure it out
-//        assertEquals(new ImmutableHashSet<>(), new ImmutableArray<String>().sorted());
     }
 
     /**

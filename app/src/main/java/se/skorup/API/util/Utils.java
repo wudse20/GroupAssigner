@@ -1,7 +1,5 @@
 package se.skorup.API.util;
 
-import se.skorup.API.util.DebugMethods;
-
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -11,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 /**
  * Some util methods
@@ -45,7 +45,7 @@ public class Utils
 
     // About
     /** The version of the program. */
-    public static final String VERSION = "0.3.0.3";
+    public static final String VERSION = "0.3.0.4 - Indev";
 
     /** The about string. */
     public static final String ABOUT =
@@ -162,5 +162,44 @@ public class Utils
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Checks if a string is a valid double.
+     *
+     * @return {@code true} iff str is a valid double.
+     * */
+    public static boolean isValidDouble(String str)
+    {
+        if (str.length() == 1 && str.matches("\\d"))
+            return true;
+
+        return Pattern.matches("(\\d+).?(\\d+)", str);
+    }
+
+    /**
+     * The map with all colors of tags.
+     * The key is the name of the color.
+     *
+     * @return the map with all the colors.
+     * */
+    public static HashMap<String, Color> colorMap()
+    {
+        var _colorMap = new HashMap<String, Color>();
+
+        _colorMap.put("GREEN", Color.GREEN);
+        _colorMap.put("DARK_GREEN", Color.GREEN.darker());
+        _colorMap.put("WHITE", Color.WHITE);
+        _colorMap.put("BLUE", Color.BLUE);
+        _colorMap.put("DARK_BLUE", Color.BLUE.darker());
+        _colorMap.put("LIGHT_BLUE", new Color(0, 187, 255));
+        _colorMap.put("PURPLE", new Color(117, 50, 168));
+        _colorMap.put("LIGHT_PURPLE", new Color(161, 79, 224));
+        _colorMap.put("YELLOW", Color.YELLOW);
+        _colorMap.put("LIGHT_RED", new Color(245, 37, 85));
+        _colorMap.put("RED", Color.RED);
+        _colorMap.put("DARK_RED", Color.RED.darker());
+
+        return _colorMap;
     }
 }

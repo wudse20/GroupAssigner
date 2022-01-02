@@ -1,4 +1,4 @@
-package se.skorup.API;
+package se.skorup.API.immutable_collections;
 
 import org.junit.jupiter.api.Test;
 import se.skorup.API.immutable_collections.ImmutableArray;
@@ -616,10 +616,10 @@ public class ImmutableArrayTester
         var rand2 = new Random(123);
 
         var list = new Vector<Integer>();
-        for (int i = 1; i <= 10000000; i++)
+        for (int i = 1; i <= 1000000; i++)
             list.add(rand1.nextInt());
 
-        var arr = ImmutableArray.fill(10000000, rand2::nextInt);
+        var arr = ImmutableArray.fill(1000000, rand2::nextInt);
         assertEquals(list.size(), arr.size());
         assertEquals(ImmutableArray.fromList(list), arr);
     }
@@ -669,7 +669,8 @@ public class ImmutableArrayTester
     public void testDropMatchingNull()
     {
         var myStringArray = new ImmutableArray<>("Test1", "Test2", "Test3", "Test4");
-        var res = myStringArray.dropMatching(null);
+        String str = null;
+        var res = myStringArray.dropMatching(str);
         assertEquals(myStringArray, res);
         assertEquals(myStringArray.size(), res.size());
     }

@@ -1,7 +1,7 @@
 package se.skorup.API.immutable_collections;
 
-import se.skorup.API.functional_interfaces.FillFunction;
-import se.skorup.API.functional_interfaces.MapFunction;
+import se.skorup.API.immutable_collections.functional_interfaces.FillFunction;
+import se.skorup.API.immutable_collections.functional_interfaces.MapFunction;
 
 import java.util.ArrayList;
 import java.util.Arrays;

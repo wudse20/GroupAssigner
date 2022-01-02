@@ -1,4 +1,4 @@
-package se.skorup.API.functional_interfaces;
+package se.skorup.API.immutable_collections.functional_interfaces;
 
 /**
  * The functional interface used to fill an immutable array.

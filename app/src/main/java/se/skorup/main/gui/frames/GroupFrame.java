@@ -4,6 +4,7 @@ import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.gui.interfaces.ActionCallback;
+import se.skorup.main.gui.panels.CalculatorPanel;
 import se.skorup.main.gui.panels.GroupButtonPanel;
 import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.gui.panels.SubgroupSettingsPanel;
@@ -50,22 +51,18 @@ public class GroupFrame extends JFrame implements ChangeListener
     private State sizeState = State.NUMBER_GROUPS;
 
     private final List<ActionCallback> callbacks = new Vector<>();
-
     private final GroupManager manager;
 
     private final Container cp = this.getContentPane();
-
-    private JTabbedPane tabs;
-
     private final BorderLayout layout = new BorderLayout();
 
-    private final SubgroupSettingsPanel sgsp;
-
-    private final SubgroupPanel sgp;
-
     private final JScrollPane scrSgp;
+    private JTabbedPane tabs;
 
-    private final GroupButtonPanel gbp = new GroupButtonPanel();
+    private final SubgroupSettingsPanel sgsp;
+    private final SubgroupPanel sgp;
+    private final CalculatorPanel calc;
+    private final GroupButtonPanel gbp;
 
     /**
      * Creates a new group frame.
@@ -78,9 +75,11 @@ public class GroupFrame extends JFrame implements ChangeListener
 
         this.manager = manager;
         this.BASE_GROUP_PATH = "%ssaves/subgroups/%s/".formatted(Utils.getFolderName(), manager.getName());
+        this.gbp = new GroupButtonPanel();
         this.sgsp = new SubgroupSettingsPanel(this);
         this.sgp = new SubgroupPanel(this);
         this.scrSgp = new JScrollPane(sgp);
+        this.calc = new CalculatorPanel(manager);
 
         this.setProperties();
         this.addComponents();
@@ -133,6 +132,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     private void addComponents()
     {
         tabs.addTab("Inställningar", sgsp);
+        tabs.addTab("Miniräknare", calc);
         tabs.addTab("Undergrupper", scrSgp);
 
         this.add(tabs, BorderLayout.CENTER);
@@ -368,6 +368,12 @@ public class GroupFrame extends JFrame implements ChangeListener
             DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             gbp.populateButtons(sgp);
+        }
+        else if (tabs.getSelectedComponent() instanceof CalculatorPanel)
+        {
+            DebugMethods.log("Selected calculator", DebugMethods.LogType.DEBUG);
+            this.setSize(new Dimension(450, 550));
+            gbp.populateButtons(calc);
         }
         else
         {

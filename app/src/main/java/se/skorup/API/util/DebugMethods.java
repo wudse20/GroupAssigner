@@ -1,6 +1,5 @@
 package se.skorup.API.util;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -72,6 +71,7 @@ public class DebugMethods
         var m = (LocalTime.now().getMinute() < 10) ?
                 "0" + LocalTime.now().getMinute()  :
                 Integer.toString(LocalTime.now().getMinute());
+
         var s = (LocalTime.now().getSecond() < 10) ?
                 "0" + LocalTime.now().getSecond()  :
                 Integer.toString(LocalTime.now().getSecond());
