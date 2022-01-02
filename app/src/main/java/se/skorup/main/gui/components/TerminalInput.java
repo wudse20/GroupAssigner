@@ -1,8 +1,8 @@
 package se.skorup.main.gui.components;
 
 import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
-import se.skorup.API.util.Utils;
 
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
@@ -13,12 +13,22 @@ import java.awt.event.KeyListener;
  * */
 public final class TerminalInput extends TerminalPane implements KeyListener
 {
+    private final ImmutableHashSet<String> keywords;
+    private final char cmdChar;
+
     /**
      * Creates a new TerminalInput.
+     *
+     * @param keywords the keywords that should be syntax highlighted.
+     * @param cmdChar the char that indicates a command and thus should be syntax highlighted.
      * */
-    public TerminalInput()
+    public TerminalInput(ImmutableHashSet<String> keywords, char cmdChar)
     {
         super(new Dimension(380, 20), true);
+
+        this.keywords = keywords;
+        this.cmdChar = cmdChar;
+
         this.setProperties();
     }
 
@@ -39,7 +49,16 @@ public final class TerminalInput extends TerminalPane implements KeyListener
     private void syntaxHighlighting()
     {
         if (getText().trim().equals(""))
+        {
             return;
+        }
+        else if (getText().indexOf(cmdChar) != -1)
+        {
+            var txt = getText();
+            this.clear();
+            this.appendColoredString("<LIGHT_PURPLE>%s</LIGHT_PURPLE>".formatted(txt));
+            return;
+        }
 
         DebugMethods.log(
             "Syntax Highlighting: '%s'".formatted(getText()),
@@ -54,7 +73,11 @@ public final class TerminalInput extends TerminalPane implements KeyListener
         {
             var c = txt.charAt(i);
 
-            if (Character.isDigit(c) || c == '.')
+            if (isStringPartOfKeyword(c))
+                res.append("<yellow>").append(c).append("</yellow>");
+            else if (c == '(' || c == ')')
+                res.append("<light_blue>").append(c).append("</light_blue>");
+            else if (Character.isDigit(c) || c == '.')
                 res.append("<blue>").append(c).append("</blue>");
             else if (isOperator(c))
                 res.append("<green>").append(c).append("</green>");
@@ -72,6 +95,24 @@ public final class TerminalInput extends TerminalPane implements KeyListener
     }
 
     /**
+     * Checks if the character is a part of a keyword.
+     *
+     * @param c the character to be tested.
+     * @return {@code true} iff the string is part of keyword,
+     *         else {@code false}.
+     * */
+    private boolean isStringPartOfKeyword(char c)
+    {
+        for (var s : keywords)
+        {
+            if (s.indexOf(c) != -1)
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Determines whether it should highlight or not.
      *
      * @return {@code true} if it should highlight, else {@code false}.
@@ -81,9 +122,16 @@ public final class TerminalInput extends TerminalPane implements KeyListener
         return Character.isAlphabetic(c) ||
                Character.isDigit(c)      ||
                Character.isWhitespace(c) ||
-               isOperator(c);
+               isOperator(c)             ||
+               c == cmdChar;
     }
 
+    /**
+     * Checks if a char is an operator.
+     *
+     * @param c the char to be tested.
+     * @return {@code true} iff the char is an operator.
+     * */
     private boolean isOperator(char c)
     {
         return c == '+' ||

@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  * */
 public class GroupManager implements Serializable
 {
+    /** The serial ID of this class. */
+    public static final long serialVersionUID = 6462178428517775725L;
+
     private int nextId = 0;
     private int members = 0;
 
@@ -367,6 +370,17 @@ public class GroupManager implements Serializable
     public String getName()
     {
         return this.name;
+    }
+
+    /**
+     * Gets the number of persons of a certain main group.
+     *
+     * @param mg the main group which is searched.
+     * @return the number of persons in mg.
+     * */
+    public int getMembersOfMainGroup(Person.MainGroup mg)
+    {
+        return getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, mg).size();
     }
 
     @Override
