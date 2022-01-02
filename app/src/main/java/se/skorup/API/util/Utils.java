@@ -1,7 +1,5 @@
 package se.skorup.API.util;
 
-import se.skorup.API.util.DebugMethods;
-
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -191,13 +189,14 @@ public class Utils
 
         _colorMap.put("GREEN", Color.GREEN);
         _colorMap.put("DARK_GREEN", Color.GREEN.darker());
-        _colorMap.put("RED", Color.RED);
         _colorMap.put("WHITE", Color.WHITE);
         _colorMap.put("BLUE", Color.BLUE);
         _colorMap.put("DARK_BLUE", Color.BLUE.darker());
         _colorMap.put("PURPLE", new Color(117, 50, 168));
         _colorMap.put("LIGHT_PURPLE", new Color(161, 79, 224));
         _colorMap.put("YELLOW", Color.YELLOW);
+        _colorMap.put("LIGHT_RED", new Color(245, 37, 85));
+        _colorMap.put("RED", Color.RED);
         _colorMap.put("DARK_RED", Color.RED.darker());
 
         return _colorMap;

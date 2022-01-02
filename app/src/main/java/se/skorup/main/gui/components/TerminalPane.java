@@ -5,7 +5,9 @@ import se.skorup.API.tag_parser.Lexer;
 import se.skorup.API.tag_parser.Parser;
 import se.skorup.API.tag_parser.TextSegment;
 import se.skorup.API.util.DebugMethods;
+import se.skorup.API.util.Utils;
 
+import javax.swing.BorderFactory;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -35,7 +37,10 @@ public abstract class TerminalPane extends JTextPane
     public TerminalPane(Dimension d, boolean isEditable)
     {
         this.setPreferredSize(d);
-        this.setEditable(true);
+        this.setEditable(isEditable);
+        this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        this.setCaretColor(Utils.FOREGROUND_COLOR);
+        this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
     }
 
     /**

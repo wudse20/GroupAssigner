@@ -77,6 +77,8 @@ public class GroupButtonPanel extends JPanel
      * Populates the panel with the buttons, based
      * on the panel.
      *
+     * TODO: Refactor
+     *
      * @param panel the panel in use.
      * @throws IllegalArgumentException iff panel isn't instance of {@link SubgroupPanel SubgroupPanel}
      *                                  or {@link SubgroupSettingsPanel SubgroupSettingsPanel}.
@@ -85,7 +87,8 @@ public class GroupButtonPanel extends JPanel
     {
         this.removeAll();
 
-        if (panel instanceof SubgroupSettingsPanel)
+        if (panel instanceof SubgroupSettingsPanel ||
+            panel instanceof CalculatorPanel)
         {
             this.add(btnClose);
             this.add(btnHelp);

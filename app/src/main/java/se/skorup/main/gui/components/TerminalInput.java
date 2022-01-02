@@ -8,12 +8,13 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class TerminalInput extends TerminalPane implements KeyListener
+/**
+ * An input text field that syntax highlights math expressions
+ * */
+public final class TerminalInput extends TerminalPane implements KeyListener
 {
     /**
      * Creates a new TerminalInput.
-     *
-     * @param manager The manager used for the commands.
      * */
     public TerminalInput()
     {
@@ -26,9 +27,6 @@ public class TerminalInput extends TerminalPane implements KeyListener
      * */
     private void setProperties()
     {
-        this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        this.setForeground(Utils.FOREGROUND_COLOR);
-
         this.setText("");
         this.addKeyListener(this);
 
@@ -57,32 +55,20 @@ public class TerminalInput extends TerminalPane implements KeyListener
             var c = txt.charAt(i);
 
             if (Character.isDigit(c) || c == '.')
-            {
-                var sb = new StringBuilder().append(">blue>");
-
-                while (Character.isDigit(c) || c == '.')
-                {
-                    sb.append(c);
-                    c = txt.charAt(++i);
-                }
-
-                sb.append("</blue>");
-                res.append(sb);
-            }
+                res.append("<blue>").append(c).append("</blue>");
             else if (isOperator(c))
-            {
                 res.append("<green>").append(c).append("</green>");
-                i++;
-            }
+            else if (Character.isWhitespace(c))
+                res.append(c);
             else
-            {
                 res.append("<red>").append(c).append("</red>");
-            }
+
+            i++;
         }
 
-        DebugMethods.log("Syntax highlighted res: %s".formatted(res), DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Syntax highlighted res: '%s'".formatted(res), DebugMethods.LogType.DEBUG);
         this.clear();
-        this.appendColoredString(res.substring(0, res.length() - 1)); // Drops the last char.
+        this.appendColoredString(res.toString()); // Drops the last char.
     }
 
     /**
@@ -92,7 +78,10 @@ public class TerminalInput extends TerminalPane implements KeyListener
      * */
     private boolean shouldHighlight(char c)
     {
-        return Character.isAlphabetic(c) || Character.isDigit(c);
+        return Character.isAlphabetic(c) ||
+               Character.isDigit(c)      ||
+               Character.isWhitespace(c) ||
+               isOperator(c);
     }
 
     private boolean isOperator(char c)
