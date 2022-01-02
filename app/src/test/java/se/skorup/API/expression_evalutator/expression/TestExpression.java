@@ -2,7 +2,13 @@ package se.skorup.API.expression_evalutator.expression;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.parser.Parser;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * The tests for the Expressions.
  * */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestExpression
 {
     private Environment alwaysZeroEnv;
@@ -251,4 +258,28 @@ public class TestExpression
 
         assertEquals(9d, unaryPlus.getValue(alwaysZeroEnv));
     }
+
+    public ToStringTest[] getData()
+    {
+        var list = new ArrayList<ToStringTest>();
+
+        list.add(new ToStringTest("5.0 + 5.0", new Parser("5+5").parse()));
+        list.add(new ToStringTest("(5.0 + 5.0) * 3.0", new Parser("(5 + 5) * 3").parse()));
+        list.add(new ToStringTest("+var(kaka) + -5.0", new Parser("+kaka + -5").parse()));
+        list.add(new ToStringTest("5.0 / 5.0", new Parser("5/5").parse()));
+        list.add(new ToStringTest("5.0 - 5.0", new Parser("5-5").parse()));
+
+        var arr = new ToStringTest[list.size()];
+        list.toArray(arr);
+        return arr;
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData")
+    public void testToString(ToStringTest tst)
+    {
+        assertEquals(tst.expected, tst.expr.toString());
+    }
+
+    private record ToStringTest(String expected, Expression expr) {}
 }
