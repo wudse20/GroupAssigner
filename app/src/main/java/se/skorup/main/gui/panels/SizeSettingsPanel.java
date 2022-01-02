@@ -37,6 +37,8 @@ public final class SizeSettingsPanel extends SettingsPanel
 
     /**
      * Creates a new SizeSettingsPanel.
+     *
+     * @param gf the instance of the GroupFrame.
      * */
     public SizeSettingsPanel(GroupFrame gf)
     {

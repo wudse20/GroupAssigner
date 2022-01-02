@@ -32,6 +32,8 @@ public record HitBox(int x, int y, int width, int height)
      *
      * @param x the x position.
      * @param y the y position.
+     * @return {@code true} iff x and y is inside
+     *         the hit box.
      * */
     public boolean isCollision(int x, int y)
     {

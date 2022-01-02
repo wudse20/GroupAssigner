@@ -24,6 +24,8 @@ public abstract class UnaryExpression implements Expression
 
     /**
      * The application of the unary expression.
+     *
+     * @param value the value of the expression.
      * */
     protected abstract double unary(double value);
 

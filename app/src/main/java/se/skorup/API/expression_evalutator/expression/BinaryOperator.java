@@ -28,6 +28,10 @@ public abstract class BinaryOperator implements Expression
 
     /**
      * The application of the binary expression.
+     *
+     * @param lhs the value at the left-hand side.
+     * @param rhs the value at the right-hand side.
+     * @return the value of this expression.
      * */
     protected abstract double value(double lhs, double rhs);
 
