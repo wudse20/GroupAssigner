@@ -1,8 +1,6 @@
 package se.skorup.main.gui.components;
 
 import se.skorup.API.immutable_collections.ImmutableArray;
-import se.skorup.API.immutable_collections.ImmutableHashSet;
-import se.skorup.API.util.DebugMethods;
 
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
