@@ -1,12 +1,15 @@
 package se.skorup.API.expression_evalutator.expression;
 
+/**
+ * The subtraction operator.
+ * */
 public class Minus extends BinaryOperator
 {
     /**
      * Creates a new Minus.
      *
-     * @param left  the left hand side of the operator.
-     * @param right the right hand side of the operator.
+     * @param left  the left-hand side of the operator.
+     * @param right the right-hand side of the operator.
      */
     public Minus(Expression left, Expression right)
     {

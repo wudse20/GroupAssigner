@@ -15,8 +15,8 @@ public abstract class BinaryOperator implements Expression
     /**
      * Creates a new BinaryOperator.
      *
-     * @param left the left hand side of the operator.
-     * @param right the right hand side of the operator.
+     * @param left the left-hand side of the operator.
+     * @param right the right-hand side of the operator.
      * @param sign the sign of the expression.
      * */
     protected BinaryOperator(Expression left, Expression right, char sign)

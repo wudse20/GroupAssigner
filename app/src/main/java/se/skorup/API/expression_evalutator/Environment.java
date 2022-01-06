@@ -1,5 +1,9 @@
 package se.skorup.API.expression_evalutator;
 
+/**
+ * The environment used to get the value
+ * of a key.
+ * */
 public interface Environment
 {
     /**

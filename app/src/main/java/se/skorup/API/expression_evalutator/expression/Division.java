@@ -1,5 +1,8 @@
 package se.skorup.API.expression_evalutator.expression;
 
+/**
+ * The division operator.
+ * */
 public class Division extends BinaryOperator
 {
     /**

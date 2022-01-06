@@ -121,6 +121,11 @@ public class Lexer
         return new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);
     }
 
+    /**
+     * Getter for: diagnostics
+     *
+     * @return the diagnostics of this operation.
+     * */
     public ImmutableCollection<String> getDiagnostics()
     {
         return ImmutableArray.fromList(diagnostics);

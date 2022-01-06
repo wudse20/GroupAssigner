@@ -1,5 +1,8 @@
 package se.skorup.API.expression_evalutator.expression;
 
+/**
+ * The unary plus operator.
+ * */
 public class UnaryPlus extends UnaryExpression
 {
     /**
