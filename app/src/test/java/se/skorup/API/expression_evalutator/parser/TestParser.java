@@ -7,6 +7,7 @@ import se.skorup.API.expression_evalutator.Environment;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -73,6 +74,14 @@ public class TestParser
         var p = new Parser(t.expression);
         assertEquals(t.expected, p.parse().getValue(t.env));
         assertEquals(p.getDiagnostics().size(), 0);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData")
+    public void testNotThrow(TestParserData t)
+    {
+        var p = new Parser(t.expression());
+        assertDoesNotThrow(p::parse);
     }
 
     private record TestParserData(String expression, double expected, Environment env) {}

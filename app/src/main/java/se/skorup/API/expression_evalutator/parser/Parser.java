@@ -26,8 +26,18 @@ import java.util.List;
  * */
 public class Parser
 {
+    /**
+     * Gets the current token.
+     *
+     * @return the current token.
+     * */
+    private SyntaxToken current()
+    {
+        return peek(0);
+    }
     private final ImmutableCollection<SyntaxToken> tokens;
     private final List<String> diagnostics;
+
     private int position;
 
     /**
@@ -80,16 +90,6 @@ public class Parser
             return tokens.get(tokens.size() - 1);
         else
             return tokens.get(index);
-    }
-
-    /**
-     * Gets the current token.
-     *
-     * @return the current token.
-     * */
-    private SyntaxToken current()
-    {
-        return peek(0);
     }
 
     /**
@@ -159,13 +159,13 @@ public class Parser
             var opToken = nextToken();
             var right = parseExpression(precedence);
 
-            switch (opToken.getText())
-            {
-                case "+" -> { left = new Plus(left, right); }
-                case "-" -> { left = new Minus(left, right); }
-                case "*" -> { left = new Multiplication(left, right); }
-                case "/" -> { left = new Division(left, right); }
-            }
+            left = switch (opToken.getText()) {
+                case "+" -> new Plus(left, right);
+                case "-" -> new Minus(left, right);
+                case "*" -> new Multiplication(left, right);
+                case "/" -> new Division(left, right);
+                default -> throw new RuntimeException("Illegal Input"); // should never happen.
+            };
         }
 
         return left;
@@ -203,7 +203,7 @@ public class Parser
     public Expression parse()
     {
         var expr = parseExpression(0);
-        var eof = matchToken(SyntaxKind.EOF);
+        matchToken(SyntaxKind.EOF);
         return expr;
     }
 

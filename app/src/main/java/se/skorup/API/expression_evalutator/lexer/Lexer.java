@@ -106,19 +106,19 @@ public class Lexer
             return new SyntaxToken(SyntaxKind.ConstantToken, start, t, 0);
         }
 
-        switch (current())
-        {
+        return switch (current()) {
             // TODO: Swap position++ for something cleaner.
-            case '+' -> { return new SyntaxToken(SyntaxKind.PlusToken, position++, "+", 0); }
-            case '-'-> { return new SyntaxToken(SyntaxKind.MinusToken, position++, "-", 0); }
-            case '*' -> { return new SyntaxToken(SyntaxKind.AstrixToken, position++, "*", 0); }
-            case '/' -> { return new SyntaxToken(SyntaxKind.SlashToken, position++, "/", 0); }
-            case '(' -> { return new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", 0); }
-            case ')' -> { return new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", 0); }
-        }
-
-        diagnostics.add("ERROR: bad character input: %c".formatted(current()));
-        return new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);
+            case '+' -> new SyntaxToken(SyntaxKind.PlusToken, position++, "+", 0);
+            case '-' -> new SyntaxToken(SyntaxKind.MinusToken, position++, "-", 0);
+            case '*' -> new SyntaxToken(SyntaxKind.AstrixToken, position++, "*", 0);
+            case '/' -> new SyntaxToken(SyntaxKind.SlashToken, position++, "/", 0);
+            case '(' -> new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", 0);
+            case ')' -> new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", 0);
+            default -> {
+                diagnostics.add("ERROR: bad character input: %c".formatted(current()));
+                yield new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);
+            }
+        };
     }
 
     /**
