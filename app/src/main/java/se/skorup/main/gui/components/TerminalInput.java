@@ -13,21 +13,21 @@ import java.awt.event.KeyListener;
  * */
 public final class TerminalInput extends TerminalPane implements KeyListener
 {
-    private final ImmutableHashSet<String> keywords;
     private final char cmdChar;
+    private SyntaxHighlighting sh;
 
     /**
      * Creates a new TerminalInput.
      *
-     * @param keywords the keywords that should be syntax highlighted.
      * @param cmdChar the char that indicates a command and thus should be syntax highlighted.
+     * @param sh the syntax highlighting to be used.
      * */
-    public TerminalInput(ImmutableHashSet<String> keywords, char cmdChar)
+    public TerminalInput(char cmdChar, SyntaxHighlighting sh)
     {
         super(new Dimension(380, 20), true);
 
-        this.keywords = keywords;
         this.cmdChar = cmdChar;
+        this.sh = sh;
 
         this.setProperties();
     }
@@ -60,56 +60,9 @@ public final class TerminalInput extends TerminalPane implements KeyListener
             return;
         }
 
-        DebugMethods.log(
-            "Syntax Highlighting: '%s'".formatted(getText()),
-            DebugMethods.LogType.DEBUG
-        );
-
-        var txt = getText();
-        var i = 0;
-        var res = new StringBuilder(); // The result.
-
-        while (i < txt.length())
-        {
-            var c = txt.charAt(i);
-
-            if (isStringPartOfKeyword(c))
-                res.append("<yellow>").append(c).append("</yellow>");
-            else if (c == '(' || c == ')')
-                res.append("<light_blue>").append(c).append("</light_blue>");
-            else if (Character.isDigit(c) || c == '.')
-                res.append("<blue>").append(c).append("</blue>");
-            else if (isOperator(c))
-                res.append("<green>").append(c).append("</green>");
-            else if (Character.isWhitespace(c))
-                res.append(c);
-            else
-                res.append("<red>").append(c).append("</red>");
-
-            i++;
-        }
-
-        DebugMethods.log("Syntax highlighted res: '%s'".formatted(res), DebugMethods.LogType.DEBUG);
+        var res = sh.syntaxHighlight(getText());
         this.clear();
-        this.appendColoredString(res.toString()); // Drops the last char.
-    }
-
-    /**
-     * Checks if the character is a part of a keyword.
-     *
-     * @param c the character to be tested.
-     * @return {@code true} iff the string is part of keyword,
-     *         else {@code false}.
-     * */
-    private boolean isStringPartOfKeyword(char c)
-    {
-        for (var s : keywords)
-        {
-            if (s.indexOf(c) != -1)
-                return true;
-        }
-
-        return false;
+        this.appendColoredString(res);
     }
 
     /**
@@ -138,6 +91,17 @@ public final class TerminalInput extends TerminalPane implements KeyListener
                c == '-' ||
                c == '*' ||
                c == '/';
+    }
+
+    /**
+     * Setter for: sh
+     *
+     * @param sh the new syntax highlighting iff sh != {@code null}.
+     * */
+    public void setSyntaxHighlighting(SyntaxHighlighting sh)
+    {
+        if (sh != null)
+            this.sh = sh;
     }
 
     @Override

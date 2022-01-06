@@ -5,6 +5,7 @@ import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
 import se.skorup.main.gui.components.TerminalInput;
 import se.skorup.main.gui.components.TerminalOutput;
 import se.skorup.main.gui.components.TerminalPane;
@@ -63,7 +64,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
 
-        this.input = new TerminalInput(new ImmutableHashSet<>(vars.keySet()), '!');
+        this.input = new TerminalInput('!', new ExpressionSyntaxHighlighting(vars.keySet()));
         this.output = new TerminalOutput(new Dimension(380, 450));
 
         this.scrOutput = new JScrollPane(output);
