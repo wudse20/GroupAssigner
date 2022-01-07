@@ -13,8 +13,8 @@ import se.skorup.API.expression_evalutator.expression.VariableExpression;
 import se.skorup.API.expression_evalutator.lexer.Lexer;
 import se.skorup.API.expression_evalutator.lexer.SyntaxKind;
 import se.skorup.API.expression_evalutator.lexer.SyntaxToken;
-import se.skorup.API.immutable_collections.ImmutableArray;
-import se.skorup.API.immutable_collections.ImmutableCollection;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableCollection;
 import se.skorup.API.util.DebugMethods;
 
 import java.util.ArrayList;

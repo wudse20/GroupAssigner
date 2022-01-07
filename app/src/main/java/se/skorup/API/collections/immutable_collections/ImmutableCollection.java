@@ -1,6 +1,6 @@
-package se.skorup.API.immutable_collections;
+package se.skorup.API.collections.immutable_collections;
 
-import se.skorup.API.immutable_collections.functional_interfaces.MapFunction;
+import se.skorup.API.collections.immutable_collections.functional_interfaces.MapFunction;
 
 import java.util.Comparator;
 import java.util.List;

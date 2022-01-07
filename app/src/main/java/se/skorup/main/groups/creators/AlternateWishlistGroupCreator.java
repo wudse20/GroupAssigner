@@ -1,7 +1,7 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.API.immutable_collections.ImmutableArray;
-import se.skorup.API.immutable_collections.ImmutableHashSet;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;

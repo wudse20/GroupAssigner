@@ -2,7 +2,6 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
-import se.skorup.API.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;

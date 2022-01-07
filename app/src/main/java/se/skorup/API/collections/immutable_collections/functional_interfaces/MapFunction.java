@@ -1,6 +1,6 @@
-package se.skorup.API.immutable_collections.functional_interfaces;
+package se.skorup.API.collections.immutable_collections.functional_interfaces;
 
-import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 
 /**
  * The interface used in: <br>

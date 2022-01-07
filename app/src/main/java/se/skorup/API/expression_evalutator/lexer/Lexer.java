@@ -1,7 +1,7 @@
 package se.skorup.API.expression_evalutator.lexer;
 
-import se.skorup.API.immutable_collections.ImmutableArray;
-import se.skorup.API.immutable_collections.ImmutableCollection;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableCollection;
 import se.skorup.API.util.Utils;
 
 import java.util.ArrayList;

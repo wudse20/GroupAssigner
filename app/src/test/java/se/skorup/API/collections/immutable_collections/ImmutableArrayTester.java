@@ -1,7 +1,7 @@
-package se.skorup.API.immutable_collections;
+package se.skorup.API.collections.immutable_collections;
 
 import org.junit.jupiter.api.Test;
-import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 
 import java.util.Arrays;
 import java.util.List;

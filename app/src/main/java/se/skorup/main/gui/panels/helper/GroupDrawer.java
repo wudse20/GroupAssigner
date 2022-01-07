@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels.helper;
 
-import se.skorup.API.immutable_collections.ImmutableArray;
-import se.skorup.API.immutable_collections.ImmutableHashSet;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.objects.PersonBox;
 import se.skorup.main.gui.objects.TextBox;

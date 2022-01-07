@@ -1,7 +1,7 @@
 package se.skorup.main.gui.frames;
 
 import se.skorup.API.util.DebugMethods;
-import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.events.AddEvent;
 import se.skorup.main.gui.interfaces.AddListener;

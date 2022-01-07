@@ -1,7 +1,7 @@
 package se.skorup.API.tag_parser;
 
 import org.junit.jupiter.api.Test;
-import se.skorup.API.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.tag_parser.exceptions.LexException;
 import se.skorup.API.tag_parser.tokens.DataToken;
 import se.skorup.API.tag_parser.tokens.TagToken;
