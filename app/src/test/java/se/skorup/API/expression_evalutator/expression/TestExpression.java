@@ -9,6 +9,8 @@ import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,7 +26,12 @@ public class TestExpression
     @BeforeEach
     public void setUp()
     {
-        this.alwaysZeroEnv = s -> 0;
+        this.alwaysZeroEnv = new Environment() {
+            @Override
+            public double getValue(String key) { return 0; }
+            @Override
+            public void registerValue(String key, double value) {}
+        };
     }
 
     @Test
@@ -259,6 +266,33 @@ public class TestExpression
         assertEquals(9d, unaryPlus.getValue(alwaysZeroEnv));
     }
 
+    @Test
+    public void testDefinitionExpression()
+    {
+        var env = new Environment() {
+            private final Map<String, Double> values = new HashMap<>();
+
+            @Override
+            public double getValue(String key)
+            {
+                return values.getOrDefault(key, 0d);
+            }
+
+            @Override
+            public void registerValue(String key, double value)
+            {
+                values.put(key, value);
+            }
+        };
+
+        var expr = new Parser("7 * 7 + 5 - 3").parse();
+        var def = new DefinitionExpression("hej", expr);
+        var constant = new VariableExpression("hej");
+
+        assertEquals(expr.getValue(env), def.getValue(env));
+        assertEquals(expr.getValue(env), constant.getValue(env));
+    }
+
     public ToStringTest[] getData()
     {
         var list = new ArrayList<ToStringTest>();
@@ -268,6 +302,8 @@ public class TestExpression
         list.add(new ToStringTest("+var(kaka) + -5.0", new Parser("+kaka + -5").parse()));
         list.add(new ToStringTest("5.0 / 5.0", new Parser("5/5").parse()));
         list.add(new ToStringTest("5.0 - 5.0", new Parser("5-5").parse()));
+        list.add(new ToStringTest("let x = 4.0", new Parser("let x = 4").parse()));
+        list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5 + 3").parse()));
 
         var arr = new ToStringTest[list.size()];
         list.toArray(arr);

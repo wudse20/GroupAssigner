@@ -14,8 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestParser
 {
     public static final int COOKIE = 42;
-    private final Environment alwaysZeroEnv = s -> 0;
-    private final Environment cookieEnv = s -> s.equals("cookie") ? COOKIE : 0;
+
+    private final Environment alwaysZeroEnv = new Environment() {
+        @Override
+        public double getValue(String key) { return 0; }
+
+        @Override
+        public void registerValue(String key, double value) {}
+    };
+
+    private final Environment cookieEnv = new Environment() {
+        @Override
+        public double getValue(String key) { return key.equals("cookie") ? COOKIE : 0;}
+
+        @Override
+        public void registerValue(String key, double value) {}
+    };
 
     /**
      * Gets the test data.
@@ -61,6 +75,10 @@ public class TestParser
         list.add(new TestParserData("-cookie", -COOKIE, cookieEnv));
         list.add(new TestParserData("-cookie * 3", -COOKIE * 3, cookieEnv));
         list.add(new TestParserData("----cookie * 3 - 7", COOKIE * 3 - 7, cookieEnv));
+        list.add(new TestParserData("let x = 5", 5, alwaysZeroEnv));
+        list.add(new TestParserData("let y = 123 * 123", 123 * 123, alwaysZeroEnv));
+        list.add(new TestParserData("let z = ( 5 * 5 - 3 )", 22, alwaysZeroEnv));
+        list.add(new TestParserData("let cookie = 123 * 3123 * 0.5", 123 * 3123 * .5d, alwaysZeroEnv));
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);
@@ -73,7 +91,7 @@ public class TestParser
     {
         var p = new Parser(t.expression);
         assertEquals(t.expected, p.parse().getValue(t.env));
-        assertEquals(p.getDiagnostics().size(), 0);
+        assertEquals(0, p.getDiagnostics().size());
     }
 
     @ParameterizedTest

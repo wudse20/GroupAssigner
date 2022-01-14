@@ -193,6 +193,7 @@ public class Utils
         _colorMap.put("BLUE", Color.BLUE);
         _colorMap.put("DARK_BLUE", Color.BLUE.darker());
         _colorMap.put("LIGHT_BLUE", new Color(0, 187, 255));
+        _colorMap.put("IDEA_PURPLE", new Color(208, 86, 154));
         _colorMap.put("PURPLE", new Color(117, 50, 168));
         _colorMap.put("LIGHT_PURPLE", new Color(161, 79, 224));
         _colorMap.put("YELLOW", Color.YELLOW);

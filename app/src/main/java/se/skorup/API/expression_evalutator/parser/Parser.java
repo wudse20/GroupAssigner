@@ -1,5 +1,6 @@
 package se.skorup.API.expression_evalutator.parser;
 
+import se.skorup.API.expression_evalutator.expression.DefinitionExpression;
 import se.skorup.API.expression_evalutator.expression.Division;
 import se.skorup.API.expression_evalutator.expression.Expression;
 import se.skorup.API.expression_evalutator.expression.Minus;
@@ -26,17 +27,9 @@ import java.util.List;
  * */
 public class Parser
 {
-    /**
-     * Gets the current token.
-     *
-     * @return the current token.
-     * */
-    private SyntaxToken current()
-    {
-        return peek(0);
-    }
     private final ImmutableCollection<SyntaxToken> tokens;
     private final List<String> diagnostics;
+    private final String text;
 
     private int position;
 
@@ -48,6 +41,7 @@ public class Parser
     public Parser(String text)
     {
         this.diagnostics = new ArrayList<>();
+        this.text = text;
         var lexer = new Lexer(text);
         var tok = new ArrayList<SyntaxToken>();
 
@@ -67,6 +61,17 @@ public class Parser
         DebugMethods.log("Tokens: %s".formatted(filtered), DebugMethods.LogType.DEBUG);
         this.tokens = ImmutableArray.fromCollection(filtered);
         diagnostics.addAll(lexer.getDiagnostics().toList());
+    }
+
+
+    /**
+     * Gets the current token.
+     *
+     * @return the current token.
+     * */
+    private SyntaxToken current()
+    {
+        return peek(0);
     }
 
     /**
@@ -134,6 +139,9 @@ public class Parser
         Expression left;
         var unaryOperatorPrecedence = current().getKind().getUnaryPrecedence();
 
+        if (current().getKind().equals(SyntaxKind.LetToken))
+            return parseConstantDeclaration();
+
         if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
         {
             var opToken = nextToken();
@@ -185,14 +193,36 @@ public class Parser
             matchToken(SyntaxKind.CloseParenthesisToken);
             return new ParenthesizedExpression(expr);
         }
-        else if (current().getKind().equals(SyntaxKind.ConstantToken))
+        else if (current().getKind().equals(SyntaxKind.IdentifierToken))
         {
-            var constant = matchToken(SyntaxKind.ConstantToken);
+            var constant = matchToken(SyntaxKind.IdentifierToken);
             return new VariableExpression(constant.getText());
         }
 
         var number = matchToken(SyntaxKind.NumberToken);
         return new NumberExpression(number.getValue());
+    }
+
+    private Expression parseConstantDeclaration()
+    {
+        nextToken();
+
+        var identifier = matchToken(SyntaxKind.IdentifierToken);
+        var eq = matchToken(SyntaxKind.EqualsToken);
+
+        var expr = text.substring(eq.getPos() + 1);
+        var parser = new Parser(expr);
+        var parsedExpr = parser.parse();
+
+        diagnostics.addAll(parser.diagnostics);
+
+        // Skips the tokens that were handled by the other parser.
+        do
+        {
+            nextToken();
+        } while (!current().getKind().equals(SyntaxKind.EOF));
+
+        return new DefinitionExpression(identifier.getText(), parsedExpr);
     }
 
     /**

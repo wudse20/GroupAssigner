@@ -258,4 +258,10 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
 
         return vars.getOrDefault(key, 0D);
     }
+
+    @Override
+    public void registerValue(String key, double value)
+    {
+        vars.put(key, value);
+    }
 }

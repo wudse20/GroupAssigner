@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static se.skorup.main.gui.components.ExpressionSyntaxHighlighting.IDENTIFIER_COLOR;
 import static se.skorup.main.gui.components.ExpressionSyntaxHighlighting.KEYWORD_COLOR;
 import static se.skorup.main.gui.components.ExpressionSyntaxHighlighting.ERROR_COLOR;
 import static se.skorup.main.gui.components.ExpressionSyntaxHighlighting.OPERATOR_COLOR;
@@ -75,17 +76,25 @@ public class TestExpressionSyntaxHighlighting
 
         al.add(new SyntaxHighlightTest(
             "cookie + kaka", "<%s>cookie</%s> <%s>+</%s> <%s>kaka</%s>".formatted(
-                KEYWORD_COLOR, KEYWORD_COLOR, OPERATOR_COLOR, OPERATOR_COLOR,
+                IDENTIFIER_COLOR, IDENTIFIER_COLOR, OPERATOR_COLOR, OPERATOR_COLOR,
                 ERROR_COLOR, ERROR_COLOR
         )));
 
         al.add(new SyntaxHighlightTest(
             "(cookie - 1) + 8",
                 "<%s>(</%s><%s>cookie</%s> <%s>-</%s> <%s>1</%s><%s>)</%s> <%s>+</%s> <%s>8</%s>".formatted(
-                    LITERAL_COLOR, LITERAL_COLOR, KEYWORD_COLOR, KEYWORD_COLOR, OPERATOR_COLOR, OPERATOR_COLOR,
+                    LITERAL_COLOR, LITERAL_COLOR, IDENTIFIER_COLOR, IDENTIFIER_COLOR, OPERATOR_COLOR, OPERATOR_COLOR,
                     LITERAL_COLOR, LITERAL_COLOR, LITERAL_COLOR, LITERAL_COLOR, OPERATOR_COLOR, OPERATOR_COLOR,
                     LITERAL_COLOR, LITERAL_COLOR
         )));
+
+        al.add(new SyntaxHighlightTest(
+            "let x = 5",
+            "<%s>let</%s> <%s>x</%s> <%s>=</%s> <%s>5</%s>".formatted(
+                KEYWORD_COLOR, KEYWORD_COLOR, IDENTIFIER_COLOR, IDENTIFIER_COLOR,
+                OPERATOR_COLOR, OPERATOR_COLOR, LITERAL_COLOR, LITERAL_COLOR
+            )
+        ));
 
         var arr = new SyntaxHighlightTest[al.size()];
         al.toArray(arr);
