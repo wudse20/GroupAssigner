@@ -26,7 +26,7 @@ public class TestLexer
         var inp = "555a.55";
         var l = new Lexer(inp);
         var t1 = new SyntaxToken(SyntaxKind.NumberToken, 0, "555", 555);
-        var t2 = new SyntaxToken(SyntaxKind.ConstantToken, 3, "a", 0);
+        var t2 = new SyntaxToken(SyntaxKind.IdentifierToken, 3, "a", 0);
         var t3 = new SyntaxToken(SyntaxKind.BadToken, 4, ".", 0);
         var t4 = new SyntaxToken(SyntaxKind.NumberToken, 5, "55", 55);
 
@@ -114,7 +114,7 @@ public class TestLexer
     public void testLexingVariable()
     {
         var inp = "kaka";
-        var t1 = new SyntaxToken(SyntaxKind.ConstantToken, 0, "kaka", 0);
+        var t1 = new SyntaxToken(SyntaxKind.IdentifierToken, 0, "kaka", 0);
 
         var l = testManyTokens(inp, t1);
         testErrorSize(l, 0);
@@ -124,13 +124,49 @@ public class TestLexer
     public void testLexingVariableInExpression()
     {
         var inp = "kaka + 7";
-        var t1 = new SyntaxToken(SyntaxKind.ConstantToken, 0, "kaka", 0);
+        var t1 = new SyntaxToken(SyntaxKind.IdentifierToken, 0, "kaka", 0);
         var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 4, " ", 0);
         var t3 = new SyntaxToken(SyntaxKind.PlusToken, 5, "+", 0);
         var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 6, " ", 0);
         var t5 = new SyntaxToken(SyntaxKind.NumberToken, 7, "7", 7);
 
         var l = testManyTokens(inp, t1, t2, t3, t4, t5);
+        testErrorSize(l, 0);
+    }
+
+    @Test
+    public void testLexingConstantDeclaration()
+    {
+        var inp = "let x = 5";
+        var t1 = new SyntaxToken(SyntaxKind.LetToken, 0, "let", 0);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 3, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.IdentifierToken, 4, "x", 0);
+        var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 5, " ", 0);
+        var t5 = new SyntaxToken(SyntaxKind.EqualsToken, 6, "=", 0);
+        var t6 = new SyntaxToken(SyntaxKind.WhitespaceToken, 7, " ", 0);
+        var t7 = new SyntaxToken(SyntaxKind.NumberToken, 8, "5", 5);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5, t6, t7);
+        testErrorSize(l, 0);
+    }
+
+    @Test
+    public void testLexingConstantDeclaration2()
+    {
+        var inp = "let x = 5 * 8";
+        var t1 = new SyntaxToken(SyntaxKind.LetToken, 0, "let", 0);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 3, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.IdentifierToken, 4, "x", 0);
+        var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 5, " ", 0);
+        var t5 = new SyntaxToken(SyntaxKind.EqualsToken, 6, "=", 0);
+        var t6 = new SyntaxToken(SyntaxKind.WhitespaceToken, 7, " ", 0);
+        var t7 = new SyntaxToken(SyntaxKind.NumberToken, 8, "5", 5);
+        var t8 = new SyntaxToken(SyntaxKind.WhitespaceToken, 9, " ", 0);
+        var t9 = new SyntaxToken(SyntaxKind.AstrixToken, 10, "*", 0);
+        var t10 = new SyntaxToken(SyntaxKind.WhitespaceToken, 11, " ", 0);
+        var t11 = new SyntaxToken(SyntaxKind.NumberToken, 12, "8", 8);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
         testErrorSize(l, 0);
     }
 

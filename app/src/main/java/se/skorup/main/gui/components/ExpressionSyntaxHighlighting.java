@@ -114,7 +114,7 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
                 case CloseParenthesisToken:
                     syntaxHighlightColor(sb, t.getText(), LITERAL_COLOR);
                     break;
-                case ConstantToken:
+                case IdentifierToken:
                     if (keywords.contains(t.getText()))
                         syntaxHighlightColor(sb, t.getText(), KEYWORD_COLOR);
                     else

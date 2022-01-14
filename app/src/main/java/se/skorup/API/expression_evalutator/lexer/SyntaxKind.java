@@ -15,7 +15,9 @@ public enum SyntaxKind
     SlashToken(2, 0),
     OpenParenthesisToken(0, 0),
     CloseParenthesisToken(0, 0),
-    ConstantToken(0, 0);
+    IdentifierToken(0, 0),
+    EqualsToken(0, 0),
+    LetToken(0, 0);
 
     private final int binaryPrecedence;
     private final int unaryPrecedence;

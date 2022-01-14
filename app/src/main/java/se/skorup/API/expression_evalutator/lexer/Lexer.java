@@ -103,7 +103,12 @@ public class Lexer
         {
             var start = position;
             var t = lexType(start, Character::isAlphabetic);
-            return new SyntaxToken(SyntaxKind.ConstantToken, start, t, 0);
+
+            //TODO: Maybe something nicer in the future
+            if (t.equals("let"))
+                return new SyntaxToken(SyntaxKind.LetToken, start, t, 0);
+
+            return new SyntaxToken(SyntaxKind.IdentifierToken, start, t, 0);
         }
 
         return switch (current()) {
@@ -114,6 +119,7 @@ public class Lexer
             case '/' -> new SyntaxToken(SyntaxKind.SlashToken, position++, "/", 0);
             case '(' -> new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", 0);
             case ')' -> new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", 0);
+            case '=' -> new SyntaxToken(SyntaxKind.EqualsToken, position++, "=", 0);
             default -> {
                 diagnostics.add("ERROR: bad character input: %c".formatted(current()));
                 yield new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);

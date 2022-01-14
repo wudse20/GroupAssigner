@@ -185,9 +185,9 @@ public class Parser
             matchToken(SyntaxKind.CloseParenthesisToken);
             return new ParenthesizedExpression(expr);
         }
-        else if (current().getKind().equals(SyntaxKind.ConstantToken))
+        else if (current().getKind().equals(SyntaxKind.IdentifierToken))
         {
-            var constant = matchToken(SyntaxKind.ConstantToken);
+            var constant = matchToken(SyntaxKind.IdentifierToken);
             return new VariableExpression(constant.getText());
         }
 
