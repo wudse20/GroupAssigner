@@ -302,6 +302,8 @@ public class TestExpression
         list.add(new ToStringTest("+var(kaka) + -5.0", new Parser("+kaka + -5").parse()));
         list.add(new ToStringTest("5.0 / 5.0", new Parser("5/5").parse()));
         list.add(new ToStringTest("5.0 - 5.0", new Parser("5-5").parse()));
+        list.add(new ToStringTest("let x = 4.0", new Parser("let x = 4").parse()));
+        list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5 + 3").parse()));
 
         var arr = new ToStringTest[list.size()];
         list.toArray(arr);

@@ -29,4 +29,10 @@ public class DefinitionExpression implements Expression
         e.registerValue(identifier, val);
         return val;
     }
+
+    @Override
+    public String toString()
+    {
+        return "let %s = %s".formatted(identifier, value);
+    }
 }
