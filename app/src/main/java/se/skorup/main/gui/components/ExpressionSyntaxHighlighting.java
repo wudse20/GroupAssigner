@@ -20,8 +20,11 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
     /** The color of the binary operators. */
     public static final String OPERATOR_COLOR = "light_blue";
 
+    /** The color of the identifiers. */
+    public static final String IDENTIFIER_COLOR = "yellow";
+
     /** The color of the keywords. */
-    public static final String KEYWORD_COLOR = "yellow";
+    public static final String KEYWORD_COLOR = "idea_purple";
 
     /** The color of the non-accepted input. */
     public static final String ERROR_COLOR = "red";
@@ -94,38 +97,71 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
         var sb = new StringBuilder();
         var tokens = getTokens(str);
 
-        for (var t : tokens)
+        for (var i = 0; i < tokens.size(); i++)
         {
-            switch (t.getKind())
-            {
-                case EOF:
-                    continue;
-                case WhitespaceToken:
-                    syntaxHighlightNoColor(sb, t.getText());
-                    break;
-                case PlusToken:
-                case MinusToken:
-                case SlashToken:
-                case AstrixToken:
-                    syntaxHighlightColor(sb, t.getText(), OPERATOR_COLOR);
-                    break;
-                case NumberToken:
-                case OpenParenthesisToken:
-                case CloseParenthesisToken:
-                    syntaxHighlightColor(sb, t.getText(), LITERAL_COLOR);
-                    break;
-                case IdentifierToken:
-                    if (keywords.contains(t.getText()))
-                        syntaxHighlightColor(sb, t.getText(), KEYWORD_COLOR);
-                    else
-                        syntaxHighlightColor(sb, t.getText(), ERROR_COLOR);
-                    break;
-                default:
-                    syntaxHighlightColor(sb, t.getText(), ERROR_COLOR);
-                    break;
-            }
+            var t = tokens.get(i);
+            i = colorize(sb, tokens, i, t);
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Colorizes a string.
+     *
+     * @param sb the string builder used.
+     * @param tokens the tokens.
+     * @param i the index.
+     * @param t the current token.
+     * */
+    private int colorize(StringBuilder sb, List<SyntaxToken> tokens, int i, SyntaxToken t)
+    {
+        switch (t.getKind())
+        {
+            case EOF:
+                return i + 1;
+            case WhitespaceToken:
+                syntaxHighlightNoColor(sb, t.getText());
+                break;
+            case PlusToken:
+            case MinusToken:
+            case SlashToken:
+            case AstrixToken:
+            case EqualsToken:
+                syntaxHighlightColor(sb, t.getText(), OPERATOR_COLOR);
+                break;
+            case NumberToken:
+            case OpenParenthesisToken:
+            case CloseParenthesisToken:
+                syntaxHighlightColor(sb, t.getText(), LITERAL_COLOR);
+                break;
+            case IdentifierToken:
+                if (keywords.contains(t.getText()))
+                    syntaxHighlightColor(sb, t.getText(), IDENTIFIER_COLOR);
+                else
+                    syntaxHighlightColor(sb, t.getText(), ERROR_COLOR);
+                break;
+            case LetToken:
+                syntaxHighlightColor(sb, t.getText(), KEYWORD_COLOR);
+
+                while ((i + 1) < tokens.size() && !tokens.get(++i).getKind().equals(SyntaxKind.EqualsToken))
+                {
+                    if (tokens.get(i).getKind().equals(SyntaxKind.IdentifierToken))
+                    {
+                        syntaxHighlightColor(sb, tokens.get(i).getText(), IDENTIFIER_COLOR);
+                        continue;
+                    }
+
+                    colorize(sb, tokens, i, tokens.get(i));
+                }
+
+                i--;
+                break;
+            default:
+                syntaxHighlightColor(sb, t.getText(), ERROR_COLOR);
+                break;
+        }
+
+        return i;
     }
 }
