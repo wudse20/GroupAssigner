@@ -75,6 +75,10 @@ public class TestParser
         list.add(new TestParserData("-cookie", -COOKIE, cookieEnv));
         list.add(new TestParserData("-cookie * 3", -COOKIE * 3, cookieEnv));
         list.add(new TestParserData("----cookie * 3 - 7", COOKIE * 3 - 7, cookieEnv));
+        list.add(new TestParserData("let x = 5", 5, alwaysZeroEnv));
+        list.add(new TestParserData("let y = 123 * 123", 123 * 123, alwaysZeroEnv));
+        list.add(new TestParserData("let z = ( 5 * 5 - 3 )", 22, alwaysZeroEnv));
+        list.add(new TestParserData("let cookie = 123 * 3123 * 0.5", 123 * 3123 * .5d, alwaysZeroEnv));
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);
@@ -87,7 +91,7 @@ public class TestParser
     {
         var p = new Parser(t.expression);
         assertEquals(t.expected, p.parse().getValue(t.env));
-        assertEquals(p.getDiagnostics().size(), 0);
+        assertEquals(0, p.getDiagnostics().size());
     }
 
     @ParameterizedTest
