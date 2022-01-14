@@ -14,8 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestParser
 {
     public static final int COOKIE = 42;
-    private final Environment alwaysZeroEnv = s -> 0;
-    private final Environment cookieEnv = s -> s.equals("cookie") ? COOKIE : 0;
+
+    private final Environment alwaysZeroEnv = new Environment() {
+        @Override
+        public double getValue(String key) { return 0; }
+
+        @Override
+        public void registerValue(String key, double value) {}
+    };
+
+    private final Environment cookieEnv = new Environment() {
+        @Override
+        public double getValue(String key) { return key.equals("cookie") ? COOKIE : 0;}
+
+        @Override
+        public void registerValue(String key, double value) {}
+    };
 
     /**
      * Gets the test data.
