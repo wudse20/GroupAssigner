@@ -6,12 +6,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Stack;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The class responsible for testing the history list.
@@ -190,7 +195,16 @@ public class HistoryListTester
     @Test
     public void testEmptySize()
     {
+        assertDoesNotThrow(new HistoryList<String>()::size);
         assertEquals(0, new HistoryList<String>().size());
+        assertTrue(new HistoryList<String>().empty());
+    }
+
+    @Test
+    public void testEmptyPeek()
+    {
+        assertDoesNotThrow(new HistoryList<String>()::peek);
+        assertEquals(Optional.empty(), new HistoryList<String>().peek());
     }
 
     @ParameterizedTest
@@ -213,37 +227,19 @@ public class HistoryListTester
     public <T> void testAdding2(TestAdding<T> t)
     {
         var hl = new HistoryList<T>();
-        assertEquals(0, hl.size());
-
-        for (var i = 0; i < t.elems.length; i++)
-        {
-            hl.add(t.elems[i]);
-
-            if (i != 0)
-                assertNotEquals(t.elems[i], hl.peek(), "NEQ");
-            else
-                assertEquals(t.elems[i], hl.peek().orElse(null), "EQ");
-        }
-
-        assertEquals(t.expectedSize, hl.size());
-
-        hl.reset();
+        assertEquals(0, hl.size(), "SIZE!!!!!");
+        assertTrue(hl.empty(), "EMPTY!!!!!");
 
         for (var e : t.elems)
-        {
-            assertEquals(e, hl.peek().orElse(null), "Backwards");
-            hl.backward();
-        }
+            hl.add(e);
 
-        assertEquals(Optional.empty(), hl.backward(), "Last backward");
+        assertEquals(t.expectedSize, hl.size(), "SIZE!!!!!!");
 
         for (var i = t.elems.length - 1; i >= 0; i--)
         {
-            assertEquals(t.elems[i], hl.peek().orElse(null), "Forwards");
+            assertEquals(t.elems[i], hl.peek().orElse(null), "Peeky, peeky");
             hl.forward();
         }
-
-        assertEquals(Optional.empty(), hl.forward(), "Last forward");
     }
 
     @ParameterizedTest
@@ -253,10 +249,11 @@ public class HistoryListTester
         assertEquals(t.expected, t.hl.toString());
     }
 
+    @SuppressWarnings("varargs")
     private record TestAdding<E>(int expectedSize, E... elems)
     {
         @SafeVarargs
-        public TestAdding {} // To stop it from complaining.
+        public TestAdding {}
 
         @Override
         public String toString()

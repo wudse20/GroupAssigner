@@ -17,6 +17,14 @@ public interface HistoryStructure<E>
     int size();
 
     /**
+     * Checks if the collection is empty,
+     * i.e. size == 0 is {@code true}.
+     *
+     * @return {@code true} iff the list is empty.
+     * */
+    boolean empty();
+
+    /**
      * Adds an element to the last spot in the list.
      * <br><br>
      * This is accomplished in O(1).

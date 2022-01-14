@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 public final class TerminalInput extends TerminalPane implements KeyListener
 {
     private final char cmdChar;
+
     private SyntaxHighlighting sh;
 
     /**
@@ -39,28 +40,6 @@ public final class TerminalInput extends TerminalPane implements KeyListener
         this.addKeyListener(this);
 
         this.setFontSize(12);
-    }
-
-    /**
-     * Highlights the syntax of the input.
-     * */
-    private void syntaxHighlighting()
-    {
-        if (getText().trim().equals(""))
-        {
-            return;
-        }
-        else if (getText().indexOf(cmdChar) != -1)
-        {
-            var txt = getText();
-            this.clear();
-            this.appendColoredString("<LIGHT_PURPLE>%s</LIGHT_PURPLE>".formatted(txt));
-            return;
-        }
-
-        var res = sh.syntaxHighlight(getText());
-        this.clear();
-        this.appendColoredString(res);
     }
 
     /**
@@ -102,6 +81,28 @@ public final class TerminalInput extends TerminalPane implements KeyListener
             this.sh = sh;
     }
 
+    /**
+     * Highlights the syntax of the input.
+     * */
+    public void syntaxHighlighting()
+    {
+        if (getText().trim().equals(""))
+        {
+            return;
+        }
+        else if (getText().indexOf(cmdChar) != -1)
+        {
+            var txt = getText();
+            this.clear();
+            this.appendColoredString("<LIGHT_PURPLE>%s</LIGHT_PURPLE>".formatted(txt));
+            return;
+        }
+
+        var res = sh.syntaxHighlight(getText());
+        this.clear();
+        this.appendColoredString(res);
+    }
+
     @Override
     public String getText()
     {
@@ -121,5 +122,7 @@ public final class TerminalInput extends TerminalPane implements KeyListener
     {
         if (shouldHighlight(e.getKeyChar()) || e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
             syntaxHighlighting();
+        else
+            e.consume();
     }
 }

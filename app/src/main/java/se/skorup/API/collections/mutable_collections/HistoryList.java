@@ -30,6 +30,12 @@ public class HistoryList<E> implements HistoryStructure<E>
     }
 
     @Override
+    public boolean empty()
+    {
+        return first == null;
+    }
+
+    @Override
     public void add(E e)
     {
         size++;
@@ -51,7 +57,7 @@ public class HistoryList<E> implements HistoryStructure<E>
     @Override
     public void reset()
     {
-        current = first;
+        current = last;
     }
 
     @Override
@@ -77,6 +83,9 @@ public class HistoryList<E> implements HistoryStructure<E>
     @Override
     public Optional<E> peek()
     {
+        if (current == null)
+            return Optional.empty();
+
         return Optional.ofNullable(current.data);
     }
 
@@ -108,8 +117,9 @@ public class HistoryList<E> implements HistoryStructure<E>
     private static class ListNode<E>
     {
         private final ListNode<E> pre;
+        private final E data;
+
         private ListNode<E> next;
-        E data;
 
         /**
          * Creates a new list node with a pre and
@@ -128,7 +138,9 @@ public class HistoryList<E> implements HistoryStructure<E>
         @Override
         public String toString()
         {
-            return "ListNode<%s>(data: %s, pre: %s)".formatted(data.getClass(), data, pre);
+            var className = data.getClass().toString();
+            className = className.substring(className.lastIndexOf('.') + 1);
+            return "ListNode<%s>(data: %s, pre: %s)".formatted(className, data, pre);
         }
     }
 }

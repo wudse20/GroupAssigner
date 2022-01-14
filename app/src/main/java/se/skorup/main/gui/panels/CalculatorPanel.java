@@ -1,5 +1,7 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.collections.mutable_collections.HistoryList;
+import se.skorup.API.collections.mutable_collections.HistoryStructure;
 import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.DebugMethods;
@@ -35,6 +37,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     private String lastConstantError = "";
 
     private final Map<String, Double> vars;
+    private final HistoryStructure<String> history;
 
     private TerminalPane input;
     private TerminalPane output;
@@ -48,6 +51,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     public CalculatorPanel(GroupManager manager)
     {
         this.vars = new HashMap<>();
+        this.history = new HistoryList<>();
 
         this.setUpConstants(manager);
         this.setProperties();
@@ -157,7 +161,12 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
      * */
     private void calculate()
     {
-        if (input.getText().length() > 0 && input.getText().charAt(0) == '!')
+        if (input.getText().trim().length() == 0)
+            return;
+
+        history.add(input.getText());
+
+        if (input.getText().charAt(0) == '!')
         {
             processCommand();
             return;
@@ -192,6 +201,32 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
             DebugMethods.log(errors, DebugMethods.LogType.ERROR);
             output.appendColoredString("<light_red>%s</light_red>".formatted(errors));
         }
+
+        input.clear();
+        history.reset();
+    }
+
+    /**
+     * Swaps the input in the text box going through
+     * the history. If there are no valid entry then
+     * we do nothing.
+     *
+     * @param isGoingUp if {@code true} then we go backwards in
+     *                  history, else we go forwards in history.
+     * */
+    private void swapInput(boolean isGoingUp)
+    {
+        if (isGoingUp)
+        {
+            history.peek().ifPresent(input::setText);
+            history.forward();
+        }
+        else
+        {
+            history.backward().ifPresentOrElse(input::setText, input::clear);
+        }
+
+        ((TerminalInput) input).syntaxHighlighting();
     }
 
     @Override
@@ -205,6 +240,12 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     {
         if (e.getKeyCode() == ENTER)
             calculate();
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+            swapInput(false);
+        else if (e.getKeyCode() == KeyEvent.VK_UP)
+            swapInput(true);
+        else
+            e.consume();
     }
 
     @Override
