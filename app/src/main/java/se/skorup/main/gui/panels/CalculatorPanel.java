@@ -6,6 +6,12 @@ import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.command.Command;
+import se.skorup.main.gui.command.CommandEnvironment;
+import se.skorup.main.gui.command.CommandResult;
+import se.skorup.main.gui.command.ErrorCommand;
+import se.skorup.main.gui.command.HelpCommand;
+import se.skorup.main.gui.command.ListCommand;
 import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
 import se.skorup.main.gui.components.TerminalInput;
 import se.skorup.main.gui.components.TerminalOutput;
@@ -23,12 +29,13 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * The panel that holds the calculator.
  * */
-public class CalculatorPanel extends JPanel implements KeyListener, Environment
+public class CalculatorPanel extends JPanel implements KeyListener, Environment, CommandEnvironment
 {
     /** The keycode for the enter key. */
     private static final int ENTER = 10;
@@ -37,6 +44,8 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     private String lastConstantError = "";
 
     private final Map<String, Double> vars;
+    private final Map<String, Command> cmds;
+
     private final HistoryStructure<String> history;
 
     private TerminalPane input;
@@ -51,9 +60,11 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     public CalculatorPanel(GroupManager manager)
     {
         this.vars = new HashMap<>();
+        this.cmds = new HashMap<>();
         this.history = new HistoryList<>();
 
         this.setUpConstants(manager);
+        this.setUpCommands();
         this.setProperties();
         this.addComponents();
     }
@@ -74,10 +85,10 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
         this.scrOutput.setBorder(BorderFactory.createEmptyBorder());
 
         this.input.addKeyListener(this);
-        this.output.setFontSize(12);
+        this.output.setFontSize(14);
 
         output.appendColoredString(
-            "<dark_green>Skriv <dark_blue>!list</dark_blue> för att se alla konstanter</dark_green>\n"
+            "<dark_green>Skriv <dark_blue>!help</dark_blue> för att få hjälp.</dark_green>\n"
         );
     }
 
@@ -123,36 +134,32 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     }
 
     /**
+     * Setup for all the commands.
+     * */
+    private void setUpCommands()
+    {
+        cmds.put("help", new HelpCommand());
+        cmds.put("list", new ListCommand());
+    }
+
+    /**
      * Processes a command.
      * */
     private void processCommand()
     {
         var cmd = input.getText().substring(1);
+        var res = executeCommand(cmd);
 
-        if (cmd.equals("list"))
+        if (res.isSuccessful())
         {
-            var arrow = "<dark_blue> => </dark_blue>";
-            var sb = new StringBuilder();
-
-            sb.append("<dark_green>members").append(arrow)
-              .append("Antalet medlämmar i denna grupp\n")
-              .append("leaders").append(arrow)
-              .append("Antalet ledare i denna grupp\n")
-              .append("candidates").append(arrow)
-              .append("Antalet deltagare i denna grupp\n")
-              .append("mgOne").append(arrow)
-              .append("Antalet medlämmar i huvudgrupp 1\n")
-              .append("mgTwo").append(arrow)
-              .append("Antalet medlämmar i huvudgrupp 2\n</dark_green>");
-
-            output.appendColoredString(sb.toString());
+            output.appendColoredString(res.result());
         }
         else
         {
+            output.appendColoredString(res.result());
             output.appendColoredString(
-                "<light_red>Kommandot: %s finns inte.\nEndast kommandot list är tillåtet!</light_red>".formatted(cmd)
+                "<green>Skriv <white>'<dark_blue>!help</dark_blue>'</white> för att lista alla kommandon.</green>"
             );
-            DebugMethods.log("Command not found: %s".formatted(cmd), DebugMethods.LogType.ERROR);
         }
     }
 
@@ -263,5 +270,29 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment
     public void registerValue(String key, double value)
     {
         vars.put(key, value);
+    }
+
+    @Override
+    public void registerCommand(String name, Command cmd)
+    {
+        cmds.put(name, cmd);
+    }
+
+    @Override
+    public CommandResult executeCommand(String name)
+    {
+        return cmds.getOrDefault(name, new ErrorCommand()).execute(this);
+    }
+
+    @Override
+    public List<String> getCommands()
+    {
+        return cmds.entrySet()
+                   .stream()
+                   .map(e ->
+                       "<blue>%s<white> => </white><green>%s</green></blue>".formatted(
+                           e.getKey(), e.getValue().getDescription()
+                       )
+                   ).toList();
     }
 }
