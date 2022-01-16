@@ -122,7 +122,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         gbp.addActionListener(e -> Utils.openHelpPages(), GroupButtonPanel.Buttons.HELP);
         gbp.addActionListener(e -> {
             if (tabs.getSelectedComponent() instanceof SubgroupSettingsPanel)
-                tabs.setSelectedIndex(1);
+                tabs.setSelectedIndex(2);
         }, GroupButtonPanel.Buttons.CREATE);
     }
 
