@@ -6,6 +6,7 @@ import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.command.ClearCommand;
 import se.skorup.main.gui.command.Command;
 import se.skorup.main.gui.command.CommandEnvironment;
 import se.skorup.main.gui.command.CommandResult;
@@ -63,10 +64,10 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         this.cmds = new HashMap<>();
         this.history = new HistoryList<>();
 
-        this.setUpConstants(manager);
-        this.setUpCommands();
         this.setProperties();
         this.addComponents();
+        this.setUpConstants(manager);
+        this.setUpCommands();
     }
 
     /**
@@ -140,6 +141,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     {
         cmds.put("help", new HelpCommand());
         cmds.put("list", new ListCommand());
+        cmds.put("clear", new ClearCommand(output));
     }
 
     /**
@@ -290,7 +292,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         return cmds.entrySet()
                    .stream()
                    .map(e ->
-                       "<blue>%s<white> => </white><green>%s</green></blue>".formatted(
+                       "<blue>!%s<white> => </white><green>%s</green></blue>".formatted(
                            e.getKey(), e.getValue().getDescription()
                        )
                    ).toList();
