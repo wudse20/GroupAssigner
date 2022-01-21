@@ -16,10 +16,12 @@ import se.skorup.API.expression_evalutator.lexer.SyntaxKind;
 import se.skorup.API.expression_evalutator.lexer.SyntaxToken;
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.collections.immutable_collections.ImmutableCollection;
+import se.skorup.API.tag_parser.tokens.Token;
 import se.skorup.API.util.DebugMethods;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * The class responsible for parsing a
@@ -208,19 +210,33 @@ public class Parser
         nextToken();
 
         var identifier = matchToken(SyntaxKind.IdentifierToken);
-        var eq = matchToken(SyntaxKind.EqualsToken);
+        matchToken(SyntaxKind.EqualsToken);
 
-        var expr = text.substring(eq.getPos() + 1);
-        var parser = new Parser(expr);
+        var stack = new Stack<Character>();
+        var expr = new StringBuilder();
+
+        var t = nextToken();
+        while (!t.getKind().equals(SyntaxKind.EOF))
+        {
+            if (t.getText().equals("("))
+            {
+                stack.push('(');
+            }
+            else if (t.getText().equals(")") && stack.isEmpty() ||
+                     t.getText().equals(")") && stack.pop() != '(')
+            {
+                position--; // To compensate for the skipped token.
+                break;
+            }
+
+            expr.append(t.getText());
+            t = nextToken();
+        }
+
+        var parser = new Parser(expr.toString());
         var parsedExpr = parser.parse();
 
         diagnostics.addAll(parser.diagnostics);
-
-        // Skips the tokens that were handled by the other parser.
-        do
-        {
-            nextToken();
-        } while (!current().getKind().equals(SyntaxKind.EOF));
 
         return new DefinitionExpression(identifier.getText(), parsedExpr);
     }

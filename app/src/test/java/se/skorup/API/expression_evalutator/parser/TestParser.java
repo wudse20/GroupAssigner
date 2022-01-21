@@ -1,5 +1,6 @@
 package se.skorup.API.expression_evalutator.parser;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -79,6 +80,11 @@ public class TestParser
         list.add(new TestParserData("let y = 123 * 123", 123 * 123, alwaysZeroEnv));
         list.add(new TestParserData("let z = ( 5 * 5 - 3 )", 22, alwaysZeroEnv));
         list.add(new TestParserData("let cookie = 123 * 3123 * 0.5", 123 * 3123 * .5d, alwaysZeroEnv));
+        list.add(new TestParserData("let cookie = (123 - 2) * 7", (123 - 2) * 7, alwaysZeroEnv));
+        list.add(new TestParserData("(let a = 3)", 3, alwaysZeroEnv));
+        list.add(new TestParserData("(let a = 23 * 3) + 7", 23 * 3 + 7, alwaysZeroEnv));
+        list.add(new TestParserData("(let a = 5 * (10 + 3)) - -3", 5 * (10 + 3) - -3, alwaysZeroEnv));
+        list.add(new TestParserData("let a = ((4 + (cookie + 3)) - 3)", ((4 + (COOKIE + 3)) - 3), cookieEnv));
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);
