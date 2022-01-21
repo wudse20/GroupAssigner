@@ -1,5 +1,7 @@
 package se.skorup.API.expression_evalutator.parser;
 
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableCollection;
 import se.skorup.API.expression_evalutator.expression.DefinitionExpression;
 import se.skorup.API.expression_evalutator.expression.Division;
 import se.skorup.API.expression_evalutator.expression.Expression;
@@ -14,9 +16,6 @@ import se.skorup.API.expression_evalutator.expression.VariableExpression;
 import se.skorup.API.expression_evalutator.lexer.Lexer;
 import se.skorup.API.expression_evalutator.lexer.SyntaxKind;
 import se.skorup.API.expression_evalutator.lexer.SyntaxToken;
-import se.skorup.API.collections.immutable_collections.ImmutableArray;
-import se.skorup.API.collections.immutable_collections.ImmutableCollection;
-import se.skorup.API.tag_parser.tokens.Token;
 import se.skorup.API.util.DebugMethods;
 
 import java.util.ArrayList;
