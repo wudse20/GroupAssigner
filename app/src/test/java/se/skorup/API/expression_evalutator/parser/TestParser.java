@@ -89,6 +89,10 @@ public class TestParser
         list.add(new TestParserData("(let x = 5) % 2", 1, alwaysZeroEnv));
         list.add(new TestParserData("4 * (((cookie + 3) % (cookie + 3)) + 1)", 4, cookieEnv));
         list.add(new TestParserData("(123 * 123 + 321432 - -321) % 2", (123 * 123 + 321432 - -321) % 2, alwaysZeroEnv));
+        list.add(new TestParserData("6 + 2 % 2", 6, alwaysZeroEnv));
+        list.add(new TestParserData("(6 + 2) % 2", 0, alwaysZeroEnv));
+        list.add(new TestParserData("6 + 1 % 2", 7, alwaysZeroEnv));
+        list.add(new TestParserData("(6 + 1) % 2", 1, alwaysZeroEnv));
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);
