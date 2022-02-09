@@ -223,6 +223,6 @@ public class TestLexer
      * */
     private void testEOF(SyntaxToken t)
     {
-        assertEquals(t.getKind(), SyntaxKind.EOF);
+        assertEquals(t.kind(), SyntaxKind.EOF);
     }
 }

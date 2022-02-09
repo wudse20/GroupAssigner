@@ -41,12 +41,12 @@ public class Parser
         {
             token = lexer.nextToken();
             tok.add(token);
-        } while (!token.getKind().equals(SyntaxKind.EOF));
+        } while (!token.kind().equals(SyntaxKind.EOF));
 
         var filtered =
             tok.parallelStream()
-                  .filter(t -> !t.getKind().equals(SyntaxKind.BadToken))
-                  .filter(t -> !t.getKind().equals(SyntaxKind.WhitespaceToken))
+                  .filter(t -> !t.kind().equals(SyntaxKind.BadToken))
+                  .filter(t -> !t.kind().equals(SyntaxKind.WhitespaceToken))
                   .toList();
 
         DebugMethods.log("Tokens: %s".formatted(filtered), DebugMethods.LogType.DEBUG);
@@ -112,11 +112,11 @@ public class Parser
      * */
     private SyntaxToken matchToken(SyntaxKind kind)
     {
-        if (current().getKind().equals(kind))
+        if (current().kind().equals(kind))
             return nextToken();
 
-        diagnostics.add("ERROR: Unexpected token: %s, expected %s".formatted(current().getKind(), kind));
-        return new SyntaxToken(kind, current().getPos(), null, 0);
+        diagnostics.add("ERROR: Unexpected token: %s, expected %s".formatted(current().kind(), kind));
+        return new SyntaxToken(kind, current().pos(), null, 0);
     }
 
     /**
@@ -128,9 +128,9 @@ public class Parser
     private Expression parseExpression(int parentPrecedence)
     {
         Expression left;
-        var unaryOperatorPrecedence = current().getKind().getUnaryPrecedence();
+        var unaryOperatorPrecedence = current().kind().getUnaryPrecedence();
 
-        if (current().getKind().equals(SyntaxKind.LetToken))
+        if (current().kind().equals(SyntaxKind.LetToken))
             return parseConstantDeclaration();
 
         if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
@@ -138,7 +138,7 @@ public class Parser
             var opToken = nextToken();
             var operand = parseExpression(unaryOperatorPrecedence);
 
-            if (opToken.getText().equals("+"))
+            if (opToken.text().equals("+"))
                 left = new UnaryPlus(operand);
             else
                 left = new UnaryMinus(operand);
@@ -150,7 +150,7 @@ public class Parser
 
         while (true)
         {
-            var precedence = current().getKind().getBinaryPrecedence();
+            var precedence = current().kind().getBinaryPrecedence();
 
             if (precedence == 0 || precedence <= parentPrecedence)
                 break;
@@ -158,7 +158,7 @@ public class Parser
             var opToken = nextToken();
             var right = parseExpression(precedence);
 
-            left = switch (opToken.getText()) {
+            left = switch (opToken.text()) {
                 case "+" -> new Plus(left, right);
                 case "-" -> new Minus(left, right);
                 case "*" -> new Multiplication(left, right);
@@ -178,21 +178,21 @@ public class Parser
      * */
     private Expression parsePrimaryExpression()
     {
-        if (current().getKind().equals(SyntaxKind.OpenParenthesisToken))
+        if (current().kind().equals(SyntaxKind.OpenParenthesisToken))
         {
             nextToken();
             var expr = parseExpression(0);
             matchToken(SyntaxKind.CloseParenthesisToken);
             return new ParenthesizedExpression(expr);
         }
-        else if (current().getKind().equals(SyntaxKind.IdentifierToken))
+        else if (current().kind().equals(SyntaxKind.IdentifierToken))
         {
             var constant = matchToken(SyntaxKind.IdentifierToken);
-            return new VariableExpression(constant.getText());
+            return new VariableExpression(constant.text());
         }
 
         var number = matchToken(SyntaxKind.NumberToken);
-        return new NumberExpression(number.getValue());
+        return new NumberExpression(number.value());
     }
 
     private Expression parseConstantDeclaration()
@@ -206,20 +206,20 @@ public class Parser
         var expr = new StringBuilder();
 
         var t = nextToken();
-        while (!t.getKind().equals(SyntaxKind.EOF))
+        while (!t.kind().equals(SyntaxKind.EOF))
         {
-            if (t.getText().equals("("))
+            if (t.text().equals("("))
             {
                 stack.push('(');
             }
-            else if (t.getText().equals(")") && stack.isEmpty() ||
-                     t.getText().equals(")") && stack.pop() != '(')
+            else if (t.text().equals(")") && stack.isEmpty() ||
+                     t.text().equals(")") && stack.pop() != '(')
             {
                 position--; // To compensate for the skipped token.
                 break;
             }
 
-            expr.append(t.getText());
+            expr.append(t.text());
             t = nextToken();
         }
 
@@ -228,7 +228,7 @@ public class Parser
 
         diagnostics.addAll(parser.diagnostics);
 
-        return new DefinitionExpression(identifier.getText(), parsedExpr);
+        return new DefinitionExpression(identifier.text(), parsedExpr);
     }
 
     /**

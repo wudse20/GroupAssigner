@@ -57,7 +57,7 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
         {
             token = l.nextToken();
             t.add(token);
-        } while (!token.getKind().equals(SyntaxKind.EOF));
+        } while (!token.kind().equals(SyntaxKind.EOF));
 
         return t;
     }
@@ -116,12 +116,12 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
      * */
     private int colorize(StringBuilder sb, List<SyntaxToken> tokens, int i, SyntaxToken t)
     {
-        switch (t.getKind())
+        switch (t.kind())
         {
             case EOF:
                 return i + 1;
             case WhitespaceToken:
-                syntaxHighlightNoColor(sb, t.getText());
+                syntaxHighlightNoColor(sb, t.text());
                 break;
             case PlusToken:
             case MinusToken:
@@ -129,27 +129,27 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
             case AstrixToken:
             case EqualsToken:
             case PercentToken:
-                syntaxHighlightColor(sb, t.getText(), OPERATOR_COLOR);
+                syntaxHighlightColor(sb, t.text(), OPERATOR_COLOR);
                 break;
             case NumberToken:
             case OpenParenthesisToken:
             case CloseParenthesisToken:
-                syntaxHighlightColor(sb, t.getText(), LITERAL_COLOR);
+                syntaxHighlightColor(sb, t.text(), LITERAL_COLOR);
                 break;
             case IdentifierToken:
-                if (keywords.contains(t.getText()))
-                    syntaxHighlightColor(sb, t.getText(), IDENTIFIER_COLOR);
+                if (keywords.contains(t.text()))
+                    syntaxHighlightColor(sb, t.text(), IDENTIFIER_COLOR);
                 else
-                    syntaxHighlightColor(sb, t.getText(), ERROR_COLOR);
+                    syntaxHighlightColor(sb, t.text(), ERROR_COLOR);
                 break;
             case LetToken:
-                syntaxHighlightColor(sb, t.getText(), KEYWORD_COLOR);
+                syntaxHighlightColor(sb, t.text(), KEYWORD_COLOR);
 
-                while ((i + 1) < tokens.size() && !tokens.get(++i).getKind().equals(SyntaxKind.EqualsToken))
+                while ((i + 1) < tokens.size() && !tokens.get(++i).kind().equals(SyntaxKind.EqualsToken))
                 {
-                    if (tokens.get(i).getKind().equals(SyntaxKind.IdentifierToken))
+                    if (tokens.get(i).kind().equals(SyntaxKind.IdentifierToken))
                     {
-                        syntaxHighlightColor(sb, tokens.get(i).getText(), IDENTIFIER_COLOR);
+                        syntaxHighlightColor(sb, tokens.get(i).text(), IDENTIFIER_COLOR);
                         continue;
                     }
 
@@ -159,7 +159,7 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
                 i--;
                 break;
             default:
-                syntaxHighlightColor(sb, t.getText(), ERROR_COLOR);
+                syntaxHighlightColor(sb, t.text(), ERROR_COLOR);
                 break;
         }
 
