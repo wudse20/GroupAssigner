@@ -2,17 +2,7 @@ package se.skorup.API.expression_evalutator.parser;
 
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.collections.immutable_collections.ImmutableCollection;
-import se.skorup.API.expression_evalutator.expression.DefinitionExpression;
-import se.skorup.API.expression_evalutator.expression.Division;
-import se.skorup.API.expression_evalutator.expression.Expression;
-import se.skorup.API.expression_evalutator.expression.Minus;
-import se.skorup.API.expression_evalutator.expression.Multiplication;
-import se.skorup.API.expression_evalutator.expression.NumberExpression;
-import se.skorup.API.expression_evalutator.expression.ParenthesizedExpression;
-import se.skorup.API.expression_evalutator.expression.Plus;
-import se.skorup.API.expression_evalutator.expression.UnaryMinus;
-import se.skorup.API.expression_evalutator.expression.UnaryPlus;
-import se.skorup.API.expression_evalutator.expression.VariableExpression;
+import se.skorup.API.expression_evalutator.expression.*;
 import se.skorup.API.expression_evalutator.lexer.Lexer;
 import se.skorup.API.expression_evalutator.lexer.SyntaxKind;
 import se.skorup.API.expression_evalutator.lexer.SyntaxToken;
@@ -173,6 +163,7 @@ public class Parser
                 case "-" -> new Minus(left, right);
                 case "*" -> new Multiplication(left, right);
                 case "/" -> new Division(left, right);
+                case "%" -> new Modulo(left, right);
                 default -> throw new RuntimeException("Illegal Input"); // should never happen.
             };
         }

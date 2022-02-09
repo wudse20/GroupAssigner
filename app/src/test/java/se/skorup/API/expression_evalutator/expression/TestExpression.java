@@ -293,6 +293,23 @@ public class TestExpression
         assertEquals(expr.getValue(env), constant.getValue(env));
     }
 
+    @Test
+    public void testModuloExpression()
+    {
+        var expr = new Modulo(new NumberExpression(5), new NumberExpression(2));
+        assertEquals(1, expr.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testModuloExpressionMoreComplex()
+    {
+        var expr1 = new Parser("123 * 123 + 32").parse();
+        var expr2 = new Parser("523 * 2 - (3 + 2)").parse();
+        var mod = new Modulo(expr1, expr2);
+
+        assertEquals((123 * 123 + 32) % (523 * 2 - (3 + 2)), mod.getValue(alwaysZeroEnv));
+    }
+
     public ToStringTest[] getData()
     {
         var list = new ArrayList<ToStringTest>();
@@ -304,6 +321,8 @@ public class TestExpression
         list.add(new ToStringTest("5.0 - 5.0", new Parser("5-5").parse()));
         list.add(new ToStringTest("let x = 4.0", new Parser("let x = 4").parse()));
         list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5 + 3").parse()));
+        list.add(new ToStringTest("5.0 % 2.0", new Parser("5 % 2").parse()));
+        list.add(new ToStringTest("var(x) % 2.0", new Parser("x % 2").parse()));
 
         var arr = new ToStringTest[list.size()];
         list.toArray(arr);

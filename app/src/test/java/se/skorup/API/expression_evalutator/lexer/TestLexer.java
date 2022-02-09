@@ -170,6 +170,20 @@ public class TestLexer
         testErrorSize(l, 0);
     }
 
+    @Test
+    public void testLexModulo()
+    {
+        var inp = "5 % 2";
+        var t1 = new SyntaxToken(SyntaxKind.NumberToken, 0, "5", 5);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 1, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.PercentToken, 2, "%", 0);
+        var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 3, " ", 0);
+        var t5 = new SyntaxToken(SyntaxKind.NumberToken, 4, "2", 2);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5);
+        testErrorSize(l, 0);
+    }
+
     /**
      * Tests the number of errors.
      *

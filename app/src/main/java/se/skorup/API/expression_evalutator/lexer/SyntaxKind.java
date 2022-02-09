@@ -17,7 +17,8 @@ public enum SyntaxKind
     CloseParenthesisToken(0, 0),
     IdentifierToken(0, 0),
     EqualsToken(0, 0),
-    LetToken(0, 0);
+    LetToken(0, 0),
+    PercentToken(2, 0);
 
     private final int binaryPrecedence;
     private final int unaryPrecedence;
