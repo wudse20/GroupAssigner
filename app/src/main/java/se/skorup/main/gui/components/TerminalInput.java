@@ -86,6 +86,8 @@ public final class TerminalInput extends TerminalPane implements KeyListener
      * */
     public void syntaxHighlighting()
     {
+        var caretPos = this.getCaretPosition();
+
         if (getText().trim().equals(""))
         {
             return;
@@ -101,6 +103,9 @@ public final class TerminalInput extends TerminalPane implements KeyListener
         var res = sh.syntaxHighlight(getText());
         this.clear();
         this.appendColoredString(res);
+
+        if (caretPos > 0 && caretPos < this.getText().length())
+            this.setCaretPosition(caretPos);
     }
 
     @Override
