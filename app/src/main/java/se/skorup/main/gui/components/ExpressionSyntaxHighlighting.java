@@ -128,6 +128,7 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
             case SlashToken:
             case AstrixToken:
             case EqualsToken:
+            case PercentToken:
                 syntaxHighlightColor(sb, t.getText(), OPERATOR_COLOR);
                 break;
             case NumberToken:
