@@ -20,7 +20,6 @@ public class Parser
 {
     private final ImmutableCollection<SyntaxToken> tokens;
     private final List<String> diagnostics;
-    private final String text;
 
     private int position;
 
@@ -32,7 +31,6 @@ public class Parser
     public Parser(String text)
     {
         this.diagnostics = new ArrayList<>();
-        this.text = text;
         var lexer = new Lexer(text);
         var tok = new ArrayList<SyntaxToken>();
 
