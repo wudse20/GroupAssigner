@@ -146,10 +146,11 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
 
     /**
      * Processes a command.
+     *
+     * @param cmd the command to be processed.
      * */
-    private void processCommand()
+    private void processCommand(String cmd)
     {
-        var cmd = input.getText().substring(1);
         var res = executeCommand(cmd);
 
         if (res.isSuccessful())
@@ -170,18 +171,21 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
      * */
     private void calculate()
     {
-        if (input.getText().trim().length() == 0)
+        var userInput = input.getText();
+
+        if (userInput.trim().length() == 0)
             return;
 
-        history.add(input.getText());
+        history.add(userInput);
 
-        if (input.getText().charAt(0) == '!')
+        if (userInput.charAt(0) == '!')
         {
-            processCommand();
+            processCommand(userInput.substring(1));
+            input.setText("");
             return;
         }
 
-        var parser = new Parser(input.getText());
+        var parser = new Parser(userInput);
         var res = parser.parse();
 
         if (parser.getDiagnostics().size() == 0)
