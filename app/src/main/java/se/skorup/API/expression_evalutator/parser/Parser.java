@@ -176,14 +176,16 @@ public class Parser
      * */
     private Expression parsePrimaryExpression()
     {
-        if (current().kind().equals(SyntaxKind.OpenParenthesisToken))
+        var kind = current().kind();
+
+        if (kind.equals(SyntaxKind.OpenParenthesisToken))
         {
             nextToken();
             var expr = parseExpression(0);
             matchToken(SyntaxKind.CloseParenthesisToken);
             return new ParenthesizedExpression(expr);
         }
-        else if (current().kind().equals(SyntaxKind.IdentifierToken))
+        else if (kind.equals(SyntaxKind.IdentifierToken))
         {
             var constant = matchToken(SyntaxKind.IdentifierToken);
             return new VariableExpression(constant.text());
