@@ -3,6 +3,7 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.AddGroupFrame;
+import se.skorup.main.gui.frames.EditGroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;
 
@@ -155,7 +156,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
             final var gm = mf.getCurrentGroup();
 
             SwingUtilities.invokeLater(() -> {
-                var add = new AddGroupFrame(gm);
+                var add = new EditGroupFrame(gm);
                 add.addAddListener((event) -> {
                     event.frame().dispose();
                     mf.refreshSidePanel();
