@@ -167,7 +167,6 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
 
         names.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         names.setForeground(Utils.FOREGROUND_COLOR);
-        names.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         names.setModel(nameModel);
         names.addListSelectionListener(this);
 
@@ -215,7 +214,7 @@ public class AddGroupFrame extends JFrame implements KeyListener, ListSelectionL
             btnRemove.setEnabled(names.getSelectedIndex() - 1 != -1);
         });
 
-        scrList.setBorder(BorderFactory.createEmptyBorder());
+        scrList.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
     }
 
     /**
