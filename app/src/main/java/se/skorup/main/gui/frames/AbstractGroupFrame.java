@@ -28,9 +28,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The abstract window for adding and editing a group.
@@ -40,8 +38,9 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
 {
 
     protected final JButton btnImport = new JButton("Importera från google forms");
-    protected final JButton btnRemove = new JButton("Tabort");
     protected final JButton btnApply = new JButton("Lägg till");
+
+    private final JButton btnRemove = new JButton("Ta bort");
 
     protected final JList<String> names = new JList<>();
     protected final InputPanel pName = new InputPanel("Grupp: ", 24);
@@ -261,10 +260,7 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
         btnRemove.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnRemove.setForeground(Utils.FOREGROUND_COLOR);
         btnRemove.setEnabled(false);
-        btnRemove.addActionListener((e) -> {
-            nameModel.removeItem(names.getSelectedValue());
-            btnRemove.setEnabled(names.getSelectedIndex() - 1 != -1);
-        });
+        btnRemove.addActionListener(e -> removeAction());
 
         scrList.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
     }
@@ -284,6 +280,22 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
     }
 
     /**
+     * The default behaviour for: btnRemove.
+     * */
+    protected void removeAction()
+    {
+        nameModel.removeItem(names.getSelectedValue());
+        btnRemove.setEnabled(names.getSelectedIndex() - 1 != -1);
+    }
+
+    /**
+     * The action used when interacting with the GroupManager.
+     *
+     * @param gm the current GroupManager.
+     * */
+    protected abstract GroupManager groupAction(GroupManager gm);
+
+    /**
      * Adds an AddListener to the frame.
      *
      * @param l the AddListener to be added,
@@ -297,13 +309,6 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
 
         addListeners.add(l);
     }
-
-    /**
-     * The action used when interacting with the GroupManager.
-     *
-     * @param gm the current GroupManager.
-     * */
-    protected abstract GroupManager groupAction(GroupManager gm);
 
     @Override
     public void keyTyped(KeyEvent e) {}

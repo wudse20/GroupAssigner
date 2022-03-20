@@ -11,7 +11,6 @@ import java.util.HashSet;
  * */
 public final class EditGroupFrame extends AbstractGroupFrame
 {
-
     /**
      * Creates a new EditGroupFrame
      *
@@ -51,20 +50,17 @@ public final class EditGroupFrame extends AbstractGroupFrame
     }
 
     @Override
-    protected void setProperties()
+    protected void removeAction()
     {
-        btnRemove.addActionListener((e) -> {
-            var index = names.getSelectedIndex();
-            var elem = nameModel.getElementAt(index);
+        var index = names.getSelectedIndex();
+        var elem = nameModel.getElementAt(index);
 
-            DebugMethods.log(
-                "%s was removed at index %d.".formatted(elem, index),
-                DebugMethods.LogType.DEBUG
-            );
+        DebugMethods.log(
+            "%s was removed at index %d.".formatted(elem, index),
+            DebugMethods.LogType.DEBUG
+        );
 
-            removed.add(elem);
-        });
-
-        super.setProperties();
+        removed.add(elem);
+        super.removeAction();
     }
 }

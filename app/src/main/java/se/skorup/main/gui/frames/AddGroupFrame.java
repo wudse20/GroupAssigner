@@ -79,6 +79,6 @@ public final class AddGroupFrame extends AbstractGroupFrame
 
         btnImport.setForeground(Utils.FOREGROUND_COLOR);
         btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnImport.addActionListener((e) -> importFromDocs());
+        btnImport.addActionListener(e -> importFromDocs());
     }
 }
