@@ -2,6 +2,7 @@ package se.skorup.main.objects;
 
 import se.skorup.main.groups.creators.WishlistGroupCreator;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,9 @@ public record Subgroups(
         String[] labels, List<Person> leaders
 ) implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 3812458839615746121L;
+
     /**
      * Changes the name of the Subgroups.
      *
