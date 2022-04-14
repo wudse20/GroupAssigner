@@ -317,7 +317,7 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
                 textBoxes.toList()
                         .stream()
                         .filter(x -> !(x instanceof PersonBox))
-                        .collect(Collectors.toList());
+                        .toList();
 
         final var counter = new AtomicInteger(0);
         flashingTimer = new Timer(500, (e) -> {
@@ -372,7 +372,7 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
                 current.groups()
                         .stream()
                         .map(ArrayList::new)
-                        .collect(Collectors.toList())
+                        .toList()
                         .get(group - 1)
                         .indexOf(((PersonBox) tb).getId())
         );
@@ -447,8 +447,8 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
     private void changeLabel(TextBox tb)
     {
         var input = JOptionPane.showInputDialog(
-                gf, "Vilken är den nya ettiketten?",
-                "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
+            gf, "Vilken är den nya ettiketten?",
+            "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
         );
 
         if (input == null)
@@ -457,13 +457,13 @@ public class SubgroupPanel extends JPanel implements MouseListener, ComponentLis
         while (input.trim().length() < 3)
         {
             JOptionPane.showMessageDialog(
-                    gf, "Ettiekten måste vara minst tre tecken lång.",
-                    "För kort!", JOptionPane.ERROR_MESSAGE
+                gf, "Ettiekten måste vara minst tre tecken lång.",
+                "För kort!", JOptionPane.ERROR_MESSAGE
             );
 
             input = JOptionPane.showInputDialog(
-                    gf, "Vilken är den nya ettiketten?",
-                    "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
+                gf, "Vilken är den nya ettiketten?",
+                "Ny ettiket!", JOptionPane.INFORMATION_MESSAGE
             );
 
             if (input == null)
