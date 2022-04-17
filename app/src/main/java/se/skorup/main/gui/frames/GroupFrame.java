@@ -259,16 +259,6 @@ public class GroupFrame extends JFrame implements ChangeListener
     }
 
     /**
-     * Getter for: groupButtonPanel
-     *
-     * @return the instance of the groupButtonPanel.
-     * */
-    public GroupButtonPanel getGroupButtonPanel()
-    {
-        return gbp;
-    }
-
-    /**
      * Getter for: Manager
      *
      * @return the current group manager.
