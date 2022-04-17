@@ -56,7 +56,6 @@ public class GroupFrame extends JFrame implements ChangeListener
     private final Container cp = this.getContentPane();
     private final BorderLayout layout = new BorderLayout();
 
-    private final JScrollPane scrSgp;
     private JTabbedPane tabs;
 
     private final SubgroupSettingsPanel sgsp;
@@ -78,7 +77,6 @@ public class GroupFrame extends JFrame implements ChangeListener
         this.gbp = new GroupButtonPanel();
         this.sgsp = new SubgroupSettingsPanel(this);
         this.sgp = new SubgroupPanel(this);
-        this.scrSgp = new JScrollPane(sgp);
         this.calc = new CalculatorPanel(manager);
 
         this.setProperties();
@@ -95,7 +93,6 @@ public class GroupFrame extends JFrame implements ChangeListener
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(450, 550));
         this.setVisible(true);
-        this.addComponentListener(sgp);
         this.setLocation(
             dim.width / 2 - this.getSize().width / 2,
             dim.height / 2 - this.getSize().height / 2
@@ -114,10 +111,6 @@ public class GroupFrame extends JFrame implements ChangeListener
         tabs.setForeground(Utils.FOREGROUND_COLOR);
         tabs.addChangeListener(this);
 
-        scrSgp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrSgp.setForeground(Utils.FOREGROUND_COLOR);
-        scrSgp.setBackground(Utils.BACKGROUND_COLOR);
-
         gbp.addActionListener(e -> this.dispose(), GroupButtonPanel.Buttons.CLOSE);
         gbp.addActionListener(e -> Utils.openHelpPages(), GroupButtonPanel.Buttons.HELP);
         gbp.addActionListener(e -> {
@@ -133,7 +126,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     {
         tabs.addTab("Inställningar", sgsp);
         tabs.addTab("Miniräknare", calc);
-        tabs.addTab("Undergrupper", scrSgp);
+        tabs.addTab("Undergrupper", sgp);
 
         this.add(tabs, BorderLayout.CENTER);
         this.add(gbp, BorderLayout.PAGE_END);
@@ -363,7 +356,7 @@ public class GroupFrame extends JFrame implements ChangeListener
             this.setSize(new Dimension(450, 550));
             gbp.populateButtons(sgsp);
         }
-        else if (tabs.getSelectedComponent() instanceof JScrollPane)
+        else if (tabs.getSelectedComponent() instanceof SubgroupPanel)
         {
             DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
