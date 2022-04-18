@@ -1,6 +1,5 @@
 package se.skorup.main.gui.components;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -58,6 +57,16 @@ public class TestFlashingButton
     {
         assertDoesNotThrow(btn::stopFlashing);
         assertDoesNotThrow(() -> btn.startFlashing(100, Color.RED, Color.BLUE, Color.BLACK));
+        assertDoesNotThrow(btn::stopFlashing);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getButtons")
+    public void testNotThrowsMultipleStarts(FlashingButton btn)
+    {
+        for (int i = 0; i < 100; i++)
+            assertDoesNotThrow(() -> btn.startFlashing(100, Color.RED, Color.BLUE, Color.BLACK));
+
         assertDoesNotThrow(btn::stopFlashing);
     }
 

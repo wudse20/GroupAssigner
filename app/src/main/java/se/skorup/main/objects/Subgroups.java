@@ -5,11 +5,13 @@ import se.skorup.main.groups.creators.WishlistGroupCreator;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 /**
- * The record for the subgroup.
+ * The record for the subgroup. The iterable will be the same as
+ * {@code instance.groups().iterable()}.
  *
  * @param name the name of the group.
  * @param groups the generated groups.
@@ -23,7 +25,7 @@ public record Subgroups(
         String name, List<Set<Integer>> groups,
         boolean isLeaderMode, boolean isWishListMode,
         String[] labels, List<Person> leaders
-) implements Serializable
+) implements Serializable, Iterable<Set<Integer>>
 {
     @Serial
     private static final long serialVersionUID = 3812458839615746121L;
@@ -57,10 +59,27 @@ public record Subgroups(
         return labels[index];
     }
 
+    /**
+     * Gets the number of groups available
+     * in this subgroups instance.
+     *
+     * @return the number of subgroups.
+     * */
+    public int getGroupCount()
+    {
+        return groups.size();
+    }
+
     @Override
     public String toString()
     {
         return "Subgroups[name=%s, groups=%s, isLeaderMode=%b, isWishListMode=%b, labels=%s, leaders=%s]"
                 .formatted(name, groups, isLeaderMode, isWishListMode, Arrays.toString(labels), leaders);
+    }
+
+    @Override
+    public Iterator<Set<Integer>> iterator()
+    {
+        return groups.iterator();
     }
 }
