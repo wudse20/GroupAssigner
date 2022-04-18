@@ -5,6 +5,7 @@ import se.skorup.API.util.Utils;
 import javax.swing.JButton;
 import javax.swing.Timer;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +37,7 @@ public class FlashingButton extends JButton
         this.lastColor = foreground;
         this.setForeground(foreground);
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        this.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
     }
 
     /**

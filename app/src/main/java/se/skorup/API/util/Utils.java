@@ -203,4 +203,12 @@ public class Utils
 
         return _colorMap;
     }
+
+    public static String padString(String org, char pad, int length)
+    {
+        if (org.length() >= length)
+            return org;
+
+        return org + Character.toString(pad).repeat(length - org.length());
+    }
 }

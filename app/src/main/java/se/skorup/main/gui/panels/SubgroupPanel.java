@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import java.awt.BorderLayout;
 import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
@@ -53,13 +54,18 @@ public class SubgroupPanel extends JPanel
     {
         this.gf = gf;
         this.gm = gf.getManager();
-        this.sdp = new SubgroupDisplayPanel();
+        this.sdp = new SubgroupDisplayPanel(this);
 
         this.setProperties();
 
+        var cont = new JPanel();
+        cont.setBackground(Utils.BACKGROUND_COLOR);
+        cont.setLayout(new BorderLayout());
+
         var scr = new JScrollPane(sdp);
         scr.setBorder(BorderFactory.createEmptyBorder());
-        this.add(scr);
+        cont.add(scr, BorderLayout.CENTER);
+        this.add(cont);
     }
 
     /**
@@ -446,5 +452,14 @@ public class SubgroupPanel extends JPanel
         DebugMethods.log(current, DebugMethods.LogType.DEBUG);
 
         sdp.displaySubgroup(current, gm);
+    }
+
+    @Override
+    public void repaint()
+    {
+        if (sdp != null)
+            sdp.displaySubgroup(current, gm);
+
+        super.repaint();
     }
 }
