@@ -2,7 +2,6 @@ package se.skorup.main.gui.components;
 
 import se.skorup.API.util.Utils;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.Timer;
 import java.awt.Color;
@@ -27,9 +26,15 @@ public class FlashingButton extends JButton
      * */
     public FlashingButton(String text)
     {
+        this(text, Utils.FOREGROUND_COLOR);
+    }
+
+    public FlashingButton(String text, Color foreground)
+    {
         super(text);
 
-        this.setForeground(Utils.FOREGROUND_COLOR);
+        this.lastColor = foreground;
+        this.setForeground(foreground);
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
     }
 
@@ -54,7 +59,7 @@ public class FlashingButton extends JButton
             throw new IllegalArgumentException("You must pass at least on color.");
 
         final var i = new AtomicInteger();
-        final var list = new ArrayList<>(Arrays.asList(flashColor)); // To prevent hte immutable list.
+        final var list = new ArrayList<>(Arrays.asList(flashColor)); // To prevent the immutable list.
         list.add(this.getForeground());
 
         t = new Timer(speedMS, (e) -> {
@@ -74,5 +79,12 @@ public class FlashingButton extends JButton
             t.stop();
             this.setForeground(lastColor);
         }
+    }
+
+    @Override
+    public void setForeground(Color c)
+    {
+        this.lastColor = c;
+        super.setForeground(c);
     }
 }

@@ -16,9 +16,11 @@ import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 import se.skorup.main.objects.Tuple;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -39,6 +41,7 @@ public class SubgroupPanel extends JPanel
 {
     private final GroupFrame gf;
     private final GroupManager gm;
+    private final SubgroupDisplayPanel sdp;
     private Subgroups current;
 
     /**
@@ -50,8 +53,13 @@ public class SubgroupPanel extends JPanel
     {
         this.gf = gf;
         this.gm = gf.getManager();
+        this.sdp = new SubgroupDisplayPanel();
 
         this.setProperties();
+
+        var scr = new JScrollPane(sdp);
+        scr.setBorder(BorderFactory.createEmptyBorder());
+        this.add(scr);
     }
 
     /**
@@ -103,6 +111,7 @@ public class SubgroupPanel extends JPanel
 
                 gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 2 : 0);
                 current = sg;
+                sdp.displaySubgroup(current, gm);
             });
         });
     }
@@ -435,5 +444,7 @@ public class SubgroupPanel extends JPanel
 
         DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
         DebugMethods.log(current, DebugMethods.LogType.DEBUG);
+
+        sdp.displaySubgroup(current, gm);
     }
 }
