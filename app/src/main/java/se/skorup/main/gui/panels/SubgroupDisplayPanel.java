@@ -9,6 +9,7 @@ import se.skorup.main.objects.Subgroups;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class SubgroupDisplayPanel extends JPanel
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
+        this.setLayout(new FlowLayout(FlowLayout.CENTER));
     }
 
     /**
@@ -70,7 +72,9 @@ public class SubgroupDisplayPanel extends JPanel
 
         this.removeAll();
         var rows = (int) Math.ceil(subgroups.getGroupCount() / 2.0);
-        this.setLayout(new GridLayout(rows, 2, sgp.getWidth() / 3, longestNameLength));
+        var container = new JPanel();
+        container.setLayout(new GridLayout(rows, 2, sgp.getWidth() / 3, longestNameLength));
+        container.setBackground(Utils.BACKGROUND_COLOR);
 
         int groupIndex = 0;
         for (var group : subgroups)
@@ -78,6 +82,7 @@ public class SubgroupDisplayPanel extends JPanel
             var cont = new JPanel();
             cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
             cont.setBackground(Utils.BACKGROUND_COLOR);
+            cont.add(new JLabel(" "));
             cont.add(new FlashingButton(
                 Utils.padString(subgroups.getLabel(groupIndex++) + ':', ' ', longestNameLength),
                 Utils.GROUP_NAME_COLOR
@@ -94,9 +99,11 @@ public class SubgroupDisplayPanel extends JPanel
                 ));
             }
 
-            this.add(cont);
+            cont.add(new JLabel(" "));
+            container.add(cont);
         }
 
+        this.add(container);
         this.revalidate();
         this.repaint();
     }

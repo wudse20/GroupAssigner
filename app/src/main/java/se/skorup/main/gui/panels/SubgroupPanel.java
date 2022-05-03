@@ -14,7 +14,6 @@ import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
-import se.skorup.main.objects.Tuple;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
@@ -23,13 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -65,7 +62,9 @@ public class SubgroupPanel extends JPanel
         var scr = new JScrollPane(sdp);
         scr.setBorder(BorderFactory.createEmptyBorder());
         cont.add(scr, BorderLayout.CENTER);
-        this.add(cont);
+
+        this.setLayout(new BorderLayout());
+        this.add(cont, BorderLayout.CENTER);
     }
 
     /**
