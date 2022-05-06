@@ -6,12 +6,16 @@ import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -21,7 +25,7 @@ import java.util.Comparator;
  * subgroups to the frame. This is also responsible
  * for updating the Subgroups.
  * */
-public class SubgroupDisplayPanel extends JPanel
+public class SubgroupDisplayPanel extends JPanel implements MouseListener
 {
     private final SubgroupPanel sgp;
 
@@ -44,6 +48,40 @@ public class SubgroupDisplayPanel extends JPanel
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setLayout(new FlowLayout(FlowLayout.CENTER));
+    }
+
+
+    /**
+     * Builds a FlashingButton with a text padded with
+     * spaces to a given length and with the passed
+     * foreground color as its foreground color. It
+     * will also add this as it's mouse listener.
+     *
+     * @param text the text of the button, i.e. the label.
+     * @param length the length the text will be padded to.
+     * @param foreground the foreground color of the button.
+     * */
+    private FlashingButton buildButton(String text, int length, Color foreground)
+    {
+        var fb = new FlashingButton(Utils.padString(text, ' ', length), foreground);
+        fb.setBackground(Utils.BACKGROUND_COLOR);
+        fb.setBorder(BorderFactory.createLineBorder(Utils.BACKGROUND_COLOR));
+        fb.addMouseListener(this);
+        return fb;
+    }
+
+    /**
+     * Builds a FlashingButton with a text padded with
+     * spaces to a given length and with the default
+     * foreground color set as it's color. It will also add
+     * this as its MouseListener.
+     *
+     * @param text the text of the button, i.e. the label.
+     * @param length the length the text will be padded to.
+     * */
+    private FlashingButton buildButton(String text, int length)
+    {
+        return buildButton(text, length, Utils.FOREGROUND_COLOR);
     }
 
     /**
@@ -83,9 +121,9 @@ public class SubgroupDisplayPanel extends JPanel
             cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
             cont.setBackground(Utils.BACKGROUND_COLOR);
             cont.add(new JLabel(" "));
-            cont.add(new FlashingButton(
-                Utils.padString(subgroups.getLabel(groupIndex++) + ':', ' ', longestNameLength),
-                Utils.GROUP_NAME_COLOR
+            cont.add(buildButton(
+                subgroups.getLabel(groupIndex++) + ':',
+                longestNameLength, Utils.GROUP_NAME_COLOR
             ));
 
             for (var p : group)
@@ -93,10 +131,7 @@ public class SubgroupDisplayPanel extends JPanel
                 var lbl = new JLabel(" ");
                 lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
                 cont.add(lbl);
-
-                cont.add(new FlashingButton(
-                    Utils.padString(manager.getPersonFromId(p).getName(), ' ', longestNameLength)
-                ));
+                cont.add(buildButton(manager.getPersonFromId(p).getName(), longestNameLength));
             }
 
             cont.add(new JLabel(" "));
@@ -106,5 +141,30 @@ public class SubgroupDisplayPanel extends JPanel
         this.add(container);
         this.revalidate();
         this.repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+        var comp = (FlashingButton) e.getComponent();
+        comp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        comp.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+        var comp = (FlashingButton) e.getComponent();
+        comp.setBackground(Utils.BACKGROUND_COLOR);
+        comp.setBorder(BorderFactory.createLineBorder(Utils.BACKGROUND_COLOR));
     }
 }
