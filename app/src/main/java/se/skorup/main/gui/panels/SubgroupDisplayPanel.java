@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
-import se.skorup.main.gui.components.FlashingButton;
+import se.skorup.main.gui.components.SubgroupItemButton;
 import se.skorup.main.gui.helper.DoubleColumnGenerator;
 import se.skorup.main.gui.helper.LayoutGenerator;
 import se.skorup.main.gui.helper.SingleColumnGenerator;
@@ -17,8 +17,6 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,7 +26,7 @@ import java.util.Comparator;
  * subgroups to the frame. This is also responsible
  * for updating the Subgroups.
  * */
-public class SubgroupDisplayPanel extends JPanel implements MouseListener
+public class SubgroupDisplayPanel extends JPanel
 {
     private final SubgroupPanel sgp;
     private LayoutGenerator gen;
@@ -58,32 +56,29 @@ public class SubgroupDisplayPanel extends JPanel implements MouseListener
     /**
      * Builds a FlashingButton with a text padded with
      * spaces to a given length and with the passed
-     * foreground color as its foreground color. It
-     * will also add this as it's mouse listener.
+     * foreground color as its foreground color.
      *
      * @param text the text of the button, i.e. the label.
      * @param length the length the text will be padded to.
      * @param foreground the foreground color of the button.
      * */
-    private FlashingButton buildButton(String text, int length, Color foreground)
+    private SubgroupItemButton buildButton(String text, int length, Color foreground)
     {
-        var fb = new FlashingButton(Utils.padString(text, ' ', length), foreground);
+        var fb = new SubgroupItemButton(Utils.padString(text, ' ', length), foreground);
         fb.setBackground(Utils.BACKGROUND_COLOR);
         fb.setBorder(BorderFactory.createLineBorder(Utils.BACKGROUND_COLOR));
-        fb.addMouseListener(this);
         return fb;
     }
 
     /**
      * Builds a FlashingButton with a text padded with
      * spaces to a given length and with the default
-     * foreground color set as it's color. It will also add
-     * this as its MouseListener.
+     * foreground color set as it's color.
      *
      * @param text the text of the button, i.e. the label.
      * @param length the length the text will be padded to.
      * */
-    private FlashingButton buildButton(String text, int length)
+    private SubgroupItemButton buildButton(String text, int length)
     {
         return buildButton(text, length, Utils.FOREGROUND_COLOR);
     }
@@ -101,6 +96,21 @@ public class SubgroupDisplayPanel extends JPanel implements MouseListener
             gen = new DoubleColumnGenerator(sgp.getWidth(), vgap);
         else
             gen = new TripleColumnGenerator(sgp.getWidth(), vgap);
+    }
+
+    /**
+     * The method to hover effects
+     *
+     * @param b                The affected button.
+     * @param backgroundColor  The color of the border.
+     * @param backgroundColor1 The color of the background.
+     * @param groupNameColor   The color of the group names.
+     * */
+    private void hover(SubgroupItemButton b, Color backgroundColor, Color backgroundColor1, Color groupNameColor)
+    {
+        b.setBorder(BorderFactory.createLineBorder(backgroundColor));
+        b.setForeground(groupNameColor);
+        b.setBackground(backgroundColor1);
     }
 
     /**
@@ -140,17 +150,22 @@ public class SubgroupDisplayPanel extends JPanel implements MouseListener
             cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
             cont.setBackground(Utils.BACKGROUND_COLOR);
             cont.add(new JLabel(" "));
-            cont.add(buildButton(
-                subgroups.getLabel(groupIndex++) + ':',
-                longestNameLength, Utils.GROUP_NAME_COLOR
-            ));
+
+            var btn = buildButton(subgroups.getLabel(groupIndex++) + ':', longestNameLength, Utils.GROUP_NAME_COLOR);
+            btn.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
+            btn.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.GROUP_NAME_COLOR));
+            cont.add(btn);
 
             for (var p : group)
             {
                 var lbl = new JLabel(" ");
                 lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
                 cont.add(lbl);
-                cont.add(buildButton(manager.getPersonFromId(p).getName(), longestNameLength));
+
+                var btn2 = buildButton(manager.getPersonFromId(p).getName(), longestNameLength);
+                btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
+                btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.FOREGROUND_COLOR));
+                cont.add(btn2);
             }
 
             cont.add(new JLabel(" "));
@@ -160,30 +175,5 @@ public class SubgroupDisplayPanel extends JPanel implements MouseListener
         this.add(container);
         this.revalidate();
         this.repaint();
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e)
-    {
-        var comp = (FlashingButton) e.getComponent();
-        comp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        comp.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e)
-    {
-        var comp = (FlashingButton) e.getComponent();
-        comp.setBackground(Utils.BACKGROUND_COLOR);
-        comp.setBorder(BorderFactory.createLineBorder(Utils.BACKGROUND_COLOR));
     }
 }
