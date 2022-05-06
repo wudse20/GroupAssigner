@@ -13,25 +13,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * The class that tests the flashing button.
  * */
-public class TestFlashingButton
+public class TestSubgroupItemButton
 {
     public static Stream<Arguments> getButtons()
     {
-        var btn = new FlashingButton("Test1");
+        var btn = new SubgroupItemButton("Test1");
         btn.startFlashing(100, Color.RED);
 
-        var btn2 = new FlashingButton("Test2");
+        var btn2 = new SubgroupItemButton("Test2");
         btn2.startFlashing(100, Color.RED, Color.BLUE, Color.GREEN);
 
         return Stream.of(
-            Arguments.of(new FlashingButton("Test3")),
+            Arguments.of(new SubgroupItemButton("Test3")),
             Arguments.of(btn), Arguments.of(btn2)
         );
     }
 
     public static Stream<Arguments> getButtons2()
     {
-        var btn = new FlashingButton("Test");
+        var btn = new SubgroupItemButton("Test");
 
         return Stream.of(
             Arguments.of(btn, 0, new Color[0]),
@@ -46,14 +46,14 @@ public class TestFlashingButton
 
     @ParameterizedTest
     @MethodSource("getButtons")
-    public void testStopFlashing(FlashingButton btn)
+    public void testStopFlashing(SubgroupItemButton btn)
     {
         assertDoesNotThrow(btn::stopFlashing);
     }
 
     @ParameterizedTest
     @MethodSource("getButtons")
-    public void testNotThrows(FlashingButton btn)
+    public void testNotThrows(SubgroupItemButton btn)
     {
         assertDoesNotThrow(btn::stopFlashing);
         assertDoesNotThrow(() -> btn.startFlashing(100, Color.RED, Color.BLUE, Color.BLACK));
@@ -62,7 +62,7 @@ public class TestFlashingButton
 
     @ParameterizedTest
     @MethodSource("getButtons")
-    public void testNotThrowsMultipleStarts(FlashingButton btn)
+    public void testNotThrowsMultipleStarts(SubgroupItemButton btn)
     {
         for (int i = 0; i < 100; i++)
             assertDoesNotThrow(() -> btn.startFlashing(100, Color.RED, Color.BLUE, Color.BLACK));
@@ -72,8 +72,22 @@ public class TestFlashingButton
 
     @ParameterizedTest
     @MethodSource("getButtons2")
-    public void testThrows(FlashingButton btn, int speed, Color[] colors)
+    public void testThrows(SubgroupItemButton btn, int speed, Color[] colors)
     {
         assertThrows(IllegalArgumentException.class, () -> btn.startFlashing(speed, colors));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getButtons")
+    public void testNoEntryNotThrows(SubgroupItemButton btn)
+    {
+        assertDoesNotThrow(() -> btn.mouseEntered(null));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getButtons")
+    public void testNoExitNotThrows(SubgroupItemButton btn)
+    {
+        assertDoesNotThrow(() -> btn.mouseExited(null));
     }
 }

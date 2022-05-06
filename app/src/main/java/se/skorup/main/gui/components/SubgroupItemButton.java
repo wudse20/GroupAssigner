@@ -1,36 +1,43 @@
 package se.skorup.main.gui.components;
 
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.helper.HoverEffectEnter;
+import se.skorup.main.gui.helper.HoverEffectExit;
 
 import javax.swing.JButton;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A button that has the ability to flash the button text
- * in different colors.
+ * in different colors. It also has the ability to add a hover
+ * effect.
  * */
-public class FlashingButton extends JButton
+public class SubgroupItemButton extends JButton implements MouseListener
 {
     private Timer t;
     private Color lastColor;
+    private HoverEffectEnter hoverEnter;
+    private HoverEffectExit hoverExit;
 
     /**
-     * Creates a new flashing button with the
+     * Creates a new button with the
      * provided argument as text.
      *
      * @param text the text of the button.
      * */
-    public FlashingButton(String text)
+    public SubgroupItemButton(String text)
     {
         this(text, Utils.FOREGROUND_COLOR);
     }
 
-    public FlashingButton(String text, Color foreground)
+    public SubgroupItemButton(String text, Color foreground)
     {
         super(text);
 
@@ -38,6 +45,7 @@ public class FlashingButton extends JButton
         this.setForeground(foreground);
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
+        this.addMouseListener(this);
     }
 
     /**
@@ -83,10 +91,55 @@ public class FlashingButton extends JButton
         }
     }
 
+    /**
+     * Set the code to execute on hover exit.
+     *
+     * @param hoverExit the new effect that will happen
+     *                  on hover exit.
+     * */
+    public void setHoverExit(HoverEffectExit hoverExit)
+    {
+        this.hoverExit = hoverExit;
+    }
+
+    /**
+     * Set the code to execute on hover enter.
+     *
+     * @param hoverEnter the new effect that will happen
+     *                   on hover enter.
+     * */
+    public void setHoverEnter(HoverEffectEnter hoverEnter)
+    {
+        this.hoverEnter = hoverEnter;
+    }
+
     @Override
     public void setForeground(Color c)
     {
         this.lastColor = c;
         super.setForeground(c);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+        if (hoverEnter != null)
+            hoverEnter.onEnter(this);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+        if (hoverExit != null)
+            hoverExit.onExit(this);
     }
 }
