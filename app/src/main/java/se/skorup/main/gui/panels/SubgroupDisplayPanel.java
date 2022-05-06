@@ -2,6 +2,10 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.FlashingButton;
+import se.skorup.main.gui.helper.DoubleColumnGenerator;
+import se.skorup.main.gui.helper.LayoutGenerator;
+import se.skorup.main.gui.helper.SingleColumnGenerator;
+import se.skorup.main.gui.helper.TripleColumnGenerator;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
@@ -13,7 +17,6 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.Comparator;
 public class SubgroupDisplayPanel extends JPanel implements MouseListener
 {
     private final SubgroupPanel sgp;
+    private LayoutGenerator gen;
 
     /**
      * Creates a new SubgroupDisplayPanel
@@ -85,6 +89,21 @@ public class SubgroupDisplayPanel extends JPanel implements MouseListener
     }
 
     /**
+     * Selects the LayoutGenerator to be used.
+     *
+     * @param vgap the vgap to be used.
+     * */
+    private void selectGen(int vgap)
+    {
+        if (sgp.getWidth() < 600)
+            gen = new SingleColumnGenerator(sgp.getWidth(), vgap);
+        else if (sgp.getWidth() < 1100)
+            gen = new DoubleColumnGenerator(sgp.getWidth(), vgap);
+        else
+            gen = new TripleColumnGenerator(sgp.getWidth(), vgap);
+    }
+
+    /**
      * Displays the subgroups to the panel.
      *
      * @param subgroups the subgroups to be displayed.
@@ -107,14 +126,14 @@ public class SubgroupDisplayPanel extends JPanel implements MouseListener
 
         nameList.sort(Comparator.comparingInt(String::length));
         var longestNameLength = nameList.get(nameList.size() - 1).length();
+        this.selectGen(longestNameLength);
 
         this.removeAll();
-        var rows = (int) Math.ceil(subgroups.getGroupCount() / 2.0);
         var container = new JPanel();
-        container.setLayout(new GridLayout(rows, 2, sgp.getWidth() / 3, longestNameLength));
+        container.setLayout(gen.generateLayout(subgroups.getGroupCount()));
         container.setBackground(Utils.BACKGROUND_COLOR);
 
-        int groupIndex = 0;
+        var groupIndex = 0;
         for (var group : subgroups)
         {
             var cont = new JPanel();
