@@ -1,8 +1,8 @@
 package se.skorup.main.gui.components;
 
 import se.skorup.API.util.Utils;
-import se.skorup.main.gui.helper.HoverEffectEnter;
-import se.skorup.main.gui.helper.HoverEffectExit;
+import se.skorup.main.gui.helper.hover.HoverEffectEnter;
+import se.skorup.main.gui.helper.hover.HoverEffectExit;
 
 import javax.swing.JButton;
 import javax.swing.Timer;

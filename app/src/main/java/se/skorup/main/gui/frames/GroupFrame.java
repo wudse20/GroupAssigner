@@ -13,13 +13,11 @@ import se.skorup.main.objects.Person;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ColorUIResource;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;

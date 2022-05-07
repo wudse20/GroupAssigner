@@ -1,4 +1,4 @@
-package se.skorup.main.gui.helper;
+package se.skorup.main.gui.helper.layout;
 
 /**
  * Generates a column generator with two columns.
