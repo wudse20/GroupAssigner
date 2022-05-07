@@ -92,6 +92,7 @@ public class GroupButtonPanel extends JPanel
         {
             this.add(btnClose);
             this.add(btnHelp);
+            this.add(btnLoad);
             this.add(btnCreate);
         }
         else if (panel instanceof SubgroupPanel)
