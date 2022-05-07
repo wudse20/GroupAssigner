@@ -2,10 +2,11 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.SubgroupItemButton;
-import se.skorup.main.gui.helper.DoubleColumnGenerator;
-import se.skorup.main.gui.helper.LayoutGenerator;
-import se.skorup.main.gui.helper.SingleColumnGenerator;
-import se.skorup.main.gui.helper.TripleColumnGenerator;
+import se.skorup.main.gui.helper.Selection;
+import se.skorup.main.gui.helper.layout.DoubleColumnGenerator;
+import se.skorup.main.gui.helper.layout.LayoutGenerator;
+import se.skorup.main.gui.helper.layout.SingleColumnGenerator;
+import se.skorup.main.gui.helper.layout.TripleColumnGenerator;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
@@ -18,11 +19,9 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The panel that displays all the generated
@@ -37,6 +36,7 @@ public class SubgroupDisplayPanel extends JPanel
     private final SubgroupPanel sgp;
     private LayoutGenerator gen;
     private State state = State.NOTHING_SELECTED;
+    private Selection selected = Selection.empty();
 
     /**
      * Creates a new SubgroupDisplayPanel
@@ -132,7 +132,7 @@ public class SubgroupDisplayPanel extends JPanel
         switch (state)
         {
             case NOTHING_SELECTED -> swapGroupName(groupIndex, sgs);
-            case NAME_SELECTED -> { /* TODO */ }
+            case NAME_SELECTED -> addPersonToGroup(groupIndex, sgs);
         }
     }
 
@@ -155,6 +155,44 @@ public class SubgroupDisplayPanel extends JPanel
 
         sgs.setLabel(groupIndex, newName);
         sgp.repaint();
+    }
+
+    /**
+     * Adds a person to a group and removes it from its
+     * current group.
+     *
+     * @param groupIndex the index of the group being added to.
+     * @param sgs the subgroups.
+     * */
+    private void addPersonToGroup(int groupIndex, Subgroups sgs)
+    {
+        if (selected.isEmpty())
+            return;
+
+        sgs.addPersonToGroup(selected.id(), groupIndex);
+        sgs.removePersonFromGroup(selected.id(), selected.group());
+        sgp.repaint();
+    }
+
+    /**
+     * The action of a person.
+     *
+     * @param groupIndex the index of the persons group
+     * @param id the id of the person.
+     * */
+    private void personAction(int groupIndex, int id)
+    {
+        var selection = new Selection(id, groupIndex);
+
+        if (selected.equals(selection))
+        {
+            selected = Selection.empty();
+            state = State.NOTHING_SELECTED;
+            return;
+        }
+
+        state = State.NAME_SELECTED;
+        selected = selection;
     }
 
     /**
@@ -202,7 +240,7 @@ public class SubgroupDisplayPanel extends JPanel
             btn.addActionListener((e) -> groupNameButtonAction(finalGroupIndex, subgroups));
             cont.add(btn);
 
-            for (var p : group)
+            for (final var p : group)
             {
                 var lbl = new JLabel(" ");
                 lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
@@ -211,6 +249,7 @@ public class SubgroupDisplayPanel extends JPanel
                 var btn2 = buildButton(manager.getPersonFromId(p).getName(), longestNameLength);
                 btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
                 btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.FOREGROUND_COLOR));
+                btn2.addActionListener(e -> personAction(finalGroupIndex, p));
                 cont.add(btn2);
             }
 

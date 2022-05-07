@@ -1,4 +1,4 @@
-package se.skorup.main.gui.helper;
+package se.skorup.main.gui.helper.hover;
 
 import se.skorup.main.gui.components.SubgroupItemButton;
 

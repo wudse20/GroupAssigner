@@ -71,6 +71,28 @@ public record Subgroups(
     }
 
     /**
+     * Adds a person to a subgroup.
+     *
+     * @param id the id of the person.
+     * @param groupIndex the index of the group.
+     * */
+    public void addPersonToGroup(int id, int groupIndex)
+    {
+        groups.get(groupIndex).add(id);
+    }
+
+    /**
+     * Removes a person from a subgroup.
+     *
+     * @param id the id of the person.
+     * @param groupIndex the index of the group.
+     * */
+    public void removePersonFromGroup(int id, int groupIndex)
+    {
+        groups.get(groupIndex).remove(id);
+    }
+
+    /**
      * Gets the number of groups available
      * in this subgroups instance.
      *

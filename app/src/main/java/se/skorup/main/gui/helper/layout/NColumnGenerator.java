@@ -1,4 +1,4 @@
-package se.skorup.main.gui.helper;
+package se.skorup.main.gui.helper.layout;
 
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
