@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.SubgroupItemButton;
 import se.skorup.main.gui.helper.Selection;
@@ -37,6 +38,7 @@ public class SubgroupDisplayPanel extends JPanel
     private LayoutGenerator gen;
     private State state = State.NOTHING_SELECTED;
     private Selection selected = Selection.empty();
+    private ImmutableArray<SubgroupItemButton> groupButtons = ImmutableArray.empty();
 
     /**
      * Creates a new SubgroupDisplayPanel
@@ -75,19 +77,6 @@ public class SubgroupDisplayPanel extends JPanel
         fb.setBackground(Utils.BACKGROUND_COLOR);
         fb.setBorder(BorderFactory.createLineBorder(Utils.BACKGROUND_COLOR));
         return fb;
-    }
-
-    /**
-     * Builds a FlashingButton with a text padded with
-     * spaces to a given length and with the default
-     * foreground color set as it's color.
-     *
-     * @param text the text of the button, i.e. the label.
-     * @param length the length the text will be padded to.
-     * */
-    private SubgroupItemButton buildButton(String text, int length)
-    {
-        return buildButton(text, length, Utils.FOREGROUND_COLOR);
     }
 
     /**
@@ -166,11 +155,13 @@ public class SubgroupDisplayPanel extends JPanel
      * */
     private void addPersonToGroup(int groupIndex, Subgroups sgs)
     {
-        if (selected.isEmpty())
+        if (selected.isEmpty() || selected.group() == groupIndex)
             return;
 
         sgs.addPersonToGroup(selected.id(), groupIndex);
         sgs.removePersonFromGroup(selected.id(), selected.group());
+        selected = Selection.empty();
+        state = State.NOTHING_SELECTED;
         sgp.repaint();
     }
 
@@ -188,11 +179,13 @@ public class SubgroupDisplayPanel extends JPanel
         {
             selected = Selection.empty();
             state = State.NOTHING_SELECTED;
+            sgp.repaint();
             return;
         }
 
         state = State.NAME_SELECTED;
         selected = selection;
+        sgp.repaint();
     }
 
     /**
@@ -225,6 +218,7 @@ public class SubgroupDisplayPanel extends JPanel
         container.setLayout(gen.generateLayout(subgroups.getGroupCount()));
         container.setBackground(Utils.BACKGROUND_COLOR);
 
+        var groupBtnList = new ArrayList<SubgroupItemButton>();
         var groupIndex = 0;
         for (var group : subgroups)
         {
@@ -239,6 +233,7 @@ public class SubgroupDisplayPanel extends JPanel
             final var finalGroupIndex = groupIndex - 1;
             btn.addActionListener((e) -> groupNameButtonAction(finalGroupIndex, subgroups));
             cont.add(btn);
+            groupBtnList.add(btn);
 
             for (final var p : group)
             {
@@ -246,9 +241,12 @@ public class SubgroupDisplayPanel extends JPanel
                 lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
                 cont.add(lbl);
 
-                var btn2 = buildButton(manager.getPersonFromId(p).getName(), longestNameLength);
-                btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
-                btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.FOREGROUND_COLOR));
+                var txtColor = selected.id() == p ? Utils.SELECTED_COLOR : Utils.FOREGROUND_COLOR;
+                var txtColor2 = selected.id() == p ? Utils.FOREGROUND_COLOR : Utils.SELECTED_COLOR;
+                var name = manager.getPersonFromId(p).getName();
+                var btn2 = buildButton(name, longestNameLength, txtColor);
+                btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
+                btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, txtColor));
                 btn2.addActionListener(e -> personAction(finalGroupIndex, p));
                 cont.add(btn2);
             }
@@ -257,8 +255,32 @@ public class SubgroupDisplayPanel extends JPanel
             container.add(cont);
         }
 
+        this.groupButtons = ImmutableArray.fromList(groupBtnList);
         this.add(container);
         this.revalidate();
         this.repaint();
+
+        if (state.equals(State.NAME_SELECTED))
+        {
+            groupButtons.dropMatching(groupButtons.get(selected.group()))
+                        .forEach(b -> b.startFlashing(
+                            500, Utils.FLASH_COLOR,
+                            Utils.MAIN_GROUP_1_COLOR, Utils.MAIN_GROUP_2_COLOR
+                        ));
+        }
+    }
+
+    /**
+     * Resets the panel.
+     * */
+    public void reset()
+    {
+        groupButtons.forEach(SubgroupItemButton::stopFlashing);
+
+        this.removeAll();
+        this.selected = Selection.empty();
+        this.state = State.NOTHING_SELECTED;
+        this.groupButtons = ImmutableArray.empty();
+        this.revalidate();
     }
 }

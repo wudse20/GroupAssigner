@@ -116,6 +116,7 @@ public class SubgroupPanel extends JPanel
 
                 gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 2 : 0);
                 current = sg;
+                sdp.reset();
                 sdp.displaySubgroup(current, gm);
             });
         });
@@ -450,6 +451,7 @@ public class SubgroupPanel extends JPanel
         DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
         DebugMethods.log(current, DebugMethods.LogType.DEBUG);
 
+        sdp.reset();
         sdp.displaySubgroup(current, gm);
     }
 
