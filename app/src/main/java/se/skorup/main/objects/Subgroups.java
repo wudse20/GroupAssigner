@@ -60,6 +60,17 @@ public record Subgroups(
     }
 
     /**
+     * Sets the label of a given index.
+     *
+     * @param index the group index.
+     * @param label the new label of the group.
+     * */
+    public void setLabel(int index, String label)
+    {
+        labels[index] = label;
+    }
+
+    /**
      * Gets the number of groups available
      * in this subgroups instance.
      *

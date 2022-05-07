@@ -13,13 +13,16 @@ import se.skorup.main.objects.Subgroups;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The panel that displays all the generated
@@ -28,8 +31,12 @@ import java.util.Comparator;
  * */
 public class SubgroupDisplayPanel extends JPanel
 {
+    /** The state for the buttons. */
+    enum State { NOTHING_SELECTED, NAME_SELECTED }
+
     private final SubgroupPanel sgp;
     private LayoutGenerator gen;
+    private State state = State.NOTHING_SELECTED;
 
     /**
      * Creates a new SubgroupDisplayPanel
@@ -114,6 +121,43 @@ public class SubgroupDisplayPanel extends JPanel
     }
 
     /**
+     * The action of a groupName.
+     *
+     * @param groupIndex the index of the group the action
+     *                   is applied to.
+     * @param sgs the subgroups.
+     * */
+    private void groupNameButtonAction(int groupIndex, Subgroups sgs)
+    {
+        switch (state)
+        {
+            case NOTHING_SELECTED -> swapGroupName(groupIndex, sgs);
+            case NAME_SELECTED -> { /* TODO */ }
+        }
+    }
+
+    /**
+     * Asks the user for a new name and sets the new name to the
+     * group.
+     *
+     * @param groupIndex the index of the group.
+     * @param sgs the subgroups.
+     * */
+    private void swapGroupName(int groupIndex, Subgroups sgs)
+    {
+        var newName = JOptionPane.showInputDialog(
+            this, "Vad ska %s heta?".formatted(sgs.getLabel(groupIndex)),
+            "Nytt namn", JOptionPane.INFORMATION_MESSAGE
+        );
+
+        if (newName == null || newName.trim().isEmpty())
+            return;
+
+        sgs.setLabel(groupIndex, newName);
+        sgp.repaint();
+    }
+
+    /**
      * Displays the subgroups to the panel.
      *
      * @param subgroups the subgroups to be displayed.
@@ -154,6 +198,8 @@ public class SubgroupDisplayPanel extends JPanel
             var btn = buildButton(subgroups.getLabel(groupIndex++) + ':', longestNameLength, Utils.GROUP_NAME_COLOR);
             btn.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
             btn.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.GROUP_NAME_COLOR));
+            final var finalGroupIndex = groupIndex - 1;
+            btn.addActionListener((e) -> groupNameButtonAction(finalGroupIndex, subgroups));
             cont.add(btn);
 
             for (var p : group)
