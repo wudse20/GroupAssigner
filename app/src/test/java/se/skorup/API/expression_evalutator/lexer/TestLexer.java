@@ -184,6 +184,39 @@ public class TestLexer
         testErrorSize(l, 0);
     }
 
+    @Test
+    public void testLexAlphaNumericConstantName()
+    {
+        var inp = "let kaka2 = 51";
+        var t1 = new SyntaxToken(SyntaxKind.LetToken, 0, "let", 0);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 3, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.IdentifierToken, 4, "kaka2", 0);
+        var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 9, " ", 0);
+        var t5 = new SyntaxToken(SyntaxKind.EqualsToken, 10, "=", 0);
+        var t6 = new SyntaxToken(SyntaxKind.WhitespaceToken, 11, " ", 0);
+        var t7 = new SyntaxToken(SyntaxKind.NumberToken, 12, "51", 51);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5, t6, t7);
+        testErrorSize(l, 0);
+    }
+
+    @Test
+    public void testLexAlphaNumericConstantNameError()
+    {
+        var inp = "let 2kaka = 51";
+        var t1 = new SyntaxToken(SyntaxKind.LetToken, 0, "let", 0);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 3, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.NumberToken, 4, "2", 2);
+        var t4 = new SyntaxToken(SyntaxKind.IdentifierToken, 5, "kaka", 0);
+        var t5 = new SyntaxToken(SyntaxKind.WhitespaceToken, 9, " ", 0);
+        var t6 = new SyntaxToken(SyntaxKind.EqualsToken, 10, "=", 0);
+        var t7 = new SyntaxToken(SyntaxKind.WhitespaceToken, 11, " ", 0);
+        var t8 = new SyntaxToken(SyntaxKind.NumberToken, 12, "51", 51);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5, t6, t7, t8);
+        testErrorSize(l, 0);
+    }
+
     /**
      * Tests the number of errors.
      *

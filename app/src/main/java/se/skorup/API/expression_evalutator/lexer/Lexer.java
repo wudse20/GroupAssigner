@@ -102,7 +102,7 @@ public class Lexer
         if (Character.isAlphabetic(current()))
         {
             var start = position;
-            var t = lexType(start, Character::isAlphabetic);
+            var t = lexType(start, c -> Character.isAlphabetic(c) || Character.isDigit(c));
 
             //TODO: Maybe something nicer in the future
             if (t.equals("let"))
