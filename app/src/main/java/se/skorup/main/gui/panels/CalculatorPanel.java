@@ -206,13 +206,14 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
                     "Constant %s wasn't found!".formatted(lastConstantError),
                     DebugMethods.LogType.ERROR
                 );
+
+                lastVarCallValid = true;
             }
         }
         else
         {
-            var errors = parser.getDiagnostics().mkString("\n");
-            DebugMethods.log(errors, DebugMethods.LogType.ERROR);
-            output.appendColoredString("<light_red>%s</light_red>".formatted(errors));
+            parser.getDiagnostics().map("<light_red>%s</light_red>"::formatted).forEach(output::appendColoredString);
+            parser.getDiagnostics().forEach(s -> DebugMethods.log(s, DebugMethods.LogType.ERROR));
         }
 
         input.clear();

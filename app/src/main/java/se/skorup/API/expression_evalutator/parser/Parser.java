@@ -248,7 +248,7 @@ public class Parser
      *
      * @return the diagnostics of the parser.
      * */
-    public ImmutableCollection<String> getDiagnostics()
+    public ImmutableArray<String> getDiagnostics()
     {
         return ImmutableArray.fromList(diagnostics);
     }
