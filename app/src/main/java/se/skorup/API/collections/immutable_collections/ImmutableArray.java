@@ -558,4 +558,14 @@ public class ImmutableArray<E> implements ImmutableCollection<E>, Iterable<E>
 
         return ImmutableArray.fromList(al);
     }
+
+    /**
+     * Creates an empty ImmutableArray of type T.
+     *
+     * @param <T> The type of the elements.
+     * */
+    public static <T> ImmutableArray<T> empty()
+    {
+        return new ImmutableArray<>();
+    }
 }
