@@ -26,7 +26,8 @@ public class HelpCommand implements Command
         res.append("<idea_purple>*</idea_purple> - multiplikation, denna tar två uttryck och beräknar deras produkt.\n");
         res.append("<idea_purple>/</idea_purple> - division, denna tar två uttryck och dividerar dem.\n");
         res.append("<idea_purple>%</idea_purple> - modulo, denna tar två uttryck och retunerar resten då det vänstra uttrcket divideras med det högra.\n");
-        res.append("Exempel: 5 % 2 = 1, ty 5 / 2 = 2 rest 1</green>");
+        res.append("Exempel: 5 % 2 = 1, ty 5 / 2 = 2 rest 1\n");
+        res.append("<idea_purple>**</idea_purple> - potens, denna tar två uttryck och returnerar a ^ b.</green>");
         return new CommandResult(res.toString(), true);
     }
 
