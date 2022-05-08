@@ -104,6 +104,15 @@ public class TestExpressionSyntaxHighlighting
                 )
         ));
 
+        al.add(new SyntaxHighlightTest(
+            "5 ** 2",
+            "<%s>5</%s> <%s>**</%s> <%s>2</%s>".formatted(
+                LITERAL_COLOR, LITERAL_COLOR, OPERATOR_COLOR, OPERATOR_COLOR,
+                LITERAL_COLOR, LITERAL_COLOR
+            )
+        ));
+
+
         var arr = new SyntaxHighlightTest[al.size()];
         al.toArray(arr);
         return arr;

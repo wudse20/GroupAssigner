@@ -129,6 +129,7 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
             case AstrixToken:
             case EqualsToken:
             case PercentToken:
+            case DoubleAstrixToken:
                 syntaxHighlightColor(sb, t.text(), OPERATOR_COLOR);
                 break;
             case NumberToken:
