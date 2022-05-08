@@ -21,8 +21,8 @@ public enum SyntaxKind
     EqualsToken(0, 0),
     LetToken(0, 0);
 
-    private final int binaryPrecedence;
     private final int unaryPrecedence;
+    private int binaryPrecedence;
 
     /**
      * Initializes the value with a precedence.
@@ -43,6 +43,11 @@ public enum SyntaxKind
      * */
     public int getBinaryPrecedence()
     {
+        // The hack of a lifetime :)
+        // Hack to get it to bind from right.
+        if (this.equals(DoubleAstrixToken))
+            return ++this.binaryPrecedence;
+
         return binaryPrecedence;
     }
 

@@ -10,7 +10,7 @@ public abstract class BinaryOperator implements Expression
     private final Expression left;
     private final Expression right;
 
-    private final char sign;
+    private final String sign;
 
     /**
      * Creates a new BinaryOperator.
@@ -19,7 +19,7 @@ public abstract class BinaryOperator implements Expression
      * @param right the right-hand side of the operator.
      * @param sign the sign of the expression.
      * */
-    protected BinaryOperator(Expression left, Expression right, char sign)
+    protected BinaryOperator(Expression left, Expression right, String sign)
     {
         this.left = left;
         this.right = right;
@@ -44,6 +44,6 @@ public abstract class BinaryOperator implements Expression
     @Override
     public String toString()
     {
-        return "%s %c %s".formatted(left, sign, right);
+        return "%s %s %s".formatted(left, sign, right);
     }
 }

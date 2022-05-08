@@ -251,7 +251,6 @@ public class TestLexer
         testErrorSize(l, 0);
     }
 
-
     /**
      * Tests the number of errors.
      *
@@ -276,7 +275,7 @@ public class TestLexer
 
         for (var t : tokens)
         {
-            assertEquals(l.nextToken(), t);
+            assertEquals(t, l.nextToken());
         }
 
         testEOF(l.nextToken());

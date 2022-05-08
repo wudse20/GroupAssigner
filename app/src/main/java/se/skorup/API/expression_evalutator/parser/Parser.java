@@ -157,11 +157,12 @@ public class Parser
             var right = parseExpression(precedence);
 
             left = switch (opToken.text()) {
-                case "+" -> new Plus(left, right);
-                case "-" -> new Minus(left, right);
-                case "*" -> new Multiplication(left, right);
-                case "/" -> new Division(left, right);
-                case "%" -> new Modulo(left, right);
+                case "+"  -> new Plus(left, right);
+                case "-"  -> new Minus(left, right);
+                case "*"  -> new Multiplication(left, right);
+                case "/"  -> new Division(left, right);
+                case "%"  -> new Modulo(left, right);
+                case "**" -> new Power(left, right);
                 default -> throw new RuntimeException("Illegal Input"); // should never happen.
             };
         }

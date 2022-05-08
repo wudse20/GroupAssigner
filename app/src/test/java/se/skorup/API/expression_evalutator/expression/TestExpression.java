@@ -310,6 +310,16 @@ public class TestExpression
         assertEquals((123 * 123 + 32) % (523 * 2 - (3 + 2)), mod.getValue(alwaysZeroEnv));
     }
 
+    @Test
+    public void testPowerExpression()
+    {
+        var expr1 = new Parser("5 ** 2").parse();
+        var expr2 = new Parser("5").parse();
+        var power = new Power(expr1, expr2);
+
+        assertEquals(Math.pow(25, 5), power.getValue(alwaysZeroEnv));
+    }
+
     public ToStringTest[] getData()
     {
         var list = new ArrayList<ToStringTest>();
@@ -323,6 +333,8 @@ public class TestExpression
         list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5 + 3").parse()));
         list.add(new ToStringTest("5.0 % 2.0", new Parser("5 % 2").parse()));
         list.add(new ToStringTest("var(x) % 2.0", new Parser("x % 2").parse()));
+        list.add(new ToStringTest("5.0 ** 2.0", new Parser("5 ** 2").parse()));
+        list.add(new ToStringTest("5.0 ** var(x)", new Parser("5 ** x").parse()));
 
         var arr = new ToStringTest[list.size()];
         list.toArray(arr);

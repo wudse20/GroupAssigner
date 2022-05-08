@@ -1,5 +1,6 @@
 package se.skorup.API.expression_evalutator.parser;
 
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -93,6 +94,18 @@ public class TestParser
         list.add(new TestParserData("(6 + 2) % 2", 0, alwaysZeroEnv));
         list.add(new TestParserData("6 + 1 % 2", 7, alwaysZeroEnv));
         list.add(new TestParserData("(6 + 1) % 2", 1, alwaysZeroEnv));
+        list.add(new TestParserData("5 ** 2", 25, alwaysZeroEnv));
+        list.add(new TestParserData("5 * 5 ** 2", 5 * Math.pow(5, 2), alwaysZeroEnv));
+        list.add(new TestParserData("cookie ** 2", COOKIE * COOKIE, cookieEnv));
+        list.add(new TestParserData("(cookie ** 2) % 2", 0, cookieEnv));
+        list.add(new TestParserData("5 ** (2 ** 2)", Math.pow(5, 4), alwaysZeroEnv));
+        list.add(new TestParserData("2 ** (3 ** 4)", Math.pow(2, Math.pow(3, 4)), alwaysZeroEnv));
+        list.add(new TestParserData("5 ** 2 ** 2", Math.pow(5, 4), alwaysZeroEnv));
+        list.add(new TestParserData("2 ** 3 ** 4", Math.pow(2, Math.pow(3, 4)), alwaysZeroEnv));
+        list.add(new TestParserData("let x = 5 ** 2 ** 3", Math.pow(5, 8), alwaysZeroEnv));
+        list.add(new TestParserData("(let x = 3) ** (let y = 4) ** (let z = 5)", Math.pow(3, Math.pow(4, 5)), alwaysZeroEnv));
+        list.add(new TestParserData("5 ** 2 + 5 ** 2", 50, alwaysZeroEnv));
+        list.add(new TestParserData("(2 ** 2) ** 4", Math.pow(4, 4), alwaysZeroEnv));
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);
@@ -104,8 +117,8 @@ public class TestParser
     public void testParser(TestParserData t)
     {
         var p = new Parser(t.expression);
-        assertEquals(t.expected, p.parse().getValue(t.env));
-        assertEquals(0, p.getDiagnostics().size());
+        assertEquals(t.expected, p.parse().getValue(t.env), "ACTUAL VALUE");
+        assertEquals(0, p.getDiagnostics().size(), "ERRORS");
     }
 
     @ParameterizedTest
