@@ -217,6 +217,41 @@ public class TestLexer
         testErrorSize(l, 0);
     }
 
+    @Test
+    public void testLexDoubleAstrixToken()
+    {
+        var inp = "5 ** 2";
+        var t1 = new SyntaxToken(SyntaxKind.NumberToken, 0, "5", 5);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 1, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.DoubleAstrixToken, 2, "**", 0);
+        var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 4, " ", 0);
+        var t5 = new SyntaxToken(SyntaxKind.NumberToken, 5, "2", 2);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5);
+        testErrorSize(l, 0);
+    }
+
+    @Test
+    public void testLexDoubleAstrixTokenWithLet()
+    {
+        var inp = "let kaka = 5 ** 2";
+        var t1 = new SyntaxToken(SyntaxKind.LetToken, 0, "let", 0);
+        var t2 = new SyntaxToken(SyntaxKind.WhitespaceToken, 3, " ", 0);
+        var t3 = new SyntaxToken(SyntaxKind.IdentifierToken, 4, "kaka", 0);
+        var t4 = new SyntaxToken(SyntaxKind.WhitespaceToken, 8, " ", 0);
+        var t5 = new SyntaxToken(SyntaxKind.EqualsToken, 9, "=", 0);
+        var t6 = new SyntaxToken(SyntaxKind.WhitespaceToken, 10, " ", 0);
+        var t7 = new SyntaxToken(SyntaxKind.NumberToken, 11, "5", 5);
+        var t8 = new SyntaxToken(SyntaxKind.WhitespaceToken, 12, " ", 0);
+        var t9 = new SyntaxToken(SyntaxKind.DoubleAstrixToken, 13, "**", 0);
+        var t10 = new SyntaxToken(SyntaxKind.WhitespaceToken, 15, " ", 0);
+        var t11 = new SyntaxToken(SyntaxKind.NumberToken, 16, "2", 2);
+
+        var l = testManyTokens(inp, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+        testErrorSize(l, 0);
+    }
+
+
     /**
      * Tests the number of errors.
      *

@@ -204,6 +204,21 @@ public class Utils
         return _colorMap;
     }
 
+    /**
+     * Pads a string to a specified length. If
+     * {@code org.length() >= length} then the
+     * org will be return. So if we have a length
+     * that is larger or equal to the legnth of the
+     * string then it won't do anything.
+     *
+     * @param org the String to be padded.
+     * @param pad the char to pad with.
+     * @param length the new length of the String.
+     * @return A string padded to length: length
+     *         if {@code org.length() >= length}
+     *         then it will send the original
+     *         string back.
+     * */
     public static String padString(String org, char pad, int length)
     {
         if (org.length() >= length)

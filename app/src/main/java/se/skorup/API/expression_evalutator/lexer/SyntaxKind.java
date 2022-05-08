@@ -14,6 +14,7 @@ public enum SyntaxKind
     AstrixToken(2, 0),
     SlashToken(2, 0),
     PercentToken(2, 0),
+    DoubleAstrixToken(2, 0),
     OpenParenthesisToken(0, 0),
     CloseParenthesisToken(0, 0),
     IdentifierToken(0, 0),

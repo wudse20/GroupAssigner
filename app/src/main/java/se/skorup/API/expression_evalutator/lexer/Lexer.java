@@ -38,10 +38,22 @@ public class Lexer
      * */
     private char current()
     {
-        if (position >= text.length())
+        return peek(0);
+    }
+
+    /**
+     * Peeks in to the future.
+     *
+     * @param steps the number of steps to peek into the future.
+     * */
+    private char peek(int steps)
+    {
+        var newPos = position + steps;
+
+        if (newPos >= text.length())
             return '\0';
 
-        return text.charAt(position);
+        return text.charAt(newPos);
     }
 
     /**
@@ -115,7 +127,16 @@ public class Lexer
             // TODO: Swap position++ for something cleaner.
             case '+' -> new SyntaxToken(SyntaxKind.PlusToken, position++, "+", 0);
             case '-' -> new SyntaxToken(SyntaxKind.MinusToken, position++, "-", 0);
-            case '*' -> new SyntaxToken(SyntaxKind.AstrixToken, position++, "*", 0);
+            case '*' -> {
+                if (peek(1) == '*')
+                {
+                    var pos = position;
+                    position += 2;
+                    yield new SyntaxToken(SyntaxKind.DoubleAstrixToken, pos, "**", 0);
+                }
+
+                yield new SyntaxToken(SyntaxKind.AstrixToken, position++, "*", 0);
+            }
             case '/' -> new SyntaxToken(SyntaxKind.SlashToken, position++, "/", 0);
             case '(' -> new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", 0);
             case ')' -> new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", 0);
