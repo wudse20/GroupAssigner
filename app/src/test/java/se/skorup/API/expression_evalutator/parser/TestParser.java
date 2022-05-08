@@ -106,6 +106,12 @@ public class TestParser
         list.add(new TestParserData("(let x = 3) ** (let y = 4) ** (let z = 5)", Math.pow(3, Math.pow(4, 5)), alwaysZeroEnv));
         list.add(new TestParserData("5 ** 2 + 5 ** 2", 50, alwaysZeroEnv));
         list.add(new TestParserData("(2 ** 2) ** 4", Math.pow(4, 4), alwaysZeroEnv));
+        list.add(new TestParserData("-2 ** 2", Math.pow(2, 2), alwaysZeroEnv));
+        list.add(new TestParserData("-2 ** 2 ** 2", Math.pow(2, Math.pow(2, 2)), alwaysZeroEnv));
+        list.add(new TestParserData("-2 ** 2 ** 2 ** 2", 65536, alwaysZeroEnv));
+        list.add(new TestParserData("(-2) ** (-2)", Math.pow(-2, -2), alwaysZeroEnv));
+        list.add(new TestParserData("-(-2) ** (-2)", Math.pow(-2, -2), alwaysZeroEnv));
+
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);
