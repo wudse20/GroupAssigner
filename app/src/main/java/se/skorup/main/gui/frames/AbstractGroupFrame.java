@@ -66,12 +66,14 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      * Creates a new AbstractGroupFrame.
      *
      * @param title the title of the frame.
+     * @param shouldAddImport If {@code true} the import button will be added,
+     *                        else it won't.
      * */
-    protected AbstractGroupFrame(String title)
+    protected AbstractGroupFrame(String title, boolean shouldAddImport)
     {
         super(title);
         this.setProperties();
-        this.addComponents();
+        this.addComponents(shouldAddImport);
     }
 
     /**
@@ -80,10 +82,12 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      *
      * @param title the title of the frame.
      * @param gm the GroupManager that it should be initialized with.
+     * @param shouldAddImport If {@code true} the import button will be added,
+     *                        else it won't.
      * */
-    protected AbstractGroupFrame(String title, GroupManager gm)
+    protected AbstractGroupFrame(String title, GroupManager gm, boolean shouldAddImport)
     {
-        this(title);
+        this(title, shouldAddImport);
         this.result = gm;
     }
 
@@ -179,12 +183,18 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
 
     /**
      * Adds the components.
+     *
+     * @param shouldAddImport If {@code true} the import button will be added,
+     *                        else it won't.
      * */
-    protected void addComponents()
+    protected void addComponents(boolean shouldAddImport)
     {
         pInputContainer.add(pName);
         pInputContainer.add(pInputGroupMember);
         pInputContainer.add(new JLabel(" "));
+
+        if (shouldAddImport)
+            pButtons.add(btnImport);
 
         pButtons.add(btnRemove);
         pButtons.add(btnCancel);

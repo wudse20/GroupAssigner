@@ -21,7 +21,7 @@ public final class AddGroupFrame extends AbstractGroupFrame
      * */
     public AddGroupFrame()
     {
-        super("Skapa en grupp!");
+        super("Skapa en grupp!", true);
     }
 
     /**
