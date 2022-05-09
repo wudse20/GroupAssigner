@@ -144,6 +144,7 @@ public class Utils
         catch (IOException e)
         {
             DebugMethods.log(e, DebugMethods.LogType.ERROR);
+            DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
 
             JOptionPane.showMessageDialog(
                 null, "Kunde inte spara filen!\nFel: %s".formatted(e.getLocalizedMessage()),

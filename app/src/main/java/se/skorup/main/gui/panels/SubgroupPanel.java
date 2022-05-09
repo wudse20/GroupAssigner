@@ -4,6 +4,7 @@ import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.groups.creators.AlternateWishlistGroupCreator;
 import se.skorup.main.groups.creators.GroupCreator;
+import se.skorup.main.groups.creators.MultiWishlistCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
 import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
@@ -444,8 +445,8 @@ public class SubgroupPanel extends JPanel
 
         current = new Subgroups(
            null, groups, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-            gc instanceof WishlistGroupCreator, new String[groups.size()],
-            new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+            gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
+            new String[groups.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
         );
 
         DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);

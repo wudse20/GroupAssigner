@@ -18,19 +18,52 @@ import java.util.stream.Collectors;
  * */
 public final class AlternateWishlistGroupCreator extends WishlistGroupCreator
 {
+    private boolean shouldUseStartPerson;
+    private Person startingPerson;
+
+
     /**
      * Creates a new GroupCreator.
      *
      * @param gm the group manager used to create
      *           the subgroups.
-     */
+     * */
     public AlternateWishlistGroupCreator(GroupManager gm)
     {
         super(gm);
     }
 
+    /**
+     * Creates a new GroupCreator, with a starting person.
+     *
+     * @param gm the group manager used to create the subgroups.
+     * @param p the person to start with.
+     * */
+    public AlternateWishlistGroupCreator(GroupManager gm, Person p)
+    {
+        this(gm);
+        this.startingPerson = p;
+        this.shouldUseStartPerson = true;
+    }
+
     @Override
     protected Person getPerson(
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
+    ) throws NoGroupAvailableException
+    {
+        if (shouldUseStartPerson && startingPerson != null)
+        {
+            var person = startingPerson;
+            startingPerson = null;
+            candidates.remove(person);
+            return person;
+        }
+
+        return noStartGetPerson(current, candidates, wish, deny, added, p);
+    }
+
+    private Person noStartGetPerson(
         Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
         Set<Tuple> deny, Set<Integer> added, Person p
     ) throws NoGroupAvailableException
