@@ -85,7 +85,7 @@ public class MultiWishlistCreator implements GroupCreator
         var sb = new StringBuilder();
         sb.append("Antal personer: ").append(n).append('\n');
         sb.append("Beräknad konstant (PSI): ").append(psi).append("\n".repeat(2));
-        sb.append("Antal personer som fått antal önskningar");
+        sb.append("Antal personer som fått antal önskningar: \n");
 
         for (int i = 0; i < x.length; i++)
             sb.append(i).append(" önskningar: ").append(x[i]).append('\n');
