@@ -2,6 +2,7 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
+import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.gui.components.SubgroupItemButton;
 import se.skorup.main.gui.helper.Selection;
 import se.skorup.main.gui.helper.layout.DoubleColumnGenerator;
@@ -243,8 +244,8 @@ public class SubgroupDisplayPanel extends JPanel
 
                 var txtColor = selected.id() == p ? Utils.SELECTED_COLOR : Utils.FOREGROUND_COLOR;
                 var txtColor2 = selected.id() == p ? Utils.FOREGROUND_COLOR : Utils.SELECTED_COLOR;
-                var name = manager.getPersonFromId(p).getName();
-                var btn2 = buildButton(name, longestNameLength, txtColor);
+                var label = getLabel(p, manager, subgroups);
+                var btn2 = buildButton(label, longestNameLength, txtColor);
                 btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
                 btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, txtColor));
                 btn2.addActionListener(e -> personAction(finalGroupIndex, p));
@@ -268,6 +269,17 @@ public class SubgroupDisplayPanel extends JPanel
                             Utils.MAIN_GROUP_1_COLOR, Utils.MAIN_GROUP_2_COLOR
                         ));
         }
+    }
+
+    private String getLabel(int p, GroupManager manager, Subgroups sg)
+    {
+        if (sg.isWishListMode())
+            return "%s (%d)".formatted(
+                manager.getPersonFromId(p).getName(),
+                sg.getNumberOfWishes(p, manager)
+            );
+
+        return manager.getPersonFromId(p).getName();
     }
 
     /**

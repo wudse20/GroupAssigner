@@ -1,6 +1,8 @@
 package se.skorup.main.objects;
 
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.main.groups.creators.WishlistGroupCreator;
+import se.skorup.main.manager.GroupManager;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -101,6 +103,31 @@ public record Subgroups(
     public int getGroupCount()
     {
         return groups.size();
+    }
+
+    /**
+     * Figures out the number of wishes for a person in
+     * its subgroup.
+     *
+     * @param id the id of the person.
+     * @param gm the group manager in use.
+     * */
+    public int getNumberOfWishes(int id, GroupManager gm)
+    {
+        var wishes = new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), id));
+
+        ImmutableHashSet<Integer> group = null;
+        for (var g : groups)
+        {
+            if (g.contains(id))
+            {
+                group = new ImmutableHashSet<>(g);
+                break;
+            }
+        }
+
+        assert group != null;
+        return wishes.intersection(group).size();
     }
 
     @Override
