@@ -9,7 +9,6 @@ import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -39,7 +38,7 @@ public class MultiWishlistCreator implements GroupCreator
      * @param groups the groups.
      * @return the score of the group.
      * */
-    private int getScore(List<Set<Integer>> groups)
+    private double getScore(List<Set<Integer>> groups)
     {
         var candidates = new ImmutableHashSet<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
         var n = candidates.size();
@@ -62,12 +61,18 @@ public class MultiWishlistCreator implements GroupCreator
             x[wishes.intersection(group).size()] += 1;
         }
 
-        var numerator = 0;
-        for (var i = 1; i < x.length; i++)
-            numerator += Math.pow(x[i], n - i);
+        var w = 0;
+        for (int i = 0; i < x.length; i++)
+            if (x[i] != 0)
+                w = i;
 
-        var psi = (numerator / n) - 100 * x[0];
-        printStatistics(n, x, psi);
+        var numerator = 0d;
+        for (var i = 1; i < x.length; i++)
+            numerator += Math.pow(x[i], 1d / i);
+
+        var psi = (numerator / n) - Math.pow(x[0] * (n - 1), 1d / (n - 1));
+        DebugMethods.log("PSI: %f".formatted(psi), DebugMethods.LogType.DEBUG);
+        printStatistics(n, x, w, psi);
         return psi;
     }
 
@@ -77,18 +82,20 @@ public class MultiWishlistCreator implements GroupCreator
      * @param n the number of persons in the group.
      * @param x {@code x[i]} corresponds to number of people
      *          that got {@code i} wishes.
+     * @param w the maximum amount of wishes a person got granted.
      * @param psi the result of the value that were calculated
      *            for this generation.
      * */
-    private void printStatistics(int n, int[] x, int psi)
+    private void printStatistics(int n, int[] x, int w, double psi)
     {
         var sb = new StringBuilder();
         sb.append("Antal personer: ").append(n).append('\n');
-        sb.append("Beräknad konstant (PSI): ").append(psi).append("\n".repeat(2));
+        sb.append("Beräknad konstant (PSI): ").append(psi).append('\n');
+        sb.append("Maximalt antal önskningar: ").append(w).append("\n".repeat(2));
         sb.append("Antal personer som fått antal önskningar: \n");
 
-        for (int i = 0; i < x.length; i++)
-            sb.append(i).append(" önskningar: ").append(x[i]).append('\n');
+        for (int i = 0; i < w + 1 && i < x.length; i++)
+            sb.append(i).append("st önskningar: ").append(x[i]).append('\n');
 
         var f = new File(Utils.getFolderName() + "/group_data/");
         f.mkdirs();
@@ -122,10 +129,10 @@ public class MultiWishlistCreator implements GroupCreator
         }
 
         return allGroups.stream()
-                .map(x -> new IntermediateResult(x, getScore(x)))
-                .max(Comparator.comparingInt(a -> a.score))
-                .orElse(new IntermediateResult(allGroups.get(0), 0))
-                .groups();
+                        .map(x -> new IntermediateResult(x, getScore(x)))
+                        .max(Comparator.comparingDouble(IntermediateResult::score))
+                        .orElse(new IntermediateResult(allGroups.get(0), 0))
+                        .groups();
     }
 
     @Override
@@ -146,6 +153,6 @@ public class MultiWishlistCreator implements GroupCreator
         return "Skapa grupper efter önskningar alternativ 3";
     }
 
-    private record IntermediateResult(List<Set<Integer>> groups, int score) {}
+    private record IntermediateResult(List<Set<Integer>> groups, double score) {}
     private interface GroupAction { List<Set<Integer>> action(AlternateWishlistGroupCreator awgc); }
 }

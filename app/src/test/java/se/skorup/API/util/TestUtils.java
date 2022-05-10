@@ -66,4 +66,26 @@ public class TestUtils
             assertEquals(org, str);
         }
     }
+
+    public static Stream<Arguments> getPowData()
+    {
+        return Stream.of(
+            Arguments.of(5, 2, 5 * 5),
+            Arguments.of(5, -2, 0),
+            Arguments.of(2, 31, Integer.MIN_VALUE),
+            Arguments.of(-5, 2, 25),
+            Arguments.of(-5, 3, -125),
+            Arguments.of(5, 5, (int) Math.pow(5, 5)),
+            Arguments.of(10, 3, 1000),
+            Arguments.of(10, 7, (int) Math.pow(10, 7)),
+            Arguments.of(7, 4, (int) Math.pow(7, 4))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getPowData")
+    public void testPowers(int b, int e, int expected)
+    {
+        assertEquals(Utils.pow(b, e), expected);
+    }
 }

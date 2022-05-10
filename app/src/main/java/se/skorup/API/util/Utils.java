@@ -227,4 +227,36 @@ public class Utils
 
         return org + Character.toString(pad).repeat(length - org.length());
     }
+
+    /**
+     * Computes base raised to the exp:th power.
+     *
+     * @param base the base of the power.
+     * @param exp  the exponent of the power.
+     * @return the mathematical value of base ^ exp.
+     * */
+    public static int pow(int base, int exp)
+    {
+        var e = Math.abs(exp);
+        return exp < 0 ? 1 / recPow(base, e) : recPow(base, e);
+    }
+
+    /**
+     * Recursive integer powers. O(log n)
+     *
+     * @param base the base of the power.
+     * @param exp  the exponent of the power.
+     * @return the mathematical value of base ^ exp.
+     * */
+    private static int recPow(int base, int exp)
+    {
+        if (exp == 0)
+            return 1;
+
+        if (exp == 1)
+            return base;
+
+        var pow = recPow(base, exp / 2);
+        return exp % 2 == 0 ? pow * pow : base * pow * pow;
+    }
 }
