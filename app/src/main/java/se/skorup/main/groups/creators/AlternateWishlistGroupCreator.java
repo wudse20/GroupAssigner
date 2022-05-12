@@ -18,9 +18,10 @@ import java.util.stream.Collectors;
  * */
 public final class AlternateWishlistGroupCreator extends WishlistGroupCreator
 {
+    private boolean shouldRandom;
+
     private boolean shouldUseStartPerson;
     private Person startingPerson;
-
 
     /**
      * Creates a new GroupCreator.
@@ -31,6 +32,7 @@ public final class AlternateWishlistGroupCreator extends WishlistGroupCreator
     public AlternateWishlistGroupCreator(GroupManager gm)
     {
         super(gm);
+        shouldRandom = gm.getWishGraph().size() == 0;
     }
 
     /**
@@ -56,6 +58,14 @@ public final class AlternateWishlistGroupCreator extends WishlistGroupCreator
         {
             var person = startingPerson;
             startingPerson = null;
+            candidates.remove(person);
+            return person;
+        }
+
+        if (shouldRandom)
+        {
+            var gen = new RandomGroupCreator(gm);
+            var person = gen.getPerson(current, candidates, wish, deny, added, p);
             candidates.remove(person);
             return person;
         }
