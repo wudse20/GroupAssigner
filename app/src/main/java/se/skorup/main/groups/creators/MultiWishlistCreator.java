@@ -32,6 +32,16 @@ public class MultiWishlistCreator implements GroupCreator
         this.gm = gm;
     }
 
+    private int n(int i)
+    {
+        return (int) (0.5d * i * i + 2.5d * i);
+    }
+
+    private double omega(int x)
+    {
+        return x <= 0 ? 0 : 10 * Math.exp(x);
+    }
+
     /**
      * Calculates the score of a group result.
      *
@@ -61,16 +71,16 @@ public class MultiWishlistCreator implements GroupCreator
             x[wishes.intersection(group).size()] += 1;
         }
 
-        var w = 0;
+        var w = 0; // Highest wish count
         for (int i = 0; i < x.length; i++)
             if (x[i] != 0)
                 w = i;
 
         var numerator = 0d;
-        for (var i = 1; i < x.length; i++)
-            numerator += Math.pow(x[i], 1d / i);
+        for (var i = 0; i < w; i++)
+            numerator += Math.pow(x[i + 1], i) / (Math.pow(2, n(i)));
 
-        var psi = (numerator / n) - Math.pow(x[0] * (n - 1), 1d / (n - 1));
+        var psi = numerator - omega(x[0]);
         DebugMethods.log("PSI: %f".formatted(psi), DebugMethods.LogType.DEBUG);
         printStatistics(n, x, w, psi);
         return psi;
@@ -128,11 +138,16 @@ public class MultiWishlistCreator implements GroupCreator
             allGroups.add(res);
         }
 
-        return allGroups.stream()
-                        .map(x -> new IntermediateResult(x, getScore(x)))
-                        .max(Comparator.comparingDouble(IntermediateResult::score))
-                        .orElse(new IntermediateResult(allGroups.get(0), 0))
-                        .groups();
+        var group =
+            allGroups.stream()
+                     .map(x -> new IntermediateResult(x, getScore(x)))
+                     .max(Comparator.comparingDouble(IntermediateResult::score))
+                     .orElse(new IntermediateResult(allGroups.get(0), 0))
+                     .groups();
+
+        DebugMethods.log("Score of group (PSI): %f".formatted(getScore(group)), DebugMethods.LogType.DEBUG);
+
+        return group;
     }
 
     @Override
