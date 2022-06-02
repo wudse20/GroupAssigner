@@ -14,6 +14,8 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -21,11 +23,13 @@ import java.util.Vector;
 /**
  * The panel that lists the persons.
  * */
-public class PersonListPanel extends JPanel implements ListSelectionListener
+public class PersonListPanel extends JPanel implements ListSelectionListener, MouseListener
 {
     private Set<Person> persons;
 
     private Person p;
+
+    private int lastIndex = -1;
 
     private final List<ActionCallback> callbacks = new Vector<>();
 
@@ -107,6 +111,7 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
         listPersons.setModel(model);
         listPersons.setBorder(BorderFactory.createEmptyBorder());
         listPersons.addListSelectionListener(this);
+        listPersons.addMouseListener(this);
 
         scrListPersons.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
 
@@ -175,7 +180,39 @@ public class PersonListPanel extends JPanel implements ListSelectionListener
 
                 callbacks.forEach(ActionCallback::callback);
             }
-
         }
     }
+
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        var point = e.getPoint();
+        var index = listPersons.locationToIndex(point);
+
+        if (listPersons.isSelectedIndex(index) && index == lastIndex)
+        {
+            listPersons.clearSelection();
+            listPersons.ensureIndexIsVisible(-1);
+            lastIndex = -1;
+            p = null;
+
+            callbacks.forEach(ActionCallback::callback);
+            DebugMethods.log("Deselected index: %d".formatted(index), DebugMethods.LogType.DEBUG);
+            return;
+        }
+
+        lastIndex = index;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }

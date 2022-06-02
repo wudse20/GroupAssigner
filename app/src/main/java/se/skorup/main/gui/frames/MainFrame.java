@@ -60,6 +60,7 @@ public class MainFrame extends JFrame
      * Adds a demo group if debug param is {@code true},
      * else it will try to read from the file.
      * */
+    @SuppressWarnings("unchecked")
     private void addGroups()
     {
         try
