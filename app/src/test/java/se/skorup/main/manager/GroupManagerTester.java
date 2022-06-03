@@ -343,6 +343,30 @@ public class GroupManagerTester
     }
 
     @Test
+    public void testGetAllOfRoleAndMainGroupBut()
+    {
+        var gm = new GroupManager("Kaka");
+
+        var p1 = gm.registerPerson("Kaka", Person.Role.CANDIDATE);
+        var p2 = gm.registerPerson("Syltkaka", Person.Role.CANDIDATE);
+        var p3 = gm.registerPerson("Krokdoil", Person.Role.CANDIDATE);
+        var p4 = gm.registerPerson("Ölkorv", Person.Role.CANDIDATE);
+        gm.registerPerson("Sebbe", Person.Role.LEADER);
+
+        p1.setMainGroup(Person.MainGroup.MAIN_GROUP_2);
+        p3.setMainGroup(Person.MainGroup.MAIN_GROUP_2);
+        p4.setMainGroup(Person.MainGroup.MAIN_GROUP_2);
+
+        assertEquals(2, gm.getAllOfMainGroupAndRollBut(p1, Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2).size());
+
+        p1.setMainGroup(Person.MainGroup.MAIN_GROUP_1);
+        p3.setMainGroup(Person.MainGroup.MAIN_GROUP_1);
+
+        assertEquals(2, gm.getAllOfMainGroupAndRollBut(p2, Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1).size());
+        assertEquals(0, gm.getAllOfMainGroupAndRollBut(p4, Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2).size());
+    }
+
+    @Test
     public void testMainGroupCount()
     {
         var gm = new GroupManager("");

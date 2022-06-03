@@ -1,12 +1,17 @@
 package se.skorup.API.collections.immutable_collections;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -462,5 +467,36 @@ public class ImmutableHashSetTester
 
         // Cast to not confuse compiler
         assertThrows(IllegalArgumentException.class, () -> a2.diff((Set<Integer>) null));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Stream<Arguments> toSetData()
+    {
+        var s1 = new ImmutableHashSet<String>();
+        var es1 = new HashSet<String>();
+
+        var s2 = new ImmutableHashSet<>(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        var es2 = new HashSet<>(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+
+        var s3 = new ImmutableHashSet<>("1", "2", "3", "4", "5");
+        var es3 = new HashSet<>(List.of("1", "2", "3", "4", "5"));
+
+        var s4 = (ImmutableHashSet<HashSet<String>>) new ImmutableHashSet<>(es1, es3); // Why JAVA? WHY!
+        var es4 = (HashSet<HashSet<String>>) new HashSet<>(List.of(es1, es3));
+
+        return Stream.of(
+            Arguments.of(s1, es1),
+            Arguments.of(s2, es2),
+            Arguments.of(s3, es3),
+            Arguments.of(s4, es4)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("toSetData")
+    public <E> void testToSet(ImmutableHashSet<E> set, Set<E> expected)
+    {
+        assertEquals(expected.size(), set.toSet().size(), "Set size off");
+        assertEquals(expected, set.toSet(), "Set equality");
     }
 }

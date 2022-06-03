@@ -90,7 +90,7 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
     private void callback()
     {
         var p = getCurrentPerson();
-        DebugMethods.log("Showing %s.".formatted(p), DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Showing %s.".formatted(p == null ? "None" : p), DebugMethods.LogType.DEBUG);
         mf.updatePerson(p);
     }
 

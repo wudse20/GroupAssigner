@@ -1,5 +1,6 @@
 package se.skorup.main.manager;
 
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
@@ -208,6 +209,21 @@ public class GroupManager implements Serializable
         return getAllOfRoll(r).stream()
                               .filter(p -> p.getMainGroup().equals(mg))
                               .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    /**
+     * Gets all members of a given role and main group but p.
+     *
+     * @param p the person to be excluded.
+     * @param r the role sought after.
+     * @param mg the main group sought after.
+     * @return a set containing all the persons of the
+     *         passed role and main group, where p is
+     *         removed.
+     * */
+    public Set<Person> getAllOfMainGroupAndRollBut(Person p, Person.Role r, Person.MainGroup mg)
+    {
+        return new ImmutableHashSet<>(getAllOfMainGroupAndRoll(r, mg)).dropMatching(p).toSet();
     }
 
     /**

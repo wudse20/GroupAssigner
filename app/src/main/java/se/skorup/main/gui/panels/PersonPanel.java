@@ -63,7 +63,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JLabel lblSpacer6 = new JLabel(" ");
     private final JLabel lblSpacer7 = new JLabel(" ");
 
-    private final JCheckBox cbShowOnlySameRole = new JCheckBox("Visa endast deltagare av samma roll");
+    private final JCheckBox cbSameMainGroup = new JCheckBox("Visa endast deltagare av huvudgrupp");
     private final JButton btnChangeRole = new JButton("Byt roll");
 
     /**
@@ -86,17 +86,32 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
      * */
     private void addComponents()
     {
-        // Stops the panel from adding the components if p is null.
         if (p == null)
-            return;
+            addAllDisplayComponents();
+        else
+            addPersonComponents();
+    }
 
+    /**
+     * Adds the components when not displaying a person.
+     * */
+    private void addAllDisplayComponents()
+    {
+
+    }
+
+    /**
+     * Adds the components for displaying a person.
+     * */
+    private void addPersonComponents()
+    {
         pName.removeAll();
         pCheckBox.removeAll();
         pContainer.removeAll();
 
         pName.add(lblName);
 
-        pCheckBox.add(cbShowOnlySameRole);
+        pCheckBox.add(cbSameMainGroup);
 
         // Don't want MainGroups for leaders.
         if (p instanceof Candidate)
@@ -142,9 +157,9 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pName.setLayout(new FlowLayout(FlowLayout.LEFT));
         pName.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 
-        cbShowOnlySameRole.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        cbShowOnlySameRole.setForeground(Utils.FOREGROUND_COLOR);
-        cbShowOnlySameRole.addActionListener(this);
+        cbSameMainGroup.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        cbSameMainGroup.setForeground(Utils.FOREGROUND_COLOR);
+        cbSameMainGroup.addActionListener(this);
 
         pCheckBox.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         pCheckBox.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -268,13 +283,27 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         var deny = Arrays.stream(p.getDenylist()).boxed().collect(Collectors.toList());
         var wish = Arrays.stream(p.getWishlist()).boxed().collect(Collectors.toList());
 
-        var candidatesOnly = cbShowOnlySameRole.isSelected();
+        var sameMainGroup = cbSameMainGroup.isSelected();
 
-        var addedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
-        var addedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+        var addedDeny =
+            sameMainGroup ?
+            group.getAllOfMainGroupAndRollBut(p, p.getRole(), p.getMainGroup()) :
+            group.getAllBut(p);
 
-        var notAddedDeny = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
-        var notAddedWish = candidatesOnly ? group.getAllOfRollBut(p) : group.getAllBut(p);
+        var addedWish =
+            sameMainGroup ?
+            group.getAllOfMainGroupAndRollBut(p, p.getRole(), p.getMainGroup()) :
+            group.getAllBut(p);
+
+        var notAddedDeny =
+            sameMainGroup ?
+            group.getAllOfMainGroupAndRollBut(p, p.getRole(), p.getMainGroup()) :
+            group.getAllBut(p);
+
+        var notAddedWish =
+            sameMainGroup ?
+            group.getAllOfMainGroupAndRollBut(p, p.getRole(), p.getMainGroup()) :
+            group.getAllBut(p);
 
         // All persons intersect list = added persons to list.
         var denies = addedDeny.stream().map(Person::getId).collect(Collectors.toSet());
