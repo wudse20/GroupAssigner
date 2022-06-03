@@ -1,7 +1,6 @@
 package se.skorup.main.objects;
 
-import se.skorup.main.Main;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +11,9 @@ import java.util.stream.Collectors;
  * */
 public abstract class Person implements Serializable, Comparable<Person>
 {
+    @Serial
+    private static final long serialVersionUID = 5695128931613766890L;
+
     /**
      * The enum that keeps track of the different
      * roles of the different persons.
@@ -183,6 +185,11 @@ public abstract class Person implements Serializable, Comparable<Person>
     public void setMainGroup(MainGroup mg)
     {
         this.mg = mg;
+    }
+
+    public Role getRole()
+    {
+        return this instanceof Leader ? Role.LEADER : Role.CANDIDATE;
     }
 
     @Override

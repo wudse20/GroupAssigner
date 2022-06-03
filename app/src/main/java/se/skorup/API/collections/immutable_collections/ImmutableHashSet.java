@@ -196,6 +196,19 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
         return diff(other.set);
     }
 
+    /**
+     * Creates a {@link java.util.HashSet set} containing all elements and
+     * then returns it.
+     *
+     * @return a {@link java.util.HashSet set} containing all elements of
+     *         this ImmutableHashSet.
+     * */
+    public Set<E> toSet()
+    {
+        // new to not expose the instance of the set used to handle the hashset.
+        return new HashSet<>(set);
+    }
+
     @Override
     public int size()
     {

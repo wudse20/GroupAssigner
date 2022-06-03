@@ -141,6 +141,7 @@ public class PersonListPanel extends JPanel implements ListSelectionListener, Mo
     {
         listPersons.clearSelection();
         p = null;
+        lastIndex = -1;
 
         DebugMethods.log(
             "Deselecting from list %s".formatted(lblGroupInfo.getText()),
@@ -172,7 +173,7 @@ public class PersonListPanel extends JPanel implements ListSelectionListener, Mo
             {
                 p = model.getElementAt(index);
 
-                DebugMethods.log("Selected person: %s".formatted(p), DebugMethods.LogType.DEBUG);
+                DebugMethods.log("Selected person: %s".formatted(p == null ? "None" : p), DebugMethods.LogType.DEBUG);
                 DebugMethods.log(
                     "Invoking callbacks from list %s".formatted(lblGroupInfo.getText()),
                     DebugMethods.LogType.DEBUG
