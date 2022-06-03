@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
@@ -159,6 +160,28 @@ public class PersonListPanel extends JPanel implements ListSelectionListener, Mo
     public Person getCurrentPerson()
     {
         return p;
+    }
+
+    /**
+     * Sets the list data. Will invoke action callbacks.
+     *
+     * @param newData the new data of the list.
+     * */
+    public void setListData(Set<Person> newData)
+    {
+        var arr = new Person[newData.size()];
+        newData.toArray(arr);
+        listPersons.setListData(arr);
+        callbacks.forEach(ActionCallback::callback);
+    }
+
+    @Override
+    public void setForeground(Color c)
+    {
+        if (lblGroupInfo != null)
+            lblGroupInfo.setForeground(c);
+
+        super.setForeground(c);
     }
 
     @Override

@@ -1,4 +1,3 @@
-
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
@@ -42,6 +41,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JPanel pName = new JPanel();
     private final JPanel pContainer = new JPanel();
     private final JPanel pCheckBox = new JPanel();
+    private final JPanel pMainGroupOverview = new JPanel();
+    private final JPanel pButtons = new JPanel();
 
     private final BorderLayout layout = new BorderLayout();
 
@@ -50,8 +51,14 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final ListPanel wishlist;
     private final ListPanel denylist;
 
+    private final PersonListPanel mainGroup1 = new PersonListPanel("Huvudgrupp 1:", new HashSet<>());
+    private final PersonListPanel mainGroup2 = new PersonListPanel("Huvudgrupp 2:", new HashSet<>());
+
     private final JRadioButton radioMG1 = new JRadioButton("Huvudgrupp 1");
     private final JRadioButton radioMG2 = new JRadioButton("Huvudgrupp 2");
+
+    private final JButton btnAddMg1 = new JButton("<html>&larr;</html>");
+    private final JButton btnAddMg2 = new JButton("<html>&rarr;</html>");
 
     private final ButtonGroup bgMainGroup = new ButtonGroup();
 
@@ -97,7 +104,27 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
      * */
     private void addAllDisplayComponents()
     {
+        pButtons.removeAll();
+        pMainGroupOverview.removeAll();
 
+        pButtons.add(btnAddMg2);
+        pButtons.add(new JLabel("<html><br></html>")); // Love HTML hacks :)
+        pButtons.add(btnAddMg1);
+
+        pMainGroupOverview.add(new JLabel("   "));
+        pMainGroupOverview.add(mainGroup1);
+        pMainGroupOverview.add(new JLabel("                "));
+        pMainGroupOverview.add(pButtons);
+        pMainGroupOverview.add(new JLabel("                "));
+        pMainGroupOverview.add(mainGroup2);
+        pMainGroupOverview.add(new JLabel("   "));
+
+        lblName.setForeground(Utils.FOREGROUND_COLOR);
+        lblName.setText("<html><br>&nbsp;&nbsp;&nbsp;Överblick över huvudgrupper<br><br></html>"); // Gotta love HTMl Hax :)
+
+        this.add(lblName, BorderLayout.PAGE_START);
+        this.add(pMainGroupOverview, BorderLayout.CENTER);
+        this.add(new JLabel("<html><br><br></html>"), BorderLayout.PAGE_END);
     }
 
     /**
@@ -149,6 +176,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     {
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
+        this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         this.setLayout(layout);
 
         lblName.setForeground(Utils.FOREGROUND_COLOR);
@@ -192,6 +220,46 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         bgMainGroup.add(radioMG1);
         bgMainGroup.add(radioMG2);
+
+        pMainGroupOverview.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pMainGroupOverview.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        mainGroup1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        mainGroup1.setForeground(Utils.MAIN_GROUP_1_COLOR);
+        mainGroup2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        mainGroup2.setForeground(Utils.MAIN_GROUP_2_COLOR);
+
+        btnAddMg1.setForeground(Utils.FOREGROUND_COLOR);
+        btnAddMg1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAddMg1.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createEmptyBorder(3, 15, 5, 15)
+            )
+        );
+
+        btnAddMg2.setForeground(Utils.FOREGROUND_COLOR);
+        btnAddMg2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAddMg2.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createEmptyBorder(3, 15, 5, 15)
+            )
+        );
+
+        pButtons.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.Y_AXIS));
+    }
+
+    /**
+     * The method that initializes the stuff for
+     * when a person isn't selected.
+     * */
+    private void initNoPersonSelected()
+    {
+        var gm = mf.getCurrentGroup();
+        mainGroup1.setListData(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
+        mainGroup2.setListData(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2));
     }
 
     /**
@@ -200,9 +268,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
      * */
     private void initPerson()
     {
-        this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-        this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-
         lblName.setText(p.getName());
         if (p instanceof Candidate)
             lblName.setForeground(
@@ -255,20 +320,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
      * */
     private void setup()
     {
-        // If there's no person, then remove everything.
-        if (p == null)
-        {
-            this.setBorder(BorderFactory.createEmptyBorder());
-            this.setBackground(Utils.BACKGROUND_COLOR);
-            this.removeAll();
-
-            lblName.setText("");
-        }
+        // TODO: FIX WIDTH OF MAIN GROUP LISTS
+        if (p == null) // If there's no person, then display overview.
+            initNoPersonSelected();
         else // Initialize the panel with a person.
-        {
             initPerson();
-        }
 
+        this.removeAll();
         this.addComponents();
         this.revalidate();
         this.repaint();
