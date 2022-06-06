@@ -11,7 +11,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.Arrays;

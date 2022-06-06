@@ -17,7 +17,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -34,7 +33,7 @@ public final class SubgroupSettingsPanel extends SettingsPanel
     private final ButtonGroup bgMainGroups = new ButtonGroup();
 
     private final JCheckBox boxOneMainGroup = new JCheckBox("Använd en huvudgrupp");
-    private final JCheckBox boxMainGroups = new JCheckBox("Använd Huvudgrupper");
+    private final JCheckBox boxMainGroups = new JCheckBox("Använd huvudgrupper");
 
     private final JComboBox<GroupCreator> cbCreators = new JComboBox<>();
 

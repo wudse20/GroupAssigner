@@ -2,7 +2,6 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.gui.components.SubgroupItemButton;
 import se.skorup.main.gui.helper.Selection;
 import se.skorup.main.gui.helper.layout.DoubleColumnGenerator;

@@ -1,7 +1,6 @@
 package se.skorup.main.gui.events;
 
 import se.skorup.main.gui.frames.AbstractGroupFrame;
-import se.skorup.main.gui.frames.AddGroupFrame;
 import se.skorup.main.manager.GroupManager;
 
 /**

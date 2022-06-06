@@ -7,7 +7,6 @@ import se.skorup.main.gui.frames.GroupFrame;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

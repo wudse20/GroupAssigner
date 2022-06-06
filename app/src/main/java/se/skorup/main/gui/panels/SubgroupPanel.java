@@ -62,6 +62,7 @@ public class SubgroupPanel extends JPanel
 
         var scr = new JScrollPane(sdp);
         scr.setBorder(BorderFactory.createEmptyBorder());
+        scr.getVerticalScrollBar().setUnitIncrement(16);
         cont.add(scr, BorderLayout.CENTER);
 
         this.setLayout(new BorderLayout());

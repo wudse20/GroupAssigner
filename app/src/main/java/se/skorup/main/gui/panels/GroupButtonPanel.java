@@ -4,7 +4,6 @@ import se.skorup.API.util.Utils;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
@@ -23,11 +22,11 @@ public class GroupButtonPanel extends JPanel
     }
 
     private final JButton btnClose = new JButton("Stäng");
-    private final JButton btnHelp = new JButton("Hjälp");
+    private final JButton btnHelp = new JButton("Hjälp!");
     private final JButton btnLoad = new JButton("Ladda");
     private final JButton btnSave = new JButton("Spara");
     private final JButton btnToFile = new JButton("Spara som textfil");
-    private final JButton btnCreate = new JButton("Genrera grupper");
+    private final JButton btnCreate = new JButton("Generera grupper");
     private final JButton btnToDenylist = new JButton("Till denylista");
     private final JButton btnPrint = new JButton("Skriv ut");
 
