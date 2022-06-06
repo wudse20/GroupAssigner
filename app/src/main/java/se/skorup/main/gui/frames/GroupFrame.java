@@ -19,6 +19,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -79,6 +80,7 @@ public class GroupFrame extends JFrame implements ChangeListener
 
         this.setProperties();
         this.addComponents();
+        this.pack();
     }
 
     /**
@@ -345,19 +347,16 @@ public class GroupFrame extends JFrame implements ChangeListener
         if (tabs.getSelectedComponent() instanceof SubgroupSettingsPanel)
         {
             DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
-            this.setSize(new Dimension(450, 550));
             gbp.populateButtons(sgsp);
         }
         else if (tabs.getSelectedComponent() instanceof SubgroupPanel)
         {
             DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
-            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             gbp.populateButtons(sgp);
         }
         else if (tabs.getSelectedComponent() instanceof CalculatorPanel)
         {
             DebugMethods.log("Selected calculator", DebugMethods.LogType.DEBUG);
-            this.setSize(new Dimension(450, 550));
             gbp.populateButtons(calc);
         }
         else

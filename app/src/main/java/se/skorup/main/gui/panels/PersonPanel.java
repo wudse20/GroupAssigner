@@ -505,11 +505,12 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     {
         DebugMethods.log("Setting Sizes", DebugMethods.LogType.DEBUG);
         var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
+        var d2 = new Dimension(d.width, (int) (d.height * 1.85));
 
         wishlist.setPreferredListSize(d);
         denylist.setPreferredListSize(d);
-        scrMainGroup1.setPreferredSize(d);
-        scrMainGroup2.setPreferredSize(d);
+        scrMainGroup1.setPreferredSize(d2);
+        scrMainGroup2.setPreferredSize(d2);
     }
 
     /**
@@ -538,8 +539,17 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
      * */
     private List<Person> getSearchResultOfRole(Set<Person> persons, String input)
     {
+        DebugMethods.log("Search input: '%s'".formatted(input), DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Trimmed input: '%s'".formatted(input.trim()), DebugMethods.LogType.DEBUG);
+
+        if (input.trim().equalsIgnoreCase("id"))
+            return List.of(); // Don't want any results for id.
+
+        if (input.trim().isEmpty()) // Don't want spaces to give no result.
+            return new ArrayList<>(persons);
+
         return persons.parallelStream()
-                      .filter(p -> p.toString().toLowerCase().contains(input.toLowerCase()))
+                      .filter(p -> p.toString().toLowerCase().contains(input.trim().toLowerCase()))
                       .toList();
     }
 

@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 
@@ -7,6 +8,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +38,14 @@ public sealed abstract class SettingsPanel extends JPanel
     public abstract List<Integer> getUserInput();
 
     /**
+     * Updates the size data display.
+     *
+     * @param size the new size of the group.
+     * @param c the color of the text.
+     * */
+    public abstract void updateSizeData(int size, Color c);
+
+    /**
      * Optional to implement. Resets the state of
      * the panel.
      * */
@@ -54,5 +65,25 @@ public sealed abstract class SettingsPanel extends JPanel
         settingsBorder.setTitleColor(Utils.FOREGROUND_COLOR);
 
         return settingsBorder;
+    }
+
+    /**
+     * Gets the text that is the group sizes that are even.
+     *
+     * @param size the size of the group.
+     * @param header the header of the string.
+     * @return a formatted string containing the even group
+     *         sizes.
+     * */
+    protected String getGroupSizeText(int size, String header)
+    {
+        var res = new ArrayList<Integer>();
+
+        for (int i = 1; i <= size; i++)
+            if (size % i == 0)
+                res.add(i);
+
+        return "<html> %s%s</html>"
+                .formatted(header, ImmutableArray.fromList(res).map("Antal personer: %s"::formatted).mkString("<br>"));
     }
 }
