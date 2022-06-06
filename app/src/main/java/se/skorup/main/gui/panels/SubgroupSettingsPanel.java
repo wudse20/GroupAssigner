@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.List;
 
@@ -112,6 +113,7 @@ public final class SubgroupSettingsPanel extends SettingsPanel
             gf.shouldUseOneMainGroup(boxOneMainGroup.isSelected());
             boxMainGroups.setSelected(false);
             displayCorrectSizeSettingsPanel();
+            displayCorrectSizeInfo();
         });
 
         boxMainGroups.setBackground(Utils.BACKGROUND_COLOR);
@@ -122,16 +124,19 @@ public final class SubgroupSettingsPanel extends SettingsPanel
             gf.shouldUseMainGroups(boxMainGroups.isSelected());
             boxOneMainGroup.setSelected(false);
             displayCorrectSizeSettingsPanel();
+            displayCorrectSizeInfo();
         });
 
         radioMainGroup1.setForeground(Utils.MAIN_GROUP_1_COLOR);
         radioMainGroup1.setBackground(Utils.BACKGROUND_COLOR);
         radioMainGroup1.setEnabled(false);
         radioMainGroup1.setSelected(true);
+        radioMainGroup1.addActionListener(e -> displayCorrectSizeInfo());
 
         radioMainGroup2.setForeground(Utils.MAIN_GROUP_2_COLOR);
         radioMainGroup2.setBackground(Utils.BACKGROUND_COLOR);
         radioMainGroup2.setEnabled(false);
+        radioMainGroup2.addActionListener(e -> displayCorrectSizeInfo());
 
         bgMainGroups.add(radioMainGroup1);
         bgMainGroups.add(radioMainGroup2);
@@ -144,6 +149,8 @@ public final class SubgroupSettingsPanel extends SettingsPanel
 
         p3.setLayout(new FlowLayout(FlowLayout.LEFT));
         p3.setBackground(Utils.BACKGROUND_COLOR);
+
+        displayCorrectSizeInfo();
     }
 
     /**
@@ -198,6 +205,33 @@ public final class SubgroupSettingsPanel extends SettingsPanel
         addComponents();
         revalidate();
         repaint();
+        gf.pack();
+    }
+
+    /**
+     * Displays the correct size info.
+     * */
+    private void displayCorrectSizeInfo()
+    {
+        if (boxOneMainGroup.isSelected())
+        {
+            updateSizeData(
+                gf.getManager()
+                  .getAllOfMainGroupAndRoll(
+                      Person.Role.CANDIDATE,
+                      radioMainGroup1.isSelected()  ?
+                      Person.MainGroup.MAIN_GROUP_1 :
+                      Person.MainGroup.MAIN_GROUP_2
+                 ).size(),
+                  radioMainGroup1.isSelected() ?
+                  Utils.MAIN_GROUP_1_COLOR     :
+                  Utils.MAIN_GROUP_2_COLOR
+            );
+        }
+        else
+        {
+            updateSizeData(gf.getManager().getMemberCountOfRole(Person.Role.CANDIDATE), Utils.FOREGROUND_COLOR);
+        }
     }
 
     /**
@@ -233,6 +267,12 @@ public final class SubgroupSettingsPanel extends SettingsPanel
     public List<Integer> getUserInput()
     {
         return pSettings.getUserInput();
+    }
+
+    @Override
+    public void updateSizeData(int size, Color c)
+    {
+        defaultSettings.updateSizeData(size, c);
     }
 
     /**

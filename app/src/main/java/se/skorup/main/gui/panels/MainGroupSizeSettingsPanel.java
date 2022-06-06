@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -30,6 +29,9 @@ import java.util.Optional;
  * */
 public final class MainGroupSizeSettingsPanel extends SettingsPanel
 {
+    private final JLabel lblSizesMg1 = new JLabel();
+    private final JLabel lblSizesMg2 = new JLabel();
+
     private final JRadioButton radioNbrGroups = new JRadioButton("Antal Grupper");
     private final JRadioButton radioNbrPersons = new JRadioButton("Antal personer/grupp");
     private final JRadioButton radioDifferentSizes = new JRadioButton("Olika antal personer/grupp");
@@ -110,6 +112,8 @@ public final class MainGroupSizeSettingsPanel extends SettingsPanel
 
         pInput.setLayout(new GridLayout(1, 2));
         pInput.setBackground(Utils.BACKGROUND_COLOR);
+
+        updateSizeData(0, null);
     }
 
     /**
@@ -124,6 +128,9 @@ public final class MainGroupSizeSettingsPanel extends SettingsPanel
         pRadios.add(radioLeaderMode);
         pRadios.add(new JLabel(" "));
         pRadios.add(boxOverflow);
+        pRadios.add(new JLabel(" "));
+        pRadios.add(lblSizesMg1);
+        pRadios.add(lblSizesMg2);
 
         pRadioContainer.add(pRadios);
 
@@ -192,6 +199,28 @@ public final class MainGroupSizeSettingsPanel extends SettingsPanel
         res.addAll(lmg2);
 
         return res;
+    }
+
+    @Override
+    public void updateSizeData(int size, Color c)
+    {
+        lblSizesMg1.setForeground(Utils.MAIN_GROUP_1_COLOR);
+        lblSizesMg1.setText(
+            getGroupSizeText(
+                gf.getManager()
+                    .getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1)
+                    .size(),
+                "Gruppstorlekar huvudgrupp 1: <br>"
+        ));
+
+        lblSizesMg2.setForeground(Utils.MAIN_GROUP_2_COLOR);
+        lblSizesMg2.setText(
+            getGroupSizeText(
+                gf.getManager()
+                    .getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2)
+                    .size(),
+                "<br>Gruppstorlekar huvudgrupp 2: <br>"
+        ));
     }
 
     @Override

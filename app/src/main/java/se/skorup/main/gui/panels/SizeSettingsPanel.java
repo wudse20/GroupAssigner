@@ -8,9 +8,11 @@ import se.skorup.main.objects.Person;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  * */
 public final class SizeSettingsPanel extends SettingsPanel
 {
+    private final JLabel lblSizes = new JLabel();
+
     private final ButtonGroup bgSettings = new ButtonGroup();
 
     private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
@@ -84,11 +88,17 @@ public final class SizeSettingsPanel extends SettingsPanel
         p.setLayout(new FlowLayout(FlowLayout.CENTER));
         p.add(boxOverflow);
 
+        var p2 = new JPanel();
+        p2.setBackground(Utils.BACKGROUND_COLOR);
+        p2.setLayout(new FlowLayout(FlowLayout.CENTER));
+        p2.add(lblSizes);
+
         this.add(pNbrGroups);
         this.add(pNbrMembers);
         this.add(pDifferentSizes);
         this.add(pLeaders);
         this.add(p);
+        this.add(p2);
     }
 
     @Override
@@ -125,6 +135,13 @@ public final class SizeSettingsPanel extends SettingsPanel
 
             return List.of();
         }
+    }
+
+    @Override
+    public void updateSizeData(int size, Color c)
+    {
+        lblSizes.setForeground(c);
+        lblSizes.setText(getGroupSizeText(size, "Jämna gruppstorlekar:<br>"));
     }
 
     @Override
