@@ -176,7 +176,6 @@ public class ListPanel extends JPanel
             }
         });
 
-
         scrAdded.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         scrAdded.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
 

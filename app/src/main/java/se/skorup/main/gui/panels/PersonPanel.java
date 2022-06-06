@@ -1,7 +1,9 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.MainFrame;
+import se.skorup.main.gui.models.PersonListModel;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
@@ -12,9 +14,12 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -25,8 +30,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +50,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JPanel pCheckBox = new JPanel();
     private final JPanel pMainGroupOverview = new JPanel();
     private final JPanel pButtons = new JPanel();
+    private final JPanel pBottom = new JPanel();
+    private final JPanel pBottomContainer = new JPanel();
 
     private final BorderLayout layout = new BorderLayout();
 
@@ -51,14 +60,21 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final ListPanel wishlist;
     private final ListPanel denylist;
 
-    private final PersonListPanel mainGroup1 = new PersonListPanel("Huvudgrupp 1:", new HashSet<>());
-    private final PersonListPanel mainGroup2 = new PersonListPanel("Huvudgrupp 2:", new HashSet<>());
+    private final PersonListModel mainGroup1Model = new PersonListModel(new ArrayList<>());
+    private final PersonListModel mainGroup2Model = new PersonListModel(new ArrayList<>());
+
+    private final JList<Person> mainGroup1 = new JList<>();
+    private final JList<Person> mainGroup2 = new JList<>();
+
+    private final JScrollPane scrMainGroup1 = new JScrollPane(mainGroup1);
+    private final JScrollPane scrMainGroup2 = new JScrollPane(mainGroup2);
 
     private final JRadioButton radioMG1 = new JRadioButton("Huvudgrupp 1");
     private final JRadioButton radioMG2 = new JRadioButton("Huvudgrupp 2");
 
     private final JButton btnAddMg1 = new JButton("<html>&larr;</html>");
     private final JButton btnAddMg2 = new JButton("<html>&rarr;</html>");
+    private final JButton btnGraph = new JButton("Visualisera gruppen");
 
     private final ButtonGroup bgMainGroup = new ButtonGroup();
 
@@ -106,25 +122,34 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     {
         pButtons.removeAll();
         pMainGroupOverview.removeAll();
+        pBottom.removeAll();
+        pBottomContainer.removeAll();
 
         pButtons.add(btnAddMg2);
         pButtons.add(new JLabel("<html><br></html>")); // Love HTML hacks :)
         pButtons.add(btnAddMg1);
 
         pMainGroupOverview.add(new JLabel("   "));
-        pMainGroupOverview.add(mainGroup1);
-        pMainGroupOverview.add(new JLabel("                "));
+        pMainGroupOverview.add(scrMainGroup1);
+        pMainGroupOverview.add(new JLabel(" ".repeat(25)));
         pMainGroupOverview.add(pButtons);
-        pMainGroupOverview.add(new JLabel("                "));
-        pMainGroupOverview.add(mainGroup2);
+        pMainGroupOverview.add(new JLabel(" ".repeat(25)));
+        pMainGroupOverview.add(scrMainGroup2);
         pMainGroupOverview.add(new JLabel("   "));
 
         lblName.setForeground(Utils.FOREGROUND_COLOR);
         lblName.setText("<html><br>&nbsp;&nbsp;&nbsp;Överblick över huvudgrupper<br><br></html>"); // Gotta love HTMl Hax :)
 
+        pBottom.add(new JLabel("<html><br><br></html>"));
+        pBottom.add(btnGraph);
+        pBottom.add(new JLabel("<html><br><br></html>"));
+
+        pBottomContainer.add(new JLabel("   "));
+        pBottomContainer.add(pBottom);
+
         this.add(lblName, BorderLayout.PAGE_START);
         this.add(pMainGroupOverview, BorderLayout.CENTER);
-        this.add(new JLabel("<html><br><br></html>"), BorderLayout.PAGE_END);
+        this.add(pBottomContainer, BorderLayout.PAGE_END);
     }
 
     /**
@@ -226,11 +251,41 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         mainGroup1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         mainGroup1.setForeground(Utils.MAIN_GROUP_1_COLOR);
+        mainGroup1.setModel(mainGroup1Model);
+
         mainGroup2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         mainGroup2.setForeground(Utils.MAIN_GROUP_2_COLOR);
+        mainGroup2.setModel(mainGroup2Model);
+
+        var b1 =
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                "Huvudgrupp 1"
+            );
+        b1.setTitleColor(Utils.FOREGROUND_COLOR);
+
+        var b2 =
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                "Huvudgrupp 2"
+            );
+        b2.setTitleColor(Utils.FOREGROUND_COLOR);
+
+        scrMainGroup1.setForeground(Utils.FOREGROUND_COLOR);
+        scrMainGroup1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        scrMainGroup1.setBorder(b1);
+        scrMainGroup1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrMainGroup1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        scrMainGroup2.setForeground(Utils.FOREGROUND_COLOR);
+        scrMainGroup2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        scrMainGroup2.setBorder(b2);
+        scrMainGroup2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrMainGroup2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         btnAddMg1.setForeground(Utils.FOREGROUND_COLOR);
         btnAddMg1.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAddMg1.addActionListener(e -> setMainGroupOfSelected(mainGroup2, Person.MainGroup.MAIN_GROUP_1));
         btnAddMg1.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
@@ -240,6 +295,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         btnAddMg2.setForeground(Utils.FOREGROUND_COLOR);
         btnAddMg2.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAddMg2.addActionListener(e -> setMainGroupOfSelected(mainGroup1, Person.MainGroup.MAIN_GROUP_2));
         btnAddMg2.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
@@ -249,6 +305,41 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         pButtons.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.Y_AXIS));
+
+        btnGraph.setForeground(Utils.FOREGROUND_COLOR);
+        btnGraph.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnGraph.addActionListener(e -> {
+            DebugMethods.log("Opening graph!", DebugMethods.LogType.DEBUG);
+            JOptionPane.showMessageDialog(
+                this, "Not yet implemented! :(",
+                ":(", JOptionPane.INFORMATION_MESSAGE);
+        });
+        btnGraph.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createEmptyBorder(3, 15, 5, 15)
+            )
+        );
+
+        pBottom.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pBottom.setLayout(new BoxLayout(pBottom, BoxLayout.Y_AXIS));
+
+        pBottomContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pBottomContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
+    }
+
+    /**
+     * Resets a JList.
+     *
+     * @param list the panel to be reset.
+     * */
+    private void resetList(JList<Person> list)
+    {
+        if (mf.getCurrentGroup() == null)
+        {
+            list.setSelectedIndices(new int[0]);
+            list.setListData(new Person[0]);
+        }
     }
 
     /**
@@ -258,8 +349,18 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private void initNoPersonSelected()
     {
         var gm = mf.getCurrentGroup();
-        mainGroup1.setListData(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
-        mainGroup2.setListData(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2));
+
+        if (gm == null)
+            return;
+
+
+        mainGroup1.setListData(
+            new Vector<>(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1))
+        );
+
+        mainGroup2.setListData(
+            new Vector<>(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2))
+        );
     }
 
     /**
@@ -320,7 +421,9 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
      * */
     private void setup()
     {
-        // TODO: FIX WIDTH OF MAIN GROUP LISTS
+        resetList(mainGroup1);
+        resetList(mainGroup2);
+
         if (p == null) // If there's no person, then display overview.
             initNoPersonSelected();
         else // Initialize the panel with a person.
@@ -391,6 +494,37 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     }
 
     /**
+     * Sets the sizes of the lists in the GUI.
+     * */
+    private void setSizes()
+    {
+        DebugMethods.log("Setting Sizes", DebugMethods.LogType.DEBUG);
+        var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
+
+        wishlist.setPreferredListSize(d);
+        denylist.setPreferredListSize(d);
+        scrMainGroup1.setPreferredSize(d);
+        scrMainGroup2.setPreferredSize(d);
+    }
+
+    /**
+     * Sets the main group of all persons selected in list persons to
+     * the main group mg.
+     *
+     * @param persons the list of selected persons to be affected.
+     * @param mg the new main group.
+     * */
+    private void setMainGroupOfSelected(JList<Person> persons, Person.MainGroup mg)
+    {
+        var selected = persons.getSelectedValuesList();
+
+        for (var p : selected)
+            p.setMainGroup(mg);
+
+        this.setup();
+    }
+
+    /**
      * Setter for: person.
      *
      * @param p the person to be set to this panel.
@@ -410,10 +544,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     @Override
     public void componentResized(ComponentEvent e)
     {
-        var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
-
-        wishlist.setPreferredListSize(d);
-        denylist.setPreferredListSize(d);
+        setSizes();
     }
 
     @Override
@@ -428,9 +559,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     @Override
     public void windowStateChanged(WindowEvent e)
     {
-        var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
-
-        wishlist.setPreferredListSize(d);
-        denylist.setPreferredListSize(d);
+        setSizes();
     }
 }
