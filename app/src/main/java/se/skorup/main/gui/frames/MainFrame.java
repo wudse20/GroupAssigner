@@ -21,6 +21,7 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The MainFrame of the GUI.
@@ -262,5 +263,19 @@ public class MainFrame extends JFrame
 
         refreshSidePanel();
         ctrPanel.updateManagers();
+    }
+
+    /**
+     * Sets the data of the two lists.
+     *
+     * @param candidates the persons in the candidates list.
+     * @param leaders the persons in the leaders list.
+     * */
+    public void setSideListData(Set<Person> candidates, Set<Person> leaders)
+    {
+        if (sidePanel != null)
+        {
+            sidePanel.setListData(candidates, leaders);
+        }
     }
 }

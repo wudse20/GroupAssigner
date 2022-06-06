@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The side panel to the left of the GUI in
@@ -113,6 +114,18 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
 
         pLeaders.updateList(gm.getAllOfRoll(Person.Role.LEADER));
         pCandidates.updateList(gm.getAllOfRoll(Person.Role.CANDIDATE));
+    }
+
+    /**
+     * Sets the data of the two lists.
+     *
+     * @param candidates the persons in the candidates list.
+     * @param leaders the persons in the leaders list.
+     * */
+    public void setListData(Set<Person> candidates, Set<Person> leaders)
+    {
+        pLeaders.updateList(leaders);
+        pCandidates.updateList(candidates);
     }
 
     @Override

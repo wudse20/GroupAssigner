@@ -88,4 +88,69 @@ public class TestUtils
     {
         assertEquals(Utils.pow(b, e), expected);
     }
+
+    public static Stream<Arguments> getDigitData()
+    {
+        return Stream.of(
+            Arguments.of('0', true),
+            Arguments.of('1', true),
+            Arguments.of('2', true),
+            Arguments.of('3', true),
+            Arguments.of('4', true),
+            Arguments.of('5', true),
+            Arguments.of('6', true),
+            Arguments.of('7', true),
+            Arguments.of('8', true),
+            Arguments.of('9', true),
+            Arguments.of('a', false),
+            Arguments.of('ö', false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getDigitData")
+    public void testIsValidDigit(char c, boolean expected)
+    {
+        assertEquals(expected, Utils.isDigit(c));
+    }
+
+    public static Stream<Arguments> getIntegerData()
+    {
+        return Stream.of(
+            Arguments.of("1", true),
+            Arguments.of("2", true),
+            Arguments.of("3", true),
+            Arguments.of("4", true),
+            Arguments.of("5", true),
+            Arguments.of("6", true),
+            Arguments.of("7", true),
+            Arguments.of("8", true),
+            Arguments.of("9", true),
+            Arguments.of("123", true),
+            Arguments.of("2123", true),
+            Arguments.of("31435", true),
+            Arguments.of("48796", true),
+            Arguments.of("5351", true),
+            Arguments.of("62314", true),
+            Arguments.of("73452", true),
+            Arguments.of("81243", true),
+            Arguments.of("95345", true),
+            Arguments.of("apa", false),
+            Arguments.of("2asdf", false),
+            Arguments.of("3231f", false),
+            Arguments.of("231f34", false),
+            Arguments.of("123f5", false),
+            Arguments.of("12f36", false),
+            Arguments.of("7f214", false),
+            Arguments.of("8123asf12", false),
+            Arguments.of("91ö23", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getIntegerData")
+    public void testIsValidInteger(String str, boolean expected)
+    {
+        assertEquals(expected, Utils.isValidInteger(str));
+    }
 }
