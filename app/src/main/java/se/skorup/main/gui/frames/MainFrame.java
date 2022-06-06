@@ -21,6 +21,7 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The MainFrame of the GUI.
@@ -60,6 +61,7 @@ public class MainFrame extends JFrame
      * Adds a demo group if debug param is {@code true},
      * else it will try to read from the file.
      * */
+    @SuppressWarnings("unchecked")
     private void addGroups()
     {
         try
@@ -87,6 +89,8 @@ public class MainFrame extends JFrame
         DebugMethods.log("GroupManagers initialized.", DebugMethods.LogType.DEBUG);
         this.setProperties();
         DebugMethods.log("The properties has been set.", DebugMethods.LogType.DEBUG);
+        sidePanel.refreshLists();
+        DebugMethods.log("Added list data.", DebugMethods.LogType.DEBUG);
         this.addComponents();
         DebugMethods.log("The components has been added.", DebugMethods.LogType.DEBUG);
         this.setVisible(true);
@@ -259,5 +263,19 @@ public class MainFrame extends JFrame
 
         refreshSidePanel();
         ctrPanel.updateManagers();
+    }
+
+    /**
+     * Sets the data of the two lists.
+     *
+     * @param candidates the persons in the candidates list.
+     * @param leaders the persons in the leaders list.
+     * */
+    public void setSideListData(Set<Person> candidates, Set<Person> leaders)
+    {
+        if (sidePanel != null)
+        {
+            sidePanel.setListData(candidates, leaders);
+        }
     }
 }

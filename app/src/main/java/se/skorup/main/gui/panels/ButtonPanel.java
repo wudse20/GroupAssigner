@@ -24,8 +24,7 @@ public class ButtonPanel extends JPanel implements ActionListener
     /** The different button types. */
     private enum Buttons
     {
-        SAVE, CREATE_GROUPS, ABOUT,
-        HELP, SIZES
+        SAVE, CREATE_GROUPS, ABOUT, HELP
     }
 
     private final MainFrame mf;
@@ -36,7 +35,6 @@ public class ButtonPanel extends JPanel implements ActionListener
     private final JButton btnCreateGroup = new JButton("Skapa grupper");
     private final JButton btnAbout = new JButton("Om");
     private final JButton btnHelp = new JButton("Hjälp!");
-    private final JButton btnSizes = new JButton("Jämna konstellationer");
 
     /**
      * Creates a new ButtonPanel.
@@ -56,7 +54,6 @@ public class ButtonPanel extends JPanel implements ActionListener
     {
         DebugMethods.log("Adding components to button panel.", DebugMethods.LogType.DEBUG);
 
-        this.add(btnSizes);
         this.add(btnHelp);
         this.add(btnAbout);
         this.add(btnCreateGroup);
@@ -90,11 +87,6 @@ public class ButtonPanel extends JPanel implements ActionListener
         btnCreateGroup.setForeground(Utils.FOREGROUND_COLOR);
         btnCreateGroup.setActionCommand(Buttons.CREATE_GROUPS.toString());
         btnCreateGroup.addActionListener(this);
-
-        btnSizes.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnSizes.setForeground(Utils.FOREGROUND_COLOR);
-        btnSizes.setActionCommand(Buttons.SIZES.toString());
-        btnSizes.addActionListener(this);
     }
 
     @Override
@@ -153,30 +145,6 @@ public class ButtonPanel extends JPanel implements ActionListener
 
                 DebugMethods.log("Save was unsuccessful", DebugMethods.LogType.ERROR);
             }
-        }
-        else if (cmd.equals(Buttons.SIZES.toString()))
-        {
-            if (mf.getCurrentGroup() == null)
-            {
-                JOptionPane.showMessageDialog(
-                    mf, "Det finns inga grupper",
-                    "Inga grupper!", JOptionPane.ERROR_MESSAGE
-                );
-                return;
-            }
-
-            var size = mf.getCurrentGroup().getMemberCountOfRole(Person.Role.CANDIDATE);
-            var res = new ArrayList<Integer>();
-
-            for (int i = 1; i <= size; i++)
-                if (size % i == 0)
-                    res.add(i);
-
-            JOptionPane.showMessageDialog(
-                mf, "Jämna storlekar gruppstolekar (antal personer): %s"
-                    .formatted(ImmutableArray.fromList(res).map("%s personer"::formatted).mkString(", ")),
-                "Jämna storlekar", JOptionPane.INFORMATION_MESSAGE
-            );
         }
     }
 }

@@ -1,5 +1,7 @@
 package se.skorup.API.util;
 
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -45,7 +47,7 @@ public class Utils
 
     // About
     /** The version of the program. */
-    public static final String VERSION = "0.4 - Indev";
+    public static final String VERSION = "0.4.1 - Indev";
 
     /** The about string. */
     public static final String ABOUT =
@@ -84,7 +86,7 @@ public class Utils
     }
 
     /**
-     * Opens the help pages: https://www.help.skorup.se/
+     * Opens the help pages: <a href="https://www.help.skorup.se/">help.skorup.se</a>
      * */
     public static void openHelpPages()
     {
@@ -168,6 +170,7 @@ public class Utils
     /**
      * Checks if a string is a valid double.
      *
+     * @param str the string to be tested.
      * @return {@code true} iff str is a valid double.
      * */
     public static boolean isValidDouble(String str)
@@ -176,6 +179,29 @@ public class Utils
             return true;
 
         return Pattern.matches("(\\d+).?(\\d+)", str);
+    }
+
+    /**
+     * Checks if a character is a digit.
+     *
+     * @param c the char to be tested.
+     * @return {@code true} iff it is a digit.
+     * */
+    public static boolean isDigit(char c)
+    {
+        return c >= '0' && c <= '9';
+    }
+
+    /**
+     * Checks if a string is a valid integer
+     *
+     * @param str the string to be tested.
+     * @return {@code true} iff str is a valid integer.
+     * */
+    public static boolean isValidInteger(String str)
+    {
+        return ImmutableArray.fromCollection(str.chars().boxed().toList())
+                             .forAll(c -> Utils.isDigit((char) (int) c));
     }
 
     /**

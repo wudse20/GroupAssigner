@@ -14,6 +14,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The side panel to the left of the GUI in
@@ -74,11 +76,11 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(mf.getWidth() / 5, this.getHeight()));
 
-        pLeaders.addActionCallback(pCandidates::deselectAll);
-        pLeaders.addActionCallback(this::callback);
+        pLeaders.addCallback(ps -> pCandidates.deselectAll());
+        pLeaders.addCallback(this::callback);
 
-        pCandidates.addActionCallback(pLeaders::deselectAll);
-        pCandidates.addActionCallback(this::callback);
+        pCandidates.addCallback(ps -> pLeaders.deselectAll());
+        pCandidates.addCallback(this::callback);
 
         mf.addComponentListener(this);
     }
@@ -86,26 +88,14 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
     /**
      * The callback called when a Candidate is
      * selected.
-     * */
-    private void callback()
-    {
-        var p = getCurrentPerson();
-        DebugMethods.log("Showing %s.".formatted(p), DebugMethods.LogType.DEBUG);
-        mf.updatePerson(p);
-    }
-
-    /**
-     * Gets the currently selected person.
      *
-     * @return the currently selected person;
-     *         {@code null} iff there is no
-     *         person selected.
+     * @param persons the selected person should always be one.
      * */
-    public Person getCurrentPerson()
+    private void callback(List<Person> persons)
     {
-        return (pCandidates.getCurrentPerson() == null) ?
-                pLeaders.getCurrentPerson() :
-                pCandidates.getCurrentPerson();
+        var p = persons.size() == 0 ? null : persons.get(0);
+        DebugMethods.log("Showing %s.".formatted(p == null ? "None" : p), DebugMethods.LogType.DEBUG);
+        mf.updatePerson(p);
     }
 
     /**
@@ -124,6 +114,18 @@ public class SidePanel extends JPanel implements ComponentListener, WindowStateL
 
         pLeaders.updateList(gm.getAllOfRoll(Person.Role.LEADER));
         pCandidates.updateList(gm.getAllOfRoll(Person.Role.CANDIDATE));
+    }
+
+    /**
+     * Sets the data of the two lists.
+     *
+     * @param candidates the persons in the candidates list.
+     * @param leaders the persons in the leaders list.
+     * */
+    public void setListData(Set<Person> candidates, Set<Person> leaders)
+    {
+        pLeaders.updateList(leaders);
+        pCandidates.updateList(candidates);
     }
 
     @Override
