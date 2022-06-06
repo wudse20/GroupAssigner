@@ -351,10 +351,13 @@ public class SubgroupPanel extends JPanel
     private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes)
     {
         return switch (gf.getSizeState()) {
-            case NUMBER_GROUPS -> () -> gc.generateGroup((short) ((int) sizes.get(0)), gf.shouldOverflow(), gm);
-            case NUMBER_PERSONS -> () -> gc.generateGroup((byte) ((int) sizes.get(0)), gf.shouldOverflow());
-            case PAIR_WITH_LEADERS -> () -> gc.generateGroup((short) ((int) sizes.get(0)), gf.shouldOverflow());
-            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroup(sizes);
+            case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), gf.shouldOverflow(), gm);
+            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), gf.shouldOverflow());
+            case PAIR_WITH_LEADERS -> {
+                var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
+                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+            }
+            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
         };
     }
 

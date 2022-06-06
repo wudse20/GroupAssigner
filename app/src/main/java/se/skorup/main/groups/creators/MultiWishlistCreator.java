@@ -157,9 +157,9 @@ public class MultiWishlistCreator implements GroupCreator
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    public List<Set<Integer>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
     {
-        return getBestGroup(a -> a.generateGroup(sizes));
+        return getBestGroup(a -> a.generateGroupNbrGroups(sizes));
     }
 
     @Override

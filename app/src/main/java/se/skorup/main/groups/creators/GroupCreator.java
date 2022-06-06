@@ -45,7 +45,7 @@ public interface GroupCreator
      * @throws IllegalArgumentException iff groupSize &lt; 2.
      * @throws NoGroupAvailableException iff there is now way to create a group.
      * */
-    default List<Set<Integer>> generateGroup(byte groupSize, boolean overflow)
+    default List<Set<Integer>> generateGroupNbrPeople(int groupSize, boolean overflow)
             throws IllegalArgumentException, NoGroupAvailableException
     {
         if (groupSize < 2)
@@ -53,7 +53,7 @@ public interface GroupCreator
                     "groupSize needs to greater or equal to 2, your value: %d < 2".formatted(groupSize)
             );
 
-        return generateGroup((int) groupSize, overflow); // Cast to int to prevent infinite recursion.
+        return generateGroup(groupSize, overflow); // Cast to int to prevent infinite recursion.
     }
 
     /**
@@ -73,7 +73,7 @@ public interface GroupCreator
      * @throws IllegalArgumentException iff nbrGroups &lt; 2.
      * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
-    default List<Set<Integer>> generateGroup(short nbrGroups, boolean overflow, GroupManager gm)
+    default List<Set<Integer>> generateGroupNbrGroups(int nbrGroups, boolean overflow, GroupManager gm)
             throws IllegalArgumentException, NoGroupAvailableException
     {
         if (nbrGroups < 2)
@@ -82,8 +82,8 @@ public interface GroupCreator
             );
 
         return generateGroup(
-                (int) Math.round((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
-                overflow
+            (int) Math.ceil((double) gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) nbrGroups),
+            overflow
         );
     }
 
@@ -217,5 +217,5 @@ public interface GroupCreator
      * @throws IllegalArgumentException iff sizes is empty or there is only one group.
      * @throws NoGroupAvailableException iff there's no way to create a group.
      * */
-    List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException;
+    List<Set<Integer>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException;
 }

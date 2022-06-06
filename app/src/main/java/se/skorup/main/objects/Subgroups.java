@@ -54,7 +54,7 @@ public record Subgroups(
     public String getLabel(int index)
     {
         if (labels[index] == null)
-            labels[index] = isLeaderMode ?
+            labels[index] = isLeaderMode && index < leaders.size() ?
             leaders.get(index).getName() :
             "Grupp %d".formatted(index + 1);
 

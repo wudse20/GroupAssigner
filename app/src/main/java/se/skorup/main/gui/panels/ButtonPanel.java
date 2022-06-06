@@ -1,11 +1,9 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
-import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
-import se.skorup.main.objects.Person;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -14,7 +12,6 @@ import javax.swing.SwingUtilities;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 /**
  * The panel with all the buttons!

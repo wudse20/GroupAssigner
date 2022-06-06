@@ -73,7 +73,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
     }
 
     @Override
-    public final List<Set<Integer>> generateGroup(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    public final List<Set<Integer>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
     {
         if (sizes == null)
             throw new IllegalArgumentException("Not enough groups 0");
