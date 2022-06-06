@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,18 +29,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
  * The panel responsible for listing a person for edit.
  * */
-public class PersonPanel extends JPanel implements ActionListener, WindowStateListener, ComponentListener
+public class PersonPanel extends JPanel implements ActionListener, WindowStateListener, ComponentListener, KeyListener
 {
     private final MainFrame mf;
 
@@ -52,10 +57,14 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JPanel pButtons = new JPanel();
     private final JPanel pBottom = new JPanel();
     private final JPanel pBottomContainer = new JPanel();
+    private final JPanel pSearch = new JPanel();
 
     private final BorderLayout layout = new BorderLayout();
 
     private final JLabel lblName = new JLabel();
+    private final JLabel lblSearch = new JLabel("   Sök: ");
+
+    private final JTextField txfSearch = new JTextField(12);
 
     private final ListPanel wishlist;
     private final ListPanel denylist;
@@ -138,7 +147,10 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pMainGroupOverview.add(new JLabel("   "));
 
         lblName.setForeground(Utils.FOREGROUND_COLOR);
-        lblName.setText("<html><br>&nbsp;&nbsp;&nbsp;Överblick över huvudgrupper<br><br></html>"); // Gotta love HTMl Hax :)
+        lblName.setText("<html><br>&nbsp;&nbsp;&nbsp;Överblick<br><br></html>"); // Gotta love HTMl Hax :)
+
+        pSearch.add(lblSearch);
+        pSearch.add(txfSearch);
 
         pBottom.add(new JLabel("<html><br><br></html>"));
         pBottom.add(btnGraph);
@@ -146,6 +158,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         pBottomContainer.add(new JLabel("   "));
         pBottomContainer.add(pBottom);
+        pBottomContainer.add(pSearch);
 
         this.add(lblName, BorderLayout.PAGE_START);
         this.add(pMainGroupOverview, BorderLayout.CENTER);
@@ -326,6 +339,15 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         pBottomContainer.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         pBottomContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        pSearch.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pSearch.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        lblSearch.setForeground(Utils.FOREGROUND_COLOR);
+
+        txfSearch.setForeground(Utils.FOREGROUND_COLOR);
+        txfSearch.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        txfSearch.addKeyListener(this);
     }
 
     /**
@@ -525,6 +547,20 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     }
 
     /**
+     * Given an input it will give all matching results of a given
+     * role.
+     *
+     * @param persons the persons to be searched through.
+     * @param input the input to the search.
+     * */
+    private List<Person> getSearchResultOfRole(Set<Person> persons, String input)
+    {
+        return persons.parallelStream()
+                      .filter(p -> p.toString().toLowerCase().contains(input.toLowerCase()))
+                      .toList();
+    }
+
+    /**
      * Setter for: person.
      *
      * @param p the person to be set to this panel.
@@ -560,5 +596,34 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     public void windowStateChanged(WindowEvent e)
     {
         setSizes();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+        var input = txfSearch.getText();
+        var gm = mf.getCurrentGroup();
+        var candidates = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.CANDIDATE), input);
+        var leaders = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.LEADER), input);
+        var mg1 = getSearchResultOfRole(
+            gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1), input
+        );
+
+        var mg2 = getSearchResultOfRole(
+            gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2), input
+        );
+
+        DebugMethods.log("Search result: Candidates: %s".formatted(candidates), DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Search result: Leaders: %s".formatted(leaders), DebugMethods.LogType.DEBUG);
+
+        mf.setSideListData(new HashSet<>(candidates), new HashSet<>(leaders));
+        mainGroup1.setListData(new Vector<>(mg1));
+        mainGroup2.setListData(new Vector<>(mg2));
     }
 }
