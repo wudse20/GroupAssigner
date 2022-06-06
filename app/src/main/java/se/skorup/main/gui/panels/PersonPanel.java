@@ -83,7 +83,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
     private final JButton btnAddMg1 = new JButton("<html>&larr;</html>");
     private final JButton btnAddMg2 = new JButton("<html>&rarr;</html>");
-    private final JButton btnGraph = new JButton("Visualisera gruppen");
 
     private final ButtonGroup bgMainGroup = new ButtonGroup();
 
@@ -153,12 +152,11 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pSearch.add(txfSearch);
 
         pBottom.add(new JLabel("<html><br><br></html>"));
-        pBottom.add(btnGraph);
+        pBottom.add(pSearch);
         pBottom.add(new JLabel("<html><br><br></html>"));
 
         pBottomContainer.add(new JLabel("   "));
         pBottomContainer.add(pBottom);
-        pBottomContainer.add(pSearch);
 
         this.add(lblName, BorderLayout.PAGE_START);
         this.add(pMainGroupOverview, BorderLayout.CENTER);
@@ -318,21 +316,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         pButtons.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.Y_AXIS));
-
-        btnGraph.setForeground(Utils.FOREGROUND_COLOR);
-        btnGraph.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnGraph.addActionListener(e -> {
-            DebugMethods.log("Opening graph!", DebugMethods.LogType.DEBUG);
-            JOptionPane.showMessageDialog(
-                this, "Not yet implemented! :(",
-                ":(", JOptionPane.INFORMATION_MESSAGE);
-        });
-        btnGraph.setBorder(
-            BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
-                BorderFactory.createEmptyBorder(3, 15, 5, 15)
-            )
-        );
 
         pBottom.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         pBottom.setLayout(new BoxLayout(pBottom, BoxLayout.Y_AXIS));
