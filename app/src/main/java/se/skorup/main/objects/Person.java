@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public abstract class Person implements Serializable, Comparable<Person>
 {
     @Serial
-    private static final long serialVersionUID = 5695128931613766890L;
+    private static final long serialVersionUID = 5182071411502349329L;
 
     /**
      * The enum that keeps track of the different

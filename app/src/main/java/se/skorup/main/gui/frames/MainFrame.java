@@ -88,6 +88,8 @@ public class MainFrame extends JFrame
         DebugMethods.log("GroupManagers initialized.", DebugMethods.LogType.DEBUG);
         this.setProperties();
         DebugMethods.log("The properties has been set.", DebugMethods.LogType.DEBUG);
+        sidePanel.refreshLists();
+        DebugMethods.log("Added list data.", DebugMethods.LogType.DEBUG);
         this.addComponents();
         DebugMethods.log("The components has been added.", DebugMethods.LogType.DEBUG);
         this.setVisible(true);
