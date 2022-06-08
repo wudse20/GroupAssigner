@@ -92,7 +92,7 @@ public class SubgroupPanel extends JPanel
     private void loadGroups()
     {
         SwingUtilities.invokeLater(() -> {
-            var frame = new SubgroupListFrame(gf.BASE_GROUP_PATH);
+            var frame = new SubgroupListFrame(gf.BASE_GROUP_PATH, gm);
 
             frame.addActionCallback(() -> {
                 var f = frame.getSelectedFile();

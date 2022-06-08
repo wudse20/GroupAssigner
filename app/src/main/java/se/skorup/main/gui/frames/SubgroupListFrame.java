@@ -3,20 +3,31 @@ package se.skorup.main.gui.frames;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
+import se.skorup.main.gui.panels.SubgroupDisplayPanel;
+import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.helper.SerializationManager;
+import se.skorup.main.objects.Subgroups;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -27,56 +38,43 @@ import java.util.stream.Collectors;
  * The SubGroupListFrame used in seeing
  * the saved SubGroups.
  * */
-public class SubgroupListFrame extends JFrame implements ActionListener
+public class SubgroupListFrame extends JFrame implements ActionListener, ComponentListener
 {
-    /** The path of this frame. */
-    private final String path;
-
-    /** The list of ActionCallbacks. */
-    private final List<ActionCallback> callbacks = new Vector<>();
-
-    /** The found files. */
     private List<File> files;
 
-    /** The content pane of the frame. */
+    private final String path;
+
+    private final GroupManager gm;
+
+    private final List<ActionCallback> callbacks = new Vector<>();
+
     private final Container cp = this.getContentPane();
 
-    /** The ComboBox for displaying the saves. */
     private final JComboBox<String> cbSaves = new JComboBox<>();
 
-    /** The button used to load a save. */
     private final JButton btnLoad = new JButton("Ladda");
 
-    /** A spacer. */
-    private final JLabel lblSpacer1 = new JLabel(" ");
+    private final JLabel lblInfo = new JLabel("Välj den önskade gruppen: ");
 
-    /** A spacer. */
-    private final JLabel lblSpacer2 = new JLabel("   ");
-
-    /** A spacer. */
-    private final JLabel lblSpacer3 = new JLabel("   ");
-
-    /** A spacer. */
-    private final JLabel lblSpacer4 = new JLabel(" ");
-
-    /** The container panel. */
     private final JPanel pContainer = new JPanel();
+    private final JPanel pPreview = new JPanel();
+    private final JPanel pButtons = new JPanel();
 
-    /** The layout of the frame. */
-    private final BorderLayout layout = new BorderLayout();
-
-    /** The layout for the container. */
-    private final FlowLayout pContainerLayout = new FlowLayout(FlowLayout.CENTER);
+    private final SubgroupDisplayPanel sgdp;
+    private final JScrollPane scrSGDP;
 
     /**
      * Creates a new SubGroupListFrame.
      *
      * @param path the path of the frame.
      * */
-    public SubgroupListFrame(String path)
+    public SubgroupListFrame(String path, GroupManager gm)
     {
         super("Undergrupper!");
         this.path = path;
+        this.gm = gm;
+        this.scrSGDP = new JScrollPane(pPreview);
+        this.sgdp = new SubgroupDisplayPanel(scrSGDP, true);
 
         this.setProperties();
         this.addComponents();
@@ -98,6 +96,8 @@ public class SubgroupListFrame extends JFrame implements ActionListener
                 this, "Det finns inga sparade grupper.",
                 "Inga sparade grupper", JOptionPane.ERROR_MESSAGE
             );
+
+            DebugMethods.log("No saved groups!", DebugMethods.LogType.ERROR);
 
             this.dispose();
             return;
@@ -122,14 +122,18 @@ public class SubgroupListFrame extends JFrame implements ActionListener
      * */
     private void addComponents()
     {
-        pContainer.add(cbSaves);
-        pContainer.add(btnLoad);
+        pPreview.add(sgdp, BorderLayout.CENTER);
 
-        cp.add(lblSpacer1, BorderLayout.PAGE_START);
-        cp.add(lblSpacer2, BorderLayout.LINE_START);
-        cp.add(pContainer, BorderLayout.CENTER);
-        cp.add(lblSpacer3, BorderLayout.LINE_END);
-        cp.add(lblSpacer4, BorderLayout.PAGE_END);
+        pButtons.add(btnLoad);
+
+        pContainer.add(lblInfo);
+        pContainer.add(cbSaves);
+
+        cp.add(pContainer, BorderLayout.PAGE_START);
+        cp.add(new JLabel("   "), BorderLayout.LINE_START);
+        cp.add(scrSGDP, BorderLayout.CENTER);
+        cp.add(new JLabel("   "), BorderLayout.LINE_END);
+        cp.add(pButtons, BorderLayout.PAGE_END);
     }
 
     /**
@@ -138,17 +142,20 @@ public class SubgroupListFrame extends JFrame implements ActionListener
     private void setProperties()
     {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setSize(new Dimension(400, 110));
+        this.setSize(new Dimension(1200, 900));
         this.setVisible(true);
+        this.addComponentListener(this);
         this.refreshList();
+
+        previewCurrentSubgroup("Loading default item!");
 
         cp.setBackground(Utils.BACKGROUND_COLOR);
         cp.setForeground(Utils.FOREGROUND_COLOR);
-        cp.setLayout(layout);
+        cp.setLayout(new BorderLayout());
 
         pContainer.setBackground(Utils.BACKGROUND_COLOR);
         pContainer.setForeground(Utils.FOREGROUND_COLOR);
-        pContainer.setLayout(pContainerLayout);
+        pContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         btnLoad.setForeground(Utils.FOREGROUND_COLOR);
         btnLoad.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -156,6 +163,49 @@ public class SubgroupListFrame extends JFrame implements ActionListener
 
         cbSaves.setForeground(Utils.FOREGROUND_COLOR);
         cbSaves.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        cbSaves.addActionListener(e -> previewCurrentSubgroup("Selected an item!"));
+
+        var b1 = BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR), "Förhandsgranskning"
+        );
+        b1.setTitleColor(Utils.FOREGROUND_COLOR);
+        b1.setTitleFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+
+        scrSGDP.getVerticalScrollBar().setUnitIncrement(16);
+        scrSGDP.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrSGDP.setBorder(b1);
+        scrSGDP.setBackground(Utils.BACKGROUND_COLOR);
+
+        pPreview.setLayout(new BorderLayout());
+
+        pButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        pButtons.setBackground(Utils.BACKGROUND_COLOR);
+
+        lblInfo.setForeground(Utils.FOREGROUND_COLOR);
+    }
+
+    /**
+     * Loads the currently selected subgroup into the preview window.
+     *
+     * @param message The log message that will be logged.
+     * */
+    private void previewCurrentSubgroup(String message)
+    {
+        DebugMethods.log(message, DebugMethods.LogType.DEBUG);
+        try
+        {
+            sgdp.displaySubgroup(
+                (Subgroups) SerializationManager.deserializeObject(getSelectedFile().getAbsolutePath()), gm
+            );
+        }
+        catch (IOException | ClassNotFoundException ex)
+        {
+            DebugMethods.log(ex, DebugMethods.LogType.ERROR);
+            JOptionPane.showMessageDialog(
+                pPreview, "Kunde inte ladda gruppen: %s".formatted(ex),
+                "Fel vid läsning :(", JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**
@@ -190,4 +240,22 @@ public class SubgroupListFrame extends JFrame implements ActionListener
     {
         this.callbacks.forEach(ActionCallback::callback);
     }
+
+    @Override
+    public void componentResized(ComponentEvent e)
+    {
+        previewCurrentSubgroup("Showing component due to resize.");
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e)
+    {
+        previewCurrentSubgroup("Showing component due to showing window.");
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {}
+
+    @Override
+    public void componentHidden(ComponentEvent e) {}
 }

@@ -14,6 +14,7 @@ import se.skorup.main.objects.Subgroups;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -34,7 +35,9 @@ public class SubgroupDisplayPanel extends JPanel
     /** The state for the buttons. */
     enum State { NOTHING_SELECTED, NAME_SELECTED }
 
-    private final SubgroupPanel sgp;
+    private final JComponent parent;
+    private final boolean disableActions;
+
     private LayoutGenerator gen;
     private State state = State.NOTHING_SELECTED;
     private Selection selected = Selection.empty();
@@ -42,11 +45,29 @@ public class SubgroupDisplayPanel extends JPanel
 
     /**
      * Creates a new SubgroupDisplayPanel
-     * and initializes it.
+     * and initializes it. The actions aren't
+     * disabled by using this constructor.
+     *
+     * @param parent the parent component of this panel.
      * */
-    public SubgroupDisplayPanel(SubgroupPanel sgp)
+    public SubgroupDisplayPanel(JComponent parent)
     {
-        this.sgp = sgp;
+        this(parent, false);
+    }
+
+    /**
+     * Creates a new SubgroupDisplayPanel and initializes it.
+     * The actions will be disabled based on the parameter
+     * disable actions.
+     *
+     * @param parent the parent component of this {}panel.
+     * @param disableActions if {@code false} then the actions won't be disabled,
+     *                       else if {@code true} then the actions will be disabled.
+     * */
+    public SubgroupDisplayPanel(JComponent parent, boolean disableActions)
+    {
+        this.parent = parent;
+        this.disableActions = disableActions;
         this.setProperties();
     }
 
@@ -83,15 +104,16 @@ public class SubgroupDisplayPanel extends JPanel
      * Selects the LayoutGenerator to be used.
      *
      * @param vgap the vgap to be used.
+     * @param width the width of the container.
      * */
-    private void selectGen(int vgap)
+    private void selectGen(int vgap, int width)
     {
-        if (sgp.getWidth() < 600)
-            gen = new SingleColumnGenerator(sgp.getWidth(), vgap);
-        else if (sgp.getWidth() < 1100)
-            gen = new DoubleColumnGenerator(sgp.getWidth(), vgap);
+        if (width < 600)
+            gen = new SingleColumnGenerator(width, vgap);
+        else if (width < 1100)
+            gen = new DoubleColumnGenerator(width, vgap);
         else
-            gen = new TripleColumnGenerator(sgp.getWidth(), vgap);
+            gen = new TripleColumnGenerator(width, vgap);
     }
 
     /**
@@ -143,7 +165,7 @@ public class SubgroupDisplayPanel extends JPanel
             return;
 
         sgs.setLabel(groupIndex, newName);
-        sgp.repaint();
+        parent.repaint();
     }
 
     /**
@@ -162,7 +184,7 @@ public class SubgroupDisplayPanel extends JPanel
         sgs.removePersonFromGroup(selected.id(), selected.group());
         selected = Selection.empty();
         state = State.NOTHING_SELECTED;
-        sgp.repaint();
+        parent.repaint();
     }
 
     /**
@@ -179,13 +201,13 @@ public class SubgroupDisplayPanel extends JPanel
         {
             selected = Selection.empty();
             state = State.NOTHING_SELECTED;
-            sgp.repaint();
+            parent.repaint();
             return;
         }
 
         state = State.NAME_SELECTED;
         selected = selection;
-        sgp.repaint();
+        parent.repaint();
     }
 
     /**
@@ -211,7 +233,7 @@ public class SubgroupDisplayPanel extends JPanel
 
         nameList.sort(Comparator.comparingInt(String::length));
         var longestNameLength = nameList.get(nameList.size() - 1).length();
-        this.selectGen(longestNameLength);
+        this.selectGen(longestNameLength, parent.getWidth());
 
         this.removeAll();
         var container = new JPanel();
@@ -227,28 +249,51 @@ public class SubgroupDisplayPanel extends JPanel
             cont.setBackground(Utils.BACKGROUND_COLOR);
             cont.add(new JLabel(" "));
 
-            var btn = buildButton(subgroups.getLabel(groupIndex++) + ':', longestNameLength, Utils.GROUP_NAME_COLOR);
-            btn.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
-            btn.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.GROUP_NAME_COLOR));
-            final var finalGroupIndex = groupIndex - 1;
-            btn.addActionListener((e) -> groupNameButtonAction(finalGroupIndex, subgroups));
-            cont.add(btn);
-            groupBtnList.add(btn);
-
-            for (final var p : group)
+            if (disableActions)
             {
-                var lbl = new JLabel(" ");
-                lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
+                var lbl = new JLabel(Utils.padString(subgroups.getLabel(groupIndex++), ' ', longestNameLength));
+                lbl.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
+                lbl.setForeground(Utils.GROUP_NAME_COLOR);
                 cont.add(lbl);
 
-                var txtColor = selected.id() == p ? Utils.SELECTED_COLOR : Utils.FOREGROUND_COLOR;
-                var txtColor2 = selected.id() == p ? Utils.FOREGROUND_COLOR : Utils.SELECTED_COLOR;
-                var label = getLabel(p, manager, subgroups);
-                var btn2 = buildButton(label, longestNameLength, txtColor);
-                btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
-                btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, txtColor));
-                btn2.addActionListener(e -> personAction(finalGroupIndex, p));
-                cont.add(btn2);
+                for (final var p : group)
+                {
+                    var lblSpacer = new JLabel(" ");
+                    lblSpacer.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
+                    cont.add(lblSpacer);
+
+                    var label = getLabel(p, manager, subgroups);
+                    var lbl2 = new JLabel(Utils.padString(label, ' ', longestNameLength));
+                    lbl2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
+                    lbl2.setForeground(Utils.FOREGROUND_COLOR);
+                    cont.add(lbl2);
+                }
+            }
+            else
+            {
+                var btn = buildButton(subgroups.getLabel(groupIndex++) + ':', longestNameLength, Utils.GROUP_NAME_COLOR);
+                btn.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
+                btn.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.GROUP_NAME_COLOR));
+                final var finalGroupIndex = groupIndex - 1;
+                btn.addActionListener((e) -> groupNameButtonAction(finalGroupIndex, subgroups));
+                cont.add(btn);
+                groupBtnList.add(btn);
+
+                for (final var p : group)
+                {
+                    var lbl = new JLabel(" ");
+                    lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
+                    cont.add(lbl);
+
+                    var txtColor = selected.id() == p ? Utils.SELECTED_COLOR : Utils.FOREGROUND_COLOR;
+                    var txtColor2 = selected.id() == p ? Utils.FOREGROUND_COLOR : Utils.SELECTED_COLOR;
+                    var label = getLabel(p, manager, subgroups);
+                    var btn2 = buildButton(label, longestNameLength, txtColor);
+                    btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
+                    btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, txtColor));
+                    btn2.addActionListener(e -> personAction(finalGroupIndex, p));
+                    cont.add(btn2);
+                }
             }
 
             cont.add(new JLabel(" "));
