@@ -14,9 +14,11 @@ import se.skorup.main.gui.command.ErrorCommand;
 import se.skorup.main.gui.command.HelpCommand;
 import se.skorup.main.gui.command.ListCommand;
 import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
+import se.skorup.main.gui.components.HexButton;
 import se.skorup.main.gui.components.TerminalInput;
 import se.skorup.main.gui.components.TerminalOutput;
 import se.skorup.main.gui.components.TerminalPane;
+import se.skorup.main.gui.layout.HexLayout;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -48,6 +50,19 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     private final Map<String, Command> cmds;
 
     private final HistoryStructure<String> history;
+
+    private final HexButton btn1 = new HexButton("1");
+    private final HexButton btn2 = new HexButton("2");
+    private final HexButton btn3 = new HexButton("3");
+    private final HexButton btn4 = new HexButton("4");
+    private final HexButton btn5 = new HexButton("5");
+    private final HexButton btn6 = new HexButton("6");
+    private final HexButton btn7 = new HexButton("7");
+    private final HexButton btn8 = new HexButton("8");
+    private final HexButton btn9 = new HexButton("9");
+    private final HexButton btn0 = new HexButton("0");
+    private final HexButton btnDecimal = new HexButton(".");
+    private final HexButton btnEquals = new HexButton("=");
 
     private TerminalPane input;
     private TerminalPane output;
@@ -106,8 +121,26 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         cont2.setBackground(Utils.BACKGROUND_COLOR);
         cont2.setLayout(new BoxLayout(cont2, BoxLayout.Y_AXIS));
 
+        var numbers = new JPanel();
+        numbers.setBackground(Utils.BACKGROUND_COLOR);
+        numbers.setLayout(new HexLayout(3, true));
+
+        numbers.add(btn7);
+        numbers.add(btn8);
+        numbers.add(btn9);
+        numbers.add(btn4);
+        numbers.add(btn5);
+        numbers.add(btn6);
+        numbers.add(btn1);
+        numbers.add(btn2);
+        numbers.add(btn3);
+        numbers.add(btnDecimal);
+        numbers.add(btn0);
+        numbers.add(btnEquals);
+
         cont2.add(new JLabel(" "));
         cont2.add(input);
+        cont2.add(numbers);
 
         cont.add(scrOutput, BorderLayout.CENTER);
         cont.add(cont2, BorderLayout.PAGE_END);

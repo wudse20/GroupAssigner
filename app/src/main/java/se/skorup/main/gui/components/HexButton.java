@@ -1,148 +1,110 @@
 package se.skorup.main.gui.components;
 
+import se.skorup.API.util.Utils;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * A button in the shape of a hexagon.
  * */
-public class HexButton extends JButton
+public class HexButton extends JButton implements MouseListener
 {
-    private final Color background;
-    private final Color border;
-    private final Color foreground;
+    private final int n = 6;
+    private final int[] x = new int[n];
+    private final int[] y = new int[n];
 
-    private Polygon bounds;
-    private String label;
+    private Polygon polygon;
 
     /**
      * Creates a new HexButton
      *
      * @param label the label of the button.
-     * @param background the background color.
-     * @param border the border color.
-     * @param foreground the foreground color.
      * */
-    public HexButton(String label, Color background, Color border, Color foreground)
+    public HexButton(String label)
     {
-        this.label = label;
-        this.background = background;
-        this.border = border;
-        this.foreground = foreground;
+        super(label);
+
+        this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        this.setForeground(Utils.FOREGROUND_COLOR);
+        this.setBorder(BorderFactory.createEmptyBorder());
+        this.setBorderPainted(false);
+        this.setContentAreaFilled(false);
+        this.setFocusPainted(false);
+        this.setOpaque(false);
+        this.addMouseListener(this);
     }
 
     /**
-     * Builds a hexagon with a given width, height and ratio.
-     *
-     * @param width the width of the hexagon.
-     * @param height the height of the hexagon.
-     * @param ratio the ratio between the edges.
-     * @return the built hexagon.
+     * Builds the polygon to be the correct size.
      * */
-    private Polygon buildHexagon(int width, int height, double ratio)
+    private void buildPolygon()
     {
-        var hex = new Polygon();
+        var x0 = getSize().width / 2;
+        var y0 = getSize().height / 2;
 
-        for (int i = 0; i < 6 ; i++)
+        for(int i = 0; i < n; i++)
         {
-            var x = width / 2 + (int) ((width - 2) / 2 * Math.cos(i * 2 * Math.PI / 6) * ratio);
-            var y = height / 2 + (int) ((height - 2) / 2 * Math.sin(i * 2 * Math.PI / 6) * ratio);
-            hex.addPoint(x, y);
+            double angle = (2 * Math.PI) / n;
+            var v = i * angle;
+            x[i] = x0 + (int) Math.round((getWidth() / 2d) * Math.cos(v));
+            y[i] = y0 + (int) Math.round((getHeight() / 2d) * Math.sin(v));
+        }
+    }
+
+    @Override
+    public void paintComponent(Graphics g)
+    {
+        buildPolygon();
+        g.setColor(this.getBackground());
+        g.fillPolygon(x, y, n);
+        super.paintComponent(g);
+    }
+
+    @Override
+    public void paintBorder(Graphics g)
+    {
+        g.setColor(borderColor);
+        buildPolygon();
+        g.drawPolygon(x, y, n);
+    }
+
+    @Override
+    public boolean contains(int x1, int y1)
+    {
+        if (polygon == null || !polygon.getBounds().equals(getBounds()))
+        {
+            buildPolygon();
+            polygon = new Polygon(x,y,n);
         }
 
-        return hex;
-    }
-
-    /**
-     * Calculates the bounds of the button.
-     * */
-    private void calculateBounds()
-    {
-        this.bounds = buildHexagon(this.getWidth(), this.getHeight(), 1.0);
+        return polygon.contains(x1, y1);
     }
 
     @Override
-    public boolean contains(Point p)
+    public void mouseReleased(MouseEvent e)
     {
-        return this.bounds.contains(p);
-    }
-
-    @Override
-    public boolean contains(int x, int y)
-    {
-        return this.contains(new Point(x, y));
-    }
-
-    @Override
-    public void setSize(Dimension d)
-    {
-        super.setSize(d);
-        this.calculateBounds();
-    }
-
-    @Override
-    public void setSize(int w, int h)
-    {
-        this.setSize(new Dimension(w, h));
-    }
-
-    @Override
-    public void setBounds(int x, int y, int w, int h)
-    {
-        super.setBounds(x, y, w, h);
-        this.calculateBounds();
-    }
-
-    @Override
-    public void setBounds(Rectangle r)
-    {
-        super.setBounds(r);
-        this.calculateBounds();
-    }
-
-    @Override
-    public void paintComponent(Graphics gOld)
-    {
-        var g = (Graphics2D) gOld;
-
-        g.setColor(border);
-        var stroke = buildHexagon(this.getWidth(), this.getHeight(), 1.01);
-        g.drawPolygon(stroke);
-        g.fillPolygon(stroke);
-
-        g.setColor(background);
-        var background = buildHexagon(this.getWidth(), this.getHeight(), 0.95);
-        g.drawPolygon(background);
-        g.fillPolygon(background);
-
-        var f = new Font(Font.DIALOG, Font.PLAIN, 12);
-        g.setFont(f);
-        g.setColor(foreground);
-
-        var fm = g.getFontMetrics();
-        var width = fm.stringWidth(label);
-        var height = fm.getHeight();
-
-        g.drawString(label, (this.getWidth() - width) / 2, (this.getHeight() + height - 25) / 2);
-    }
-
-    @Override
-    public String getText()
-    {
-        return label;
-    }
-
-    @Override
-    public void setText(String text)
-    {
-        this.label = text;
+        this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.repaint();
     }
+
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+        this.setBackground(Utils.BACKGROUND_COLOR);
+        this.repaint();
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
 }
