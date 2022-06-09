@@ -102,8 +102,8 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
         {
             pName.setTextFieldBackground(Color.RED);
             JOptionPane.showMessageDialog(
-                    this, "För kort namn! Måste var minst fem bokstäver långt.",
-                    "För kort namn!", JOptionPane.ERROR_MESSAGE
+                this, "För kort namn! Måste var minst fem bokstäver långt.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
             );
 
             return;
@@ -111,8 +111,8 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
         else if (nameModel.getItems().size() == 0)
         {
             JOptionPane.showMessageDialog(
-                    this, "Du måste lägga till minst en person i gruppen.",
-                    "För kort namn!", JOptionPane.ERROR_MESSAGE
+                this, "Du måste lägga till minst en person i gruppen.",
+                "För kort namn!", JOptionPane.ERROR_MESSAGE
             );
             return;
         }
@@ -135,8 +135,8 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
             {
                 var inputs =
                         Arrays.stream(input.split(","))
-                                .map(String::trim)
-                                .toArray(String[]::new);
+                              .map(String::trim)
+                              .toArray(String[]::new);
 
                 for (var s : inputs)
                 {

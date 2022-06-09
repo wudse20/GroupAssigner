@@ -160,6 +160,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
                 add.addAddListener((event) -> {
                     event.frame().dispose();
                     mf.refreshSidePanel();
+                    this.updateManagers();
                 });
             });
         }
