@@ -357,7 +357,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         if (gm == null)
             return;
 
-
         mainGroup1.setListData(
             new Vector<>(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1))
         );
@@ -365,6 +364,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         mainGroup2.setListData(
             new Vector<>(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2))
         );
+
+        search();
     }
 
     /**
@@ -553,6 +554,32 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     }
 
     /**
+     * Uses the text in the search field and based on that
+     * updates the GUI with the correct data.
+     * */
+    private void search()
+    {
+        var input = txfSearch.getText();
+        var gm = mf.getCurrentGroup();
+        var candidates = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.CANDIDATE), input);
+        var leaders = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.LEADER), input);
+        var mg1 = getSearchResultOfRole(
+                gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1), input
+        );
+
+        var mg2 = getSearchResultOfRole(
+                gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2), input
+        );
+
+        DebugMethods.log("Search result: Candidates: %s".formatted(candidates), DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Search result: Leaders: %s".formatted(leaders), DebugMethods.LogType.DEBUG);
+
+        mf.setSideListData(new HashSet<>(candidates), new HashSet<>(leaders));
+        mainGroup1.setListData(new Vector<>(mg1));
+        mainGroup2.setListData(new Vector<>(mg2));
+    }
+
+    /**
      * Setter for: person.
      *
      * @param p the person to be set to this panel.
@@ -599,23 +626,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     @Override
     public void keyReleased(KeyEvent e)
     {
-        var input = txfSearch.getText();
-        var gm = mf.getCurrentGroup();
-        var candidates = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.CANDIDATE), input);
-        var leaders = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.LEADER), input);
-        var mg1 = getSearchResultOfRole(
-            gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1), input
-        );
-
-        var mg2 = getSearchResultOfRole(
-            gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2), input
-        );
-
-        DebugMethods.log("Search result: Candidates: %s".formatted(candidates), DebugMethods.LogType.DEBUG);
-        DebugMethods.log("Search result: Leaders: %s".formatted(leaders), DebugMethods.LogType.DEBUG);
-
-        mf.setSideListData(new HashSet<>(candidates), new HashSet<>(leaders));
-        mainGroup1.setListData(new Vector<>(mg1));
-        mainGroup2.setListData(new Vector<>(mg2));
+        search();
     }
 }
