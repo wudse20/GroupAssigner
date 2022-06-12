@@ -343,6 +343,43 @@ public class SubgroupPanel extends JPanel
     }
 
     /**
+     * Calculates the optimal size for overflow to make it
+     * the best groups possible.
+     *
+     * @param size the size of the group
+     * */
+    private int calculateOptimalSize(int size)
+    {
+        var total = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
+
+        // If match then do nothing!
+        if (total % size == 0)
+            return size;
+
+        // Check biggest delta with simple overflow.
+        // i.e. just adding the overflow to its own
+        // group. Delta = size - (total % size)
+        var delta1 = size - (total % size);
+        var delta2 = (size + 1) - (total % (size + 1));
+        var delta3 = (size - 1) - (total % (size - 1));
+
+        if (delta1 < delta2)
+        {
+            if (delta1 < delta3)
+                return size;
+            else
+                return size - 1;
+        }
+        else
+        {
+            if (delta2 < delta3)
+                return size + 1;
+            else
+                return size - 1;
+        }
+    }
+
+    /**
      * Figures out which group generator to use.
      *
      * @param gc the group creator in use.
@@ -351,9 +388,23 @@ public class SubgroupPanel extends JPanel
      * */
     private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes)
     {
+        if (!gf.shouldOverflow())
+        {
+            return switch (gf.getSizeState()) {
+                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm);
+                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false);
+                case PAIR_WITH_LEADERS -> {
+                    var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
+                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                }
+                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+            };
+        }
+
+        var optimalSize = calculateOptimalSize(sizes.get(0));
         return switch (gf.getSizeState()) {
-            case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), gf.shouldOverflow(), gm);
-            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), gf.shouldOverflow());
+            case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(optimalSize, true, gm);
+            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(optimalSize, true);
             case PAIR_WITH_LEADERS -> {
                 var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
                 yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
