@@ -39,7 +39,7 @@ public final class MainGroupSizeSettingsPanel extends SettingsPanel
 
     private final ButtonGroup bg = new ButtonGroup();
 
-    private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
+    private final JCheckBox boxOverflow = new JCheckBox("Optimera gruppstorlekar");
 
     private final BorderedInputPanel pMG1 =
         new BorderedInputPanel("Huvudgrupp 1", 12, Utils.MAIN_GROUP_1_COLOR);
