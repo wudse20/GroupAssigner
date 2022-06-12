@@ -1,4 +1,5 @@
 # GroupAssigner
+[![Java CI with Gradle](https://github.com/wudse20/GroupAssigner/actions/workflows/gradle.yml/badge.svg)](https://github.com/wudse20/GroupAssigner/actions/workflows/gradle.yml)
 A program that assigns people to different groups, based on their preferences.
 
 ## Download
