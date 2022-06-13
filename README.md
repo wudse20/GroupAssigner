@@ -6,7 +6,7 @@ A program that assigns people to different groups, based on their preferences.
 The program can be downloaded by following this [link](https://www.skorup.se/download). This page is in swedish.
 
 ## Versions
-Java: 17 <br>
+Java: 18 <br>
 Juniper JUnit (org.junit.jupiter:junit-jupiter:5.7.2)
 
 ## Compile and run
