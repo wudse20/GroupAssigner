@@ -297,7 +297,7 @@ public class SubgroupPanel extends JPanel
      *                              GroupCreator.
      * @param mg the main group.
      * */
-    private GroupCreator getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
+    private GroupCreatorResult getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
     {
         var gc = gf.getGroupSelectedGroupCreator();
 
@@ -307,14 +307,17 @@ public class SubgroupPanel extends JPanel
             var gm = new GroupManager(mg.toString());
             persons.forEach(gm::registerPerson);
 
-            return gc instanceof RandomGroupCreator   ?
+            var res =
+                   gc instanceof RandomGroupCreator   ?
                    new RandomGroupCreator(gm)         :
                    gc instanceof WishlistGroupCreator ?
                    new WishlistGroupCreator(gm)       :
                    new AlternateWishlistGroupCreator(gm);
+
+            return new GroupCreatorResult(res, gm);
         }
 
-        return gc;
+        return new GroupCreatorResult(gc, this.gm);
     }
 
     /**
@@ -384,9 +387,10 @@ public class SubgroupPanel extends JPanel
      *
      * @param gc the group creator in use.
      * @param sizes the sizes of the groups.
+     * @param gm the group manager in use.
      * @return the correct GroupGenerator.
      * */
-    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes)
+    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes, GroupManager gm)
     {
         if (!gf.shouldOverflow())
         {
@@ -417,10 +421,11 @@ public class SubgroupPanel extends JPanel
      * Generates a singe subgroup.
      *
      * @param gc the group creator that should be used.
+     * @param gm the group manager in use.
      * @return the List of Sets consisting of
      *         the newly created subgroups.
      * */
-    private List<Set<Integer>> generateSingleSubgroup(GroupCreator gc)
+    private List<Set<Integer>> generateSingleSubgroup(GroupCreator gc, GroupManager gm)
     {
         final var sizes = gf.getUserInput();
 
@@ -429,7 +434,7 @@ public class SubgroupPanel extends JPanel
 
         try
         {
-            return tryGenerateGroups(getGroupGenerator(gc, sizes));
+            return tryGenerateGroups(getGroupGenerator(gc, sizes, gm));
         }
         catch (NoGroupAvailableException | IllegalArgumentException e)
         {
@@ -461,15 +466,14 @@ public class SubgroupPanel extends JPanel
 
         try
         {
-            var groups =
-               tryGenerateGroups(
-                   getGroupGenerator(
-                       getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1), mg1Sizes));
+            var gc1 = getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1);
+            var gg1 = getGroupGenerator(gc1.gc, mg1Sizes, gc1.gm);
+            var groups = tryGenerateGroups(gg1);
 
-            groups.addAll(
-                tryGenerateGroups(
-                    getGroupGenerator(
-                        getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2), mg2Sizes)));
+            var gc2 = getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2);
+            var gg2 = getGroupGenerator(gc2.gc, mg2Sizes, gc2.gm);
+            var groups2 = tryGenerateGroups(gg2);
+            groups.addAll(groups2);
 
             return groups;
         }
@@ -489,11 +493,11 @@ public class SubgroupPanel extends JPanel
      * */
     private void generateGroups()
     {
-        final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup());
+        final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup()).gc;
         var groups =
             gf.shouldUseMainGroups()   ?
             generateMultipleSubgroup() :
-            generateSingleSubgroup(gc);
+            generateSingleSubgroup(gc, gm);
 
         if (groups.size() == 0)
             return;
@@ -519,4 +523,6 @@ public class SubgroupPanel extends JPanel
 
         super.repaint();
     }
+
+    private record GroupCreatorResult(GroupCreator gc, GroupManager gm) {}
 }
