@@ -68,7 +68,7 @@ public class HexButton extends JButton implements MouseListener
     @Override
     public void paintBorder(Graphics g)
     {
-        g.setColor(borderColor);
+        g.setColor(getForeground());
         buildPolygon();
         g.drawPolygon(x, y, n);
     }
