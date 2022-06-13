@@ -19,7 +19,7 @@ public class SettingPanel extends JPanel
 
     private final InputPanel pInput;
 
-    private final FlowLayout layout = new FlowLayout(FlowLayout.CENTER);
+    private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
     /**
      * Creates a new SettingPanel.

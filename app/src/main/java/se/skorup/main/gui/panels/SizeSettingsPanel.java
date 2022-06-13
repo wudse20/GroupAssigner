@@ -27,7 +27,7 @@ public final class SizeSettingsPanel extends SettingsPanel
 
     private final ButtonGroup bgSettings = new ButtonGroup();
 
-    private final JCheckBox boxOverflow = new JCheckBox("Skapa extra grupper ifall det inte går jämt upp.");
+    private final JCheckBox boxOverflow = new JCheckBox("Optimera gruppstorlekar");
 
     private final SettingPanel pNbrGroups =
         new SettingPanel("%-35s".formatted("Antal grupper"), null, 4, true);
@@ -74,6 +74,7 @@ public final class SizeSettingsPanel extends SettingsPanel
 
         boxOverflow.setBackground(Utils.BACKGROUND_COLOR);
         boxOverflow.setForeground(Utils.FOREGROUND_COLOR);
+        boxOverflow.setFont(pLeaders.getFont());
         boxOverflow.addActionListener(e -> gf.setOverflow(boxOverflow.isSelected()));
     }
 
@@ -84,7 +85,7 @@ public final class SizeSettingsPanel extends SettingsPanel
     {
         var p = new JPanel();
         p.setBackground(Utils.BACKGROUND_COLOR);
-        p.setLayout(new FlowLayout(FlowLayout.CENTER));
+        p.setLayout(new FlowLayout(FlowLayout.LEFT));
         p.add(boxOverflow);
 
         var p2 = new JPanel();
