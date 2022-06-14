@@ -57,11 +57,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JPanel pBottom = new JPanel();
     private final JPanel pBottomContainer = new JPanel();
     private final JPanel pSearch = new JPanel();
+    private final JPanel pGroupData = new JPanel();
 
     private final BorderLayout layout = new BorderLayout();
 
     private final JLabel lblName = new JLabel();
-    private final JLabel lblSearch = new JLabel("   Sök: ");
+    private final JLabel lblSearch = new JLabel("Sök: ");
+    private final JLabel lblGroupData = new JLabel("Kaka");
 
     private final JTextField txfSearch = new JTextField(12);
 
@@ -84,14 +86,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final JButton btnAddMg2 = new JButton("<html>&rarr;</html>");
 
     private final ButtonGroup bgMainGroup = new ButtonGroup();
-
-    private final JLabel lblSpacer1 = new JLabel(" ");
-    private final JLabel lblSpacer2 = new JLabel("   ");
-    private final JLabel lblSpacer3 = new JLabel("   ");
-    private final JLabel lblSpacer4 = new JLabel(" ");
-    private final JLabel lblSpacer5 = new JLabel(" ");
-    private final JLabel lblSpacer6 = new JLabel(" ");
-    private final JLabel lblSpacer7 = new JLabel(" ");
 
     private final JCheckBox cbSameMainGroup = new JCheckBox("Visa endast deltagare av huvudgrupp");
     private final JButton btnChangeRole = new JButton("Byt roll");
@@ -131,6 +125,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pMainGroupOverview.removeAll();
         pBottom.removeAll();
         pBottomContainer.removeAll();
+        pGroupData.removeAll();
 
         pButtons.add(btnAddMg2);
         pButtons.add(new JLabel("<html><br></html>")); // Love HTML hacks :)
@@ -150,9 +145,11 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pSearch.add(lblSearch);
         pSearch.add(txfSearch);
 
-        pBottom.add(new JLabel("<html><br><br></html>"));
+        pGroupData.add(lblGroupData);
+
         pBottom.add(pSearch);
-        pBottom.add(new JLabel("<html><br><br></html>"));
+        pBottom.add(pGroupData);
+        pBottom.add(new JLabel("<html><br></html>"));
 
         pBottomContainer.add(new JLabel("   "));
         pBottomContainer.add(pBottom);
@@ -185,18 +182,18 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pCheckBox.add(btnChangeRole);
 
         pContainer.add(pName);
-        pContainer.add(lblSpacer5);
+        pContainer.add(new JLabel(" "));
         pContainer.add(wishlist);
-        pContainer.add(lblSpacer6);
+        pContainer.add(new JLabel(" "));
         pContainer.add(denylist);
-        pContainer.add(lblSpacer7);
+        pContainer.add(new JLabel(" "));
         pContainer.add(pCheckBox);
 
-        this.add(lblSpacer1, BorderLayout.PAGE_START);
-        this.add(lblSpacer2, BorderLayout.LINE_START);
+        this.add(new JLabel(" "), BorderLayout.PAGE_START);
+        this.add(new JLabel("   "), BorderLayout.LINE_START);
         this.add(pContainer, BorderLayout.CENTER);
-        this.add(lblSpacer3, BorderLayout.LINE_END);
-        this.add(lblSpacer4, BorderLayout.PAGE_END);
+        this.add(new JLabel("   "), BorderLayout.LINE_END);
+        this.add(new JLabel(" "), BorderLayout.PAGE_END);
 
         pContainer.revalidate();
         pName.revalidate();
@@ -323,13 +320,18 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         pBottomContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         pSearch.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        pSearch.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        pSearch.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         lblSearch.setForeground(Utils.FOREGROUND_COLOR);
 
         txfSearch.setForeground(Utils.FOREGROUND_COLOR);
         txfSearch.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         txfSearch.addKeyListener(this);
+
+        lblGroupData.setForeground(Utils.FOREGROUND_COLOR);
+
+        pGroupData.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        pGroupData.setLayout(new FlowLayout(FlowLayout.LEFT));
     }
 
     /**
@@ -359,6 +361,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         mainGroup1Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
         mainGroup2Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2));
+
+        lblGroupData.setText(getGroupDataFormatted());
 
         search();
     }
@@ -502,7 +506,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         DebugMethods.log("Setting Sizes", DebugMethods.LogType.DEBUG);
         var d = new Dimension((mf.getWidth() / 5), mf.getHeight() / 5); // Base
         var d2 = new Dimension((int) (d.width * 1.23), d.height); // Denylist / wishlist
-        var d3 = new Dimension((int) (d.width * 1.365), (int) (d.height * 1.85)); // MainGroup lists
+        var d3 = new Dimension((int) (d.width * 1.365), (int) (d.height * 1.65)); // MainGroup lists
 
         wishlist.setPreferredListSize(d2);
         denylist.setPreferredListSize(d2);
@@ -571,6 +575,25 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         mf.setSideListData(new HashSet<>(candidates), new HashSet<>(leaders));
         mainGroup1.setListData(new Vector<>(mg1));
         mainGroup2.setListData(new Vector<>(mg2));
+    }
+
+    /**
+     * Formats the group data to the string
+     * displayed in the GUI.
+     *
+     * @return a formatted string containing the group data.
+     * */
+    private String getGroupDataFormatted()
+    {
+        var gm = mf.getCurrentGroup();
+        return ("<html><br>Totalt antal personer: %d<br>" +
+                "<p color=\"lime\">Antal personer i huvudgrupp 1: %d</p>" +
+                "<p color=\"#00ffff\">Antal personer i huvudgrupp 2: %d</p></html>"
+        ).formatted(
+            gm.getMemberCount(),
+            gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1).size(),
+            gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2).size()
+        );
     }
 
     /**
