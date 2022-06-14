@@ -210,7 +210,7 @@ public final class MainGroupSizeSettingsPanel extends SettingsPanel
                 gf.getManager()
                     .getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1)
                     .size(),
-                "Gruppstorlekar huvudgrupp 1: <br>"
+                "Jämna gruppstorlekar huvudgrupp 1: <br>Antal personer: "
         ));
 
         lblSizesMg2.setForeground(Utils.MAIN_GROUP_2_COLOR);
@@ -219,7 +219,7 @@ public final class MainGroupSizeSettingsPanel extends SettingsPanel
                 gf.getManager()
                     .getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2)
                     .size(),
-                "<br>Gruppstorlekar huvudgrupp 2: <br>"
+                "<br>Jämna gruppstorlekar huvudgrupp 2: <br>Antal personer: "
         ));
     }
 

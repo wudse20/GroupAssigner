@@ -141,7 +141,7 @@ public final class SizeSettingsPanel extends SettingsPanel
     public void updateSizeData(int size, Color c)
     {
         lblSizes.setForeground(c);
-        lblSizes.setText(getGroupSizeText(size, "Jämna gruppstorlekar:<br>"));
+        lblSizes.setText(getGroupSizeText(size, "Jämna gruppstorlekar:"));
     }
 
     @Override

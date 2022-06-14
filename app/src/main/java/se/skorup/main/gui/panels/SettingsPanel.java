@@ -1,6 +1,5 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.GroupFrame;
 
@@ -8,7 +7,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,13 +74,12 @@ public sealed abstract class SettingsPanel extends JPanel
      * */
     protected String getGroupSizeText(int size, String header)
     {
-        var res = new ArrayList<Integer>();
+        var sb = new StringBuilder().append("<html>").append(header).append(" ");
 
         for (int i = 1; i <= size; i++)
             if (size % i == 0)
-                res.add(i);
+                sb.append(i).append(", ");
 
-        return "<html> %s%s</html>"
-                .formatted(header, ImmutableArray.fromList(res).map("Antal personer: %s"::formatted).mkString("<br>"));
+        return sb.delete(sb.length() - 2, sb.length()).append("</html>").toString();
     }
 }
