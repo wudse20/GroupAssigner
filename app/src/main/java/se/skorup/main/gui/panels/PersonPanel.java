@@ -539,9 +539,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         DebugMethods.log("Search input: '%s'".formatted(input), DebugMethods.LogType.DEBUG);
         DebugMethods.log("Trimmed input: '%s'".formatted(input.trim()), DebugMethods.LogType.DEBUG);
 
-        if (input.trim().equalsIgnoreCase("id"))
-            return List.of(); // Don't want any results for id.
-
         if (input.trim().isEmpty()) // Don't want spaces to give no result.
             return new ArrayList<>(persons);
 

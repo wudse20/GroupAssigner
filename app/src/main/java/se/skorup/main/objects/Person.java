@@ -195,7 +195,7 @@ public abstract class Person implements Serializable, Comparable<Person>
     @Override
     public String toString()
     {
-        return "%s, id: %d".formatted(name, id);
+        return name;
     }
 
     /**
