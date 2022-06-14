@@ -307,12 +307,16 @@ public class SubgroupPanel extends JPanel
             var gm = new GroupManager(mg.toString());
             persons.forEach(gm::registerPerson);
 
-            var res =
-                   gc instanceof RandomGroupCreator   ?
-                   new RandomGroupCreator(gm)         :
-                   gc instanceof WishlistGroupCreator ?
-                   new WishlistGroupCreator(gm)       :
-                   new AlternateWishlistGroupCreator(gm);
+            GroupCreator res;
+
+            if (gc instanceof RandomGroupCreator)
+                res = new RandomGroupCreator(gm);
+            else if (gc instanceof MultiWishlistCreator)
+                res = new MultiWishlistCreator(gm);
+            else if (gc instanceof WishlistGroupCreator w && w instanceof AlternateWishlistGroupCreator)
+                res = new AlternateWishlistGroupCreator(gm);
+            else
+                res = new WishlistGroupCreator(gm);
 
             return new GroupCreatorResult(res, gm);
         }
@@ -371,14 +375,14 @@ public class SubgroupPanel extends JPanel
             if (delta1 < delta3)
                 return size;
             else
-                return size - 1;
+                return size - 1 < 1 ? size : size - 1;
         }
         else
         {
             if (delta2 < delta3)
                 return size + 1;
             else
-                return size - 1;
+                return size - 1 < 1 ? size : size - 1;
         }
     }
 
@@ -461,6 +465,15 @@ public class SubgroupPanel extends JPanel
             return List.of();
 
         var splitIndex = sizes.indexOf(Integer.MIN_VALUE);
+
+        // Create using one MainGroup
+        if (splitIndex == -1)
+        {
+            var gc = getGroupCreator(true, gf.getMainGroup());
+            var gg = getGroupGenerator(gc.gc, sizes, gc.gm);
+            return gg.generate();
+        }
+
         var mg1Sizes = sizes.subList(0, splitIndex);
         var mg2Sizes = sizes.subList(splitIndex + 1, sizes.size());
 
