@@ -357,13 +357,8 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         if (gm == null)
             return;
 
-        mainGroup1.setListData(
-            new Vector<>(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1))
-        );
-
-        mainGroup2.setListData(
-            new Vector<>(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2))
-        );
+        mainGroup1Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
+        mainGroup2Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2));
 
         search();
     }
