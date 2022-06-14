@@ -354,8 +354,9 @@ public class SubgroupPanel extends JPanel
      * the best groups possible.
      *
      * @param size the size of the group
+     * @param gm the group manager in use.
      * */
-    private int calculateOptimalSize(int size)
+    private int calculateOptimalSize(int size, GroupManager gm)
     {
         var total = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
 
@@ -409,10 +410,12 @@ public class SubgroupPanel extends JPanel
             };
         }
 
-        var optimalSize = calculateOptimalSize(sizes.get(0));
         return switch (gf.getSizeState()) {
-            case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(optimalSize, true, gm);
-            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(optimalSize, true);
+            case NUMBER_GROUPS -> {
+                var nbrPersons = (int) Math.ceil(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) sizes.get(0));
+                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm);
+            }
+            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true);
             case PAIR_WITH_LEADERS -> {
                 var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
                 yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
