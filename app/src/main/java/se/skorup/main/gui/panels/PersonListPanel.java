@@ -33,7 +33,7 @@ public class PersonListPanel extends JPanel
      * */
     public PersonListPanel(String label, Set<Person> persons)
     {
-        this.listPersons = new PersonList(new ArrayList<>(), ListSelectionModel.SINGLE_SELECTION);
+        this.listPersons = new PersonList(new ArrayList<>(persons), ListSelectionModel.SINGLE_SELECTION);
         this.scrListPersons = new JScrollPane(listPersons);
         this.lblGroupInfo = new JLabel(label);
 

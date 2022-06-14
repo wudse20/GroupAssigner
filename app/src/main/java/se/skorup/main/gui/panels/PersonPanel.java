@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
@@ -359,8 +358,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         if (gm == null)
             return;
 
+        mainGroup1Model.removeAll();
         mainGroup1Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
-        mainGroup2Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2));
+        mainGroup1.clearSelection();
+
+        mainGroup2Model.removeAll();
+        mainGroup2Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
+        mainGroup2.clearSelection();
 
         lblGroupData.setText(getGroupDataFormatted());
 
@@ -573,8 +577,11 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         DebugMethods.log("Search result: Leaders: %s".formatted(leaders), DebugMethods.LogType.DEBUG);
 
         mf.setSideListData(new HashSet<>(candidates), new HashSet<>(leaders));
-        mainGroup1.setListData(new Vector<>(mg1));
-        mainGroup2.setListData(new Vector<>(mg2));
+        mainGroup1Model.removeAll();
+        mainGroup1Model.addItems(mg1);
+
+        mainGroup2Model.removeAll();
+        mainGroup2Model.addItems(mg2);
     }
 
     /**
