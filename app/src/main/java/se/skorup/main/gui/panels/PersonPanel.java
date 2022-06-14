@@ -428,6 +428,7 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     {
         resetList(mainGroup1);
         resetList(mainGroup2);
+        setSizes();
 
         if (p == null) // If there's no person, then display overview.
             initNoPersonSelected();
@@ -504,13 +505,14 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private void setSizes()
     {
         DebugMethods.log("Setting Sizes", DebugMethods.LogType.DEBUG);
-        var d = new Dimension(mf.getWidth() / 5, mf.getHeight() / 5);
-        var d2 = new Dimension(d.width, (int) (d.height * 1.85));
+        var d = new Dimension((mf.getWidth() / 5), mf.getHeight() / 5); // Base
+        var d2 = new Dimension((int) (d.width * 1.23), d.height); // Denylist / wishlist
+        var d3 = new Dimension((int) (d.width * 1.365), (int) (d.height * 1.85)); // MainGroup lists
 
-        wishlist.setPreferredListSize(d);
-        denylist.setPreferredListSize(d);
-        scrMainGroup1.setPreferredSize(d2);
-        scrMainGroup2.setPreferredSize(d2);
+        wishlist.setPreferredListSize(d2);
+        denylist.setPreferredListSize(d2);
+        scrMainGroup1.setPreferredSize(d3);
+        scrMainGroup2.setPreferredSize(d3);
     }
 
     /**
