@@ -114,7 +114,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
 
         this.add(new JLabel("    "), BorderLayout.PAGE_START);
         this.add(new JLabel("    "), BorderLayout.LINE_START);
-        this.add(cont, BorderLayout.CENTER);
+        this.add(new CalculatorButtonPanel(), BorderLayout.CENTER);
         this.add(new JLabel("    "), BorderLayout.LINE_END);
         this.add(new JLabel("    "), BorderLayout.PAGE_END);
     }
