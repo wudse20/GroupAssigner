@@ -1,20 +1,25 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.interfaces.ActionCallback;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * The buttons for the calculator
  * */
 public class CalculatorButtonPanel extends JPanel
 {
-    private String data;
+    private String data = "";
+
+    private final List<ActionCallback> callbacks = new ArrayList<>();
 
     private final JButton[] buttons = {
         new JButton("7"), new JButton("8"), new JButton("9"), new JButton("+"),
@@ -42,7 +47,10 @@ public class CalculatorButtonPanel extends JPanel
         this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
 
         Arrays.stream(buttons).forEachOrdered(this::setButtonProperties);
-        Arrays.stream(buttons).forEach(b -> b.addActionListener(e -> data += b.getText()));
+        Arrays.stream(buttons).forEach(b -> b.addActionListener(e -> {
+            data += b.getText();
+            callbacks.forEach(ActionCallback::callback);
+        }));
     }
 
     /**
@@ -80,5 +88,18 @@ public class CalculatorButtonPanel extends JPanel
     public void resetData()
     {
         data = "";
+    }
+
+    /**
+     * Adds an action callback.
+     *
+     * @param ac the new action callback.
+     * */
+    public void addActionCallback(ActionCallback ac)
+    {
+        if (ac == null)
+            return;
+
+        callbacks.add(ac);
     }
 }
