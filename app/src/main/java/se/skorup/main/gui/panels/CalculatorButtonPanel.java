@@ -5,25 +5,23 @@ import se.skorup.API.util.Utils;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.Arrays;
 
 /**
  * The buttons for the calculator
  * */
 public class CalculatorButtonPanel extends JPanel
 {
-    private final JButton btn0 = new JButton("0");
-    private final JButton btn1 = new JButton("1");
-    private final JButton btn2 = new JButton("2");
-    private final JButton btn3 = new JButton("3");
-    private final JButton btn4 = new JButton("4");
-    private final JButton btn5 = new JButton("5");
-    private final JButton btn6 = new JButton("6");
-    private final JButton btn7 = new JButton("7");
-    private final JButton btn8 = new JButton("8");
-    private final JButton btn9 = new JButton("9");
-    private final JButton btnEquals = new JButton("=");
-    private final JButton btnDot = new JButton(".");
+    private String data;
+
+    private final JButton[] buttons = {
+        new JButton("7"), new JButton("8"), new JButton("9"), new JButton("+"),
+        new JButton("4"), new JButton("5"), new JButton("6"), new JButton("-"),
+        new JButton("1"), new JButton("2"), new JButton("3"), new JButton("*"),
+        new JButton("."), new JButton("0"), new JButton("%"), new JButton("/")
+    };
 
     /**
      * Creates a new CalculatorButtonPanel.
@@ -39,22 +37,12 @@ public class CalculatorButtonPanel extends JPanel
      * */
     private void setProperties()
     {
-        this.setLayout(new GridLayout(4, 3));
+        this.setLayout(new GridLayout(4, 4));
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
 
-        setButtonProperties(btn0);
-        setButtonProperties(btn1);
-        setButtonProperties(btn2);
-        setButtonProperties(btn3);
-        setButtonProperties(btn4);
-        setButtonProperties(btn5);
-        setButtonProperties(btn6);
-        setButtonProperties(btn7);
-        setButtonProperties(btn8);
-        setButtonProperties(btn9);
-        setButtonProperties(btnEquals);
-        setButtonProperties(btnDot);
+        Arrays.stream(buttons).forEachOrdered(this::setButtonProperties);
+        Arrays.stream(buttons).forEach(b -> b.addActionListener(e -> data += b.getText()));
     }
 
     /**
@@ -62,18 +50,7 @@ public class CalculatorButtonPanel extends JPanel
      * */
     private void addComponents()
     {
-        this.add(btn7);
-        this.add(btn8);
-        this.add(btn9);
-        this.add(btn4);
-        this.add(btn5);
-        this.add(btn6);
-        this.add(btn1);
-        this.add(btn2);
-        this.add(btn3);
-        this.add(btnDot);
-        this.add(btn0);
-        this.add(btnEquals);
+        Arrays.stream(buttons).forEach(this::add);
     }
 
     /**
@@ -84,5 +61,24 @@ public class CalculatorButtonPanel extends JPanel
         button.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         button.setForeground(Utils.FOREGROUND_COLOR);
         button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFont(new Font(Font.DIALOG, Font.BOLD, 32));
+    }
+
+    /**
+     * Gets the created data.
+     *
+     * @return the created data.
+     * */
+    public String getData()
+    {
+        return data;
+    }
+
+    /**
+     * Resets the data.
+     * */
+    public void resetData()
+    {
+        data = "";
     }
 }

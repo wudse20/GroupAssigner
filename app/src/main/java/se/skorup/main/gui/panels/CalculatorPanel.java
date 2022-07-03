@@ -49,6 +49,8 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
 
     private final HistoryStructure<String> history;
 
+    private final CalculatorButtonPanel cbp = new CalculatorButtonPanel();
+
     private TerminalPane input;
     private TerminalPane output;
     private JScrollPane scrOutput;
@@ -102,19 +104,12 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         cont.setBackground(Utils.BACKGROUND_COLOR);
         cont.setLayout(new BorderLayout());
 
-        var cont2 = new JPanel();
-        cont2.setBackground(Utils.BACKGROUND_COLOR);
-        cont2.setLayout(new BoxLayout(cont2, BoxLayout.Y_AXIS));
+        cont.add(cbp, BorderLayout.PAGE_END);
 
-        cont2.add(new JLabel(" "));
-        cont2.add(input);
-
-        cont.add(scrOutput, BorderLayout.CENTER);
-        cont.add(cont2, BorderLayout.PAGE_END);
 
         this.add(new JLabel("    "), BorderLayout.PAGE_START);
         this.add(new JLabel("    "), BorderLayout.LINE_START);
-        this.add(new CalculatorButtonPanel(), BorderLayout.CENTER);
+        this.add(cont, BorderLayout.CENTER);
         this.add(new JLabel("    "), BorderLayout.LINE_END);
         this.add(new JLabel("    "), BorderLayout.PAGE_END);
     }
