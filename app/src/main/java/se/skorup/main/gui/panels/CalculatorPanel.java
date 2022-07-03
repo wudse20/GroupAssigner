@@ -1,32 +1,19 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.collections.mutable_collections.HistoryList;
-import se.skorup.API.collections.mutable_collections.HistoryStructure;
 import se.skorup.API.expression_evalutator.Environment;
-import se.skorup.API.expression_evalutator.parser.Parser;
-import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.gui.command.ClearCommand;
 import se.skorup.main.gui.command.Command;
 import se.skorup.main.gui.command.CommandEnvironment;
 import se.skorup.main.gui.command.CommandResult;
 import se.skorup.main.gui.command.ErrorCommand;
 import se.skorup.main.gui.command.HelpCommand;
 import se.skorup.main.gui.command.ListCommand;
-import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
-import se.skorup.main.gui.components.TerminalInput;
-import se.skorup.main.gui.components.TerminalOutput;
-import se.skorup.main.gui.components.TerminalPane;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
@@ -47,13 +34,8 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     private final Map<String, Double> vars;
     private final Map<String, Command> cmds;
 
-    private final HistoryStructure<String> history;
-
     private final CalculatorButtonPanel cbp = new CalculatorButtonPanel();
-
-    private TerminalPane input;
-    private TerminalPane output;
-    private JScrollPane scrOutput;
+    private final CalculatorIOPanel ciop;
 
     /**
      * Creates a new Calculator panel.
@@ -64,7 +46,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     {
         this.vars = new HashMap<>();
         this.cmds = new HashMap<>();
-        this.history = new HistoryList<>();
+        this.ciop = new CalculatorIOPanel(vars.keySet());
 
         this.setProperties();
         this.addComponents();
@@ -81,18 +63,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
 
-        this.input = new TerminalInput('!', new ExpressionSyntaxHighlighting(vars.keySet()));
-        this.output = new TerminalOutput(new Dimension(380, 450));
-
-        this.scrOutput = new JScrollPane(output);
-        this.scrOutput.setBorder(BorderFactory.createEmptyBorder());
-
-        this.input.addKeyListener(this);
-        this.output.setFontSize(14);
-
-        output.appendColoredString(
-            "<dark_green>Skriv <dark_blue>!help</dark_blue> för att få hjälp.</dark_green>\n"
-        );
+        cbp.addActionCallback(() -> ciop.setText(cbp.getData()));
     }
 
     /**
@@ -104,6 +75,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         cont.setBackground(Utils.BACKGROUND_COLOR);
         cont.setLayout(new BorderLayout());
 
+        cont.add(ciop, BorderLayout.CENTER);
         cont.add(cbp, BorderLayout.PAGE_END);
 
 
@@ -136,108 +108,8 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     {
         cmds.put("help", new HelpCommand());
         cmds.put("list", new ListCommand());
-        cmds.put("clear", new ClearCommand(output));
+//        cmds.put("clear", new ClearCommand(output));
     }
-
-    /**
-     * Processes a command.
-     *
-     * @param cmd the command to be processed.
-     * */
-    private void processCommand(String cmd)
-    {
-        var res = executeCommand(cmd);
-
-        if (res.isSuccessful())
-        {
-            output.appendColoredString(res.result());
-        }
-        else
-        {
-            output.appendColoredString(res.result());
-            output.appendColoredString(
-                "<green>Skriv <white>'<dark_blue>!help</dark_blue>'</white> för att lista alla kommandon.</green>"
-            );
-        }
-    }
-
-    /**
-     * Calculates the entered expression.
-     * */
-    private void calculate()
-    {
-        var userInput = input.getText();
-
-        if (userInput.trim().length() == 0)
-            return;
-
-        history.add(userInput);
-
-        if (userInput.charAt(0) == '!')
-        {
-            processCommand(userInput.substring(1));
-            input.setText("");
-            return;
-        }
-
-        var parser = new Parser(userInput);
-        var res = parser.parse();
-
-        if (parser.getDiagnostics().size() == 0)
-        {
-            var val = res.getValue(this);
-
-            if (lastVarCallValid)
-            {
-                output.appendColoredString("<green>%f</green>".formatted(val));
-            }
-            else
-            {
-                output.appendColoredString(
-                    "<light_red>Konstanten: %s hittades inte!<light_red>".formatted(lastConstantError)
-                );
-
-                DebugMethods.log(
-                    "Constant %s wasn't found!".formatted(lastConstantError),
-                    DebugMethods.LogType.ERROR
-                );
-
-                lastVarCallValid = true;
-            }
-        }
-        else
-        {
-            parser.getDiagnostics().map("<light_red>%s</light_red>"::formatted).forEach(output::appendColoredString);
-            parser.getDiagnostics().forEach(s -> DebugMethods.log(s, DebugMethods.LogType.ERROR));
-        }
-
-        input.clear();
-        history.reset();
-    }
-
-    /**
-     * Swaps the input in the text box going through
-     * the history. If there are no valid entry then
-     * we do nothing.
-     *
-     * @param isGoingUp if {@code true} then we go backwards in
-     *                  history, else we go forwards in history.
-     * */
-    private void swapInput(boolean isGoingUp)
-    {
-        if (isGoingUp)
-        {
-            history.peek().ifPresent(input::setText);
-            history.forward();
-        }
-        else
-        {
-            history.backward().ifPresentOrElse(input::setText, input::clear);
-        }
-
-        ((TerminalInput) input).syntaxHighlighting();
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {}
 
@@ -247,14 +119,14 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     @Override
     public void keyReleased(KeyEvent e)
     {
-        if (e.getKeyCode() == ENTER)
-            calculate();
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-            swapInput(false);
-        else if (e.getKeyCode() == KeyEvent.VK_UP)
-            swapInput(true);
-        else
-            e.consume();
+//        if (e.getKeyCode() == ENTER)
+//            calculate();
+//        else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+//            swapInput(false);
+//        else if (e.getKeyCode() == KeyEvent.VK_UP)
+//            swapInput(true);
+//        else
+//            e.consume();
     }
 
     @Override
