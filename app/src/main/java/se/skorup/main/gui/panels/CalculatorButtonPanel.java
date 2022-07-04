@@ -25,7 +25,8 @@ public class CalculatorButtonPanel extends JPanel
         new JButton("7"), new JButton("8"), new JButton("9"), new JButton("+"),
         new JButton("4"), new JButton("5"), new JButton("6"), new JButton("-"),
         new JButton("1"), new JButton("2"), new JButton("3"), new JButton("*"),
-        new JButton("."), new JButton("0"), new JButton("%"), new JButton("/")
+        new JButton("."), new JButton("0"), new JButton("%"), new JButton("/"),
+        new JButton("("), new JButton(")")
     };
 
     /**
@@ -42,7 +43,7 @@ public class CalculatorButtonPanel extends JPanel
      * */
     private void setProperties()
     {
-        this.setLayout(new GridLayout(4, 4));
+        this.setLayout(new GridLayout(5, 4));
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
 

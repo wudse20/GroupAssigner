@@ -36,6 +36,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
 
     private final CalculatorButtonPanel cbp = new CalculatorButtonPanel();
     private final CalculatorIOPanel ciop;
+    private final CalculatorConstantPanel ccp;
 
     /**
      * Creates a new Calculator panel.
@@ -47,6 +48,7 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         this.vars = new HashMap<>();
         this.cmds = new HashMap<>();
         this.ciop = new CalculatorIOPanel(vars.keySet());
+        this.ccp = new CalculatorConstantPanel(vars.keySet());
 
         this.setProperties();
         this.addComponents();
@@ -75,9 +77,9 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         cont.setBackground(Utils.BACKGROUND_COLOR);
         cont.setLayout(new BorderLayout());
 
+        cont.add(ccp, BorderLayout.LINE_START);
         cont.add(ciop, BorderLayout.CENTER);
         cont.add(cbp, BorderLayout.PAGE_END);
-
 
         this.add(new JLabel("    "), BorderLayout.PAGE_START);
         this.add(new JLabel("    "), BorderLayout.LINE_START);
@@ -99,6 +101,8 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         vars.put("candidates", (double) manager.getMemberCountOfRole(Person.Role.CANDIDATE));
         vars.put("mgOne", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_1));
         vars.put("mgTwo", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_2));
+
+        ccp.setUpButtons(vars.keySet());
     }
 
     /**
