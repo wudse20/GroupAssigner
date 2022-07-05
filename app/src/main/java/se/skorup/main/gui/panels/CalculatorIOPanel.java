@@ -5,7 +5,6 @@ import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
 import se.skorup.main.gui.components.TerminalInput;
 import se.skorup.main.gui.components.TerminalOutput;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -47,6 +47,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
     private final JButton btnDel = new JButton("Delete");
     private final JButton btnCalc = new JButton("Beräkna");
+    private final JButton btnNewConst = new JButton("Ny konstant");
 
     /**
      * Creates a new Calculator panel.
@@ -58,7 +59,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         this.vars = new HashMap<>();
         this.cmds = new HashMap<>();
         this.ciop = new CalculatorIOPanel(vars.keySet());
-        this.ccp = new CalculatorConstantPanel(vars.keySet());
+        this.ccp = new CalculatorConstantPanel(vars.keySet(), this);
 
         this.setProperties();
         this.addComponents();
@@ -125,6 +126,15 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
             cbp.resetData();
         });
 
+        btnNewConst.setForeground(Utils.FOREGROUND_COLOR);
+        btnNewConst.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnNewConst.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
+        btnNewConst.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
+            )
+        );
     }
 
     /**
@@ -142,6 +152,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         ctrButtons.add(btnCalc);
         ctrButtons.add(btnDel);
+        ctrButtons.add(btnNewConst);
 
         buttons.add(ctrButtons);
         buttons.add(cbp);
@@ -171,7 +182,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         vars.put("mgOne", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_1));
         vars.put("mgTwo", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_2));
 
-        ccp.setUpButtons(vars.keySet());
+        updateConstantButtons();
     }
 
     /**
@@ -182,6 +193,14 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         cmds.put("help", new HelpCommand());
         cmds.put("list", new ListCommand());
 //        cmds.put("clear", new ClearCommand(output));
+    }
+
+    /**
+     * Updates the constant buttons.
+     * */
+    public void updateConstantButtons()
+    {
+        ccp.setUpButtons(vars.keySet());
     }
 
     @Override
@@ -199,6 +218,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     public void registerValue(String key, double value)
     {
         vars.put(key, value);
+        updateConstantButtons();
     }
 
     @Override
