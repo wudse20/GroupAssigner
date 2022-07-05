@@ -40,12 +40,6 @@ public class CalculatorIOPanel extends JPanel
     {
         this.setLayout(new BorderLayout());
         this.setBackground(Utils.BACKGROUND_COLOR);
-
-        input.setBackground(Utils.BACKGROUND_COLOR);
-        input.setBorder(BorderFactory.createEmptyBorder());
-
-        output.setBackground(Utils.BACKGROUND_COLOR);
-        output.setBorder(BorderFactory.createEmptyBorder());
     }
 
     /**
@@ -60,10 +54,18 @@ public class CalculatorIOPanel extends JPanel
     /**
      * Sets the text of the input.
      * */
-    public void setText(String text)
+    public void setInputText(String text)
     {
         input.clear();
         input.setText(text);
         input.syntaxHighlighting();
+    }
+
+    /**
+     * Appends a String to the output.
+     * */
+    public void appendOutputText(String text)
+    {
+        output.appendColoredString(text);
     }
 }
