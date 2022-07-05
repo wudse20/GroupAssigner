@@ -18,6 +18,6 @@ public record VariableExpression(String identifier) implements Expression
     @Override
     public String toString()
     {
-        return "var(%s)".formatted(identifier);
+        return identifier;
     }
 }

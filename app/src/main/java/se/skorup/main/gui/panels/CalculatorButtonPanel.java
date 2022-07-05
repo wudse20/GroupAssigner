@@ -22,11 +22,12 @@ public class CalculatorButtonPanel extends JPanel
     private final List<ActionCallback> callbacks = new ArrayList<>();
 
     private final JButton[] buttons = {
-        new JButton("7"), new JButton("8"), new JButton("9"), new JButton("+"),
-        new JButton("4"), new JButton("5"), new JButton("6"), new JButton("-"),
-        new JButton("1"), new JButton("2"), new JButton("3"), new JButton("*"),
-        new JButton("."), new JButton("0"), new JButton("%"), new JButton("/"),
-        new JButton("("), new JButton(")")
+        new JButton("7"), new JButton("8"), new JButton("9"),
+        new JButton("4"), new JButton("5"), new JButton("6"),
+        new JButton("1"), new JButton("2"), new JButton("3"),
+        new JButton("."), new JButton("0"), new JButton("+"),
+        new JButton("-"), new JButton("*"), new JButton("/"),
+        new JButton("%"), new JButton("("), new JButton(")")
     };
 
     /**
@@ -43,9 +44,8 @@ public class CalculatorButtonPanel extends JPanel
      * */
     private void setProperties()
     {
-        this.setLayout(new GridLayout(5, 4));
+        this.setLayout(new GridLayout(6, 3));
         this.setBackground(Utils.BACKGROUND_COLOR);
-        this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
 
         Arrays.stream(buttons).forEachOrdered(this::setButtonProperties);
         Arrays.stream(buttons).forEach(b -> b.addActionListener(e -> {
@@ -69,7 +69,7 @@ public class CalculatorButtonPanel extends JPanel
     {
         button.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         button.setForeground(Utils.FOREGROUND_COLOR);
-        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         button.setFont(new Font(Font.DIALOG, Font.BOLD, 32));
     }
 
@@ -81,6 +81,16 @@ public class CalculatorButtonPanel extends JPanel
     public String getData()
     {
         return data;
+    }
+
+    /**
+     * Sets the created data.
+     *
+     * @param data the new data.
+     * */
+    public void setData(String data)
+    {
+        this.data = data;
     }
 
     /**

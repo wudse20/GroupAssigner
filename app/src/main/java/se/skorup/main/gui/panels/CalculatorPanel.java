@@ -1,6 +1,8 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.parser.Parser;
+import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.command.Command;
 import se.skorup.main.gui.command.CommandEnvironment;
@@ -8,14 +10,18 @@ import se.skorup.main.gui.command.CommandResult;
 import se.skorup.main.gui.command.ErrorCommand;
 import se.skorup.main.gui.command.HelpCommand;
 import se.skorup.main.gui.command.ListCommand;
+import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +29,7 @@ import java.util.Map;
 /**
  * The panel that holds the calculator.
  * */
-public class CalculatorPanel extends JPanel implements KeyListener, Environment, CommandEnvironment
+public class CalculatorPanel extends JPanel implements Environment, CommandEnvironment
 {
     /** The keycode for the enter key. */
     private static final int ENTER = 10;
@@ -37,6 +43,10 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
     private final CalculatorButtonPanel cbp = new CalculatorButtonPanel();
     private final CalculatorIOPanel ciop;
     private final CalculatorConstantPanel ccp;
+    private final JPanel ctrButtons = new JPanel();
+
+    private final JButton btnDel = new JButton("Delete");
+    private final JButton btnCalc = new JButton("Beräkna");
 
     /**
      * Creates a new Calculator panel.
@@ -65,7 +75,56 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
 
-        cbp.addActionCallback(() -> ciop.setText(cbp.getData()));
+        cbp.addActionCallback(() -> ciop.setInputText(cbp.getData()));
+
+        ctrButtons.setBackground(Utils.BACKGROUND_COLOR);
+        ctrButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        btnDel.setForeground(Utils.FOREGROUND_COLOR);
+        btnDel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnDel.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
+        btnDel.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
+            )
+        );
+
+        btnDel.addActionListener(e -> {
+            if (cbp.getData().trim().isEmpty())
+                return;
+
+            DebugMethods.log("Before: %s".formatted(cbp.getData()), DebugMethods.LogType.DEBUG);
+            var newData = cbp.getData().substring(0, cbp.getData().length() - 1);
+            DebugMethods.log("After: %s".formatted(newData), DebugMethods.LogType.DEBUG);
+            cbp.setData(newData);
+            ciop.setInputText(newData);
+        });
+
+        btnCalc.setForeground(Utils.FOREGROUND_COLOR);
+        btnCalc.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnCalc.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
+        btnCalc.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
+            )
+        );
+
+        btnCalc.addActionListener(e -> {
+            var p = new Parser(cbp.getData());
+            var expr = p.parse();
+            var res = expr.getValue(this);
+            var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(expr.toString());
+
+            ciop.appendOutputText(highlighted);
+            ciop.appendOutputText("\n");
+            ciop.appendOutputText(Double.toString(res));
+            ciop.appendOutputText("\n");
+            ciop.setInputText("");
+            cbp.resetData();
+        });
+
     }
 
     /**
@@ -77,9 +136,19 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         cont.setBackground(Utils.BACKGROUND_COLOR);
         cont.setLayout(new BorderLayout());
 
+        var buttons = new JPanel();
+        buttons.setBackground(Utils.BACKGROUND_COLOR);
+        buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
+
+        ctrButtons.add(btnCalc);
+        ctrButtons.add(btnDel);
+
+        buttons.add(ctrButtons);
+        buttons.add(cbp);
+
         cont.add(ccp, BorderLayout.LINE_START);
         cont.add(ciop, BorderLayout.CENTER);
-        cont.add(cbp, BorderLayout.PAGE_END);
+        cont.add(buttons, BorderLayout.PAGE_END);
 
         this.add(new JLabel("    "), BorderLayout.PAGE_START);
         this.add(new JLabel("    "), BorderLayout.LINE_START);
@@ -113,24 +182,6 @@ public class CalculatorPanel extends JPanel implements KeyListener, Environment,
         cmds.put("help", new HelpCommand());
         cmds.put("list", new ListCommand());
 //        cmds.put("clear", new ClearCommand(output));
-    }
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-    @Override
-    public void keyPressed(KeyEvent e) {}
-
-    @Override
-    public void keyReleased(KeyEvent e)
-    {
-//        if (e.getKeyCode() == ENTER)
-//            calculate();
-//        else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-//            swapInput(false);
-//        else if (e.getKeyCode() == KeyEvent.VK_UP)
-//            swapInput(true);
-//        else
-//            e.consume();
     }
 
     @Override
