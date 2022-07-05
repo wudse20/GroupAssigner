@@ -326,15 +326,16 @@ public class TestExpression
 
         list.add(new ToStringTest("5.0 + 5.0", new Parser("5+5").parse()));
         list.add(new ToStringTest("(5.0 + 5.0) * 3.0", new Parser("(5 + 5) * 3").parse()));
-        list.add(new ToStringTest("+var(kaka) + -5.0", new Parser("+kaka + -5").parse()));
+        list.add(new ToStringTest("+kaka + -5.0", new Parser("+kaka + -5").parse()));
         list.add(new ToStringTest("5.0 / 5.0", new Parser("5/5").parse()));
         list.add(new ToStringTest("5.0 - 5.0", new Parser("5-5").parse()));
         list.add(new ToStringTest("let x = 4.0", new Parser("let x = 4").parse()));
         list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5 + 3").parse()));
         list.add(new ToStringTest("5.0 % 2.0", new Parser("5 % 2").parse()));
-        list.add(new ToStringTest("var(x) % 2.0", new Parser("x % 2").parse()));
+        list.add(new ToStringTest("x % 2.0", new Parser("x % 2").parse()));
         list.add(new ToStringTest("5.0 ** 2.0", new Parser("5 ** 2").parse()));
-        list.add(new ToStringTest("5.0 ** var(x)", new Parser("5 ** x").parse()));
+        list.add(new ToStringTest("5.0 ** x", new Parser("5 ** x").parse()));
+        list.add(new ToStringTest("5.0 * kaka + kakor", new Parser("5 * kaka + kakor").parse()));
 
         var arr = new ToStringTest[list.size()];
         list.toArray(arr);
