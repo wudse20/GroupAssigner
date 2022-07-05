@@ -353,10 +353,11 @@ public class GroupFrame extends JFrame implements ChangeListener
             DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(sgp);
         }
-        else if (tabs.getSelectedComponent() instanceof CalculatorPanel)
+        else if (tabs.getSelectedComponent() instanceof CalculatorPanel cp)
         {
             DebugMethods.log("Selected calculator", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(calc);
+            cp.updateConstantButtons();
         }
         else
         {
