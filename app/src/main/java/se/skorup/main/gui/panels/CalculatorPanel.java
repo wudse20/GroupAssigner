@@ -26,9 +26,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.CompoundBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +40,7 @@ import java.util.Map;
 /**
  * The panel that holds the calculator.
  * */
-public class CalculatorPanel extends JPanel implements Environment, CommandEnvironment
+public class CalculatorPanel extends JPanel implements Environment, CommandEnvironment, DocumentListener, KeyListener
 {
     /** The button border. */
     private static final CompoundBorder BUTTON_BORDER = BorderFactory.createCompoundBorder(
@@ -107,6 +111,9 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         });
 
         cbp.addActionCallback(() -> ciop.setInputText(cbp.getData()));
+
+        ciop.getInput().addKeyListener(this);
+        ciop.getInput().getDocument().addDocumentListener(this);
 
         ctrButtons.setBackground(Utils.BACKGROUND_COLOR);
         ctrButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -356,4 +363,40 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
                        )
                    ).toList();
     }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+        final var ENTER = 10;
+        final var ARROW_DOWN = 40;
+        final var ARROW_UP = 38;
+
+        switch (e.getKeyCode())
+        {
+            case ENTER -> doCalculation(ciop.getInputText());
+            case ARROW_DOWN -> swapInput(false);
+            case ARROW_UP -> swapInput(true);
+        }
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e)
+    {
+        cbp.setData(ciop.getInputText());
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e)
+    {
+        cbp.setData(ciop.getInputText());
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {}
 }

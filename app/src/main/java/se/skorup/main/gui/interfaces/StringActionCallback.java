@@ -1,10 +1,10 @@
 package se.skorup.main.gui.interfaces;
 
 /**
- * A callback with text from a button.
+ * A callback with a String.
  * */
 @FunctionalInterface
-public interface ButtonCallback
+public interface StringActionCallback
 {
     /**
      * An action with a String.
