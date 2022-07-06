@@ -39,10 +39,13 @@ import java.util.Map;
 public class CalculatorPanel extends JPanel implements Environment, CommandEnvironment
 {
     /** The button border. */
-    private static final CompoundBorder BORDER = BorderFactory.createCompoundBorder(
+    private static final CompoundBorder BUTTON_BORDER = BorderFactory.createCompoundBorder(
         BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
         BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
     );
+
+    /** The font for the buttons. */
+    private static final Font BUTTON_FONT = new Font(Font.DIALOG, Font.BOLD, 16);
 
     private boolean lastVarCallValid = true;
     private String lastConstantError = "";
@@ -62,6 +65,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     private final JButton btnNewConst = new JButton("Ny konstant");
     private final JButton btnUp = new JButton("<html>&uarr;</html>");
     private final JButton btnDown = new JButton("<html>&darr;</html>");
+    private final JButton btnClear = new JButton("Rensa");
 
     private final JScrollPane scrCCP;
 
@@ -109,8 +113,8 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         btnDel.setForeground(Utils.FOREGROUND_COLOR);
         btnDel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnDel.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
-        btnDel.setBorder(BORDER);
+        btnDel.setFont(BUTTON_FONT);
+        btnDel.setBorder(BUTTON_BORDER);
 
         btnDel.addActionListener(e -> {
             if (cbp.getData().trim().isEmpty())
@@ -125,14 +129,14 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         btnCalc.setForeground(Utils.FOREGROUND_COLOR);
         btnCalc.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnCalc.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+        btnCalc.setFont(BUTTON_FONT);
         btnCalc.addActionListener(e -> doCalculation(ciop.getInputText()));
-        btnCalc.setBorder(BORDER);
+        btnCalc.setBorder(BUTTON_BORDER);
 
         btnNewConst.setForeground(Utils.FOREGROUND_COLOR);
         btnNewConst.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnNewConst.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
-        btnNewConst.setBorder(BORDER);
+        btnNewConst.setFont(BUTTON_FONT);
+        btnNewConst.setBorder(BUTTON_BORDER);
 
         btnNewConst.addActionListener(e -> {
             var identifier = JOptionPane.showInputDialog(
@@ -150,15 +154,21 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         btnUp.setForeground(Utils.FOREGROUND_COLOR);
         btnUp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnUp.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
-        btnUp.setBorder(BORDER);
+        btnUp.setFont(BUTTON_FONT);
+        btnUp.setBorder(BUTTON_BORDER);
         btnUp.addActionListener(e -> swapInput(true));
 
         btnDown.setForeground(Utils.FOREGROUND_COLOR);
         btnDown.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnDown.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
-        btnDown.setBorder(BORDER);
+        btnDown.setFont(BUTTON_FONT);
+        btnDown.setBorder(BUTTON_BORDER);
         btnDown.addActionListener(e -> swapInput(false));
+
+        btnClear.setForeground(Utils.FOREGROUND_COLOR);
+        btnClear.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnClear.setFont(BUTTON_FONT);
+        btnClear.setBorder(BUTTON_BORDER);
+        btnClear.addActionListener(e -> executeCommand("clear"));
     }
 
     /**
@@ -183,7 +193,10 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         ctrButtons.add(btnCalc);
         ctrButtons.add(btnDel);
+        ctrButtons.add(btnClear);
+        ctrButtons.add(new JLabel(" "));
         ctrButtons.add(btnNewConst);
+        ctrButtons.add(new JLabel(" "));
         ctrButtons.add(btnUp);
         ctrButtons.add(btnDown);
 
