@@ -3,7 +3,7 @@ package se.skorup.API.expression_evalutator.expression;
 import se.skorup.API.expression_evalutator.Environment;
 
 /**
- * Represents a number, it's called NumberExpression
+ * Represents a real number, it's called NumberExpression
  * to remove the collision.
  *
  * @param value the value of the number.
@@ -11,7 +11,7 @@ import se.skorup.API.expression_evalutator.Environment;
 public record NumberExpression(double value) implements Expression
 {
     @Override
-    public double getValue(Environment e)
+    public Number getValue(Environment e)
     {
         return value;
     }

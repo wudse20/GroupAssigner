@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
+import se.skorup.API.util.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +29,9 @@ public class TestExpression
     {
         this.alwaysZeroEnv = new Environment() {
             @Override
-            public double getValue(String key) { return 0; }
+            public Number getValue(String key) { return 0; }
             @Override
-            public void registerValue(String key, double value) {}
+            public void registerValue(String key, Number value) {}
         };
     }
 
@@ -270,16 +271,16 @@ public class TestExpression
     public void testDefinitionExpression()
     {
         var env = new Environment() {
-            private final Map<String, Double> values = new HashMap<>();
+            private final Map<String, Number> values = new HashMap<>();
 
             @Override
-            public double getValue(String key)
+            public Number getValue(String key)
             {
                 return values.getOrDefault(key, 0d);
             }
 
             @Override
-            public void registerValue(String key, double value)
+            public void registerValue(String key, Number value)
             {
                 values.put(key, value);
             }
@@ -297,7 +298,7 @@ public class TestExpression
     public void testModuloExpression()
     {
         var expr = new Modulo(new NumberExpression(5), new NumberExpression(2));
-        assertEquals(1, expr.getValue(alwaysZeroEnv));
+        assertEquals(1.0, expr.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -314,28 +315,43 @@ public class TestExpression
     public void testPowerExpression()
     {
         var expr1 = new Parser("5 ** 2").parse();
-        var expr2 = new Parser("5").parse();
+        var expr2 = new Parser("2").parse();
         var power = new Power(expr1, expr2);
 
-        assertEquals(Math.pow(25, 5), power.getValue(alwaysZeroEnv));
+        assertEquals(Utils.pow(5, Utils.pow(2, 2)), power.getValue(alwaysZeroEnv));
     }
 
     public ToStringTest[] getData()
     {
         var list = new ArrayList<ToStringTest>();
 
-        list.add(new ToStringTest("5.0 + 5.0", new Parser("5+5").parse()));
-        list.add(new ToStringTest("(5.0 + 5.0) * 3.0", new Parser("(5 + 5) * 3").parse()));
-        list.add(new ToStringTest("+kaka + -5.0", new Parser("+kaka + -5").parse()));
-        list.add(new ToStringTest("5.0 / 5.0", new Parser("5/5").parse()));
-        list.add(new ToStringTest("5.0 - 5.0", new Parser("5-5").parse()));
-        list.add(new ToStringTest("let x = 4.0", new Parser("let x = 4").parse()));
-        list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5 + 3").parse()));
-        list.add(new ToStringTest("5.0 % 2.0", new Parser("5 % 2").parse()));
-        list.add(new ToStringTest("x % 2.0", new Parser("x % 2").parse()));
-        list.add(new ToStringTest("5.0 ** 2.0", new Parser("5 ** 2").parse()));
-        list.add(new ToStringTest("5.0 ** x", new Parser("5 ** x").parse()));
-        list.add(new ToStringTest("5.0 * kaka + kakor", new Parser("5 * kaka + kakor").parse()));
+        // Integer
+        list.add(new ToStringTest("5 + 5", new Parser("5+5").parse()));
+        list.add(new ToStringTest("(5 + 5) * 3", new Parser("(5 + 5) * 3").parse()));
+        list.add(new ToStringTest("+kaka + -5", new Parser("+kaka + -5").parse()));
+        list.add(new ToStringTest("5 / 5", new Parser("5/5").parse()));
+        list.add(new ToStringTest("5 - 5", new Parser("5-5").parse()));
+        list.add(new ToStringTest("let x = 4", new Parser("let x = 4").parse()));
+        list.add(new ToStringTest("let x = 5 + 3", new Parser("let x = 5 + 3").parse()));
+        list.add(new ToStringTest("5 % 2", new Parser("5 % 2").parse()));
+        list.add(new ToStringTest("x % 2", new Parser("x % 2").parse()));
+        list.add(new ToStringTest("5 ** 2", new Parser("5 ** 2").parse()));
+        list.add(new ToStringTest("5 ** x", new Parser("5 ** x").parse()));
+        list.add(new ToStringTest("5 * kaka + kakor", new Parser("5 * kaka + kakor").parse()));
+
+        // Double
+        list.add(new ToStringTest("5.0 + 5.0", new Parser("5.0+5.0").parse()));
+        list.add(new ToStringTest("(5.0 + 5.0) * 3.0", new Parser("(5.0 + 5.0) * 3.0").parse()));
+        list.add(new ToStringTest("+kaka + -5.0", new Parser("+kaka + -5.0").parse()));
+        list.add(new ToStringTest("5.0 / 5.0", new Parser("5.0/5.0").parse()));
+        list.add(new ToStringTest("5.0 - 5.0", new Parser("5.0-5.0").parse()));
+        list.add(new ToStringTest("let x = 4.0", new Parser("let x = 4.0").parse()));
+        list.add(new ToStringTest("let x = 5.0 + 3.0", new Parser("let x = 5.0 + 3.0").parse()));
+        list.add(new ToStringTest("5.0 % 2.0", new Parser("5.0 % 2.0").parse()));
+        list.add(new ToStringTest("x % 2.0", new Parser("x % 2.0").parse()));
+        list.add(new ToStringTest("5.0 ** 2.0", new Parser("5.0 ** 2.0").parse()));
+        list.add(new ToStringTest("5.0 ** x", new Parser("5.0 ** x").parse()));
+        list.add(new ToStringTest("5.0 * kaka + kakor", new Parser("5.0 * kaka + kakor").parse()));
 
         var arr = new ToStringTest[list.size()];
         list.toArray(arr);

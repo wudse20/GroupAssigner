@@ -16,8 +16,11 @@ public class UnaryMinus extends UnaryExpression
     }
 
     @Override
-    protected double unary(double value)
+    protected Number unary(Number value)
     {
-        return -value;
+        if (value instanceof Double)
+            return -value.doubleValue();
+
+        return -value.intValue();
     }
 }

@@ -12,6 +12,6 @@ public interface Expression
      *
      * @param e the environment with the variables.
      * @return the value of the expression.
-     * */
-    double getValue(Environment e);
+     */
+    Number getValue(Environment e);
 }

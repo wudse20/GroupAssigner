@@ -1,5 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.util.Utils;
+
 /**
  * The class used to represent a power.
  * */
@@ -17,8 +19,11 @@ public class Power extends BinaryOperator
     }
 
     @Override
-    protected double value(double lhs, double rhs)
+    protected Number value(Number lhs, Number rhs)
     {
-        return Math.pow(lhs, rhs);
+        if (lhs instanceof Double || rhs instanceof Double)
+            return Math.pow(lhs.doubleValue(), rhs.doubleValue());
+
+        return Utils.pow(lhs.intValue(), rhs.intValue());
     }
 }

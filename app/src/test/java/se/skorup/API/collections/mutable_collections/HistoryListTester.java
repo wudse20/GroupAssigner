@@ -253,7 +253,8 @@ public class HistoryListTester
     private record TestAdding<E>(int expectedSize, E... elems)
     {
         @SafeVarargs
-        public TestAdding {}
+        public TestAdding {
+        }
 
         @Override
         public String toString()

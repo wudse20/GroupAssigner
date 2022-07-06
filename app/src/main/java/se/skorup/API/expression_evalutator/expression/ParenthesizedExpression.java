@@ -10,7 +10,7 @@ import se.skorup.API.expression_evalutator.Environment;
 public record ParenthesizedExpression(Expression expr) implements Expression
 {
     @Override
-    public double getValue(Environment e)
+    public Number getValue(Environment e)
     {
         return expr.getValue(e);
     }

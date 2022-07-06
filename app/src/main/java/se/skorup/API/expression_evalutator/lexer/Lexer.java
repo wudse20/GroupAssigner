@@ -101,6 +101,9 @@ public class Lexer
                 return new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);
             }
 
+            if (t.indexOf('.') == -1)
+                return new SyntaxToken(SyntaxKind.IntegerToken, start, t, Integer.parseInt(t));
+
             return new SyntaxToken(SyntaxKind.NumberToken, start, t, Double.parseDouble(t));
         }
 

@@ -8,6 +8,7 @@ public enum SyntaxKind
     EOF(0, 0),
     BadToken(0, 0),
     NumberToken(0, 0),
+    IntegerToken(0, 0),
     WhitespaceToken(0, 0),
     PlusToken(1, Integer.MAX_VALUE),
     MinusToken(1, Integer.MAX_VALUE),

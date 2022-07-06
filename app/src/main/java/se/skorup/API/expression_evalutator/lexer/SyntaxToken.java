@@ -8,4 +8,4 @@ package se.skorup.API.expression_evalutator.lexer;
  * @param text the text of the syntax token, i.e. the text that lexer created the token from.
  * @param value the value of the syntax token when evaluated.
  * */
-public record SyntaxToken(SyntaxKind kind, int pos, String text, double value) {}
+public record SyntaxToken(SyntaxKind kind, int pos, String text, Number value) {}

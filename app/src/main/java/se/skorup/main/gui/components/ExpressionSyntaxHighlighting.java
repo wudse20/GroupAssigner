@@ -133,6 +133,7 @@ public class ExpressionSyntaxHighlighting implements SyntaxHighlighting
                 syntaxHighlightColor(sb, t.text(), OPERATOR_COLOR);
                 break;
             case NumberToken:
+            case IntegerToken:
             case OpenParenthesisToken:
             case CloseParenthesisToken:
                 syntaxHighlightColor(sb, t.text(), LITERAL_COLOR);
