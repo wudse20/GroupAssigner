@@ -120,6 +120,16 @@ public class CalculatorIOPanel extends JPanel
     }
 
     /**
+     * Getter for: input
+     *
+     * @return the instance of the input window.
+     * */
+    public TerminalPane getInput()
+    {
+        return input;
+    }
+
+    /**
      * Clears the input.
      * */
     public void clearInput()
