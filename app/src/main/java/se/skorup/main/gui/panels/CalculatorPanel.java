@@ -54,7 +54,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     private boolean lastVarCallValid = true;
     private String lastConstantError = "";
 
-    private final Map<String, Double> vars;
+    private final Map<String, Number> vars;
     private final Map<String, Command> cmds;
 
     private final HistoryStructure<String> history = new HistoryList<>();
@@ -323,18 +323,18 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     }
 
     @Override
-    public double getValue(String key)
+    public Number getValue(String key)
     {
         lastVarCallValid = vars.containsKey(key);
 
         if (!lastVarCallValid)
             lastConstantError = key;
 
-        return vars.getOrDefault(key, 0D);
+        return vars.getOrDefault(key, 0);
     }
 
     @Override
-    public void registerValue(String key, double value)
+    public void registerValue(String key, Number value)
     {
         vars.put(key, value);
         updateConstantButtons();

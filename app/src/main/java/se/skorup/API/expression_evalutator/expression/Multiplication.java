@@ -17,8 +17,11 @@ public class Multiplication extends BinaryOperator
     }
 
     @Override
-    protected double value(double lhs, double rhs)
+    protected Number value(Number lhs, Number rhs)
     {
-        return lhs * rhs;
+        if (lhs instanceof Double || rhs instanceof Double)
+            return lhs.doubleValue() * rhs.doubleValue();
+
+        return lhs.intValue() * rhs.intValue();
     }
 }

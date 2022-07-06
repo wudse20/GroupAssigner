@@ -265,7 +265,8 @@ public class Utils
     public static int pow(int base, int exp)
     {
         var e = Math.abs(exp);
-        return exp < 0 ? 1 / recPow(base, e) : recPow(base, e);
+        var val = recPow(base, e);
+        return exp < 0 ? 1 / val : val;
     }
 
     /**

@@ -5,6 +5,7 @@ import se.skorup.API.collections.immutable_collections.ImmutableCollection;
 import se.skorup.API.expression_evalutator.expression.DefinitionExpression;
 import se.skorup.API.expression_evalutator.expression.Division;
 import se.skorup.API.expression_evalutator.expression.Expression;
+import se.skorup.API.expression_evalutator.expression.IntegerExpression;
 import se.skorup.API.expression_evalutator.expression.Minus;
 import se.skorup.API.expression_evalutator.expression.Modulo;
 import se.skorup.API.expression_evalutator.expression.Multiplication;
@@ -203,9 +204,14 @@ public class Parser
             var constant = matchToken(SyntaxKind.IdentifierToken);
             return new VariableExpression(constant.text());
         }
+        else if (kind.equals(SyntaxKind.IntegerToken))
+        {
+            var integer = matchToken(SyntaxKind.IntegerToken);
+            return new IntegerExpression(integer.value().intValue());
+        }
 
         var number = matchToken(SyntaxKind.NumberToken);
-        return new NumberExpression(number.value());
+        return new NumberExpression(number.value().doubleValue());
     }
 
     private Expression parseConstantDeclaration()

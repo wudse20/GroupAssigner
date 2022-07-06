@@ -11,8 +11,8 @@ public interface Environment
      *
      * @param key the key of the value
      * @return the value of the key.
-     * */
-    double getValue(String key);
+     */
+    Number getValue(String key);
 
     /**
      * Adds a value to a given key.
@@ -20,5 +20,5 @@ public interface Environment
      * @param key the key of the constant.
      * @param value the value of the constant.
      * */
-    void registerValue(String key, double value);
+    void registerValue(String key, Number value);
 }

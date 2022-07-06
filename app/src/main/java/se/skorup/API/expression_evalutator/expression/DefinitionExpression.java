@@ -23,7 +23,7 @@ public class DefinitionExpression implements Expression
     }
 
     @Override
-    public double getValue(Environment e)
+    public Number getValue(Environment e)
     {
         var val = value.getValue(e);
         e.registerValue(identifier, val);

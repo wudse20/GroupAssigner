@@ -26,11 +26,11 @@ public abstract class UnaryExpression implements Expression
      * The application of the unary expression.
      *
      * @param value the value of the expression.
-     * */
-    protected abstract double unary(double value);
+     */
+    protected abstract Number unary(Number value);
 
     @Override
-    public double getValue(Environment e)
+    public Number getValue(Environment e)
     {
         return unary(expr.getValue(e));
     }

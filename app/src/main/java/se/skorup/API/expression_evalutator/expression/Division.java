@@ -17,8 +17,8 @@ public class Division extends BinaryOperator
     }
 
     @Override
-    protected double value(double lhs, double rhs)
+    protected Number value(Number lhs, Number rhs)
     {
-        return lhs / rhs;
+        return lhs.doubleValue() / rhs.doubleValue();
     }
 }
