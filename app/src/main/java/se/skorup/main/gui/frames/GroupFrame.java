@@ -358,7 +358,7 @@ public class GroupFrame extends JFrame implements ChangeListener
             DebugMethods.log("Selected calculator", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(calc);
             cp.updateConstantButtons();
-            this.setSize(new Dimension(450, 800));
+            this.setSize(new Dimension(460, 800));
         }
         else
         {

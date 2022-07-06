@@ -109,7 +109,7 @@ public abstract class TerminalPane extends JTextPane
      * */
     public boolean appendColoredString(String s)
     {
-        Matcher matcher = Pattern.compile("<[A-Za-z_]+>").matcher(s);
+        Matcher matcher = Pattern.compile("<[A-Za-z_]+>").matcher(s.trim());
 
         if (matcher.lookingAt())
         {
