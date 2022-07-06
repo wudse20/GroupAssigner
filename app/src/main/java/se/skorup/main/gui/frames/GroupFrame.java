@@ -79,7 +79,6 @@ public class GroupFrame extends JFrame implements ChangeListener
 
         this.setProperties();
         this.addComponents();
-        this.pack();
     }
 
     /**
@@ -347,6 +346,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         {
             DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(sgsp);
+            this.setSize(new Dimension(450, 550));
         }
         else if (tabs.getSelectedComponent() instanceof SubgroupPanel)
         {
@@ -358,6 +358,7 @@ public class GroupFrame extends JFrame implements ChangeListener
             DebugMethods.log("Selected calculator", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(calc);
             cp.updateConstantButtons();
+            this.setSize(new Dimension(450, 800));
         }
         else
         {

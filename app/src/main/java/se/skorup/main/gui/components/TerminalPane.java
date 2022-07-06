@@ -36,7 +36,18 @@ public abstract class TerminalPane extends JTextPane
      * */
     public TerminalPane(Dimension d, boolean isEditable)
     {
+        this(isEditable);
         this.setPreferredSize(d);
+    }
+
+    /**
+     * Creates a new terminal pane.
+     *
+     * @param isEditable if {@code true} then the text pane is editable,
+     *                   else if {@code false} then it isn't.
+     * */
+    public TerminalPane(boolean isEditable)
+    {
         this.setEditable(isEditable);
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setCaretColor(Utils.FOREGROUND_COLOR);

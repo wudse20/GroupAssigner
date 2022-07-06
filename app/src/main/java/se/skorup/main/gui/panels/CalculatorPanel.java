@@ -4,6 +4,7 @@ import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.command.ClearCommand;
 import se.skorup.main.gui.command.Command;
 import se.skorup.main.gui.command.CommandEnvironment;
 import se.skorup.main.gui.command.CommandResult;
@@ -18,7 +19,10 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -48,6 +52,10 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     private final JButton btnDel = new JButton("Delete");
     private final JButton btnCalc = new JButton("Beräkna");
     private final JButton btnNewConst = new JButton("Ny konstant");
+    private final JButton btnUp = new JButton("<html>&uarr;</html>");
+    private final JButton btnDown = new JButton("<html>&darr;</html>");
+
+    private final JScrollPane scrCCP;
 
     /**
      * Creates a new Calculator panel.
@@ -59,7 +67,8 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         this.vars = new HashMap<>();
         this.cmds = new HashMap<>();
         this.ciop = new CalculatorIOPanel(vars.keySet());
-        this.ccp = new CalculatorConstantPanel(vars.keySet(), this);
+        this.ccp = new CalculatorConstantPanel(vars.keySet());
+        this.scrCCP = new JScrollPane(ccp);
 
         this.setProperties();
         this.addComponents();
@@ -76,6 +85,9 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
 
+        scrCCP.setBorder(BorderFactory.createEmptyBorder());
+        scrCCP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
         cbp.addActionCallback(() -> ciop.setInputText(cbp.getData()));
 
         ctrButtons.setBackground(Utils.BACKGROUND_COLOR);
@@ -83,7 +95,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         btnDel.setForeground(Utils.FOREGROUND_COLOR);
         btnDel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnDel.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
+        btnDel.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         btnDel.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
@@ -104,7 +116,8 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         btnCalc.setForeground(Utils.FOREGROUND_COLOR);
         btnCalc.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnCalc.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
+        btnCalc.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+        btnCalc.addActionListener(e -> doCalculation(ciop.getInputText()));
         btnCalc.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
@@ -112,29 +125,83 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
             )
         );
 
-        btnCalc.addActionListener(e -> {
-            var p = new Parser(cbp.getData());
-            var expr = p.parse();
-            var res = expr.getValue(this);
-            var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(expr.toString());
-
-            ciop.appendOutputText(highlighted);
-            ciop.appendOutputText("\n");
-            ciop.appendOutputText(Double.toString(res));
-            ciop.appendOutputText("\n");
-            ciop.setInputText("");
-            cbp.resetData();
-        });
-
         btnNewConst.setForeground(Utils.FOREGROUND_COLOR);
         btnNewConst.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnNewConst.setFont(new Font(Font.DIALOG, Font.BOLD, 24));
+        btnNewConst.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         btnNewConst.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
                 BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
             )
         );
+
+        btnNewConst.addActionListener(e -> {
+            var identifier = JOptionPane.showInputDialog(
+                this, "Vad ska konstanten heta?",
+                "Konstantens namn", JOptionPane.INFORMATION_MESSAGE
+            );
+
+            if (identifier == null || identifier.trim().isEmpty())
+                return;
+
+            var data = "let %s = ".formatted(identifier);
+            ciop.setInputText(data);
+            cbp.setData(data);
+        });
+
+        btnUp.setForeground(Utils.FOREGROUND_COLOR);
+        btnUp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnUp.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+        btnUp.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
+            )
+        );
+
+        btnDown.setForeground(Utils.FOREGROUND_COLOR);
+        btnDown.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnDown.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+        btnDown.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
+            )
+        );
+    }
+
+    /**
+     * Does a calculation based on the input text.
+     *
+     * @param text the input to the code.
+     * */
+    private void doCalculation(String text)
+    {
+        if (text.length() > 0 && text.charAt(0) == '!')
+        {
+            executeCommand(text.substring(1));
+            ciop.setInputText("");
+            cbp.resetData();
+            return;
+        }
+
+        var p = new Parser(text);
+        var expr = p.parse();
+
+        if (p.getDiagnostics().size() == 0)
+        {
+            var res = expr.getValue(this);
+            var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(expr.toString());
+
+            ciop.appendOutputText(highlighted);
+            ciop.appendOutputText("<LIGHT_GREEN>%f</LIGHT_GREEN>%n".formatted(res));
+            ciop.setInputText("");
+            cbp.resetData();
+        }
+        else
+        {
+            ciop.appendOutputText("<RED>%s</RED>".formatted(p.getDiagnostics().mkString("\n")));
+        }
     }
 
     /**
@@ -150,15 +217,24 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         buttons.setBackground(Utils.BACKGROUND_COLOR);
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
 
+        var cont2 = new JPanel();
+        cont2.setBackground(Utils.BACKGROUND_COLOR);
+        cont2.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        cont2.add(new JLabel("   "));
+        cont2.add(ciop);
+
         ctrButtons.add(btnCalc);
         ctrButtons.add(btnDel);
         ctrButtons.add(btnNewConst);
+        ctrButtons.add(btnUp);
+        ctrButtons.add(btnDown);
 
         buttons.add(ctrButtons);
         buttons.add(cbp);
 
-        cont.add(ccp, BorderLayout.LINE_START);
-        cont.add(ciop, BorderLayout.CENTER);
+        cont.add(scrCCP, BorderLayout.PAGE_START);
+        cont.add(cont2, BorderLayout.CENTER);
         cont.add(buttons, BorderLayout.PAGE_END);
 
         this.add(new JLabel("    "), BorderLayout.PAGE_START);
@@ -176,11 +252,11 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
      * */
     private void setUpConstants(GroupManager manager)
     {
-        vars.put("members", (double) manager.getMemberCount());
-        vars.put("leaders", (double) manager.getMemberCountOfRole(Person.Role.LEADER));
-        vars.put("candidates", (double) manager.getMemberCountOfRole(Person.Role.CANDIDATE));
-        vars.put("mgOne", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_1));
-        vars.put("mgTwo", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_2));
+        vars.put("medlämmar", (double) manager.getMemberCount());
+        vars.put("ledare", (double) manager.getMemberCountOfRole(Person.Role.LEADER));
+        vars.put("deltagare", (double) manager.getMemberCountOfRole(Person.Role.CANDIDATE));
+        vars.put("huvudgrupp 1", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_1));
+        vars.put("huvudgrupp 2", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_2));
 
         updateConstantButtons();
     }
@@ -192,7 +268,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     {
         cmds.put("help", new HelpCommand());
         cmds.put("list", new ListCommand());
-//        cmds.put("clear", new ClearCommand(output));
+        cmds.put("clear", new ClearCommand(ciop.getOutput()));
     }
 
     /**

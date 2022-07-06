@@ -4,8 +4,9 @@ import se.skorup.API.util.Utils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,30 +17,17 @@ import java.util.Set;
  * */
 public class CalculatorConstantPanel extends JPanel
 {
-    private final CalculatorPanel cp;
     private final List<JButton> buttons = new ArrayList<>();
-
-    private final JPanel container = new JPanel();
-    private final JScrollPane scrContainer = new JScrollPane(container);
 
     /**
      * Creates a new CalculatorConstantPanel.
      *
      * @param constants a set containing the identifiers to all constants.
-     * @param cp the instance of the parent calculator panel.
      * */
-    public CalculatorConstantPanel(Set<String> constants, CalculatorPanel cp)
+    public CalculatorConstantPanel(Set<String> constants)
     {
-        this.cp = cp;
-
         this.setBackground(Utils.BACKGROUND_COLOR);
-        this.add(scrContainer);
         this.setUpButtons(constants);
-
-        scrContainer.setBackground(Utils.BACKGROUND_COLOR);
-        scrContainer.setBorder(BorderFactory.createEmptyBorder());
-
-        container.setBackground(Utils.BACKGROUND_COLOR);
     }
 
     /**
@@ -50,13 +38,14 @@ public class CalculatorConstantPanel extends JPanel
     public void setUpButtons(Set<String> constants)
     {
         buttons.clear();
-        constants.forEach(s -> buttons.add(new JButton(s)));
+        constants.stream().sorted().forEach(s -> buttons.add(new JButton(s)));
         buttons.forEach(this::fixButtonProperties);
 
-        container.removeAll();
-        container.setLayout(new GridLayout(constants.size(), 1));
-        buttons.forEach(container::add);
-        container.revalidate();
+        this.removeAll();
+        this.setLayout(new GridLayout(2, constants.size()));
+        buttons.forEach(this::add);
+        buttons.forEach(b -> this.add(new JLabel(" ")));
+        this.revalidate();
     }
 
     /**
@@ -68,5 +57,11 @@ public class CalculatorConstantPanel extends JPanel
     {
         btn.setForeground(Utils.FOREGROUND_COLOR);
         btn.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btn.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
+                BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
+            )
+        );
     }
 }
