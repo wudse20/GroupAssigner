@@ -1,5 +1,6 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.expression_evalutator.Type;
 import se.skorup.API.util.Utils;
 
 /**
@@ -19,9 +20,9 @@ public class Power extends BinaryOperator
     }
 
     @Override
-    protected Number value(Number lhs, Number rhs)
+    protected Number value(Number lhs, Number rhs, Type t)
     {
-        if (lhs instanceof Double || rhs instanceof Double)
+        if (t.equals(Type.DOUBLE))
             return Math.pow(lhs.doubleValue(), rhs.doubleValue());
 
         return Utils.pow(lhs.intValue(), rhs.intValue());

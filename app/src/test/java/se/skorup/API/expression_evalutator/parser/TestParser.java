@@ -43,7 +43,7 @@ public class TestParser
 
         list.add(new TestParserData("4 * 3", 12, alwaysZeroEnv));
         list.add(new TestParserData("cookie", COOKIE, cookieEnv));
-        list.add(new TestParserData("(-(4 * 3) + 7 * (2 + 5) + 1) * (1 / 2) - 4", 15d, alwaysZeroEnv));
+        list.add(new TestParserData("(-(4 * 3) + 7 * (2 + 5) + 1) * (1 / 2) - 4", (-(4 * 3) + 7 * (2 + 5) + 1) * (1 / 2d) - 4, alwaysZeroEnv));
         list.add(new TestParserData("-(4 * 3) + 7 * (2 + 5)", 37, alwaysZeroEnv));
         list.add(new TestParserData("(4 + 3) * (3 - 2)", 7, alwaysZeroEnv));
         list.add(new TestParserData("-(5 + 5)", -10, alwaysZeroEnv));

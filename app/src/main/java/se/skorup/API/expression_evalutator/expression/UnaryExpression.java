@@ -1,6 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.Type;
 
 /**
  * A template for a unary expression.
@@ -26,13 +27,20 @@ public abstract class UnaryExpression implements Expression
      * The application of the unary expression.
      *
      * @param value the value of the expression.
-     */
-    protected abstract Number unary(Number value);
+     * @param t the type of the expression
+     * */
+    protected abstract Number unary(Number value, Type t);
 
     @Override
     public Number getValue(Environment e)
     {
-        return unary(expr.getValue(e));
+        return unary(expr.getValue(e), getType(e));
+    }
+
+    @Override
+    public Type getType(Environment e)
+    {
+        return expr.getType(e);
     }
 
     @Override

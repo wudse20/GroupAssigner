@@ -1,6 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.Type;
 
 /**
  * The expression used to define a constant.
@@ -28,6 +29,12 @@ public class DefinitionExpression implements Expression
         var val = value.getValue(e);
         e.registerValue(identifier, val);
         return val;
+    }
+
+    @Override
+    public Type getType(Environment e)
+    {
+        return value.getType(e);
     }
 
     @Override

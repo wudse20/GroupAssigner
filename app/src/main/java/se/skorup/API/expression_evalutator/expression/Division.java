@@ -1,5 +1,8 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.Type;
+
 /**
  * The division operator.
  * */
@@ -17,8 +20,14 @@ public class Division extends BinaryOperator
     }
 
     @Override
-    protected Number value(Number lhs, Number rhs)
+    protected Number value(Number lhs, Number rhs, Type t)
     {
         return lhs.doubleValue() / rhs.doubleValue();
+    }
+
+    @Override
+    public Type getType(Environment e)
+    {
+        return Type.DOUBLE;
     }
 }

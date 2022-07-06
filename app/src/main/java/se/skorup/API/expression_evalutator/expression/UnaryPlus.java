@@ -1,5 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.expression_evalutator.Type;
+
 /**
  * The unary plus operator.
  * */
@@ -16,9 +18,9 @@ public class UnaryPlus extends UnaryExpression
     }
 
     @Override
-    protected Number unary(Number value)
+    protected Number unary(Number value, Type t)
     {
-        if (value instanceof Double)
+        if (t.equals(Type.DOUBLE))
             return +value.doubleValue();
 
         return +value.intValue();

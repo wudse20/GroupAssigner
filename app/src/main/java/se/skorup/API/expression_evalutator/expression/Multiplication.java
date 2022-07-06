@@ -1,5 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
+import se.skorup.API.expression_evalutator.Type;
+
 /**
  * The multiplication operator.
  * */
@@ -17,9 +19,9 @@ public class Multiplication extends BinaryOperator
     }
 
     @Override
-    protected Number value(Number lhs, Number rhs)
+    protected Number value(Number lhs, Number rhs, Type t)
     {
-        if (lhs instanceof Double || rhs instanceof Double)
+        if (t.equals(Type.DOUBLE))
             return lhs.doubleValue() * rhs.doubleValue();
 
         return lhs.intValue() * rhs.intValue();

@@ -6,12 +6,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.Type;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestExpression
 {
     private Environment alwaysZeroEnv;
+    private Environment nonZeroEnv;
 
     @BeforeEach
     public void setUp()
@@ -30,6 +33,22 @@ public class TestExpression
         this.alwaysZeroEnv = new Environment() {
             @Override
             public Number getValue(String key) { return 0; }
+            @Override
+            public void registerValue(String key, Number value) {}
+        };
+
+        this.nonZeroEnv = new Environment() {
+            @Override
+            public Number getValue(String key)
+            {
+                if (key.equals("COOKIE"))
+                    return 42;
+                else if (key.equals("COOKIED"))
+                    return 42d;
+
+                return 0;
+            }
+
             @Override
             public void registerValue(String key, Number value) {}
         };
@@ -48,6 +67,17 @@ public class TestExpression
     }
 
     @Test
+    public void testInteger()
+    {
+        var n1 = new IntegerExpression(10);
+        var n2 = new IntegerExpression(-1);
+
+        assertEquals(10, n1.getValue(alwaysZeroEnv));
+        assertEquals(-1, n2.getValue(alwaysZeroEnv));
+    }
+
+
+    @Test
     public void testPlus()
     {
         // 10 + 14 = 24
@@ -56,6 +86,17 @@ public class TestExpression
         var plus = new Plus(n1, n2);
 
         assertEquals(24d, plus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testPlusInteger()
+    {
+        // 10 + 14 = 24
+        var n1 = new IntegerExpression(10);
+        var n2 = new IntegerExpression(14);
+        var plus = new Plus(n1, n2);
+
+        assertEquals(24, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -72,6 +113,19 @@ public class TestExpression
     }
 
     @Test
+    public void testPlusNestedInteger()
+    {
+        // 6 + 4 + 12 = 22
+        var n1 = new IntegerExpression(6);
+        var n2 = new IntegerExpression(4);
+        var n3 = new IntegerExpression(12);
+        var p1 = new Plus(n1, n2);
+        var plus = new Plus(p1, n3);
+
+        assertEquals(22, plus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testMinus()
     {
         // 10 - 14 = -4
@@ -80,6 +134,17 @@ public class TestExpression
         var minus = new Minus(n1, n2);
 
         assertEquals(-4d, minus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testMinusInteger()
+    {
+        // 10 - 14 = -4
+        var n1 = new IntegerExpression(10);
+        var n2 = new IntegerExpression(14);
+        var minus = new Minus(n1, n2);
+
+        assertEquals(-4, minus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -96,6 +161,19 @@ public class TestExpression
     }
 
     @Test
+    public void testMinusNestedInteger()
+    {
+        // 6 + 4 - 12 = -2
+        var n1 = new IntegerExpression(6);
+        var n2 = new IntegerExpression(4);
+        var n3 = new IntegerExpression(12);
+        var p1 = new Plus(n1, n2);
+        var minus = new Minus(p1, n3);
+
+        assertEquals(-2, minus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testMultiply()
     {
         // 10 * 14 = 140
@@ -104,6 +182,17 @@ public class TestExpression
         var mul = new Multiplication(n1, n2);
 
         assertEquals(140d, mul.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testMultiplyInteger()
+    {
+        // 10 * 14 = 140
+        var n1 = new IntegerExpression(10);
+        var n2 = new IntegerExpression(14);
+        var mul = new Multiplication(n1, n2);
+
+        assertEquals(140, mul.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -120,11 +209,35 @@ public class TestExpression
     }
 
     @Test
+    public void testMultiplyNestedInteger()
+    {
+        // 6 + 4 * 12 = 54
+        var n1 = new IntegerExpression(6);
+        var n2 = new IntegerExpression(4);
+        var n3 = new IntegerExpression(12);
+        var mul = new Multiplication(n2, n3);
+        var p1 = new Plus(n1, mul);
+
+        assertEquals(54, p1.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testDivision()
     {
         // 20 / 2 = 10
         var n1 = new NumberExpression(20);
         var n2 = new NumberExpression(2);
+        var div = new Division(n1, n2);
+
+        assertEquals(10d, div.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testDivisionInteger()
+    {
+        // 20 / 2 = 10
+        var n1 = new IntegerExpression(20);
+        var n2 = new IntegerExpression(2);
         var div = new Division(n1, n2);
 
         assertEquals(10d, div.getValue(alwaysZeroEnv));
@@ -144,6 +257,19 @@ public class TestExpression
     }
 
     @Test
+    public void testDivisionNestedInteger()
+    {
+        // 6 / 4 + 3 = 4.5
+        var n1 = new IntegerExpression(6);
+        var n2 = new IntegerExpression(4);
+        var n3 = new IntegerExpression(3);
+        var div = new Division(n1, n2);
+        var p1 = new Plus(div, n3);
+
+        assertEquals(4.5, p1.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testUnaryMinus()
     {
         // -4
@@ -151,6 +277,16 @@ public class TestExpression
         var minus = new UnaryMinus(n1);
 
         assertEquals(-4d, minus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testUnaryMinusInteger()
+    {
+        // -4
+        var n1 = new IntegerExpression(4);
+        var minus = new UnaryMinus(n1);
+
+        assertEquals(-4, minus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -164,6 +300,16 @@ public class TestExpression
     }
 
     @Test
+    public void testMultipleUnaryMinusesInteger()
+    {
+        // ---4 = -4
+        var n1 = new IntegerExpression(4);
+        var minus = new UnaryMinus(new UnaryMinus(new UnaryMinus(n1)));
+
+        assertEquals(-4, minus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testUnaryPlus()
     {
         // +4
@@ -174,6 +320,16 @@ public class TestExpression
     }
 
     @Test
+    public void testUnaryPlusInteger()
+    {
+        // +4
+        var n1 = new IntegerExpression(4);
+        var plus = new UnaryPlus(n1);
+
+        assertEquals(+4, plus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testMultipleUnaryPluses()
     {
         // +++4 = +4
@@ -181,6 +337,16 @@ public class TestExpression
         var plus = new UnaryPlus(new UnaryPlus(new UnaryPlus(n1)));
 
         assertEquals(+4d, plus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testMultipleUnaryPlusesInteger()
+    {
+        // +++4 = +4
+        var n1 = new IntegerExpression(4);
+        var plus = new UnaryPlus(new UnaryPlus(new UnaryPlus(n1)));
+
+        assertEquals(+4, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -198,6 +364,23 @@ public class TestExpression
             );
 
         assertEquals(4d, plus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testUnaryMinusesAndUnaryPlusesInteger()
+    {
+        // -+-+4 = 4
+        var n1 = new IntegerExpression(4);
+        var plus =
+            new UnaryMinus(
+                new UnaryPlus(
+                    new UnaryMinus(
+                        new UnaryPlus(n1)
+                    )
+                )
+            );
+
+        assertEquals(4, plus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -222,6 +405,27 @@ public class TestExpression
     }
 
     @Test
+    public void testUnaryMinusesAndUnaryPluses2Integer()
+    {
+        // -+-+-+4 = -4
+        var n1 = new IntegerExpression(4);
+        var plus =
+            new UnaryMinus(
+                new UnaryPlus(
+                    new UnaryMinus(
+                        new UnaryPlus(
+                            new UnaryMinus(
+                                new UnaryPlus(n1)
+                            )
+                        )
+                    )
+                )
+            );
+
+        assertEquals(-4, plus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testParenthesizedExpression()
     {
         // (4 + 5) = 9
@@ -233,6 +437,20 @@ public class TestExpression
                 ));
 
         assertEquals(9d, p.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testParenthesizedExpressionInteger()
+    {
+        // (4 + 5) = 9
+        var p =
+            new ParenthesizedExpression(
+                new Plus(
+                    new IntegerExpression(4),
+                    new IntegerExpression(5)
+                ));
+
+        assertEquals(9, p.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -252,6 +470,22 @@ public class TestExpression
     }
 
     @Test
+    public void testUnaryMinusParenthesizedExpressionInteger()
+    {
+        // -(4 + 5) = -9
+        var p =
+            new ParenthesizedExpression(
+                new Plus(
+                    new IntegerExpression(4),
+                    new IntegerExpression(5)
+                ));
+
+        var unaryMinus = new UnaryMinus(p);
+
+        assertEquals(-9, unaryMinus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
     public void testUnaryPlusParenthesizedExpression()
     {
         // +(4 + 5) = 9
@@ -265,6 +499,22 @@ public class TestExpression
         var unaryPlus = new UnaryPlus(p);
 
         assertEquals(9d, unaryPlus.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testUnaryPlusParenthesizedExpressionInteger()
+    {
+        // +(4 + 5) = 9
+        var p =
+            new ParenthesizedExpression(
+                new Plus(
+                    new IntegerExpression(4),
+                    new IntegerExpression(5)
+                ));
+
+        var unaryPlus = new UnaryPlus(p);
+
+        assertEquals(9, unaryPlus.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -299,6 +549,13 @@ public class TestExpression
     {
         var expr = new Modulo(new NumberExpression(5), new NumberExpression(2));
         assertEquals(1.0, expr.getValue(alwaysZeroEnv));
+    }
+
+    @Test
+    public void testModuloExpressionInteger()
+    {
+        var expr = new Modulo(new IntegerExpression(5), new IntegerExpression(2));
+        assertEquals(1, expr.getValue(alwaysZeroEnv));
     }
 
     @Test
@@ -358,6 +615,54 @@ public class TestExpression
         return arr;
     }
 
+    public static Stream<TypingTest> getTypeData()
+    {
+        var list = new ArrayList<TypingTest>();
+
+        list.add(new TypingTest("5 / 5", Type.DOUBLE));
+        list.add(new TypingTest("5.0 / 5", Type.DOUBLE));
+        list.add(new TypingTest("5 / 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 / 5.0", Type.DOUBLE));
+        list.add(new TypingTest("(4 * 3) / 3", Type.DOUBLE));
+        list.add(new TypingTest("(5 ** 2) / 5.0", Type.DOUBLE));
+        list.add(new TypingTest("(100 / 2) % 2", Type.DOUBLE));
+        list.add(new TypingTest("5 + 5", Type.INTEGER));
+        list.add(new TypingTest("5.0 + 5", Type.DOUBLE));
+        list.add(new TypingTest("5 + 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 + 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5 - 5", Type.INTEGER));
+        list.add(new TypingTest("5.0 - 5", Type.DOUBLE));
+        list.add(new TypingTest("5 - 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 - 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5 * 5", Type.INTEGER));
+        list.add(new TypingTest("5.0 * 5", Type.DOUBLE));
+        list.add(new TypingTest("5 * 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 * 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5 ** 5", Type.INTEGER));
+        list.add(new TypingTest("5.0 ** 5", Type.DOUBLE));
+        list.add(new TypingTest("5 ** 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 ** 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5 % 5", Type.INTEGER));
+        list.add(new TypingTest("5.0 % 5", Type.DOUBLE));
+        list.add(new TypingTest("5 % 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 % 5.0", Type.DOUBLE));
+        list.add(new TypingTest("let x = 10", Type.INTEGER));
+        list.add(new TypingTest("let y = 10 / 5", Type.DOUBLE));
+        list.add(new TypingTest("let z = 5.0", Type.DOUBLE));
+        list.add(new TypingTest("COOKIE", Type.INTEGER));
+        list.add(new TypingTest("COOKIED", Type.DOUBLE));
+        list.add(new TypingTest("+COOKIE", Type.INTEGER));
+        list.add(new TypingTest("-COOKIE", Type.INTEGER));
+        list.add(new TypingTest("+COOKIED", Type.DOUBLE));
+        list.add(new TypingTest("-COOKIED", Type.DOUBLE));
+        list.add(new TypingTest("5", Type.INTEGER));
+        list.add(new TypingTest("5.0", Type.DOUBLE));
+        list.add(new TypingTest("5 ** 5 ** 5.0", Type.DOUBLE));
+        list.add(new TypingTest("COOKIE * 2 + (let z = 3)", Type.INTEGER));
+
+        return list.stream();
+    }
+
     @ParameterizedTest
     @MethodSource("getData")
     public void testToString(ToStringTest tst)
@@ -365,5 +670,15 @@ public class TestExpression
         assertEquals(tst.expected, tst.expr.toString());
     }
 
+    @ParameterizedTest
+    @MethodSource("getTypeData")
+    public void testTyping(TypingTest tst)
+    {
+        var expr = new Parser(tst.expression).parse();
+        assertEquals(tst.expected, expr.getType(nonZeroEnv));
+    }
+
     private record ToStringTest(String expected, Expression expr) {}
+
+    private record TypingTest(String expression, Type expected) {}
 }

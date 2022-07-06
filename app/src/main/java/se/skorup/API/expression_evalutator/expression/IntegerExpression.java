@@ -1,6 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.Type;
 
 /**
  * Represents an integer, it's called IntegerExpression
@@ -14,6 +15,12 @@ public record IntegerExpression(int value) implements Expression
     public Number getValue(Environment e)
     {
         return value;
+    }
+
+    @Override
+    public Type getType(Environment e)
+    {
+        return Type.INTEGER;
     }
 
     @Override
