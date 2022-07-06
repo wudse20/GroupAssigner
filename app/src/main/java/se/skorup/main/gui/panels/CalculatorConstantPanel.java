@@ -1,12 +1,12 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.interfaces.ButtonCallback;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.Set;
 public class CalculatorConstantPanel extends JPanel
 {
     private final List<JButton> buttons = new ArrayList<>();
+    private final List<ButtonCallback> callbacks = new ArrayList<>();
 
     /**
      * Creates a new CalculatorConstantPanel.
@@ -57,11 +58,26 @@ public class CalculatorConstantPanel extends JPanel
     {
         btn.setForeground(Utils.FOREGROUND_COLOR);
         btn.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btn.addActionListener(e -> callbacks.forEach(c -> c.action(btn.getText())));
         btn.setBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
                 BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 4)
             )
         );
+    }
+
+    /**
+     * Adds a callback to the panel.
+     *
+     * @param bc the non-{@code null} callback. If {@code null}
+     *           then it will just return without doing anything.
+     * */
+    public void addCallback(ButtonCallback bc)
+    {
+        if (bc == null)
+            return;
+
+        callbacks.add(bc);
     }
 }
