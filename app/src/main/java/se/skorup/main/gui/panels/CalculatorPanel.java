@@ -1,5 +1,7 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.collections.mutable_collections.HistoryList;
+import se.skorup.API.collections.mutable_collections.HistoryStructure;
 import se.skorup.API.expression_evalutator.Environment;
 import se.skorup.API.expression_evalutator.parser.Parser;
 import se.skorup.API.util.DebugMethods;
@@ -47,6 +49,8 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
     private final Map<String, Double> vars;
     private final Map<String, Command> cmds;
+
+    private final HistoryStructure<String> history = new HistoryList<>();
 
     private final CalculatorButtonPanel cbp = new CalculatorButtonPanel();
     private final CalculatorIOPanel ciop;
@@ -148,11 +152,13 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         btnUp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnUp.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         btnUp.setBorder(BORDER);
+        btnUp.addActionListener(e -> swapInput(true));
 
         btnDown.setForeground(Utils.FOREGROUND_COLOR);
         btnDown.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnDown.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         btnDown.setBorder(BORDER);
+        btnDown.addActionListener(e -> swapInput(false));
     }
 
     /**
@@ -229,6 +235,9 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
      * */
     private void doCalculation(String text)
     {
+        if (text.trim().length() > 0)
+            history.add(text);
+
         if (text.length() > 0 && text.charAt(0) == '!')
         {
             executeCommand(text.substring(1));
@@ -261,6 +270,27 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
             var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(ciop.getInputText());
             ciop.appendOutputText(highlighted);
             ciop.appendOutputText("<RED>%s</RED>%n".formatted(p.getDiagnostics().mkString("\n")));
+        }
+    }
+
+    /**
+     * Swaps the input in the text box going through
+     * the history. If there are no valid entry then
+     * we do nothing.
+     *
+     * @param isGoingUp if {@code true} then we go backwards in
+     *                  history, else we go forwards in history.
+     * */
+    private void swapInput(boolean isGoingUp)
+    {
+        if (isGoingUp)
+        {
+            history.peek().ifPresent(ciop::setInputText);
+            history.forward();
+        }
+        else
+        {
+            history.backward().ifPresentOrElse(ciop::setInputText, ciop::clearInput);
         }
     }
 

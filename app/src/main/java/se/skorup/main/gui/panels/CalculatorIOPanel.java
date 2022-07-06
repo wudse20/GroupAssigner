@@ -118,4 +118,12 @@ public class CalculatorIOPanel extends JPanel
     {
         return output;
     }
+
+    /**
+     * Clears the input.
+     * */
+    public void clearInput()
+    {
+        input.clear();
+    }
 }
