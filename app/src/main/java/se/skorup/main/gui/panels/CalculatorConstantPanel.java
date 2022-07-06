@@ -42,8 +42,11 @@ public class CalculatorConstantPanel extends JPanel
         constants.stream().sorted().forEach(s -> buttons.add(new JButton(s)));
         buttons.forEach(this::fixButtonProperties);
 
+        var layout = new GridLayout(2, constants.size());
+        layout.setHgap(10);
+
         this.removeAll();
-        this.setLayout(new GridLayout(2, constants.size()));
+        this.setLayout(layout);
         buttons.forEach(this::add);
         buttons.forEach(b -> this.add(new JLabel(" ")));
         this.revalidate();
