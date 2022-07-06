@@ -70,7 +70,7 @@ public class CalculatorButtonPanel extends JPanel
         button.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         button.setForeground(Utils.FOREGROUND_COLOR);
         button.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-        button.setFont(new Font(Font.DIALOG, Font.BOLD, 32));
+        button.setFont(new Font(Font.DIALOG, Font.BOLD, 26));
     }
 
     /**

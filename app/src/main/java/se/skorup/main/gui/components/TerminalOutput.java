@@ -17,6 +17,14 @@ public final class TerminalOutput extends TerminalPane
         super(d, false);
     }
 
+    /**
+     * Setup for the component and creation.
+     * */
+    public TerminalOutput()
+    {
+        super(false);
+    }
+
     @Override
     public boolean appendColoredString(String s)
     {

@@ -214,6 +214,7 @@ public class Utils
     {
         var _colorMap = new HashMap<String, Color>();
 
+        _colorMap.put("LIGHT_GREEN", new Color(194, 255, 190));
         _colorMap.put("GREEN", Color.GREEN);
         _colorMap.put("DARK_GREEN", Color.GREEN.darker());
         _colorMap.put("WHITE", Color.WHITE);
