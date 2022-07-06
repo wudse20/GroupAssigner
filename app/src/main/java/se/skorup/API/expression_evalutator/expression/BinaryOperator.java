@@ -1,6 +1,7 @@
 package se.skorup.API.expression_evalutator.expression;
 
 import se.skorup.API.expression_evalutator.Environment;
+import se.skorup.API.expression_evalutator.Type;
 
 /**
  * A template for a binary operator.
@@ -31,14 +32,24 @@ public abstract class BinaryOperator implements Expression
      *
      * @param lhs the value at the left-hand side.
      * @param rhs the value at the right-hand side.
+     * @param t   the type of the expression.
      * @return the value of this expression.
      */
-    protected abstract Number value(Number lhs, Number rhs);
+    protected abstract Number value(Number lhs, Number rhs, Type t);
 
     @Override
     public final Number getValue(Environment e)
     {
-        return value(left.getValue(e), right.getValue(e));
+        return value(left.getValue(e), right.getValue(e), getType(e));
+    }
+
+    @Override
+    public Type getType(Environment e)
+    {
+        if (left.getType(e).equals(Type.DOUBLE) || right.getType(e).equals(Type.DOUBLE))
+            return Type.DOUBLE;
+
+        return Type.INTEGER;
     }
 
     @Override
