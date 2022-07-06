@@ -53,13 +53,11 @@ public class TestParser
         list.add(new TestParserData("5 / 5 * 5 + +--7 - -3", 15d, alwaysZeroEnv));
         list.add(new TestParserData("5 / 5 * 5 + 7 - 3", 9d, alwaysZeroEnv));
         list.add(new TestParserData("-5 / 5", -1d, alwaysZeroEnv));
-        list.add(new TestParserData("5 / 5", 1d, alwaysZeroEnv));
         list.add(new TestParserData("-5 * -5 + -5 - -5", 25, alwaysZeroEnv));
         list.add(new TestParserData("-5 * -5", 25, alwaysZeroEnv));
         list.add(new TestParserData("5 + 5 * 5", 30, alwaysZeroEnv));
         list.add(new TestParserData("5 * 5 + 5", 30, alwaysZeroEnv));
         list.add(new TestParserData("5 * 5 * 5", 125, alwaysZeroEnv));
-        list.add(new TestParserData("5 * 5", 25, alwaysZeroEnv));
         list.add(new TestParserData("5-+5", 0, alwaysZeroEnv));
         list.add(new TestParserData("5--5", 10, alwaysZeroEnv));
         list.add(new TestParserData("5 - 4 - 1", 0, alwaysZeroEnv));
@@ -67,7 +65,6 @@ public class TestParser
         list.add(new TestParserData("-7 + +3 + --4", 0, alwaysZeroEnv));
         list.add(new TestParserData("7 + 3", 10, alwaysZeroEnv));
         list.add(new TestParserData("5+5+5", 15, alwaysZeroEnv));
-        list.add(new TestParserData("5+5", 10, alwaysZeroEnv));
         list.add(new TestParserData("+5", 5, alwaysZeroEnv));
         list.add(new TestParserData("-5", -5, alwaysZeroEnv));
         list.add(new TestParserData("5", 5, alwaysZeroEnv));

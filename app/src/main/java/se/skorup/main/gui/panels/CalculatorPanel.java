@@ -229,11 +229,11 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
      * */
     private void setUpConstants(GroupManager manager)
     {
-        vars.put("medlämmar", (double) manager.getMemberCount());
-        vars.put("ledare", (double) manager.getMemberCountOfRole(Person.Role.LEADER));
-        vars.put("deltagare", (double) manager.getMemberCountOfRole(Person.Role.CANDIDATE));
-        vars.put("huvudgrupp1", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_1));
-        vars.put("huvudgrupp2", (double) manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_2));
+        vars.put("medlämmar", manager.getMemberCount());
+        vars.put("ledare", manager.getMemberCountOfRole(Person.Role.LEADER));
+        vars.put("deltagare", manager.getMemberCountOfRole(Person.Role.CANDIDATE));
+        vars.put("huvudgrupp1", manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_1));
+        vars.put("huvudgrupp2", manager.getMembersOfMainGroup(Person.MainGroup.MAIN_GROUP_2));
 
         updateConstantButtons();
     }
@@ -281,7 +281,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
                 return;
             }
 
-            ciop.appendOutputText("<LIGHT_GREEN>%f</LIGHT_GREEN>%n".formatted(res));
+            ciop.appendOutputText("<LIGHT_GREEN>%s</LIGHT_GREEN>%n".formatted(res));
             ciop.setInputText("");
             cbp.resetData();
         }
