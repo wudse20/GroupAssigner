@@ -317,6 +317,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
             if (!lastVarCallValid)
             {
                 output.appendColoredString("<RED>The constant: %s doesn't exist</RED>%n".formatted(lastConstantError));
+                lastVarCallValid = true;
                 return;
             }
 
