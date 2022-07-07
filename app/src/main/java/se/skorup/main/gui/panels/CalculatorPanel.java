@@ -257,12 +257,27 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     {
         if (text.trim().length() > 0)
             history.add(text);
+        else
+            return;
 
-        if (text.length() > 0 && text.charAt(0) == '!')
+        if (text.charAt(0) == '!')
         {
-            executeCommand(text.substring(1));
-            ciop.setInputText("");
-            cbp.resetData();
+            var cmd = executeCommand(text.substring(1));
+
+            if (cmd.isSuccessful())
+            {
+                ciop.setInputText("");
+                ciop.appendOutputText(cmd.result());
+                cbp.resetData();
+            }
+            else
+            {
+                ciop.appendOutputText("Error executing command: ");
+                ciop.appendOutputText(cmd.result());
+            }
+
+            ciop.appendOutputText("\n");
+
             return;
         }
 
