@@ -53,6 +53,13 @@ public class Utils
     public static final String ABOUT =
             "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
 
+    /** The regex pattern for a double. Stolen from: https://stackoverflow.com/a/16078719 */
+    private static final Pattern DOUBLE_PATTERN = Pattern.compile(
+            "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)" +
+                    "([eE][+-]?(\\p{Digit}+))?)|(\\.((\\d+))([eE][+-]?(\\d+))?)|" +
+                    "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
+                    "[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
+
     /**
      * Checks if the code is running on a window system or not.
      *
@@ -175,10 +182,7 @@ public class Utils
      * */
     public static boolean isValidDouble(String str)
     {
-        if (str.length() == 1 && str.matches("\\d"))
-            return true;
-
-        return Pattern.matches("(\\d+).?(\\d+)", str);
+        return DOUBLE_PATTERN.matcher(str).matches();
     }
 
     /**

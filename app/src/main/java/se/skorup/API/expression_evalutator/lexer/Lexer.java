@@ -98,7 +98,8 @@ public class Lexer
             if (!Utils.isValidDouble(t))
             {
                 diagnostics.add("The number %s isn't a valid double".formatted(t));
-                return new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);
+                var pos = position + 1 <= text.length() ? ++position : position;
+                return new SyntaxToken(SyntaxKind.BadToken, pos, text.substring(start, position), 0);
             }
 
             if (t.indexOf('.') == -1)

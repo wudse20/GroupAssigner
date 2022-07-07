@@ -74,7 +74,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     private final JButton btnDown = new JButton("<html>&darr;</html>");
     private final JButton btnClear = new JButton("Rensa");
 
-    private final TerminalPane input;
+    private final TerminalInput input;
     private final TerminalPane output;
 
     private final JScrollPane scrCCP;
@@ -118,10 +118,14 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         ccp.addCallback(s -> {
             var data = "%s %s ".formatted(input.getText(), s);
             input.setText(data);
+            input.syntaxHighlighting();
             cbp.setData(data);
         });
 
-        cbp.addActionCallback(() -> input.setText(cbp.getData()));
+        cbp.addActionCallback(() -> {
+            input.setText(cbp.getData());
+            input.syntaxHighlighting();
+        });
 
         input.addKeyListener(this);
         input.getDocument().addDocumentListener(this);
@@ -167,6 +171,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
             var data = "let %s = ".formatted(identifier);
             input.setText(data);
+            input.syntaxHighlighting();
             cbp.setData(data);
         });
 

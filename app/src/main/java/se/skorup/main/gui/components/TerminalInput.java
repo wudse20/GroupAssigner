@@ -53,7 +53,8 @@ public final class TerminalInput extends TerminalPane implements KeyListener
                Character.isDigit(c)      ||
                Character.isWhitespace(c) ||
                isOperator(c)             ||
-               c == cmdChar;
+               c == cmdChar              ||
+               c == '.';
     }
 
     /**

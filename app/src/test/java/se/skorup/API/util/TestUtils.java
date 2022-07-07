@@ -1,8 +1,6 @@
 package se.skorup.API.util;
 
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -10,32 +8,51 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the Utils methods.
  * */
 public class TestUtils
 {
-    @Test
-    public void testToNameCase()
+    public static Stream<Arguments> getNameCaseData()
     {
-        assertEquals("Anton", Utils.toNameCase("Anton"));
-        assertEquals("Anton", Utils.toNameCase("anton"));
-        assertEquals("Anton Skorup", Utils.toNameCase("anton skorup"));
-        assertEquals("Anton Skorup", Utils.toNameCase("AnToN sKoRuP"));
+        return Stream.of(
+            Arguments.of("Anton", "Anton"),
+            Arguments.of("Anton", "anton"),
+            Arguments.of("Anton Skorup", "anton skorup"),
+            Arguments.of("Anton Skorup", "AnToN sKoRuP"),
+            Arguments.of("Anton Skorup", "Anton Skorup"),
+            Arguments.of("Anton Karl Dan Skorup", "Anton Karl Dan Skorup"),
+            Arguments.of("Anton Karl Dan Skorup", "anton KARL dan SKORUP")
+        );
     }
 
-    @Test
-    public void testIsValidDouble()
+    @ParameterizedTest
+    @MethodSource("getNameCaseData")
+    public void testToNameCase(String expected, String input)
     {
-        assertTrue(Utils.isValidDouble("00.00"));
-        assertTrue(Utils.isValidDouble("5"));
-        assertTrue(Utils.isValidDouble("555"));
-        assertTrue(Utils.isValidDouble("10.32"));
-        assertFalse(Utils.isValidDouble("kaka"));
-        assertFalse(Utils.isValidDouble(".5"));
+        assertEquals(expected, Utils.toNameCase(input), input);
+    }
+
+    public static Stream<Arguments> getDoubleData()
+    {
+        return Stream.of(
+            Arguments.of("5", true),
+            Arguments.of("555", true),
+            Arguments.of("10.32", true),
+            Arguments.of("kaka", false),
+            Arguments.of(".5", true),
+            Arguments.of("5.", true),
+            Arguments.of("5..", false),
+            Arguments.of("5..0", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getDoubleData")
+    public void testIsValidDouble(String input, boolean expected)
+    {
+        assertEquals(expected, Utils.isValidDouble(input), input);
     }
 
     public static Stream<Arguments> getPadData()
