@@ -21,12 +21,12 @@ public interface GroupCreator
      * Generates the different, groups of size
      * size.
      *
-     * @param size the size of the group.
+     * @param size     the size of the group.
      * @param overflow if the groups should overflow or not.
      * @return a List containing the generated groups.
      * @throws NoGroupAvailableException iff there's no way to create a group.
-     * */
-    List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException;
+     */
+    List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException;
 
     /**
      * Generates subgroups of the provided
@@ -37,15 +37,15 @@ public interface GroupCreator
      *
      * @param groupSize The size of the group. Must
      *                  be larger than 1, i.e groupSize &#8805; 2.
-     * @param overflow if {@code true} then it will overflow and create
-     *                 extra groups, else it will put the remainder in
-     *                 the last group.
+     * @param overflow  if {@code true} then it will overflow and create
+     *                  extra groups, else it will put the remainder in
+     *                  the last group.
      * @return a list containing sets of integers which corresponds
-     *         to groups.
-     * @throws IllegalArgumentException iff groupSize &lt; 2.
+     * to groups.
+     * @throws IllegalArgumentException  iff groupSize &lt; 2.
      * @throws NoGroupAvailableException iff there is now way to create a group.
-     * */
-    default List<Set<Integer>> generateGroupNbrPeople(int groupSize, boolean overflow)
+     */
+    default List<List<Set<Integer>>> generateGroupNbrPeople(int groupSize, boolean overflow)
             throws IllegalArgumentException, NoGroupAvailableException
     {
         if (groupSize < 2)
@@ -64,16 +64,16 @@ public interface GroupCreator
      *
      * @param nbrGroups the amount of groups. Must be
      *                  larger than 1, i.e nbrGroups &#8805; 2.
-     * @param overflow if {@code true} then it will overflow and create
-     *                 extra groups, else it will put the remainder in
-     *                 the last group.
-     * @param gm The group manager that holds the main group.
-     * @return a list containing sets of integers which corresponds
-     *         to groups.
-     * @throws IllegalArgumentException iff nbrGroups &lt; 2.
+     * @param overflow  if {@code true} then it will overflow and create
+     *                  extra groups, else it will put the remainder in
+     *                  the last group.
+     * @param gm        The group manager that holds the main group.
+     * @return a list containing lists containing sets of integers which corresponds
+     *         to groups. Each group is a list in the list.
+     * @throws IllegalArgumentException  iff nbrGroups &lt; 2.
      * @throws NoGroupAvailableException iff there's no way to create a group.
-     * */
-    default List<Set<Integer>> generateGroupNbrGroups(int nbrGroups, boolean overflow, GroupManager gm)
+     */
+    default List<List<Set<Integer>>> generateGroupNbrGroups(int nbrGroups, boolean overflow, GroupManager gm)
             throws IllegalArgumentException, NoGroupAvailableException
     {
         if (nbrGroups < 2)
@@ -211,11 +211,10 @@ public interface GroupCreator
      *
      * @param sizes the list of integers containing the sizes
      *              of the different groups.
-     * @return a list containing sets of integers which corresponds
-     *         to groups. The integers are the id's in their group
-     *         manager.
-     * @throws IllegalArgumentException iff sizes is empty or there is only one group.
+     * @return a list containing lists containing sets of integers which corresponds
+     *         to groups. Each group is a list in the list.
+     * @throws IllegalArgumentException  iff sizes is empty or there is only one group.
      * @throws NoGroupAvailableException iff there's no way to create a group.
-     * */
-    List<Set<Integer>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException;
+     */
+    List<List<Set<Integer>>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException;
 }

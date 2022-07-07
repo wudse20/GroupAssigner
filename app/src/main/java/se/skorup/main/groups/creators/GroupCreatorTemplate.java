@@ -6,6 +6,7 @@ import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -44,7 +45,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
     ) throws NoGroupAvailableException;
 
     @Override
-    public final List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
+    public final List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
         var result = new ArrayList<Set<Integer>>();
         var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
@@ -69,11 +70,11 @@ public abstract class GroupCreatorTemplate implements GroupCreator
         if (current != null)
             result.add(current);
 
-        return result;
+        return List.of(result);
     }
 
     @Override
-    public final List<Set<Integer>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    public final List<List<Set<Integer>>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
     {
         if (sizes == null)
             throw new IllegalArgumentException("Not enough groups 0");
@@ -111,6 +112,6 @@ public abstract class GroupCreatorTemplate implements GroupCreator
         if (current.size() != 0 && !result.contains(current))
             result.add(current);
 
-        return result;
+        return Collections.singletonList(result);
     }
 }

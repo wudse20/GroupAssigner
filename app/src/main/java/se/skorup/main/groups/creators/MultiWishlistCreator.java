@@ -10,6 +10,7 @@ import se.skorup.main.objects.Tuple;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -151,15 +152,15 @@ public class MultiWishlistCreator implements GroupCreator
     }
 
     @Override
-    public List<Set<Integer>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
+    public List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
-        return getBestGroup(a -> a.generateGroup(size, overflow));
+        return Collections.singletonList(getBestGroup(a -> a.generateGroup(size, overflow).get(0)));
     }
 
     @Override
-    public List<Set<Integer>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    public List<List<Set<Integer>>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
     {
-        return getBestGroup(a -> a.generateGroupNbrGroups(sizes));
+        return Collections.singletonList(getBestGroup(a -> a.generateGroupNbrGroups(sizes).get(0)));
     }
 
     @Override
