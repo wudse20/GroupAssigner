@@ -28,7 +28,9 @@ import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -92,30 +94,53 @@ public class SubgroupPanel extends JPanel
     private void loadGroups()
     {
         SwingUtilities.invokeLater(() -> {
-            var frame = new SubgroupListFrame(gf.BASE_GROUP_PATH, gm);
+            var path = gf.BASE_GROUP_PATH;
+            var dir = new File(path).list();
 
-            frame.addActionCallback(() -> {
-                var f = frame.getSelectedFile();
+            if (dir == null || dir.length == 0)
+            {
+                JOptionPane.showMessageDialog(
+                    this, "Det finns inga sparade grupper",
+                    "Inga sparade grupper", JOptionPane.ERROR_MESSAGE
+                );
+
+                DebugMethods.log("No saved groups", DebugMethods.LogType.ERROR);
+                return;
+            }
+            List<Subgroups> groups;
+
+            try
+            {
+                groups = Arrays.stream(Objects.requireNonNull(dir))
+                               .map(x -> "%s%s".formatted(path, x))
+                               .map(File::new) // Creates files.
+                               .map(f -> {
+                                   try
+                                   {
+                                       return (Subgroups) SerializationManager.deserializeObject(f.getAbsolutePath());
+                                   }
+                                   catch (IOException | ClassNotFoundException e)
+                                   {
+                                       DebugMethods.log(e, DebugMethods.LogType.ERROR);
+                                       throw new RuntimeException(e);
+                                   }
+                               }).toList();
+            }
+            catch (RuntimeException e)
+            {
+                JOptionPane.showMessageDialog(
+                    this, "ERROR: %s".formatted(e.getLocalizedMessage()),
+                    "ERROR", JOptionPane.ERROR_MESSAGE
+                );
+
+                DebugMethods.log(e, DebugMethods.LogType.ERROR);
+                return;
+            }
+
+            var frame = new SubgroupListFrame(groups, gm, "Ladda");
+
+            frame.addActionCallback(sg -> {
                 frame.dispose();
-
-                Subgroups sg;
-                try
-                {
-                    sg = (Subgroups) SerializationManager.deserializeObject(f.getAbsolutePath());
-                }
-                catch (IOException | ClassNotFoundException e)
-                {
-                    e.printStackTrace();
-                    DebugMethods.log(e, DebugMethods.LogType.ERROR);
-
-                    JOptionPane.showMessageDialog(
-                        this, "Kunde inte läsa gruppen!\nFel: %s".formatted(e.getLocalizedMessage()),
-                        "Misslyckades att läsa från fil.", JOptionPane.ERROR_MESSAGE
-                    );
-
-                    return;
-                }
-
                 gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 2 : 0);
                 current = sg;
                 sdp.reset();
