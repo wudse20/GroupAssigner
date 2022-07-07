@@ -14,6 +14,9 @@ import se.skorup.main.gui.command.ErrorCommand;
 import se.skorup.main.gui.command.HelpCommand;
 import se.skorup.main.gui.command.ListCommand;
 import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
+import se.skorup.main.gui.components.TerminalInput;
+import se.skorup.main.gui.components.TerminalOutput;
+import se.skorup.main.gui.components.TerminalPane;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -29,6 +32,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
@@ -60,7 +64,6 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     private final HistoryStructure<String> history = new HistoryList<>();
 
     private final CalculatorButtonPanel cbp = new CalculatorButtonPanel();
-    private final CalculatorIOPanel ciop;
     private final CalculatorConstantPanel ccp;
     private final JPanel ctrButtons = new JPanel();
 
@@ -71,7 +74,11 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     private final JButton btnDown = new JButton("<html>&darr;</html>");
     private final JButton btnClear = new JButton("Rensa");
 
+    private final TerminalPane input;
+    private final TerminalPane output;
+
     private final JScrollPane scrCCP;
+    private final JScrollPane scrOutput;
 
     /**
      * Creates a new Calculator panel.
@@ -82,9 +89,11 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     {
         this.vars = new HashMap<>();
         this.cmds = new HashMap<>();
-        this.ciop = new CalculatorIOPanel(vars.keySet());
         this.ccp = new CalculatorConstantPanel(vars.keySet());
+        this.input = new TerminalInput('!', new ExpressionSyntaxHighlighting(vars.keySet()));
+        this.output = new TerminalOutput(new Dimension(200, 300));
         this.scrCCP = new JScrollPane(ccp);
+        this.scrOutput = new JScrollPane(output);
 
         this.setProperties();
         this.addComponents();
@@ -104,16 +113,18 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         scrCCP.setBorder(BorderFactory.createEmptyBorder());
         scrCCP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
+        scrOutput.setBorder(BorderFactory.createEmptyBorder());
+
         ccp.addCallback(s -> {
-            var data = "%s %s ".formatted(ciop.getInputText(), s);
-            ciop.setInputText(data);
+            var data = "%s %s ".formatted(input.getText(), s);
+            input.setText(data);
             cbp.setData(data);
         });
 
-        cbp.addActionCallback(() -> ciop.setInputText(cbp.getData()));
+        cbp.addActionCallback(() -> input.setText(cbp.getData()));
 
-        ciop.getInput().addKeyListener(this);
-        ciop.getInput().getDocument().addDocumentListener(this);
+        input.addKeyListener(this);
+        input.getDocument().addDocumentListener(this);
 
         ctrButtons.setBackground(Utils.BACKGROUND_COLOR);
         ctrButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -131,13 +142,13 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
             var newData = cbp.getData().substring(0, cbp.getData().length() - 1);
             DebugMethods.log("After: %s".formatted(newData), DebugMethods.LogType.DEBUG);
             cbp.setData(newData);
-            ciop.setInputText(newData);
+            input.setText(newData);
         });
 
         btnCalc.setForeground(Utils.FOREGROUND_COLOR);
         btnCalc.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCalc.setFont(BUTTON_FONT);
-        btnCalc.addActionListener(e -> doCalculation(ciop.getInputText()));
+        btnCalc.addActionListener(e -> doCalculation(input.getText()));
         btnCalc.setBorder(BUTTON_BORDER);
 
         btnNewConst.setForeground(Utils.FOREGROUND_COLOR);
@@ -155,7 +166,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
                 return;
 
             var data = "let %s = ".formatted(identifier);
-            ciop.setInputText(data);
+            input.setText(data);
             cbp.setData(data);
         });
 
@@ -176,6 +187,10 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         btnClear.setFont(BUTTON_FONT);
         btnClear.setBorder(BUTTON_BORDER);
         btnClear.addActionListener(e -> executeCommand("clear"));
+
+        output.setBackground(Utils.BACKGROUND_COLOR);
+        output.setFontSize(14);
+        output.setBorder(BorderFactory.createEmptyBorder());
     }
 
     /**
@@ -195,9 +210,6 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         cont2.setBackground(Utils.BACKGROUND_COLOR);
         cont2.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        cont2.add(new JLabel("   "));
-        cont2.add(ciop);
-
         ctrButtons.add(btnCalc);
         ctrButtons.add(btnDel);
         ctrButtons.add(btnClear);
@@ -207,11 +219,13 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         ctrButtons.add(btnUp);
         ctrButtons.add(btnDown);
 
+        buttons.add(input);
+        buttons.add(new JLabel(" "));
         buttons.add(ctrButtons);
         buttons.add(cbp);
 
         cont.add(scrCCP, BorderLayout.PAGE_START);
-        cont.add(cont2, BorderLayout.CENTER);
+        cont.add(scrOutput, BorderLayout.CENTER);
         cont.add(buttons, BorderLayout.PAGE_END);
 
         this.add(new JLabel("    "), BorderLayout.PAGE_START);
@@ -245,7 +259,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     {
         cmds.put("help", new HelpCommand());
         cmds.put("list", new ListCommand());
-        cmds.put("clear", new ClearCommand(ciop.getOutput()));
+        cmds.put("clear", new ClearCommand(output));
     }
 
     /**
@@ -266,17 +280,17 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
             if (cmd.isSuccessful())
             {
-                ciop.setInputText("");
-                ciop.appendOutputText(cmd.result());
+                input.setText("");
+                output.appendColoredString(cmd.result());
                 cbp.resetData();
             }
             else
             {
-                ciop.appendOutputText("Error executing command: ");
-                ciop.appendOutputText(cmd.result());
+                output.appendColoredString("Error executing command: ");
+                output.appendColoredString(cmd.result());
             }
 
-            ciop.appendOutputText("\n");
+            output.appendColoredString("\n");
 
             return;
         }
@@ -288,23 +302,23 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         {
             var res = expr.getValue(this);
             var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(expr.toString());
-            ciop.appendOutputText(highlighted);
+            output.appendColoredString(highlighted);
 
             if (!lastVarCallValid)
             {
-                ciop.appendOutputText("<RED>The constant: %s doesn't exist</RED>%n".formatted(lastConstantError));
+                output.appendColoredString("<RED>The constant: %s doesn't exist</RED>%n".formatted(lastConstantError));
                 return;
             }
 
-            ciop.appendOutputText("<LIGHT_GREEN>%s</LIGHT_GREEN>%n".formatted(res));
-            ciop.setInputText("");
+            output.appendColoredString("<LIGHT_GREEN>%s</LIGHT_GREEN>%n".formatted(res));
+            input.setText("");
             cbp.resetData();
         }
         else
         {
-            var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(ciop.getInputText());
-            ciop.appendOutputText(highlighted);
-            ciop.appendOutputText("<RED>%s</RED>%n".formatted(p.getDiagnostics().mkString("\n")));
+            var highlighted = new ExpressionSyntaxHighlighting(vars.keySet()).syntaxHighlight(input.getText());
+            output.appendColoredString(highlighted);
+            output.appendColoredString("<RED>%s</RED>%n".formatted(p.getDiagnostics().mkString("\n")));
         }
     }
 
@@ -320,12 +334,12 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     {
         if (isGoingUp)
         {
-            history.peek().ifPresent(ciop::setInputText);
+            history.peek().ifPresent(input::setText);
             history.forward();
         }
         else
         {
-            history.backward().ifPresentOrElse(ciop::setInputText, ciop::clearInput);
+            history.backward().ifPresentOrElse(input::setText, input::clear);
         }
     }
 
@@ -394,7 +408,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
 
         switch (e.getKeyCode())
         {
-            case ENTER -> doCalculation(ciop.getInputText());
+            case ENTER -> doCalculation(input.getText());
             case ARROW_DOWN -> swapInput(false);
             case ARROW_UP -> swapInput(true);
         }
@@ -403,13 +417,13 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        cbp.setData(ciop.getInputText());
+        cbp.setData(input.getText());
     }
 
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        cbp.setData(ciop.getInputText());
+        cbp.setData(input.getText());
     }
 
     @Override
