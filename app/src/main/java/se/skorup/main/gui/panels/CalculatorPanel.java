@@ -281,16 +281,21 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
             if (cmd.isSuccessful())
             {
                 input.setText("");
-                output.appendColoredString(cmd.result());
+
+                if (!
+                        cmd.result().trim().isEmpty())
+                    output.appendColoredString(cmd.result());
+
                 cbp.resetData();
             }
             else
             {
-                output.appendColoredString("Error executing command: ");
+                output.appendColoredString("<IDEA_PURPLE>%s</IDEA_PURPLE>".formatted(text));
+                output.appendColoredString("<RED>Error executing command: <WHITE>%s</WHITE></RED>".formatted(text.substring(1)));
                 output.appendColoredString(cmd.result());
+                output.appendColoredString("");
             }
 
-            output.appendColoredString("\n");
 
             return;
         }
