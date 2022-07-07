@@ -425,27 +425,27 @@ public class SubgroupPanel extends JPanel
         if (!gf.shouldOverflow())
         {
             return switch (gf.getSizeState()) {
-                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm);
-                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false);
+                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm).get(0);
+                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false).get(0);
                 case PAIR_WITH_LEADERS -> {
                     var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm).get(0);
                 }
-                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes).get(0);
             };
         }
 
         return switch (gf.getSizeState()) {
             case NUMBER_GROUPS -> {
                 var nbrPersons = (int) Math.ceil(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) sizes.get(0));
-                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm);
+                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm).get(0);
             }
-            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true);
+            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true).get(0);
             case PAIR_WITH_LEADERS -> {
                 var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm).get(0);
             }
-            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes).get(0);
         };
     }
 
