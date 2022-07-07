@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
-import se.skorup.main.gui.interfaces.StringActionCallback;
+import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,7 +18,7 @@ import java.util.Set;
 public class CalculatorConstantPanel extends JPanel
 {
     private final List<JButton> buttons = new ArrayList<>();
-    private final List<StringActionCallback> callbacks = new ArrayList<>();
+    private final List<ActionCallbackWithParam<String>> callbacks = new ArrayList<>();
 
     /**
      * Creates a new CalculatorConstantPanel.
@@ -76,7 +76,7 @@ public class CalculatorConstantPanel extends JPanel
      * @param bc the non-{@code null} callback. If {@code null}
      *           then it will just return without doing anything.
      * */
-    public void addCallback(StringActionCallback bc)
+    public void addCallback(ActionCallbackWithParam<String> bc)
     {
         if (bc == null)
             return;
