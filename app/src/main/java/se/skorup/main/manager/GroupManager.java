@@ -413,4 +413,10 @@ public class GroupManager implements Serializable
                this.name.equals(g.name)    &&
                this.members == g.members;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return group.hashCode() + name.hashCode() + members;
+    }
 }

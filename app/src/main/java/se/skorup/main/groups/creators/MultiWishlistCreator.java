@@ -1,6 +1,5 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
@@ -11,8 +10,6 @@ import se.skorup.main.objects.Tuple;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -136,7 +133,7 @@ public class MultiWishlistCreator implements GroupCreator
 
         for (var p : gm.getAllOfRoll(Person.Role.CANDIDATE))
         {
-            var gc = new AlternateWishlistGroupCreator(gm, p);
+            var gc = new WishlistGroupCreator(gm, p);
             var res = ga.action(gc);
             allGroups.add(res);
         }
@@ -175,9 +172,9 @@ public class MultiWishlistCreator implements GroupCreator
     @Override
     public String toString()
     {
-        return "Skapa grupper efter önskningar alternativ 3";
+        return "Skapa grupper efter önskningar";
     }
 
     private record IntermediateResult(List<Set<Integer>> groups, double score) {}
-    private interface GroupAction { List<Set<Integer>> action(AlternateWishlistGroupCreator awgc); }
+    private interface GroupAction { List<Set<Integer>> action(WishlistGroupCreator awgc); }
 }
