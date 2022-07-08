@@ -1,13 +1,11 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.API.collections.immutable_collections.ImmutableArray;
-import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +16,6 @@ import java.util.stream.Collectors;
  * */
 public final class WishlistGroupCreator extends GroupCreatorTemplate
 {
-    private boolean shouldRandom;
-
     private boolean shouldUseStartPerson;
     private Person startingPerson;
 
@@ -32,7 +28,6 @@ public final class WishlistGroupCreator extends GroupCreatorTemplate
     public WishlistGroupCreator(GroupManager gm)
     {
         super(gm);
-        shouldRandom = gm.getWishGraph().size() == 0;
     }
 
     /**
@@ -48,6 +43,86 @@ public final class WishlistGroupCreator extends GroupCreatorTemplate
         this.shouldUseStartPerson = true;
     }
 
+    /**
+     * Gets the next person.
+     *
+     * @param current the currently worked on group.
+     * @param candidates the unused candidates.
+     * @param wish the wishes of this group.
+     * @param deny the denylist of this group.
+     * @param added the persons that are already used.
+     * @param p the current person.
+     * @throws NoGroupAvailableException iff there are no possible groups.
+     * */
+    private Person getNextPerson(
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
+    ) throws NoGroupAvailableException
+    {
+        if (current.size() == 0) // Starting a new subgroup.
+        {
+            if (added.size() == 0) // The first person.
+            {
+                p = getRandomPerson(candidates); // Gets a random person to start with.
+            }
+            else // We've already added a person, i.e. not first group; then we pick the person with the fewest wishes left.
+            {
+                // Takes the person with the fewest wishes left.
+                p = candidates.stream()
+                              .map(x -> new PersonWithWishesLeft(x, getWishes(wish, added, x.getId()).size()))
+                              .sorted(Comparator.comparingInt(a -> a.wishes))
+                              .toList()
+                              .get(0)
+                              .p();
+            }
+        }
+        else // The group is already started.
+        {
+            var wishes = getWishes(wish, added, p.getId()); // The wishes of p.
+
+            if (wishes.isEmpty()) // If there are no wishes left.
+            {
+                var list = new ArrayList<Person>();
+
+                // Get all the persons that has wished for p.
+                for (var c : candidates)
+                {
+                    if (getWishes(wish, added, c.getId()).contains(p.getId()))
+                    {
+                        list.add(c);
+                    }
+                }
+
+                // No persons then just get a person that is allowed.
+                if (list.isEmpty())
+                {
+                    p = getAllowedPerson(deny, current, candidates, added, p);
+                }
+                else
+                {
+                    p = list.stream()
+                            .map(x -> new PersonWithWishesLeft(x, getWishes(wish, added, x.getId()).size()))
+                            .sorted(Comparator.comparingInt(a -> a.wishes))
+                            .toList()
+                            .get(0)
+                            .p();
+                }
+            }
+            else
+            {
+                p = wishes.stream()
+                          .map(gm::getPersonFromId)
+                          .map(x -> new PersonWithWishesLeft(x, getWishes(wish, added, x.getId()).size()))
+                          .sorted(Comparator.comparingInt(a -> a.wishes))
+                          .toList()
+                          .get(0)
+                          .p();
+            }
+        }
+
+        return p;
+    }
+
     @Override
     protected Person getPerson(
         Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
@@ -58,90 +133,10 @@ public final class WishlistGroupCreator extends GroupCreatorTemplate
         {
             var person = startingPerson;
             startingPerson = null;
-            candidates.remove(person);
             return person;
         }
 
-        if (shouldRandom)
-        {
-            var gen = new RandomGroupCreator(gm);
-            var person = gen.getPerson(current, candidates, wish, deny, added, p);
-            candidates.remove(person);
-            return person;
-        }
-
-        return noStartGetPerson(current, candidates, wish, deny, added, p);
-    }
-
-    private Person noStartGetPerson(
-        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-        Set<Tuple> deny, Set<Integer> added, Person p
-    ) throws NoGroupAvailableException
-    {
-        if (current.size() == 0)
-        {
-            if (added.size() == 0)
-            {
-                p = getRandomPerson(candidates);
-            }
-            else
-            {
-                var arr = ImmutableArray.fromList(candidates).map(x -> {
-                    var wishes =
-                        new ImmutableHashSet<>(Arrays.stream(x.getWishlist()).boxed().collect(Collectors.toSet()));
-                    return new Tuple(x.getId(), wishes.diff(added).size()); // first value: id, second value: nbrWishes
-                }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a)
-                  .dropMatching(added.toArray(new Integer[0])).map(gm::getPersonFromId);
-
-                p = arr.get(0); // Gets person with fewest wishes left.
-                candidates.remove(p);
-            }
-        }
-        else
-        {
-            var wishes = getWishes(wish, p.getId());
-
-            if (wishes.isEmpty())
-            {
-                p = getAllowedPerson(deny, current, candidates, p);
-            }
-            else
-            {
-                var arr = ImmutableArray.fromList(wishes).map(x -> {
-                    var d = new ImmutableHashSet<>(Tuple.imageOf(wish, x)).diff(added);
-                    return new Tuple(x, d.size()); // a is id and b is the amount of wishes.
-                }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a).dropMatching(added.toArray(new Integer[0]));
-
-                // Tries to get person with fewest wishes left
-                // and the goes throw the ascending order of
-                // wishes left.
-                for (var j : arr.toList())
-                {
-                    p = gm.getPersonFromId(j);
-
-                    if (!added.contains(j) && !isPersonDisallowed(deny, current, p.getId()))
-                        break;
-
-                    p = null;
-                }
-
-                // Resets iff there are no free wishes.
-                if (arr.size() == 0)
-                    p = null;
-
-                if (p == null)
-                {
-                    // No wishes; that aren't blocked so resorts to random group generation.
-                    p = getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
-                }
-                else
-                {
-                    candidates.remove(p);
-                }
-            }
-        }
-
-        return p;
+        return getNextPerson(current, candidates, wish, deny, added, p);
     }
 
     @Override
@@ -162,4 +157,6 @@ public final class WishlistGroupCreator extends GroupCreatorTemplate
         return o instanceof WishlistGroupCreator wgc &&
                wgc.gm.equals(gm);
     }
+
+    private record PersonWithWishesLeft(Person p, int wishes) {}
 }

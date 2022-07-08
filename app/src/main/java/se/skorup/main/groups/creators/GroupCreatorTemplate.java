@@ -64,6 +64,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
             assert current != null; // To stop it from complaining.
             p = getPerson(current, candidates, wish, deny, added, p);
             current.add(p.getId());
+            candidates.remove(p);
             added.add(p.getId());
         }
 

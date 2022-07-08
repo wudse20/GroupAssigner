@@ -1,10 +1,12 @@
 package se.skorup.main.groups.creators;
 
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -17,17 +19,6 @@ import java.util.Vector;
  * */
 public interface GroupCreator
 {
-    /**
-     * Generates the different, groups of size
-     * size.
-     *
-     * @param size     the size of the group.
-     * @param overflow if the groups should overflow or not.
-     * @return a List containing the generated groups.
-     * @throws NoGroupAvailableException iff there's no way to create a group.
-     */
-    List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException;
-
     /**
      * Generates subgroups of the provided
      * GroupManager, with a specified group size.
@@ -176,6 +167,19 @@ public interface GroupCreator
     }
 
     /**
+     * Gets the wishes for a given id.
+     *
+     * @param wishes the set containing all the wishes.
+     * @param id the id of the persons wishes.
+     * @return a list containing the wishes.
+     * */
+    default List<Integer> getWishes(Set<Tuple> wishes, Set<Integer> added, int id)
+    {
+        var set = new ImmutableHashSet<>(Tuple.imageOf(wishes, id)).diff(added);
+        return set.toList();
+    }
+
+    /**
      * Finds a allowed person.
      *
      * @param deny the deny graph of the person.
@@ -193,7 +197,7 @@ public interface GroupCreator
         int count = 0;
         while (isPersonDisallowed(deny, current, p.getId()))
         {
-            if (++count == 1000)
+            if (++count == 5000)
                 throw new NoGroupAvailableException("Cannot create a group, to many denylist items.");
 
             candidates.add(p);
@@ -202,6 +206,45 @@ public interface GroupCreator
 
         return p;
     }
+
+    /**
+     * Finds a allowed person.
+     *
+     * @param deny the deny graph of the person.
+     * @param current the current group in progress.
+     * @param candidates the unused persons.
+     * @param added the added persons, i.e. persons that cannot be chosen.
+     * @param p the person that's being checked at the start.
+     * @return the the first found allowed person.
+     * @throws NoGroupAvailableException iff there are no person that's allowed.
+     * */
+    default Person getAllowedPerson(
+            Set<Tuple> deny, Set<Integer> current,
+            List<Person> candidates, Set<Integer> added,
+            Person p
+    ) throws NoGroupAvailableException
+    {
+        for (var c : candidates)
+        {
+            if (isPersonDisallowed(deny, current, c.getId()) || added.contains(c.getId()))
+                continue;
+
+            return c;
+        }
+
+        throw new NoGroupAvailableException("Cannot create group. Possibly too many denylist items.");
+    }
+
+    /**
+     * Generates the different, groups of size
+     * size.
+     *
+     * @param size     the size of the group.
+     * @param overflow if the groups should overflow or not.
+     * @return a List containing the generated groups.
+     * @throws NoGroupAvailableException iff there's no way to create a group.
+     */
+    List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException;
 
     /**
      * Generates subgroups of the provided GroupManager,
