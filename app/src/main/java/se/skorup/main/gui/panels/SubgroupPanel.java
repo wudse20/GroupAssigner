@@ -2,11 +2,10 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.creators.AlternateWishlistGroupCreator;
+import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.groups.creators.MultiWishlistCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
-import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
@@ -338,8 +337,8 @@ public class SubgroupPanel extends JPanel
                 res = new RandomGroupCreator(gm);
             else if (gc instanceof MultiWishlistCreator)
                 res = new MultiWishlistCreator(gm);
-            else if (gc instanceof WishlistGroupCreator w && w instanceof AlternateWishlistGroupCreator)
-                res = new AlternateWishlistGroupCreator(gm);
+            else if (gc instanceof WishlistGroupCreator w && w instanceof WishlistGroupCreator)
+                res = new WishlistGroupCreator(gm);
             else
                 res = new WishlistGroupCreator(gm);
 

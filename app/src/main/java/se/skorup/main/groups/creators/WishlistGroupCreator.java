@@ -1,50 +1,101 @@
 package se.skorup.main.groups.creators;
 
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * The group creator used to create groups
- * based on the wishes of the candidates.
- *  */
-public sealed class WishlistGroupCreator extends GroupCreatorTemplate permits AlternateWishlistGroupCreator
+ * An alternate GroupCreator for wishlist generation.
+ * */
+public final class WishlistGroupCreator extends GroupCreatorTemplate
 {
+    private boolean shouldRandom;
+
+    private boolean shouldUseStartPerson;
+    private Person startingPerson;
+
     /**
-     * Creates a wishlist group creator.
+     * Creates a new GroupCreator.
      *
      * @param gm the group manager used to create
      *           the subgroups.
-     */
+     * */
     public WishlistGroupCreator(GroupManager gm)
     {
         super(gm);
+        shouldRandom = gm.getWishGraph().size() == 0;
     }
 
     /**
-     * Gets the next person.
+     * Creates a new GroupCreator, with a starting person.
      *
-     * @param current the currently worked on group.
-     * @param candidates the unused candidates.
-     * @param wish the wishes of this group.
-     * @param deny the denylist of this group.
-     * @param added the persons that are already used.
-     * @param p the current person.
-     * @throws NoGroupAvailableException iff there are no possible groups.
+     * @param gm the group manager used to create the subgroups.
+     * @param p the person to start with.
      * */
+    public WishlistGroupCreator(GroupManager gm, Person p)
+    {
+        this(gm);
+        this.startingPerson = p;
+        this.shouldUseStartPerson = true;
+    }
+
+    @Override
     protected Person getPerson(
         Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
         Set<Tuple> deny, Set<Integer> added, Person p
     ) throws NoGroupAvailableException
     {
-        assert current != null; // Just to stop it from complaining.
-        if (p == null)
+        if (shouldUseStartPerson && startingPerson != null)
         {
-            return getRandomPerson(candidates);
+            var person = startingPerson;
+            startingPerson = null;
+            candidates.remove(person);
+            return person;
+        }
+
+        if (shouldRandom)
+        {
+            var gen = new RandomGroupCreator(gm);
+            var person = gen.getPerson(current, candidates, wish, deny, added, p);
+            candidates.remove(person);
+            return person;
+        }
+
+        return noStartGetPerson(current, candidates, wish, deny, added, p);
+    }
+
+    private Person noStartGetPerson(
+        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
+        Set<Tuple> deny, Set<Integer> added, Person p
+    ) throws NoGroupAvailableException
+    {
+        if (current.size() == 0)
+        {
+            if (added.size() == 0)
+            {
+                p = getRandomPerson(candidates);
+            }
+            else
+            {
+                var arr = ImmutableArray.fromList(candidates).map(x -> {
+                    var wishes =
+                        new ImmutableHashSet<>(Arrays.stream(x.getWishlist()).boxed().collect(Collectors.toSet()));
+                    return new Tuple(x.getId(), wishes.diff(added).size()); // first value: id, second value: nbrWishes
+                }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a)
+                  .dropMatching(added.toArray(new Integer[0])).map(gm::getPersonFromId);
+
+                p = arr.get(0); // Gets person with fewest wishes left.
+                candidates.remove(p);
+            }
         }
         else
         {
@@ -52,11 +103,19 @@ public sealed class WishlistGroupCreator extends GroupCreatorTemplate permits Al
 
             if (wishes.isEmpty())
             {
-                p = getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
+                p = getAllowedPerson(deny, current, candidates, p);
             }
             else
             {
-                for (int j : wishes)
+                var arr = ImmutableArray.fromList(wishes).map(x -> {
+                    var d = new ImmutableHashSet<>(Tuple.imageOf(wish, x)).diff(added);
+                    return new Tuple(x, d.size()); // a is id and b is the amount of wishes.
+                }).sortBy(Comparator.comparingInt(Tuple::b)).map(Tuple::a).dropMatching(added.toArray(new Integer[0]));
+
+                // Tries to get person with fewest wishes left
+                // and the goes throw the ascending order of
+                // wishes left.
+                for (var j : arr.toList())
                 {
                     p = gm.getPersonFromId(j);
 
@@ -66,10 +125,19 @@ public sealed class WishlistGroupCreator extends GroupCreatorTemplate permits Al
                     p = null;
                 }
 
-                if (p == null) // No wishes; that aren't blocked so resorts to random group generation.
+                // Resets iff there are no free wishes.
+                if (arr.size() == 0)
+                    p = null;
+
+                if (p == null)
+                {
+                    // No wishes; that aren't blocked so resorts to random group generation.
                     p = getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
+                }
                 else
+                {
                     candidates.remove(p);
+                }
             }
         }
 
@@ -79,25 +147,19 @@ public sealed class WishlistGroupCreator extends GroupCreatorTemplate permits Al
     @Override
     public String toString()
     {
-        return "Skapa grupper efter önskelista";
+        return "Skapa grupper efter önskningar (borde aldrig synas)";
     }
 
     @Override
     public int hashCode()
     {
-        return toString().hashCode();
+        return gm.hashCode();
     }
 
     @Override
     public boolean equals(Object o)
     {
-        return o instanceof WishlistGroupCreator gc &&
-                this.toString().equals(gc.toString());
+        return o instanceof WishlistGroupCreator wgc &&
+               wgc.gm.equals(gm);
     }
-
-    public GroupManager gm()
-    {
-        return gm;
-    }
-
 }
