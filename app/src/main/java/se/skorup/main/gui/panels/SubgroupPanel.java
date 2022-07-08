@@ -356,8 +356,8 @@ public class SubgroupPanel extends JPanel
      * @param gg the generator that generates the groups.
      * @return the generated groups.
      * @throws NoGroupAvailableException iff the group creation failed.
-     * */
-    private List<Set<Integer>> tryGenerateGroups(GroupGenerator gg) throws NoGroupAvailableException
+     */
+    private List<List<Set<Integer>>> tryGenerateGroups(GroupGenerator gg) throws NoGroupAvailableException
     {
         for (int i = 0; i < 1000; i++)
         {
@@ -425,27 +425,27 @@ public class SubgroupPanel extends JPanel
         if (!gf.shouldOverflow())
         {
             return switch (gf.getSizeState()) {
-                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm).get(0);
-                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false).get(0);
+                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm);
+                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false);
                 case PAIR_WITH_LEADERS -> {
                     var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm).get(0);
+                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
                 }
-                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes).get(0);
+                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
             };
         }
 
         return switch (gf.getSizeState()) {
             case NUMBER_GROUPS -> {
                 var nbrPersons = (int) Math.ceil(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) sizes.get(0));
-                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm).get(0);
+                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm);
             }
-            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true).get(0);
+            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true);
             case PAIR_WITH_LEADERS -> {
                 var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm).get(0);
+                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
             }
-            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes).get(0);
+            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
         };
     }
 
@@ -454,10 +454,10 @@ public class SubgroupPanel extends JPanel
      *
      * @param gc the group creator that should be used.
      * @param gm the group manager in use.
-     * @return the List of Sets consisting of
+     * @return the List of Lists of Sets consisting of
      *         the newly created subgroups.
-     * */
-    private List<Set<Integer>> generateSingleSubgroup(GroupCreator gc, GroupManager gm)
+     */
+    private List<List<Set<Integer>>> generateSingleSubgroup(GroupCreator gc, GroupManager gm)
     {
         final var sizes = gf.getUserInput();
 
@@ -484,8 +484,8 @@ public class SubgroupPanel extends JPanel
      * same time and concatenating them.
      *
      * @return the generated groups.
-     * */
-    private List<Set<Integer>> generateMultipleSubgroup()
+     */
+    private List<List<Set<Integer>>> generateMultipleSubgroup()
     {
         final var sizes = gf.getUserInput();
 
@@ -536,9 +536,9 @@ public class SubgroupPanel extends JPanel
     {
         final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup()).gc;
         var groups =
-            gf.shouldUseMainGroups()   ?
-            generateMultipleSubgroup() :
-            generateSingleSubgroup(gc, gm);
+            gf.shouldUseMainGroups()             ?
+            generateMultipleSubgroup().get(0)    :
+            generateSingleSubgroup(gc, gm).get(0);
 
         if (groups.size() == 0)
             return;

@@ -16,6 +16,6 @@ public interface GroupGenerator
      *
      * @return the generated method.
      * @throws NoGroupAvailableException iff the group cannot be created.
-     * */
-    List<Set<Integer>> generate() throws NoGroupAvailableException;
+     */
+    List<List<Set<Integer>>> generate() throws NoGroupAvailableException;
 }
