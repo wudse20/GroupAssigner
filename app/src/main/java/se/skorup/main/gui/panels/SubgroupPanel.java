@@ -536,24 +536,60 @@ public class SubgroupPanel extends JPanel
     {
         final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup()).gc;
         var groups =
-            gf.shouldUseMainGroups()             ?
-            generateMultipleSubgroup().get(0)    :
-            generateSingleSubgroup(gc, gm).get(0);
+            gf.shouldUseMainGroups()   ?
+            generateMultipleSubgroup() :
+            generateSingleSubgroup(gc, gm);
 
         if (groups.size() == 0)
             return;
 
-        current = new Subgroups(
-           null, groups, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-            gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
-            new String[groups.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
-        );
+        if (groups.size() == 1)
+        {
+            current = new Subgroups(
+               null, groups.get(0), gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
+                gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
+                new String[groups.get(0).size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+            );
 
-        DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
-        DebugMethods.log(current, DebugMethods.LogType.DEBUG);
+            DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
+            DebugMethods.log(current, DebugMethods.LogType.DEBUG);
 
-        sdp.reset();
-        sdp.displaySubgroup(current, gm);
+            sdp.reset();
+            sdp.displaySubgroup(current, gm);
+
+            return;
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            var sgs = new ArrayList<Subgroups>();
+
+            int i = 1;
+            for (var g : groups)
+            {
+                sgs.add(new Subgroups(
+                    "Förslag: %d".formatted(i++), g, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
+                    gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
+                    new String[g.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+                ));
+            }
+
+            DebugMethods.log("Generated groups:", DebugMethods.LogType.DEBUG);
+            DebugMethods.log(groups, DebugMethods.LogType.DEBUG);
+            var frame = new SubgroupListFrame(sgs, gm, "Välj");
+            gf.setVisible(false);
+
+            frame.addActionCallback(sg -> {
+                DebugMethods.log("Chosen groups:", DebugMethods.LogType.DEBUG);
+                DebugMethods.log(sg, DebugMethods.LogType.DEBUG);
+
+                sdp.reset();
+                sdp.displaySubgroup(sg, gm);
+                current = sg;
+
+                frame.dispose();
+                gf.setVisible(true);
+            });
+        });
     }
 
     @Override
