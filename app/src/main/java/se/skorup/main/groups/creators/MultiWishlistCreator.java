@@ -1,5 +1,6 @@
 package se.skorup.main.groups.creators;
 
+import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
@@ -127,8 +128,9 @@ public class MultiWishlistCreator implements GroupCreator
      * Finds the best group according to a given score.
      *
      * @param ga the action used to generate the group.
+     * @return the best groups that has the same and highest score.
      * */
-    private List<Set<Integer>> getBestGroup(GroupAction ga) throws NoGroupAvailableException
+    private List<List<Set<Integer>>> getBestGroups(GroupAction ga) throws NoGroupAvailableException
     {
         var allGroups = new ArrayList<List<Set<Integer>>>();
 
@@ -139,28 +141,35 @@ public class MultiWishlistCreator implements GroupCreator
             allGroups.add(res);
         }
 
-        var group =
+        var max =
             allGroups.stream()
-                     .map(x -> new IntermediateResult(x, getScore(x)))
-                     .max(Comparator.comparingDouble(IntermediateResult::score))
-                     .orElse(new IntermediateResult(allGroups.get(0), 0))
-                     .groups();
+                     .mapToDouble(this::getScore)
+                     .max()
+                     .orElse(Double.MIN_VALUE);
 
-        DebugMethods.log("Score of group (PSI): %f".formatted(getScore(group)), DebugMethods.LogType.DEBUG);
+        var res = new ArrayList<List<Set<Integer>>>();
+        allGroups.stream()
+                 .map(g -> new IntermediateResult(g, getScore(g)))
+                 .forEach(ir -> {
+                     if (ir.score == max)
+                         res.add(ir.groups);
+                 });
 
-        return group;
+        DebugMethods.log("Score of group (PSI): %f".formatted(max), DebugMethods.LogType.DEBUG);
+
+        return res;
     }
 
     @Override
     public List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
     {
-        return Collections.singletonList(getBestGroup(a -> a.generateGroup(size, overflow).get(0)));
+        return getBestGroups(a -> a.generateGroup(size, overflow).get(0));
     }
 
     @Override
     public List<List<Set<Integer>>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
     {
-        return Collections.singletonList(getBestGroup(a -> a.generateGroupNbrGroups(sizes).get(0)));
+        return getBestGroups(a -> a.generateGroupNbrGroups(sizes).get(0));
     }
 
     @Override

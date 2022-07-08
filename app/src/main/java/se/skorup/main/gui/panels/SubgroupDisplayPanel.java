@@ -110,7 +110,7 @@ public class SubgroupDisplayPanel extends JPanel
     {
         if (width < 600)
             gen = new SingleColumnGenerator(width, vgap);
-        else if (width < 1100)
+        else if (width < 1600)
             gen = new DoubleColumnGenerator(width, vgap);
         else
             gen = new TripleColumnGenerator(width, vgap);

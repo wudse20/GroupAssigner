@@ -106,7 +106,7 @@ public class SubgroupListFrame extends JFrame implements ActionListener, Compone
     private void setProperties()
     {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setSize(new Dimension(1200, 900));
+        this.setSize(new Dimension(1600, 900));
         this.setVisible(true);
         this.addComponentListener(this);
         this.refreshList();
