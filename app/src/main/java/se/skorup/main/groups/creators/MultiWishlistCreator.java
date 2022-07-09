@@ -10,6 +10,8 @@ import se.skorup.main.objects.Tuple;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +49,7 @@ public class MultiWishlistCreator implements GroupCreator
      * @param groups the groups.
      * @return the score of the group.
      * */
-    private double getScore(List<Set<Integer>> groups)
+    private double getScore(Collection<Set<Integer>> groups)
     {
         var candidates = new ImmutableHashSet<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
         var n = candidates.size();
@@ -129,12 +131,12 @@ public class MultiWishlistCreator implements GroupCreator
      * */
     private List<List<Set<Integer>>> getBestGroups(GroupAction ga) throws NoGroupAvailableException
     {
-        var allGroups = new ArrayList<List<Set<Integer>>>();
+        var allGroups = new HashSet<Set<Set<Integer>>>();
 
         for (var p : gm.getAllOfRoll(Person.Role.CANDIDATE))
         {
             var gc = new WishlistGroupCreator(gm, p);
-            var res = ga.action(gc);
+            var res = new HashSet<>(ga.action(gc));
             allGroups.add(res);
         }
 
@@ -146,7 +148,7 @@ public class MultiWishlistCreator implements GroupCreator
 
         var res = new ArrayList<List<Set<Integer>>>();
         allGroups.stream()
-                 .map(g -> new IntermediateResult(g, getScore(g)))
+                 .map(g -> new IntermediateResult(new ArrayList<>(g), getScore(g)))
                  .forEach(ir -> {
                      if (ir.score == max)
                          res.add(ir.groups);
