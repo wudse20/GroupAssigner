@@ -346,7 +346,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         {
             DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(sgsp);
-            this.setSize(new Dimension(450, 550));
+            this.setSize(new Dimension(450, 625));
         }
         else if (tabs.getSelectedComponent() instanceof SubgroupPanel)
         {

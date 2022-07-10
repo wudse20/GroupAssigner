@@ -76,9 +76,18 @@ public sealed abstract class SettingsPanel extends JPanel
     {
         var sb = new StringBuilder().append("<html>").append(header).append(" ");
 
+        var count = 0;
         for (int i = 1; i <= size; i++)
+        {
             if (size % i == 0)
+            {
                 sb.append(i).append(", ");
+                count++;
+            }
+        }
+
+        if (count == 0)
+            sb.append("0");
 
         return sb.delete(sb.length() - 2, sb.length()).append("</html>").toString();
     }

@@ -201,7 +201,6 @@ public final class SubgroupSettingsPanel extends SettingsPanel
         addComponents();
         revalidate();
         repaint();
-        gf.pack();
     }
 
     /**
