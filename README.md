@@ -5,6 +5,9 @@ A program that assigns people to different groups, based on their preferences.
 ## Download
 The program can be downloaded by following this [link](https://www.skorup.se/download). This page is in swedish.
 
+## Docs
+Some technical docs over groupgeneration - in swedish. [Take me there!](https://www.skorup.se/how)
+
 ## Versions
 Java: 18 <br>
 Juniper JUnit (org.junit.jupiter:junit-jupiter:5.7.2)
