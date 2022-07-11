@@ -187,12 +187,12 @@ public class TestUtils
     public static Stream<Arguments> getSizeData()
     {
         return Stream.of(
-            Arguments.of("test", Optional.empty(), 10, "<html><p>test1, 2, 5, 10</p></html>"),
-            Arguments.of("test", Optional.empty(), 0, "<html><p>test0</p></html>"),
-            Arguments.of("test", Optional.empty(), 3, "<html><p>test1, 3</p></html>"),
-            Arguments.of("test", Optional.of("red"), 24, "<html><p color=\"red\">test1, 2, 3, 4, 6, 8, 12, 24</p></html>"),
-            Arguments.of("test", Optional.of("red"), 0, "<html><p color=\"red\">test0</p></html>"),
-            Arguments.of("test", Optional.of("red"), 3, "<html><p color=\"red\">test1, 3</p></html>")
+            Arguments.of("test", Optional.empty(), 10, "<html><p>test 1, 2, 5, 10</p></html>"),
+            Arguments.of("test", Optional.empty(), 0, "<html><p>test 0</p></html>"),
+            Arguments.of("test", Optional.empty(), 3, "<html><p>test 1, 3</p></html>"),
+            Arguments.of("test", Optional.of("red"), 24, "<html><p color=\"red\">test 1, 2, 3, 4, 6, 8, 12, 24</p></html>"),
+            Arguments.of("test", Optional.of("red"), 0, "<html><p color=\"red\">test 0</p></html>"),
+            Arguments.of("test", Optional.of("red"), 3, "<html><p color=\"red\">test 1, 3</p></html>")
         );
     }
 

@@ -308,16 +308,23 @@ public class Utils
         var sb = new StringBuilder().append("<html>");
 
         if (color.orElse("").trim().length() != 0)
-            sb.append("<p color=\"").append(color.get()).append("\">").append(header);
+            sb.append("<p color=\"")
+              .append(color.get())
+              .append("\">")
+              .append(header)
+              .append(' ');
         else
-            sb.append("<p>").append(header);
+            sb.append("<p>")
+              .append(header)
+              .append(' ');
 
         var count = 0;
         for (int i = 1; i <= size; i++)
         {
             if (size % i == 0)
             {
-                sb.append(i).append(", ");
+                sb.append(i)
+                  .append(", ");
                 count++;
             }
         }
