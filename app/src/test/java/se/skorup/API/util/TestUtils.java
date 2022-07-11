@@ -46,7 +46,11 @@ public class TestUtils
             Arguments.of(".5", true),
             Arguments.of("5.", true),
             Arguments.of("5..", false),
-            Arguments.of("5..0", false)
+            Arguments.of("5..0", false),
+            Arguments.of("123443d", true),
+            Arguments.of("213123D", true),
+            Arguments.of("123443f", true),
+            Arguments.of("213123F", true)
         );
     }
 
@@ -97,7 +101,10 @@ public class TestUtils
             Arguments.of(5, 5, (int) Math.pow(5, 5)),
             Arguments.of(10, 3, 1000),
             Arguments.of(10, 7, (int) Math.pow(10, 7)),
-            Arguments.of(7, 4, (int) Math.pow(7, 4))
+            Arguments.of(7, 4, (int) Math.pow(7, 4)),
+            Arguments.of(1, (int) Math.pow(10, 100), 1),
+            Arguments.of(1413, 1, 1413),
+            Arguments.of(123, 0, 1)
         );
     }
 
@@ -162,7 +169,11 @@ public class TestUtils
             Arguments.of("12f36", false),
             Arguments.of("7f214", false),
             Arguments.of("8123asf12", false),
-            Arguments.of("91ö23", false)
+            Arguments.of("91ö23", false),
+            Arguments.of("123443d", false),
+            Arguments.of("213123D", false),
+            Arguments.of("123f", false),
+            Arguments.of("123F", false)
         );
     }
 

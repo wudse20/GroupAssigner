@@ -289,6 +289,9 @@ public class Utils
         if (exp == 1)
             return base;
 
+        if (base == 1)
+            return 1;
+
         var pow = recPow(base, exp / 2);
         return exp % 2 == 0 ? pow * pow : base * pow * pow;
     }
