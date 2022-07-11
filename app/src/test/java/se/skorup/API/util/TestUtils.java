@@ -1,10 +1,12 @@
 package se.skorup.API.util;
 
 
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -169,5 +171,24 @@ public class TestUtils
     public void testIsValidInteger(String str, boolean expected)
     {
         assertEquals(expected, Utils.isValidInteger(str));
+    }
+
+    public static Stream<Arguments> getSizeData()
+    {
+        return Stream.of(
+            Arguments.of("test", Optional.empty(), 10, "<html><p>test1, 2, 5, 10</p></html>"),
+            Arguments.of("test", Optional.empty(), 0, "<html><p>test0</p></html>"),
+            Arguments.of("test", Optional.empty(), 3, "<html><p>test1, 3</p></html>"),
+            Arguments.of("test", Optional.of("red"), 24, "<html><p color=\"red\">test1, 2, 3, 4, 6, 8, 12, 24</p></html>"),
+            Arguments.of("test", Optional.of("red"), 0, "<html><p color=\"red\">test0</p></html>"),
+            Arguments.of("test", Optional.of("red"), 3, "<html><p color=\"red\">test1, 3</p></html>")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSizeData")
+    public void testFormatSize(String header, Optional<String> color, int size, String expected)
+    {
+        assertEquals(expected, Utils.formatSizeString(header, color, size), "TEST WITH FORMAT SIZE");
     }
 }

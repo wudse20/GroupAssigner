@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -290,5 +291,37 @@ public class Utils
 
         var pow = recPow(base, exp / 2);
         return exp % 2 == 0 ? pow * pow : base * pow * pow;
+    }
+
+    /**
+     * Formats a string to print all evenly divisible sizes with a header.
+     * It will create HTML-code with a color if a color is passed as it will
+     * give the p-element a color attribute of the passed color.
+     *
+     * @param header the header of the string.
+     * */
+    public static String formatSizeString(String header, Optional<String> color, int size)
+    {
+        var sb = new StringBuilder().append("<html>");
+
+        if (color.orElse("").trim().length() != 0)
+            sb.append("<p color=\"").append(color.get()).append("\">").append(header);
+        else
+            sb.append("<p>").append(header);
+
+        var count = 0;
+        for (int i = 1; i <= size; i++)
+        {
+            if (size % i == 0)
+            {
+                sb.append(i).append(", ");
+                count++;
+            }
+        }
+
+        if (count == 0)
+            return sb.append("0</p></html>").toString();
+
+        return sb.delete(sb.length() - 2, sb.length()).append("</p></html>").toString();
     }
 }
