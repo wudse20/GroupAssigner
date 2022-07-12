@@ -42,6 +42,7 @@ public class SubgroupDisplayPanel extends JPanel
     private State state = State.NOTHING_SELECTED;
     private Selection selected = Selection.empty();
     private ImmutableArray<SubgroupItemButton> groupButtons = ImmutableArray.empty();
+    private boolean shouldDisplayMainGroups = false;
 
     /**
      * Creates a new SubgroupDisplayPanel
@@ -60,7 +61,7 @@ public class SubgroupDisplayPanel extends JPanel
      * The actions will be disabled based on the parameter
      * disable actions.
      *
-     * @param parent the parent component of this {}panel.
+     * @param parent the parent component of this panel.
      * @param disableActions if {@code false} then the actions won't be disabled,
      *                       else if {@code true} then the actions will be disabled.
      * */
@@ -211,6 +212,24 @@ public class SubgroupDisplayPanel extends JPanel
     }
 
     /**
+     * Gets the correct color for a person with an id.
+     *
+     * @param id the id of the person.
+     * @param gm the group manager in use.
+     * @return the proper color of a person.
+     * */
+    private Color getColor(int id, GroupManager gm)
+    {
+        if (!shouldDisplayMainGroups)
+            return Utils.FOREGROUND_COLOR;
+
+        if (gm.getPersonFromId(id).getMainGroup().equals(Person.MainGroup.MAIN_GROUP_1))
+            return Utils.MAIN_GROUP_1_COLOR;
+        else
+            return Utils.MAIN_GROUP_2_COLOR;
+    }
+
+    /**
      * Displays the subgroups to the panel.
      *
      * @param subgroups the subgroups to be displayed.
@@ -265,7 +284,7 @@ public class SubgroupDisplayPanel extends JPanel
                     var label = getLabel(p, manager, subgroups);
                     var lbl2 = new JLabel(Utils.padString(label, ' ', longestNameLength));
                     lbl2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
-                    lbl2.setForeground(Utils.FOREGROUND_COLOR);
+                    lbl2.setForeground(getColor(p, manager));
                     cont.add(lbl2);
                 }
             }
@@ -285,8 +304,8 @@ public class SubgroupDisplayPanel extends JPanel
                     lbl.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
                     cont.add(lbl);
 
-                    var txtColor = selected.id() == p ? Utils.SELECTED_COLOR : Utils.FOREGROUND_COLOR;
-                    var txtColor2 = selected.id() == p ? Utils.FOREGROUND_COLOR : Utils.SELECTED_COLOR;
+                    var txtColor = selected.id() == p ? Utils.SELECTED_COLOR : getColor(p, manager);
+                    var txtColor2 = selected.id() == p ? getColor(p, manager) : Utils.SELECTED_COLOR;
                     var label = getLabel(p, manager, subgroups);
                     var btn2 = buildButton(label, longestNameLength, txtColor);
                     btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
@@ -338,5 +357,17 @@ public class SubgroupDisplayPanel extends JPanel
         this.state = State.NOTHING_SELECTED;
         this.groupButtons = ImmutableArray.empty();
         this.revalidate();
+    }
+
+    /**
+     * Shows and hides the colors of the names from the main groups.
+     *
+     * @param shouldDisplayMainGroups if {@code true} it will display the colors,
+     *                               else if {@code false} it will display the standard forground color.
+     * */
+    public void setMainGroupDisplay(boolean shouldDisplayMainGroups)
+    {
+        this.shouldDisplayMainGroups = shouldDisplayMainGroups;
+        parent.repaint();
     }
 }

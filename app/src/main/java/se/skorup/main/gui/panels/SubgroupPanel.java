@@ -591,6 +591,17 @@ public class SubgroupPanel extends JPanel
         });
     }
 
+    /**
+     * Shows and hides the colors of the names from the main groups.
+     *
+     * @param shouldDisplayMainGroups if {@code true} it will display the colors,
+     *                               else if {@code false} it will display the standard forground color.
+     * */
+    public void setMainGroupDisplay(boolean shouldDisplayMainGroups)
+    {
+        sdp.setMainGroupDisplay(shouldDisplayMainGroups);
+    }
+
     @Override
     public void repaint()
     {

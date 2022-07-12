@@ -11,6 +11,7 @@ import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -45,6 +46,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     private boolean shouldUseMainGroups = false;
     private boolean shouldUseOneMainGroup = false;
     private boolean shouldOverflow = false;
+    private boolean shouldDisplayMainGroups = false;
 
     private State sizeState = State.NUMBER_GROUPS;
 
@@ -119,6 +121,11 @@ public class GroupFrame extends JFrame implements ChangeListener
             if (!(tabs.getSelectedComponent() instanceof SubgroupPanel))
                 tabs.setSelectedIndex(2);
         }, GroupButtonPanel.Buttons.LOAD);
+        gbp.addActionListener(e -> {
+            shouldDisplayMainGroups = !shouldDisplayMainGroups;
+            ((JButton) e.getSource()).setText(shouldDisplayMainGroups ? "Dölj huvudgrupper" : "Visa huvudgrupper");
+            sgp.setMainGroupDisplay(shouldDisplayMainGroups);
+        }, GroupButtonPanel.Buttons.TOGGLE_MAIN_GROUPS);
     }
 
     /**

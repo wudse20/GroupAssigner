@@ -18,7 +18,8 @@ public class GroupButtonPanel extends JPanel
     public enum Buttons
     {
         CLOSE, HELP, LOAD, SAVE, PRINT,
-        TO_FILE, CREATE, TO_DENYLIST
+        TO_FILE, CREATE, TO_DENYLIST,
+        TOGGLE_MAIN_GROUPS
     }
 
     private final JButton btnClose = new JButton("Stäng");
@@ -29,6 +30,7 @@ public class GroupButtonPanel extends JPanel
     private final JButton btnCreate = new JButton("Generera grupper");
     private final JButton btnToDenylist = new JButton("Till denylista");
     private final JButton btnPrint = new JButton("Skriv ut");
+    private final JButton btnToggleMainGroups = new JButton("Visa huvudgrupper");
 
     /**
      * Creates a new GroupButtonPanel.
@@ -70,6 +72,9 @@ public class GroupButtonPanel extends JPanel
 
         btnPrint.setForeground(Utils.FOREGROUND_COLOR);
         btnPrint.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+
+        btnToggleMainGroups.setForeground(Utils.FOREGROUND_COLOR);
+        btnToggleMainGroups.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
     }
 
     /**
@@ -97,6 +102,7 @@ public class GroupButtonPanel extends JPanel
         else if (panel instanceof SubgroupPanel)
         {
             this.add(btnClose);
+            this.add(btnToggleMainGroups);
             this.add(btnHelp);
             this.add(btnLoad);
             this.add(btnSave);
@@ -141,6 +147,7 @@ public class GroupButtonPanel extends JPanel
             case TO_FILE -> btnToFile.addActionListener(al);
             case TO_DENYLIST -> btnToDenylist.addActionListener(al);
             case PRINT -> btnPrint.addActionListener(al);
+            case TOGGLE_MAIN_GROUPS -> btnToggleMainGroups.addActionListener(al);
         }
     }
 }
