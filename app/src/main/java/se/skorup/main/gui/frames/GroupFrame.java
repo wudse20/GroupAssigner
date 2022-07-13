@@ -349,6 +349,8 @@ public class GroupFrame extends JFrame implements ChangeListener
     @Override
     public void stateChanged(ChangeEvent e)
     {
+        var dim = Toolkit.getDefaultToolkit().getScreenSize();
+
         if (tabs.getSelectedComponent() instanceof SubgroupSettingsPanel)
         {
             DebugMethods.log("Selected settings", DebugMethods.LogType.DEBUG);
@@ -359,6 +361,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         {
             DebugMethods.log("Selected subgroups", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(sgp);
+            this.setSize(new Dimension(1200, 685));
         }
         else if (tabs.getSelectedComponent() instanceof CalculatorPanel cp)
         {
@@ -371,5 +374,10 @@ public class GroupFrame extends JFrame implements ChangeListener
         {
             DebugMethods.log("Selected no panel, bug", DebugMethods.LogType.ERROR);
         }
+
+        this.setLocation(
+            dim.width / 2 - this.getSize().width / 2,
+            dim.height / 2 - this.getSize().height / 2
+        );
     }
 }
