@@ -59,6 +59,21 @@ public class DebugMethods
     }
 
     /**
+     * Logs a formatted message to the console. This
+     * will work like {@link java.io.PrintStream#printf System.out.printf}.
+     * It uses {@link DebugMethods#log log(message, type)} with the message:
+     * fString.{@link String#formatted formatted}(args).
+     *
+     * @param type The type of message.
+     * @param fString the string with format symbols.
+     * @param args the arguments to the fString.
+     * */
+    public static void logF(LogType type, String fString, Object... args)
+    {
+        log(fString.formatted(args), type);
+    }
+
+    /**
      * Gets the current time and formats it into a string.
      *
      * @return a formatted string of the current time.
