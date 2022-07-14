@@ -1,10 +1,15 @@
 package se.skorup.main.objects;
 
+import java.io.Serial;
+
 /**
  * The class that represents a leader.
  * */
 public final class Leader extends Person
 {
+    @Serial
+    private static final long serialVersionUID = 5485343530584026120L;
+
     /**
      * Creates a new leader with a name.
      *

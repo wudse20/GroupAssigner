@@ -1,5 +1,7 @@
 package se.skorup.main.objects;
 
+import java.io.Serial;
+
 /**
  * TODO: rename.
  *
@@ -7,6 +9,9 @@ package se.skorup.main.objects;
  * */
 public final class Candidate extends Person
 {
+    @Serial
+    private static final long serialVersionUID = 5358269934766198466L;
+
     /**
      * Creates a new person with a name.
      *
