@@ -534,6 +534,22 @@ public class SubgroupPanel extends JPanel
     private void generateGroups()
     {
         final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup()).gc;
+        var leaders = gm.getMemberCountOfRole(Person.Role.LEADER);
+        var candidates = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
+
+        // If leaders cannot be properly divided between groups
+        // display warning to user.
+        if (
+            gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS) &&
+            candidates / leaders <= 1
+        )
+        {
+            JOptionPane.showMessageDialog(
+                this, "Kan inte skapa grupper till alla ledare! Hoppar över vissa ledare",
+                "För många ledare", JOptionPane.WARNING_MESSAGE
+            );
+        }
+
         var groups =
             gf.shouldUseMainGroups()   ?
             generateMultipleSubgroup() :
