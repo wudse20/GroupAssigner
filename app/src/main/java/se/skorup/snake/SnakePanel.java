@@ -25,6 +25,7 @@ public final class SnakePanel extends JPanel implements KeyListener
     private final int blocksY = SnakeFrame.HEIGHT / blockSize;
 
     private Direction direction = Direction.RIGHT;
+    private Direction nextDirection = Direction.RIGHT;
 
     private Timer t;
     private SnakeBlock head;
@@ -60,6 +61,7 @@ public final class SnakePanel extends JPanel implements KeyListener
      * */
     private void snakeGame()
     {
+        direction = nextDirection;
         snake.removeLast(); // Removes the last.
         this.addNewHead();
 
@@ -170,13 +172,13 @@ public final class SnakePanel extends JPanel implements KeyListener
         var keyChar = e.getKeyCode();
 
         if (keyChar == KeyEvent.VK_W || keyChar == KeyEvent.VK_UP && !direction.equals(Direction.DOWN))
-            direction = Direction.UP;
+            nextDirection = Direction.UP;
         else if (keyChar == KeyEvent.VK_S || keyChar == KeyEvent.VK_DOWN && !direction.equals(Direction.UP))
-            direction = Direction.DOWN;
+            nextDirection = Direction.DOWN;
         else if (keyChar == KeyEvent.VK_A || keyChar == KeyEvent.VK_LEFT && !direction.equals(Direction.RIGHT))
-            direction = Direction.LEFT;
+            nextDirection = Direction.LEFT;
         else if (keyChar == KeyEvent.VK_D || keyChar == KeyEvent.VK_RIGHT && !direction.equals(Direction.LEFT))
-            direction = Direction.RIGHT;
+            nextDirection = Direction.RIGHT;
 
         DebugMethods.log("New direction: %s".formatted(direction), DebugMethods.LogType.DEBUG);
     }
