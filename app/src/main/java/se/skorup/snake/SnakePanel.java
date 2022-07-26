@@ -2,6 +2,7 @@ package se.skorup.snake;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.manager.helper.SerializationManager;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -11,6 +12,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
@@ -20,6 +23,9 @@ import java.util.Random;
  * */
 public final class SnakePanel extends JPanel implements KeyListener
 {
+    /** The path of the score. */
+    public static final String SNAKE_SCORE_PATH = Utils.getFolderName() + "snake/score.data";
+
     private final SnakeFrame sf;
     private final Timer t;
 
@@ -34,6 +40,7 @@ public final class SnakePanel extends JPanel implements KeyListener
     private boolean hasStarted = false;
 
     private SnakeBlock head;
+    private Score highscore;
     private int appleX;
     private int appleY;
 
@@ -46,6 +53,8 @@ public final class SnakePanel extends JPanel implements KeyListener
     {
         this.sf = sf;
         this.head = new SnakeBlock(blocksX / 2, blocksY / 2 - 1);
+
+        this.loadHighscore();
 
         // Starting snake
         snake.addFirst(new SnakeBlock(blocksX / 2 - 4, blocksY / 2 - 1));
@@ -60,6 +69,25 @@ public final class SnakePanel extends JPanel implements KeyListener
             snakeGame();
             this.repaint();
         });
+    }
+
+    /**
+     * Loads the highscore.
+     * */
+    private void loadHighscore()
+    {
+        Score hs = null;
+
+        try
+        {
+            hs = (Score) SerializationManager.deserializeObject(SNAKE_SCORE_PATH);
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+        }
+
+        this.highscore = hs == null ? new Score(0) : hs;
     }
 
     /**
@@ -105,10 +133,34 @@ public final class SnakePanel extends JPanel implements KeyListener
         t.stop();
         DebugMethods.log(message, DebugMethods.LogType.DEBUG);
         sf.setVisible(false);
-        JOptionPane.showMessageDialog(
-            sf, "<html>GAME OVER!<br>Cause: %s<br>Score: %d</html>".formatted(message, (snake.size() - 4) * 100),
-            "GAME OVER!", JOptionPane.INFORMATION_MESSAGE
-        );
+
+        var score = (snake.size() - 4) * 100;
+        if (highscore.isScoreBeaten(score))
+        {
+            highscore = new Score(score);
+            JOptionPane.showMessageDialog(
+                this, "<html>GAME OVER!<br>New highscore: %d<br>Cause: %s".formatted(score, message),
+                "Game Over :(", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(
+                sf, "<html>GAME OVER!<br>Cause: %s<br>Score: %d</html>".formatted(message, score),
+            "GAME OVER! :(", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+
+        try
+        {
+            SerializationManager.createFileIfNotExists(new File(SNAKE_SCORE_PATH));
+            SerializationManager.serializeObject(SNAKE_SCORE_PATH, highscore);
+        }
+        catch (IOException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+        }
+
         sf.dispose();
     }
 
@@ -191,6 +243,7 @@ public final class SnakePanel extends JPanel implements KeyListener
         g.setColor(Utils.SELECTED_COLOR);
         g.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         g.drawString("Score: %d".formatted((snake.size() - 5) * 100), 10, 30);
+        g.drawString("Highscore: %d".formatted(highscore.score()), 10, 30 + g.getFontMetrics().getHeight());
     }
 
     @Override
