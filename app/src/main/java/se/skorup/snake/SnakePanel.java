@@ -54,11 +54,24 @@ public final class SnakePanel extends JPanel implements KeyListener
     private void snakeGame()
     {
         snake.removeLast(); // Removes the last.
+
         head = switch (direction) {
-            case UP -> new SnakeBlock(head.x() + Direction.UP.xMod, head.y() + Direction.UP.yMod);
-            case DOWN -> new SnakeBlock(head.x() + Direction.DOWN.xMod, head.y() + Direction.DOWN.yMod);
-            case LEFT -> new SnakeBlock(head.x() + Direction.LEFT.xMod, head.y() + Direction.LEFT.yMod);
-            case RIGHT -> new SnakeBlock(head.x() + Direction.RIGHT.xMod, head.y() + Direction.RIGHT.yMod);
+            case UP -> new SnakeBlock(
+                Math.floorMod(head.x() + Direction.UP.xMod, blocksX),
+                Math.floorMod(head.y() + Direction.UP.yMod, blocksY)
+            );
+            case DOWN -> new SnakeBlock(
+                Math.floorMod(head.x() + Direction.DOWN.xMod, blocksX),
+                Math.floorMod(head.y() + Direction.DOWN.yMod, blocksY)
+            );
+            case LEFT -> new SnakeBlock(
+                Math.floorMod(head.x() + Direction.LEFT.xMod, blocksX),
+                Math.floorMod(head.y() + Direction.LEFT.yMod, blocksY)
+            );
+            case RIGHT -> new SnakeBlock(
+                Math.floorMod(head.x() + Direction.RIGHT.xMod, blocksX),
+                Math.floorMod(head.y() + Direction.RIGHT.yMod, blocksY)
+            );
         };
 
         snake.addFirst(head);
