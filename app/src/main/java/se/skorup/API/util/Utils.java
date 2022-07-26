@@ -48,7 +48,7 @@ public class Utils
 
     // About
     /** The version of the program. */
-    public static final String VERSION = "0.4.2";
+    public static final String VERSION = "0.4.3 - Indev";
 
     /** The about string. */
     public static final String ABOUT =

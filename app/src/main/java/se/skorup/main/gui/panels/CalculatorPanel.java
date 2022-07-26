@@ -352,6 +352,8 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
         {
             history.backward().ifPresentOrElse(input::setText, input::clear);
         }
+
+        input.syntaxHighlighting();
     }
 
     /**
