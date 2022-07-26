@@ -283,6 +283,7 @@ public final class SnakePanel extends JPanel implements KeyListener
         {
             hasStarted = true;
             t.start();
+            return;
         }
 
         if (keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_UP && !direction.equals(Direction.DOWN))
