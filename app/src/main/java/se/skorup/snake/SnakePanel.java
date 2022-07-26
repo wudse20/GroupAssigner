@@ -286,14 +286,14 @@ public final class SnakePanel extends JPanel implements KeyListener
             return;
         }
 
-        if (keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_UP && !direction.equals(Direction.DOWN))
-            nextDirection = Direction.UP;
-        else if (keyCode == KeyEvent.VK_S || keyCode == KeyEvent.VK_DOWN && !direction.equals(Direction.UP))
-            nextDirection = Direction.DOWN;
-        else if (keyCode == KeyEvent.VK_A || keyCode == KeyEvent.VK_LEFT && !direction.equals(Direction.RIGHT))
-            nextDirection = Direction.LEFT;
-        else if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_RIGHT && !direction.equals(Direction.LEFT))
-            nextDirection = Direction.RIGHT;
+        if (keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_UP)
+            nextDirection = direction.equals(Direction.DOWN) ? Direction.DOWN : Direction.UP;
+        else if (keyCode == KeyEvent.VK_S || keyCode == KeyEvent.VK_DOWN)
+            nextDirection = direction.equals(Direction.UP) ? Direction.UP : Direction.DOWN;
+        else if (keyCode == KeyEvent.VK_A || keyCode == KeyEvent.VK_LEFT)
+            nextDirection = direction.equals(Direction.RIGHT) ? Direction.RIGHT : Direction.LEFT;
+        else if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_RIGHT)
+            nextDirection = direction.equals(Direction.LEFT) ? Direction.LEFT : Direction.RIGHT;
     }
 
     @Override

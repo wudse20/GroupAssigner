@@ -74,6 +74,16 @@ public class DebugMethods
     }
 
     /**
+     * Logs a blank message.
+     *
+     * @param type the type of the log.
+     * */
+    public static void log(LogType type)
+    {
+        DebugMethods.log("", type);
+    }
+
+    /**
      * Gets the current time and formats it into a string.
      *
      * @return a formatted string of the current time.
