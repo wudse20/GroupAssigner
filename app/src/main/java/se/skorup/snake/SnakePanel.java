@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Random;
 
 /**
  * The snake panel that is the game itself.
@@ -27,6 +28,8 @@ public final class SnakePanel extends JPanel implements KeyListener
 
     private Timer t;
     private SnakeBlock head;
+    private int appleX;
+    private int appleY;
 
     /**
      * Creates a snake panel.
@@ -36,11 +39,15 @@ public final class SnakePanel extends JPanel implements KeyListener
         head = new SnakeBlock(blocksX / 2, blocksY / 2 - 1);
 
         // Starting snake
+        snake.addFirst(new SnakeBlock(blocksX / 2 - 4, blocksY / 2 - 1));
+        snake.addFirst(new SnakeBlock(blocksX / 2 - 3, blocksY / 2 - 1));
         snake.addFirst(new SnakeBlock(blocksX / 2 - 2, blocksY / 2 - 1));
         snake.addFirst(new SnakeBlock(blocksX / 2 - 1, blocksY / 2 - 1));
         snake.addFirst(head);
 
-        t = new Timer(1000 / 15, (e) -> {
+        this.findApplePos();
+
+        t = new Timer(1000 / 24, (e) -> {
             snakeGame();
             this.repaint();
         });
@@ -54,27 +61,57 @@ public final class SnakePanel extends JPanel implements KeyListener
     private void snakeGame()
     {
         snake.removeLast(); // Removes the last.
+        this.addNewHead();
 
+        if (head.equals(new SnakeBlock(appleX, appleY)))
+        {
+            DebugMethods.log("Ate apple!", DebugMethods.LogType.DEBUG);
+            this.addNewHead();
+            this.findApplePos();
+            DebugMethods.log(
+                "New apple generated: (%d, %d)".formatted(appleX, appleY),
+                DebugMethods.LogType.DEBUG
+            );
+        }
+    }
+
+    /**
+     * Adds a new head.
+     * */
+    private void addNewHead()
+    {
         head = switch (direction) {
             case UP -> new SnakeBlock(
-                Math.floorMod(head.x() + Direction.UP.xMod, blocksX),
-                Math.floorMod(head.y() + Direction.UP.yMod, blocksY)
+                    Math.floorMod(head.x() + Direction.UP.xMod, blocksX),
+                    Math.floorMod(head.y() + Direction.UP.yMod, blocksY)
             );
             case DOWN -> new SnakeBlock(
-                Math.floorMod(head.x() + Direction.DOWN.xMod, blocksX),
-                Math.floorMod(head.y() + Direction.DOWN.yMod, blocksY)
+                    Math.floorMod(head.x() + Direction.DOWN.xMod, blocksX),
+                    Math.floorMod(head.y() + Direction.DOWN.yMod, blocksY)
             );
             case LEFT -> new SnakeBlock(
-                Math.floorMod(head.x() + Direction.LEFT.xMod, blocksX),
-                Math.floorMod(head.y() + Direction.LEFT.yMod, blocksY)
+                    Math.floorMod(head.x() + Direction.LEFT.xMod, blocksX),
+                    Math.floorMod(head.y() + Direction.LEFT.yMod, blocksY)
             );
             case RIGHT -> new SnakeBlock(
-                Math.floorMod(head.x() + Direction.RIGHT.xMod, blocksX),
-                Math.floorMod(head.y() + Direction.RIGHT.yMod, blocksY)
+                    Math.floorMod(head.x() + Direction.RIGHT.xMod, blocksX),
+                    Math.floorMod(head.y() + Direction.RIGHT.yMod, blocksY)
             );
         };
 
         snake.addFirst(head);
+    }
+
+    /**
+     * Finds a new apple position.
+     * */
+    private void findApplePos()
+    {
+        do
+        {
+            appleX = new Random().nextInt(blocksX);
+            appleY = new Random().nextInt(blocksY);
+        } while (snake.contains(new SnakeBlock(appleX, appleY)));
     }
 
     /**
@@ -103,12 +140,24 @@ public final class SnakePanel extends JPanel implements KeyListener
         }
     }
 
+    /**
+     * Draws the apple.
+     *
+     * @param g the Graphics2D object in use to draw.
+     * */
+    private void drawApple(Graphics2D g)
+    {
+        g.setColor(Utils.GROUP_NAME_COLOR);
+        g.fillRect(appleX * blockSize, appleY * blockSize, blockSize, blockSize);
+    }
+
     @Override
     public void paintComponent(Graphics gOld)
     {
         var g = (Graphics2D) gOld; // Use the newer graphics class.
 
         this.drawBackground(g);
+        this.drawApple(g);
         this.drawSnake(g);
     }
 
