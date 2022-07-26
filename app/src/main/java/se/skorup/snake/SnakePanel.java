@@ -186,6 +186,13 @@ public final class SnakePanel extends JPanel implements KeyListener
         g.fillRect(appleX * blockSize, appleY * blockSize, blockSize, blockSize);
     }
 
+    private void drawScore(Graphics2D g)
+    {
+        g.setColor(Utils.SELECTED_COLOR);
+        g.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+        g.drawString("Score: %d".formatted((snake.size() - 5) * 100), 10, 30);
+    }
+
     @Override
     public void paintComponent(Graphics gOld)
     {
@@ -196,6 +203,7 @@ public final class SnakePanel extends JPanel implements KeyListener
         {
             this.drawApple(g);
             this.drawSnake(g);
+            this.drawScore(g);
             return;
         }
 
