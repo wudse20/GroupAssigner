@@ -24,7 +24,7 @@ public final class SnakeFrame extends JFrame
         super("Snake");
 
         this.setResizable(false);
-        this.setSize(new Dimension(WIDTH, HEIGHT));
+        this.setSize(new Dimension(WIDTH - 5, HEIGHT - 2)); // -5 & -2 was needed.
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().add(sp);
