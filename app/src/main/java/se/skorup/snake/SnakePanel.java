@@ -3,8 +3,10 @@ package se.skorup.snake;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -18,6 +20,9 @@ import java.util.Random;
  * */
 public final class SnakePanel extends JPanel implements KeyListener
 {
+    private final SnakeFrame sf;
+    private final Timer t;
+
     private final Deque<SnakeBlock> snake = new ArrayDeque<>();
 
     private final int blockSize = 20;
@@ -26,18 +31,21 @@ public final class SnakePanel extends JPanel implements KeyListener
 
     private Direction direction = Direction.RIGHT;
     private Direction nextDirection = Direction.RIGHT;
+    private boolean hasStarted = false;
 
-    private Timer t;
     private SnakeBlock head;
     private int appleX;
     private int appleY;
 
     /**
      * Creates a snake panel.
+     *
+     * @param sf the snake frame.
      * */
-    public SnakePanel()
+    public SnakePanel(SnakeFrame sf)
     {
-        head = new SnakeBlock(blocksX / 2, blocksY / 2 - 1);
+        this.sf = sf;
+        this.head = new SnakeBlock(blocksX / 2, blocksY / 2 - 1);
 
         // Starting snake
         snake.addFirst(new SnakeBlock(blocksX / 2 - 4, blocksY / 2 - 1));
@@ -52,8 +60,6 @@ public final class SnakePanel extends JPanel implements KeyListener
             snakeGame();
             this.repaint();
         });
-
-        t.start();
     }
 
     /**
@@ -65,10 +71,24 @@ public final class SnakePanel extends JPanel implements KeyListener
         snake.removeLast(); // Removes the last.
         this.addNewHead();
 
+        if (snake.contains(head))
+        {
+            gameOver("Self collision!");
+            return;
+        }
+        else if (head.x() > blocksX - 2 || head.x() < 0 || head.y() > blocksY - 3 || head.y() < 0)
+        {
+            gameOver("Wall collision!");
+            return;
+        }
+
+        snake.addFirst(head);
+
         if (head.equals(new SnakeBlock(appleX, appleY)))
         {
             DebugMethods.log("Ate apple!", DebugMethods.LogType.DEBUG);
             this.addNewHead();
+            snake.addFirst(head);
             this.findApplePos();
             DebugMethods.log(
                 "New apple generated: (%d, %d)".formatted(appleX, appleY),
@@ -78,30 +98,43 @@ public final class SnakePanel extends JPanel implements KeyListener
     }
 
     /**
+     * The game is over! :(
+     * */
+    private void gameOver(String message)
+    {
+        t.stop();
+        DebugMethods.log(message, DebugMethods.LogType.DEBUG);
+        sf.setVisible(false);
+        JOptionPane.showMessageDialog(
+            sf, "<html>GAME OVER!<br>Cause: %s<br>Score: %d</html>".formatted(message, (snake.size() - 4) * 100),
+            "GAME OVER!", JOptionPane.INFORMATION_MESSAGE
+        );
+        sf.dispose();
+    }
+
+    /**
      * Adds a new head.
      * */
     private void addNewHead()
     {
         head = switch (direction) {
             case UP -> new SnakeBlock(
-                    Math.floorMod(head.x() + Direction.UP.xMod, blocksX),
-                    Math.floorMod(head.y() + Direction.UP.yMod, blocksY)
+                head.x() + Direction.UP.xMod,
+                head.y() + Direction.UP.yMod
             );
             case DOWN -> new SnakeBlock(
-                    Math.floorMod(head.x() + Direction.DOWN.xMod, blocksX),
-                    Math.floorMod(head.y() + Direction.DOWN.yMod, blocksY)
+                head.x() + Direction.DOWN.xMod,
+                head.y() + Direction.DOWN.yMod
             );
             case LEFT -> new SnakeBlock(
-                    Math.floorMod(head.x() + Direction.LEFT.xMod, blocksX),
-                    Math.floorMod(head.y() + Direction.LEFT.yMod, blocksY)
+                head.x() + Direction.LEFT.xMod,
+                head.y() + Direction.LEFT.yMod
             );
             case RIGHT -> new SnakeBlock(
-                    Math.floorMod(head.x() + Direction.RIGHT.xMod, blocksX),
-                    Math.floorMod(head.y() + Direction.RIGHT.yMod, blocksY)
+                head.x() + Direction.RIGHT.xMod,
+                head.y() + Direction.RIGHT.yMod
             );
         };
-
-        snake.addFirst(head);
     }
 
     /**
@@ -111,8 +144,8 @@ public final class SnakePanel extends JPanel implements KeyListener
     {
         do
         {
-            appleX = new Random().nextInt(blocksX);
-            appleY = new Random().nextInt(blocksY);
+            appleX = new Random().nextInt(blocksX - 3) + 1;
+            appleY = new Random().nextInt(blocksY - 4) + 1;
         } while (snake.contains(new SnakeBlock(appleX, appleY)));
     }
 
@@ -157,10 +190,19 @@ public final class SnakePanel extends JPanel implements KeyListener
     public void paintComponent(Graphics gOld)
     {
         var g = (Graphics2D) gOld; // Use the newer graphics class.
-
         this.drawBackground(g);
-        this.drawApple(g);
-        this.drawSnake(g);
+
+        if (hasStarted)
+        {
+            this.drawApple(g);
+            this.drawSnake(g);
+            return;
+        }
+
+        g.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+        g.setColor(Utils.SELECTED_COLOR);
+        var width = g.getFontMetrics().stringWidth("Press 'Enter' to start!");
+        g.drawString("Press 'Enter' to start!", (SnakeFrame.WIDTH - 7) / 2 - width / 2, SnakeFrame.HEIGHT / 2 - 25);
     }
 
     @Override
@@ -169,18 +211,22 @@ public final class SnakePanel extends JPanel implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        var keyChar = e.getKeyCode();
+        var keyCode = e.getKeyCode();
 
-        if (keyChar == KeyEvent.VK_W || keyChar == KeyEvent.VK_UP && !direction.equals(Direction.DOWN))
+        if (!hasStarted && keyCode == KeyEvent.VK_ENTER)
+        {
+            hasStarted = true;
+            t.start();
+        }
+
+        if (keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_UP && !direction.equals(Direction.DOWN))
             nextDirection = Direction.UP;
-        else if (keyChar == KeyEvent.VK_S || keyChar == KeyEvent.VK_DOWN && !direction.equals(Direction.UP))
+        else if (keyCode == KeyEvent.VK_S || keyCode == KeyEvent.VK_DOWN && !direction.equals(Direction.UP))
             nextDirection = Direction.DOWN;
-        else if (keyChar == KeyEvent.VK_A || keyChar == KeyEvent.VK_LEFT && !direction.equals(Direction.RIGHT))
+        else if (keyCode == KeyEvent.VK_A || keyCode == KeyEvent.VK_LEFT && !direction.equals(Direction.RIGHT))
             nextDirection = Direction.LEFT;
-        else if (keyChar == KeyEvent.VK_D || keyChar == KeyEvent.VK_RIGHT && !direction.equals(Direction.LEFT))
+        else if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_RIGHT && !direction.equals(Direction.LEFT))
             nextDirection = Direction.RIGHT;
-
-        DebugMethods.log("New direction: %s".formatted(direction), DebugMethods.LogType.DEBUG);
     }
 
     @Override

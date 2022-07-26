@@ -9,12 +9,12 @@ import java.awt.Dimension;
 public final class SnakeFrame extends JFrame
 {
     /** The width of the frame. */
-    public static final int WIDTH = 400;
+    public static final int WIDTH = 600;
 
     /** The height of the frame. */
-    public static final int HEIGHT = 400;
+    public static final int HEIGHT = 600;
 
-    private final SnakePanel sp = new SnakePanel();
+    private final SnakePanel sp;
 
     /**
      * Creates a new snake game.
@@ -23,8 +23,9 @@ public final class SnakeFrame extends JFrame
     {
         super("Snake");
 
+        this.sp = new SnakePanel(this);
         this.setResizable(false);
-        this.setSize(new Dimension(WIDTH - 5, HEIGHT - 2)); // -5 & -2 was needed.
+        this.setSize(new Dimension(WIDTH - 7, HEIGHT - 3)); // -7 & -3 was needed.
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().add(sp);
