@@ -32,6 +32,7 @@ public final class SnakePanel extends JPanel implements KeyListener
     private final Deque<SnakeBlock> snake = new ArrayDeque<>();
 
     private final int blockSize = 20;
+    private int score = 0;
     private final int blocksX = SnakeFrame.WIDTH / blockSize;
     private final int blocksY = SnakeFrame.HEIGHT / blockSize;
 
@@ -115,6 +116,7 @@ public final class SnakePanel extends JPanel implements KeyListener
         if (head.equals(new SnakeBlock(appleX, appleY)))
         {
             DebugMethods.log("Ate apple!", DebugMethods.LogType.DEBUG);
+            score += 100;
             this.addNewHead();
             snake.addFirst(head);
             this.findApplePos();
@@ -123,6 +125,8 @@ public final class SnakePanel extends JPanel implements KeyListener
                 DebugMethods.LogType.DEBUG
             );
         }
+
+        score += 1;
     }
 
     /**
@@ -134,13 +138,12 @@ public final class SnakePanel extends JPanel implements KeyListener
         DebugMethods.log(message, DebugMethods.LogType.DEBUG);
         sf.setVisible(false);
 
-        var score = (snake.size() - 4) * 100;
         if (highscore.isScoreBeaten(score))
         {
             highscore = new Score(score);
             JOptionPane.showMessageDialog(
                 this, "<html>GAME OVER!<br>New highscore: %d<br>Cause: %s".formatted(score, message),
-                "Game Over :(", JOptionPane.INFORMATION_MESSAGE
+                "GAME OVER :(", JOptionPane.INFORMATION_MESSAGE
             );
         }
         else
@@ -242,8 +245,10 @@ public final class SnakePanel extends JPanel implements KeyListener
     {
         g.setColor(Utils.SELECTED_COLOR);
         g.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
-        g.drawString("Score: %d".formatted((snake.size() - 5) * 100), 10, 30);
-        g.drawString("Highscore: %d".formatted(highscore.score()), 10, 30 + g.getFontMetrics().getHeight());
+        g.drawString("Score: %d".formatted(score), 10, 30);
+
+        var hs = highscore.isScoreBeaten(score) ? score : highscore.score();
+        g.drawString("Highscore: %d".formatted(hs), 10, 30 + g.getFontMetrics().getHeight());
     }
 
     @Override
