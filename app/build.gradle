@@ -47,11 +47,16 @@ tasks.named('test') {
     useJUnitPlatform()
 
     ext.failedTests = []
+    ext.failedTestCounter = 0
+    ext.passedTestCounter = 0
 
     afterTest { descriptor, result ->
         if (result.resultType == TestResult.ResultType.FAILURE) {
             String failedTest = "${descriptor.className}::${descriptor.name}"
             failedTests << [failedTest]
+            failedTestCounter++
+        } else {
+            passedTestCounter++
         }
     }
 
@@ -63,6 +68,11 @@ tasks.named('test') {
                     logger.lifecycle("${failedTest}")
                 }
             }
+
+            logger.lifecycle("Passed: %d, failed: %d, ratio: %f".formatted(
+                passedTestCounter, failedTestCounter,
+                (double) passedTestCounter / (passedTestCounter + failedTestCounter)
+            ))
         }
     }
 }
