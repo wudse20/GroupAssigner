@@ -7,6 +7,7 @@ import se.skorup.main.gui.models.PersonListModel;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
+import se.skorup.snake.SnakeFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -20,6 +21,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -582,6 +584,13 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         mainGroup2Model.removeAll();
         mainGroup2Model.addItems(mg2);
+
+        if (input.equalsIgnoreCase("snake"))
+        {
+            SwingUtilities.invokeLater(SnakeFrame::new);
+            txfSearch.setText("");
+            search();
+        }
     }
 
     /**
