@@ -32,7 +32,9 @@ public class CSVParser
             if (data.trim().isEmpty())
                 return new String[0][0];
 
-            var splitByLine = data.split("\n");
+            var splitByLine =
+                Arrays.stream(data.split("\n"))
+                      .toArray(String[]::new);
 
             if (splitByLine.length == 0) // No lines.
                 return new String[0][0];
@@ -60,6 +62,7 @@ public class CSVParser
             }
 
             return splitByComma.stream()
+                               .map(l -> l.stream().map(Utils::toNameCase).toList())
                                .map(l -> l.toArray(new String[0]))
                                .toArray(String[][]::new);
         }
