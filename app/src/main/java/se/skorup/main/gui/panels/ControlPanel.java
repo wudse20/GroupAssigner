@@ -1,6 +1,8 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
+import se.skorup.API.util.FormsParser;
+import se.skorup.API.util.MyFileReader;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.AddGroupFrame;
 import se.skorup.main.gui.frames.EditGroupFrame;
@@ -9,6 +11,7 @@ import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -17,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -102,6 +106,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     {
         this.add(cbManagers);
         this.add(btnAdd);
+        this.add(btnImport);
         this.add(btnEdit);
         this.add(btnDelete);
     }
@@ -190,6 +195,39 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
 
             if (input == JOptionPane.YES_OPTION)
                 mf.removeCurrentGroupManager();
+        }
+        else if (cmd.equals(Buttons.IMPORT.toString()))
+        {
+            var fc = new JFileChooser(".");
+            fc.setMultiSelectionEnabled(true);
+            var selection = fc.showDialog(this, "Välj");
+
+            if (selection == JFileChooser.APPROVE_OPTION)
+            {
+                var sb = new StringBuilder();
+                for (var f : fc.getSelectedFiles())
+                    sb.append(f.getName()).append(" + ");
+
+                var result = new GroupManager(sb.substring(0, sb.length() - 3));
+
+                try
+                {
+                    for (var str : MyFileReader.readFiles(fc.getSelectedFiles()))
+                        FormsParser.parseFormData(str, result);
+                }
+                catch (IOException ex)
+                {
+                    DebugMethods.log(ex, DebugMethods.LogType.ERROR);
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Kunde inte läsa fil!\nFelmeddelande%s".formatted(ex.getLocalizedMessage()),
+                        "Kunde inte läsa fil", JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
+                mf.addGroupManager(result);
+                this.updateManagers();
+            }
         }
     }
 }
