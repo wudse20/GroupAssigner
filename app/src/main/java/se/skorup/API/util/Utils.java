@@ -48,6 +48,15 @@ public class Utils
     /** The MainGroup 2 color. */
     public static final Color MAIN_GROUP_2_COLOR = Color.CYAN;
 
+    /** The light green color.*/
+    public static final Color LIGHT_GREEN = new Color(194, 255, 190);
+
+    /** The light blue color. */
+    public static final Color LIGHT_BLUE = new Color(0, 187, 255);
+
+    /** The light red color. */
+    public static final Color LIGHT_RED = new Color(245, 37, 85);
+
     // About
     /** The version of the program. */
     public static final String VERSION = "0.4.3 - Indev";

@@ -23,8 +23,8 @@ public class SubgroupItemButton extends JButton implements MouseListener
 {
     private Timer t;
     private Color lastColor;
-    private HoverEffectEnter hoverEnter;
-    private HoverEffectExit hoverExit;
+    private HoverEffectEnter<SubgroupItemButton> hoverEnter;
+    private HoverEffectExit<SubgroupItemButton> hoverExit;
 
     /**
      * Creates a new button with the
@@ -97,7 +97,7 @@ public class SubgroupItemButton extends JButton implements MouseListener
      * @param hoverExit the new effect that will happen
      *                  on hover exit.
      * */
-    public void setHoverExit(HoverEffectExit hoverExit)
+    public void setHoverExit(HoverEffectExit<SubgroupItemButton> hoverExit)
     {
         this.hoverExit = hoverExit;
     }
@@ -108,7 +108,7 @@ public class SubgroupItemButton extends JButton implements MouseListener
      * @param hoverEnter the new effect that will happen
      *                   on hover enter.
      * */
-    public void setHoverEnter(HoverEffectEnter hoverEnter)
+    public void setHoverEnter(HoverEffectEnter<SubgroupItemButton> hoverEnter)
     {
         this.hoverEnter = hoverEnter;
     }
