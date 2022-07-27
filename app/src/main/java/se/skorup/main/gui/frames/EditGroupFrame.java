@@ -18,7 +18,7 @@ public final class EditGroupFrame extends AbstractGroupFrame
      * */
     public EditGroupFrame(GroupManager gm)
     {
-        super("Uppdatera en grupp", gm, false);
+        super("Uppdatera en grupp", gm);
 
         gm.getAllPersons()
                 .stream()

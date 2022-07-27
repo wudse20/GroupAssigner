@@ -36,8 +36,6 @@ import java.util.List;
 public abstract sealed class AbstractGroupFrame extends JFrame implements KeyListener, ListSelectionListener
        permits EditGroupFrame, AddGroupFrame
 {
-
-    protected final JButton btnImport = new JButton("Importera från google forms");
     protected final JButton btnApply = new JButton("Lägg till");
 
     private final JButton btnRemove = new JButton("Ta bort");
@@ -66,14 +64,12 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      * Creates a new AbstractGroupFrame.
      *
      * @param title the title of the frame.
-     * @param shouldAddImport If {@code true} the import button will be added,
-     *                        else it won't.
      * */
-    protected AbstractGroupFrame(String title, boolean shouldAddImport)
+    protected AbstractGroupFrame(String title)
     {
         super(title);
         this.setProperties();
-        this.addComponents(shouldAddImport);
+        this.addComponents();
     }
 
     /**
@@ -82,12 +78,10 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      *
      * @param title the title of the frame.
      * @param gm the GroupManager that it should be initialized with.
-     * @param shouldAddImport If {@code true} the import button will be added,
-     *                        else it won't.
      * */
-    protected AbstractGroupFrame(String title, GroupManager gm, boolean shouldAddImport)
+    protected AbstractGroupFrame(String title, GroupManager gm)
     {
-        this(title, shouldAddImport);
+        this(title);
         this.result = gm;
     }
 
@@ -183,18 +177,12 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
 
     /**
      * Adds the components.
-     *
-     * @param shouldAddImport If {@code true} the import button will be added,
-     *                        else it won't.
      * */
-    protected void addComponents(boolean shouldAddImport)
+    protected void addComponents()
     {
         pInputContainer.add(pName);
         pInputContainer.add(pInputGroupMember);
         pInputContainer.add(new JLabel(" "));
-
-        if (shouldAddImport)
-            pButtons.add(btnImport);
 
         pButtons.add(btnRemove);
         pButtons.add(btnCancel);
