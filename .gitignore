@@ -32,6 +32,8 @@ out/
 
 src/META-INF
 
+app/our
+
 # Ignore Gradle project-specific cache directory
 .gradle
 

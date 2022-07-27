@@ -28,7 +28,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     /** The enum for the different buttons. */
     private enum Buttons
     {
-        ADD, EDIT, DELETE
+        ADD, EDIT, DELETE, IMPORT
     }
 
     private final List<GroupManager> managers;
@@ -40,6 +40,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     private final JButton btnAdd = new JButton("Skapa en ny grupp");
     private final JButton btnEdit = new JButton("Ändra denna grupp");
     private final JButton btnDelete = new JButton("Ta bort denna grupp");
+    private final JButton btnImport = new JButton("Importera från Google Forms");
 
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
@@ -85,6 +86,11 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         btnDelete.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnDelete.setActionCommand(Buttons.DELETE.toString());
         btnDelete.addActionListener(this);
+
+        btnImport.setForeground(Utils.FOREGROUND_COLOR);
+        btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnImport.setActionCommand(Buttons.IMPORT.toString());
+        btnImport.addActionListener(this);
 
         this.updateManagers();
     }
