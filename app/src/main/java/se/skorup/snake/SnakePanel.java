@@ -174,20 +174,20 @@ public final class SnakePanel extends JPanel implements KeyListener
     {
         head = switch (direction) {
             case UP -> new SnakeBlock(
-                head.x() + Direction.UP.xMod,
-                head.y() + Direction.UP.yMod
+                head.x() + Direction.UP.xModifier,
+                head.y() + Direction.UP.yModifier
             );
             case DOWN -> new SnakeBlock(
-                head.x() + Direction.DOWN.xMod,
-                head.y() + Direction.DOWN.yMod
+                head.x() + Direction.DOWN.xModifier,
+                head.y() + Direction.DOWN.yModifier
             );
             case LEFT -> new SnakeBlock(
-                head.x() + Direction.LEFT.xMod,
-                head.y() + Direction.LEFT.yMod
+                head.x() + Direction.LEFT.xModifier,
+                head.y() + Direction.LEFT.yModifier
             );
             case RIGHT -> new SnakeBlock(
-                head.x() + Direction.RIGHT.xMod,
-                head.y() + Direction.RIGHT.yMod
+                head.x() + Direction.RIGHT.xModifier,
+                head.y() + Direction.RIGHT.yModifier
             );
         };
     }
@@ -268,7 +268,10 @@ public final class SnakePanel extends JPanel implements KeyListener
         g.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         g.setColor(Utils.SELECTED_COLOR);
         var width = g.getFontMetrics().stringWidth("Press 'Enter' to start!");
-        g.drawString("Press 'Enter' to start!", (SnakeFrame.WIDTH - 7) / 2 - width / 2, SnakeFrame.HEIGHT / 2 - 25);
+        g.drawString(
+            "Press 'Enter' to start!",
+            (SnakeFrame.WIDTH - 7) / 2 - width / 2, SnakeFrame.HEIGHT / 2 - 25
+        );
     }
 
     @Override
@@ -306,13 +309,13 @@ public final class SnakePanel extends JPanel implements KeyListener
         LEFT(-1, 0),
         RIGHT(1, 0);
 
-        public final int xMod;
-        public final int yMod;
+        public final int xModifier;
+        public final int yModifier;
 
-        Direction(int xMod, int yMod)
+        Direction(int xModifier, int yModifier)
         {
-            this.xMod = xMod;
-            this.yMod = yMod;
+            this.xModifier = xModifier;
+            this.yModifier = yModifier;
         }
     }
 }
