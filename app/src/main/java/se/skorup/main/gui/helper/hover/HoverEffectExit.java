@@ -1,6 +1,6 @@
 package se.skorup.main.gui.helper.hover;
 
-import se.skorup.main.gui.components.SubgroupItemButton;
+import java.awt.Component;
 
 /**
  * The hover exit interface.
@@ -11,7 +11,7 @@ public interface HoverEffectExit
     /**
      * The action that happens on exit.
      *
-     * @param btn the button affected.
+     * @param comp the button affected.
      * */
-    void onExit(SubgroupItemButton btn);
+    void onExit(Component comp);
 }

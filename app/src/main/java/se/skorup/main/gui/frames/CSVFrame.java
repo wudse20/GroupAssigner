@@ -6,8 +6,10 @@ import se.skorup.main.gui.components.CSVLabel;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.manager.GroupManager;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
@@ -67,12 +69,16 @@ public class CSVFrame extends JFrame
         pCSV.setBackground(Utils.BACKGROUND_COLOR);
         pCSV.setLayout(new GridLayout(data.length, data[0].length));
 
+        scrCSV.setBorder(BorderFactory.createEmptyBorder());
+
         this.labels = new CSVLabel[data.length][data[0].length];
         for (var i = 0; i < data.length; i++)
         {
             for (var ii = 0; ii < data[i].length; ii++)
             {
                 var label = new CSVLabel(data[i][ii], i, ii, Color.WHITE, Color.BLACK);
+                label.addEnterEffect(c -> c.setBackground(Utils.SELECTED_COLOR));
+                label.addExitEffect(c -> c.setBackground(Color.WHITE));
                 pCSV.add(label);
                 labels[i][ii] = label;
             }
@@ -84,7 +90,9 @@ public class CSVFrame extends JFrame
      * */
     private void addComponents()
     {
+        cp.add(new JLabel(" "), BorderLayout.PAGE_START);
         cp.add(scrCSV, BorderLayout.CENTER);
+        cp.add(new JLabel("   "), BorderLayout.LINE_END);
     }
 
     private String[][] loadFile()
