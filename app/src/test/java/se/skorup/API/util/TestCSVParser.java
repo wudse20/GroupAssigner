@@ -16,35 +16,35 @@ public class TestCSVParser
     public static Stream<Arguments> getTestData()
     {
         var wierdCSV = new String[][] {
-            {"kaka kaka kaka kaka"},
-            {"kaka kaka kaka kaka"},
-            {"kaka kaka kaka kaka"}
+            {"Kaka Kaka Kaka Kaka"},
+            {"Kaka Kaka Kaka Kaka"},
+            {"Kaka Kaka Kaka Kaka"}
         };
 
         var testData = new String[][] {
             { "Tidstämpel", "Namn" , "Önskning 1", "Önskning 2", "Önskning 3" },
-            { "t1", "Agnes", "Emma", "Linnea", "Emma" },
-            { "t2", "Alice", "Bella", "Isabelle", "Stella" },
-            { "t3", "Allie", "Stella", "Isabelle", "Linnea" },
-            { "t4", "Bella", "Alice", "Isabelle", "Stella" },
-            { "t5", "Emma", "Linnea", "Emma", "Agnes" },
-            { "t6", "Emma", "Agnes", "Emma", "Linnea" },
-            { "t7", "Isabelle", "Allie", "Stella", "Alice"},
-            { "t8", "Linnea", "Emma", "Agnes", "Emma" },
-            { "t9", "Stella", "Isabelle", "Allie", "Linnea" }
+            { "T1", "Agnes", "Emma", "Linnea", "Emma" },
+            { "T2", "Alice", "Bella", "Isabelle", "Stella" },
+            { "T3", "Allie", "Stella", "Isabelle", "Linnea" },
+            { "T4", "Bella", "Alice", "Isabelle", "Stella" },
+            { "T5", "Emma", "Linnea", "Emma", "Agnes" },
+            { "T6", "Emma", "Agnes", "Emma", "Linnea" },
+            { "T7", "Isabelle", "Allie", "Stella", "Alice"},
+            { "T8", "Linnea", "Emma", "Agnes", "Emma" },
+            { "T9", "Stella", "Isabelle", "Allie", "Linnea" }
         };
 
         var testData2 = new String[][] {
             { "Tidstämpel", "Namn" , "Önskning 1", "Önskning 2", "Önskning 3" },
-            { "t1", "Agnes", "Emma", "Linnea", "Emma" },
-            { "t2", "Alice", "Bella", "Isabelle", "" },
-            { "t3", "Allie", "Stella", "Isabelle", "Linnea" },
-            { "t4", "Bella", "Alice", "Isabelle", "Stella" },
-            { "t5", "Emma", "Linnea", "Emma", "Agnes" },
-            { "t6", "Emma", "Agnes", "Emma", "Linnea" },
-            { "t7", "Isabelle", "Allie", "Stella", "Alice"},
-            { "t8", "Linnea", "Emma", "Agnes", "Emma" },
-            { "t9", "Stella", "Isabelle", "Allie", "" }
+            { "T1", "Agnes", "Emma", "Linnea", "Emma" },
+            { "T2", "Alice", "Bella", "Isabelle", "" },
+            { "T3", "Allie", "Stella", "Isabelle", "Linnea" },
+            { "T4", "Bella", "Alice", "Isabelle", "Stella" },
+            { "T5", "Emma", "Linnea", "Emma", "Agnes" },
+            { "T6", "Emma", "Agnes", "Emma", "Linnea" },
+            { "T7", "Isabelle", "Allie", "Stella", "Alice"},
+            { "T8", "Linnea", "Emma", "Agnes", "Emma" },
+            { "T9", "Stella", "Isabelle", "Allie", "" }
         };
 
         return Stream.of(
@@ -52,7 +52,8 @@ public class TestCSVParser
             Arguments.of("./src/test/testData/empty.csv", new String[0][0], "Empty file"),
             Arguments.of("./src/test/testData/wierd_csv.csv", wierdCSV, "wierd_csv.csv"),
             Arguments.of("./src/test/testData/test_data.csv", testData, "test_data.csv"),
-            Arguments.of("./src/test/testData/test_data2.csv", testData2, "test_data2.csv")
+            Arguments.of("./src/test/testData/test_data2.csv", testData2, "test_data2.csv"),
+            Arguments.of("./src/test/testData/test_data3.csv", testData2, "test_data3.csv (NameCase)")
         );
     }
 

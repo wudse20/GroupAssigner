@@ -134,7 +134,10 @@ public class Utils
      * */
     public static String toNameCase(String input)
     {
-        var names = input.split(" ");
+        if (input.length() == 0)
+            return input;
+
+        var names = input.split("\\s+");
         var sb = new StringBuilder();
 
         for (var name : names)
