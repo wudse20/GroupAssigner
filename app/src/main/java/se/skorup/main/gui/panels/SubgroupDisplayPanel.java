@@ -291,8 +291,8 @@ public class SubgroupDisplayPanel extends JPanel
             else
             {
                 var btn = buildButton(subgroups.getLabel(groupIndex++) + ':', longestNameLength, Utils.GROUP_NAME_COLOR);
-                btn.setHoverEnter(b -> hover((SubgroupItemButton) b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
-                btn.setHoverExit(b -> hover((SubgroupItemButton) b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.GROUP_NAME_COLOR));
+                btn.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, Utils.SELECTED_COLOR));
+                btn.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, Utils.GROUP_NAME_COLOR));
                 final var finalGroupIndex = groupIndex - 1;
                 btn.addActionListener((e) -> groupNameButtonAction(finalGroupIndex, subgroups));
                 cont.add(btn);
@@ -308,8 +308,8 @@ public class SubgroupDisplayPanel extends JPanel
                     var txtColor2 = selected.id() == p ? getColor(p, manager) : Utils.SELECTED_COLOR;
                     var label = getLabel(p, manager, subgroups);
                     var btn2 = buildButton(label, longestNameLength, txtColor);
-                    btn2.setHoverEnter(b -> hover((SubgroupItemButton) b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
-                    btn2.setHoverExit(b -> hover((SubgroupItemButton) b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, txtColor));
+                    btn2.setHoverEnter(b -> hover(b, Utils.FOREGROUND_COLOR, Utils.COMPONENT_BACKGROUND_COLOR, txtColor2));
+                    btn2.setHoverExit(b -> hover(b, Utils.BACKGROUND_COLOR, Utils.BACKGROUND_COLOR, txtColor));
                     btn2.addActionListener(e -> personAction(finalGroupIndex, p));
                     cont.add(btn2);
                 }

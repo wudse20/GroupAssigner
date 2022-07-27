@@ -6,12 +6,12 @@ import java.awt.Component;
  * The hover enter interface
  * */
 @FunctionalInterface
-public interface HoverEffectEnter
+public interface HoverEffectEnter<T extends Component>
 {
     /**
      * The action that happens on enter.
      *
      * @param comp the button affected.
      * */
-    void onEnter(Component comp);
+    void onEnter(T comp);
 }
