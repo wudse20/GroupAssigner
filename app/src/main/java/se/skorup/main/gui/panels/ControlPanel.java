@@ -5,6 +5,7 @@ import se.skorup.API.util.FormsParser;
 import se.skorup.API.util.MyFileReader;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.AddGroupFrame;
+import se.skorup.main.gui.frames.CSVFrame;
 import se.skorup.main.gui.frames.EditGroupFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;
@@ -32,7 +33,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     /** The enum for the different buttons. */
     private enum Buttons
     {
-        ADD, EDIT, DELETE, IMPORT
+        ADD, EDIT, DELETE, IMPORT_FORMS, IMPORT_CSV
     }
 
     private final List<GroupManager> managers;
@@ -44,7 +45,8 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     private final JButton btnAdd = new JButton("Skapa en ny grupp");
     private final JButton btnEdit = new JButton("Ändra denna grupp");
     private final JButton btnDelete = new JButton("Ta bort denna grupp");
-    private final JButton btnImport = new JButton("Importera från Google Forms");
+    private final JButton btnImportForms = new JButton("Importera från Google Forms");
+    private final JButton btnImportCSV = new JButton("Importera från CSV-fil");
 
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
@@ -91,10 +93,15 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         btnDelete.setActionCommand(Buttons.DELETE.toString());
         btnDelete.addActionListener(this);
 
-        btnImport.setForeground(Utils.FOREGROUND_COLOR);
-        btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnImport.setActionCommand(Buttons.IMPORT.toString());
-        btnImport.addActionListener(this);
+        btnImportForms.setForeground(Utils.FOREGROUND_COLOR);
+        btnImportForms.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnImportForms.setActionCommand(Buttons.IMPORT_FORMS.toString());
+        btnImportForms.addActionListener(this);
+
+        btnImportCSV.setForeground(Utils.FOREGROUND_COLOR);
+        btnImportCSV.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnImportCSV.setActionCommand(Buttons.IMPORT_CSV.toString());
+        btnImportCSV.addActionListener(this);
 
         this.updateManagers();
     }
@@ -106,7 +113,8 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     {
         this.add(cbManagers);
         this.add(btnAdd);
-        this.add(btnImport);
+        this.add(btnImportCSV);
+        this.add(btnImportForms);
         this.add(btnEdit);
         this.add(btnDelete);
     }
@@ -196,7 +204,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
             if (input == JOptionPane.YES_OPTION)
                 mf.removeCurrentGroupManager();
         }
-        else if (cmd.equals(Buttons.IMPORT.toString()))
+        else if (cmd.equals(Buttons.IMPORT_FORMS.toString()))
         {
             var fc = new JFileChooser(".");
             fc.setMultiSelectionEnabled(true);
@@ -228,6 +236,15 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
                 mf.addGroupManager(result);
                 this.updateManagers();
             }
+        }
+        else if (cmd.equals(Buttons.IMPORT_CSV.toString()))
+        {
+            var frame = new CSVFrame();
+            frame.addActionCallback(gm -> {
+                mf.addGroupManager(gm);
+                this.updateManagers();
+                frame.dispose();
+            });
         }
     }
 }
