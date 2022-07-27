@@ -208,7 +208,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         {
             var fc = new JFileChooser(".");
             fc.setMultiSelectionEnabled(true);
-            var selection = fc.showDialog(this, "Välj");
+            var selection = fc.showDialog(mf, "Välj");
 
             if (selection == JFileChooser.APPROVE_OPTION)
             {
