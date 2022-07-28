@@ -140,6 +140,19 @@ public class CSVLabel extends JLabel implements MouseListener
         return selected;
     }
 
+    /**
+     * Sets the status of selected. This will invoke
+     * the callbacks as if the label was clicked.
+     *
+     * @param selected if {@code true} it will be selected,
+     *                 if {@code false} it will be deselected.
+     * */
+    public void setSelected(boolean selected)
+    {
+        this.selected = selected;
+        callbacks.forEach(c -> c.action(this));
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {}
 

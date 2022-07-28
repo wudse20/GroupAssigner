@@ -1,10 +1,12 @@
 package se.skorup.main.gui.frames;
 
 import se.skorup.API.util.CSVParser;
+import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.CSVLabel;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -25,7 +27,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * The frame that houses the custom CSV parsing
@@ -44,10 +49,14 @@ public class CSVFrame extends JFrame
 
     private State state = State.PERSON;
 
-    private final CSVLabel[][] labels;
+    private final PersonLabelRecord[][] labels;
     private final String[][] data;
 
     private final List<ActionCallbackWithParam<GroupManager>> callbacks = new ArrayList<>();
+    private final List<Person> persons = new ArrayList<>();
+    private final Map<Person, List<PersonLabelRecord>> wishes = new HashMap<>();
+
+    private final GroupManager gm = new GroupManager("");
 
     private final Container cp = this.getContentPane();
 
@@ -77,7 +86,7 @@ public class CSVFrame extends JFrame
         super("Skapa grupper utifrån CSV");
 
         this.data = loadFile();
-        this.labels = new CSVLabel[data.length][data.length];
+        this.labels = new PersonLabelRecord[data.length][data.length];
 
         this.setProperties();
         this.addComponents();
@@ -113,6 +122,7 @@ public class CSVFrame extends JFrame
                     c.setBackground(Utils.SELECTED_COLOR);
                 });
                 label.addExitEffect(c -> c.setBackground(c.getSavedBackground()));
+                label.addActionCallback(this::clicked);
                 label.addActionCallback(l -> {
                     if (l.isSelected())
                     {
@@ -126,7 +136,7 @@ public class CSVFrame extends JFrame
                     }
                 });
                 pCSV.add(label);
-                labels[i][ii] = label;
+                labels[i][ii] = new PersonLabelRecord(label, null);
             }
         }
 
@@ -243,6 +253,62 @@ public class CSVFrame extends JFrame
     }
 
     /**
+     * Handles the person at coord x, y and
+     * updates everything accordingly.
+     *
+     * @param x the x-coord.
+     * @param y the y-coord.
+     * */
+    private void handlePerson(int x, int y)
+    {
+        var pr = labels[x][y];
+        var p = pr.p();
+        var l = pr.label();
+
+        if (l.isSelected()) // Deselection.
+        {
+            persons.remove(p);
+            gm.removePerson(p.getId());
+            l.setSavedBackground(Color.WHITE);
+            l.setBackground(Color.WHITE);
+            var wishes =
+                Optional.ofNullable(this.wishes.remove(p))
+                        .orElse(new ArrayList<>());
+
+            for (var plr : wishes)
+            {
+                plr.label().setSelected(false);
+                plr.label().setSavedBackground(Color.WHITE);
+                plr.label().setBackground(Color.WHITE);
+            }
+        }
+        else // Selection
+        {
+            p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
+            persons.add(p);
+            labels[x][y] = labels[x][y].swapPerson(p);
+        }
+
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
+    }
+
+    /**
+     * The code for handling clicks.
+     *
+     * @param label the label that is clicked.
+     * */
+    private void clicked(CSVLabel label)
+    {
+        switch (state)
+        {
+            case PERSON -> handlePerson(
+                label.getXCoordinate(),
+                label.getYCoordinate()
+            );
+        }
+    }
+
+    /**
      * Adds an action callback.
      *
      * @param ac the action callback to be added.
@@ -253,6 +319,7 @@ public class CSVFrame extends JFrame
             callbacks.add(ac);
     }
 
+    /** The enum for the state. */
     private enum State
     {
         PERSON(Utils.LIGHT_GREEN),
@@ -264,6 +331,20 @@ public class CSVFrame extends JFrame
         State(Color c)
         {
             this.c = c;
+        }
+    }
+
+    /** The record for keeping tack on label and person relationship. */
+    private record PersonLabelRecord(CSVLabel label, Person p)
+    {
+        /**
+         * Swaps the person of this record.
+         *
+         * @param p the new person.
+         * */
+        public PersonLabelRecord swapPerson(Person p)
+        {
+            return new PersonLabelRecord(label, p);
         }
     }
 }
