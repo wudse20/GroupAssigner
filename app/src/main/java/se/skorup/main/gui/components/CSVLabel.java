@@ -23,8 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * */
 public class CSVLabel extends JLabel implements MouseListener
 {
-    private static int id = 0;
-
     /** The background for persons. */
     public static final Color PERSON_COLOR = Utils.LIGHT_GREEN;
 
@@ -39,7 +37,6 @@ public class CSVLabel extends JLabel implements MouseListener
 
     private final int x;
     private final int y;
-    private final int labelID;
 
     private final List<HoverEffectEnter<CSVLabel>> enterList = new ArrayList<>();
     private final List<HoverEffectExit<CSVLabel>> exitList = new ArrayList<>();
@@ -69,7 +66,6 @@ public class CSVLabel extends JLabel implements MouseListener
 
         this.x = x;
         this.y = y;
-        this.labelID = ++id;
         this.savedBackground = background;
 
         this.setForeground(foreground);
@@ -248,14 +244,21 @@ public class CSVLabel extends JLabel implements MouseListener
     @Override
     public int hashCode()
     {
-        return getText().hashCode() + id;
+        return getText().hashCode() + Utils.pow(x, 2) + Utils.pow(y, 3);
     }
 
     @Override
     public boolean equals(Object o)
     {
         return o instanceof CSVLabel l &&
-               l.labelID == labelID    &&
+               l.x == x                &&
+               l.y == y                &&
                l.getText().equals(getText());
+    }
+
+    @Override
+    public String toString()
+    {
+        return getText();
     }
 }
