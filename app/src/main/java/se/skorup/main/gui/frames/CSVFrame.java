@@ -142,6 +142,7 @@ public class CSVFrame extends JFrame
 
         btnAdd.setForeground(Utils.FOREGROUND_COLOR);
         btnAdd.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnAdd.addActionListener(e -> addGroup());
 
         btnCancel.setForeground(Utils.FOREGROUND_COLOR);
         btnCancel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
@@ -222,6 +223,40 @@ public class CSVFrame extends JFrame
         cp.add(pButtons, BorderLayout.PAGE_END);
     }
 
+    /**
+     * The code to add a created group.
+     * */
+    private void addGroup()
+    {
+        // Fixing group manager.
+        for (var p : persons)
+        {
+            for (var w : wishes.getOrDefault(p, new HashSet<>()))
+            {
+                var id = w.p.getId();
+                p.addWishlistId(id);
+            }
+        }
+
+        this.setVisible(false);
+
+        // Opening edit GUI.
+        var agf = new EditGroupFrame(gm);
+        agf.addAddListener(event -> {
+            var res = event.result();
+            event.frame().dispose();
+            this.invokeCallbacks(res);
+            this.dispose();
+        });
+    }
+
+    /**
+     * Loads the file from the system and returns
+     * the CSV-file as a 2D-matrix. It will also
+     * allow the user to select the file.
+     *
+     * @return the loaded file from the data.
+     * */
     private String[][] loadFile()
     {
         var fc = new JFileChooser(".");
@@ -283,18 +318,48 @@ public class CSVFrame extends JFrame
         }
         else // Selection
         {
-            p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
-            persons.add(p);
-            labels[x][y] = labels[x][y].swapPerson(p);
+            handleAlreadyExistingPerson(x, y, p, l);
             l.setState(State.PERSON);
         }
 
         DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
     }
 
+    /**
+     * Handles an already existing person.
+     *
+     * @param x the x-coord of the existing person.
+     * @param y the y-coord of the existing person.
+     * @param p the already existing person
+     * @param l the label that's affected.
+     * */
+    private void handleAlreadyExistingPerson(int x, int y, Person p, CSVLabel l)
+    {
+        if (p == null)
+        {
+            if (gm.getPersonFromName(l.getText()).isEmpty())
+            {
+                p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
+                persons.add(p);
+            }
+            else
+            {
+                p = gm.getPersonFromName(l.getText()).get(0);
+            }
+        }
+
+        labels[x][y] = labels[x][y].swapPerson(p);
+    }
+
+    /**
+     * Handles a wish click.
+     *
+     * @param x the x-coord of the label.
+     * @param y the y-coord of the label.
+     * */
     private void handleWish(int x, int y)
     {
-        var pr = labels[x][y];
+            var pr = labels[x][y];
         var p = pr.p();
         var l = pr.label();
         var s = l.getState();
@@ -311,9 +376,7 @@ public class CSVFrame extends JFrame
         {
             l.setSavedBackground(PERSON_COLOR);
             l.setBackground(PERSON_COLOR);
-            p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
-            persons.add(p);
-            labels[x][y] = labels[x][y].swapPerson(p);
+            handleAlreadyExistingPerson(x, y, p, l);
             wishPerson = labels[x][y];
             wishes.put(p, wishes.getOrDefault(p, new HashSet<>()));
             l.startFlashing(500, PERSON_COLOR, WISH_COLOR);
@@ -332,9 +395,8 @@ public class CSVFrame extends JFrame
         else if (s.equals(State.UNSELECTED) && wishPerson != null && (p == null || persons.contains(p))) // Adding wish.
         {
             var set = wishes.getOrDefault(wishPerson.p(), new HashSet<>());
-            p = p == null ? gm.registerPerson(l.getText(), Person.Role.CANDIDATE) : p;
-            persons.add(p);
-            labels[x][y] = labels[x][y].swapPerson(p);
+
+            handleAlreadyExistingPerson(x, y, p, l);
             set.add(labels[x][y]);
             wishes.put(wishPerson.p(), set);
             l.setState(State.WISH);

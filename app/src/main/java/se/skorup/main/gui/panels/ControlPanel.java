@@ -175,8 +175,8 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
             final var gm = mf.getCurrentGroup();
 
             SwingUtilities.invokeLater(() -> {
-                var add = new EditGroupFrame(gm);
-                add.addAddListener((event) -> {
+                var edit = new EditGroupFrame(gm);
+                edit.addAddListener((event) -> {
                     event.frame().dispose();
                     mf.refreshSidePanel();
                     this.updateManagers();
