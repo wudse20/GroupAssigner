@@ -415,7 +415,10 @@ public class CSVFrame extends JFrame implements KeyListener
             wishes.put(wishPerson.p(), set);
             l.setState(State.WISH);
         }
-        else if (s.equals(State.WISH) && wishPerson != null && wishPerson != pr) // Removing wish.
+        else if (
+            s.equals(State.WISH) && wishPerson != null && wishPerson != pr &&
+            wishes.getOrDefault(wishPerson.p, new HashSet<>()).contains(pr)
+        ) // Removing wish.
         {
             var set = wishes.getOrDefault(wishPerson.p(), new HashSet<>());
             set.remove(pr);
