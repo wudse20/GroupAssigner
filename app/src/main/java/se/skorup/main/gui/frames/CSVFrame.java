@@ -63,6 +63,8 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private boolean isCtrlDown = false;
 
+    private CSVLabel[] selected = new CSVLabel[0];
+
     private final PersonLabelRecord[][] labels;
     private final String[][] data;
 
@@ -138,19 +140,10 @@ public class CSVFrame extends JFrame implements KeyListener
             for (var ii = 0; ii < data[i].length; ii++)
             {
                 var label = new CSVLabel(data[i][ii], i, ii, Color.WHITE, Color.BLACK);
-                label.addEnterEffect(c -> {
-                    c.setSavedBackground(c.getBackground());
-                    c.setBackground(Utils.SELECTED_COLOR);
-
-                    if (isCtrlDown)
-                        clicked(c);
-
-                    this.requestFocus();
-                });
-                label.addExitEffect(c -> {
-                    c.setBackground(c.getSavedBackground());
-                    this.requestFocus();
-                });
+                var fi = i;
+                var fii = ii;
+                label.addEnterEffect(c -> hoverEnter(c, fi, fii));
+                label.addExitEffect(c -> hoverExit());
                 label.addActionCallback(this::clicked);
                 pCSV.add(label);
                 labels[i][ii] = new PersonLabelRecord(label, null);
@@ -291,6 +284,39 @@ public class CSVFrame extends JFrame implements KeyListener
         cp.add(scrCSV, BorderLayout.CENTER);
         cp.add(new JLabel("   "), BorderLayout.LINE_END);
         cp.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Handles hover enter foreach CSVLabel.
+     *
+     * @param c the label itself.
+     * @param x the x-coord of the label.
+     * @param y the y-coord of the label.
+     * */
+    private void hoverEnter(CSVLabel c, int x, int y)
+    {
+        if (fs.equals(FrameState.NORMAL))
+        {
+            c.setSavedBackground(c.getBackground());
+            c.setBackground(Utils.SELECTED_COLOR);
+            selected = new CSVLabel[1];
+            selected[0] = c;
+
+            if (isCtrlDown)
+                clicked(c);
+        }
+
+        this.requestFocus();
+    }
+
+    private void hoverExit()
+    {
+        for (var l : selected)
+        {
+            l.setBackground(l.getSavedBackground());
+        }
+
+        this.requestFocus();
     }
 
     /**
