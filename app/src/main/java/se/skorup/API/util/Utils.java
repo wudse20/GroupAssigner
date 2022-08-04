@@ -104,9 +104,19 @@ public class Utils
      * */
     public static void openHelpPages()
     {
+        openWebpage("https://www.help.skorup.se/");
+    }
+
+    /**
+     * Opens a webpage in the default browser.
+     *
+     * @param url the url of the website.
+     * */
+    public static void openWebpage(String url)
+    {
         try
         {
-            Desktop.getDesktop().browse(new URI("https://www.help.skorup.se/"));
+            Desktop.getDesktop().browse(new URI(url));
         }
         catch (IOException | URISyntaxException ex)
         {
