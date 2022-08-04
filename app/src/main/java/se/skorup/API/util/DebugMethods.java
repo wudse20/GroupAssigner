@@ -84,6 +84,30 @@ public class DebugMethods
     }
 
     /**
+     * Logs an error to the console.
+     *
+     * @param message the message of the error.
+     * */
+    public static void error(String message)
+    {
+        log(message, LogType.ERROR);
+    }
+
+    /**
+     * Logs an error to the console. It utilizes
+     * {@link String#formatted(Object...) formatted} to
+     * use for formatting, so it has to abide by its laws.
+     *
+     * @param fString the string with the inserted format
+     *                messages.
+     * @param args the arguments to the formatting.
+     * */
+    public static void errorF(String fString, Object... args)
+    {
+        logF(LogType.ERROR, fString, args);
+    }
+
+    /**
      * Gets the current time and formats it into a string.
      *
      * @return a formatted string of the current time.

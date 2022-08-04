@@ -4,6 +4,7 @@ import se.skorup.API.util.CSVParser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.CSVLabel;
+import se.skorup.main.gui.components.enums.State;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
@@ -28,9 +29,16 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import static se.skorup.main.gui.components.CSVLabel.PERSON_COLOR;
+import static se.skorup.main.gui.components.CSVLabel.SKIP_COLOR;
+import static se.skorup.main.gui.components.CSVLabel.UNSELECTED_COLOR;
+import static se.skorup.main.gui.components.CSVLabel.WISH_COLOR;
 
 /**
  * The frame that houses the custom CSV parsing
@@ -48,13 +56,14 @@ public class CSVFrame extends JFrame
         "Välj en ruta som kommer att hoppas över. Detta är valfritt och behöver inte göras.";
 
     private State state = State.PERSON;
+    private PersonLabelRecord wishPerson;
 
     private final PersonLabelRecord[][] labels;
     private final String[][] data;
 
     private final List<ActionCallbackWithParam<GroupManager>> callbacks = new ArrayList<>();
-    private final List<Person> persons = new ArrayList<>();
-    private final Map<Person, List<PersonLabelRecord>> wishes = new HashMap<>();
+    private final Set<Person> persons = new HashSet<>();
+    private final Map<Person, Set<PersonLabelRecord>> wishes = new HashMap<>();
 
     private final GroupManager gm = new GroupManager("");
 
@@ -123,18 +132,6 @@ public class CSVFrame extends JFrame
                 });
                 label.addExitEffect(c -> c.setBackground(c.getSavedBackground()));
                 label.addActionCallback(this::clicked);
-                label.addActionCallback(l -> {
-                    if (l.isSelected())
-                    {
-                        l.setSavedBackground(Color.WHITE);
-                        l.setBackground(Color.WHITE);
-                    }
-                    else
-                    {
-                        l.setSavedBackground(state.c);
-                        l.setBackground(state.c);
-                    }
-                });
                 pCSV.add(label);
                 labels[i][ii] = new PersonLabelRecord(label, null);
             }
@@ -158,21 +155,21 @@ public class CSVFrame extends JFrame
         radioPerson.addActionListener(e -> state = State.PERSON);
         radioPerson.setSelected(true);
         radioPerson.setForeground(Color.BLACK);
-        radioPerson.setBackground(Utils.LIGHT_GREEN);
+        radioPerson.setBackground(PERSON_COLOR);
         radioPerson.setFont(font);
 
         radioWish.addActionListener(e -> lblInfo.setText(WISH_INFO));
         radioWish.addActionListener(e -> state = State.WISH);
         radioWish.setSelected(false);
         radioWish.setForeground(Color.BLACK);
-        radioWish.setBackground(Utils.LIGHT_BLUE);
+        radioWish.setBackground(WISH_COLOR);
         radioWish.setFont(font);
 
         radioSkip.addActionListener(e -> lblInfo.setText(SKIP_INFO));
         radioSkip.addActionListener(e -> state = State.SKIP);
         radioSkip.setSelected(false);
         radioSkip.setForeground(Color.BLACK);
-        radioSkip.setBackground(Utils.LIGHT_RED);
+        radioSkip.setBackground(SKIP_COLOR);
         radioSkip.setFont(font);
 
         btnGroup.add(radioPerson);
@@ -265,31 +262,112 @@ public class CSVFrame extends JFrame
         var p = pr.p();
         var l = pr.label();
 
-        if (l.isSelected()) // Deselection.
+        if (l.getState().equals(State.PERSON)) // Deselection.
         {
             persons.remove(p);
             gm.removePerson(p.getId());
-            l.setSavedBackground(Color.WHITE);
-            l.setBackground(Color.WHITE);
+            l.setSavedBackground(UNSELECTED_COLOR);
+            l.setBackground(UNSELECTED_COLOR);
             var wishes =
                 Optional.ofNullable(this.wishes.remove(p))
-                        .orElse(new ArrayList<>());
+                        .orElse(new HashSet<>());
 
             for (var plr : wishes)
             {
-                plr.label().setSelected(false);
                 plr.label().setSavedBackground(Color.WHITE);
                 plr.label().setBackground(Color.WHITE);
+                plr.label().setState(State.UNSELECTED);
             }
+
+            l.setState(State.UNSELECTED);
         }
         else // Selection
         {
             p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
             persons.add(p);
             labels[x][y] = labels[x][y].swapPerson(p);
+            l.setState(State.PERSON);
         }
 
         DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
+    }
+
+    private void handleWish(int x, int y)
+    {
+        var pr = labels[x][y];
+        var p = pr.p();
+        var l = pr.label();
+        var s = l.getState();
+
+        if (s.equals(State.PERSON) && p != null && wishPerson == null) // First wish person
+        {
+            wishPerson = labels[x][y];
+            wishes.put(p, wishes.getOrDefault(p, new HashSet<>()));
+            l.startFlashing(500, PERSON_COLOR, WISH_COLOR);
+            DebugMethods.log("First wish person", DebugMethods.LogType.DEBUG);
+            l.setState(State.WISH);
+        }
+        else if (s.equals(State.UNSELECTED) && wishPerson == null && !persons.contains(p)) // First wish person and someone isn't a person
+        {
+            l.setSavedBackground(PERSON_COLOR);
+            l.setBackground(PERSON_COLOR);
+            p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
+            persons.add(p);
+            labels[x][y] = labels[x][y].swapPerson(p);
+            wishPerson = labels[x][y];
+            wishes.put(p, wishes.getOrDefault(p, new HashSet<>()));
+            l.startFlashing(500, PERSON_COLOR, WISH_COLOR);
+            DebugMethods.log("First wish person and someone isn't a person", DebugMethods.LogType.DEBUG);
+            l.setState(State.WISH);
+        }
+        else if (s.equals(State.WISH) && wishPerson != null && wishPerson == labels[x][y]) // Deselection of wish person
+        {
+            l.stopFlashing();
+            l.setSavedBackground(PERSON_COLOR); // Always no matter what revert to PERSON_COLOR
+            l.setBackground(PERSON_COLOR);
+            wishPerson = null;
+            DebugMethods.log("Deselection of wish person", DebugMethods.LogType.DEBUG);
+            l.setState(State.PERSON);
+        }
+        else if (s.equals(State.UNSELECTED) && wishPerson != null && (p == null || persons.contains(p))) // Adding wish.
+        {
+            var set = wishes.getOrDefault(wishPerson.p(), new HashSet<>());
+            p = p == null ? gm.registerPerson(l.getText(), Person.Role.CANDIDATE) : p;
+            persons.add(p);
+            labels[x][y] = labels[x][y].swapPerson(p);
+            set.add(labels[x][y]);
+            wishes.put(wishPerson.p(), set);
+            l.setState(State.WISH);
+        }
+        else if (s.equals(State.WISH) && wishPerson != null && wishPerson != pr) // Removing wish.
+        {
+            var set = wishes.getOrDefault(wishPerson.p(), new HashSet<>());
+            set.remove(pr);
+            wishes.put(wishPerson.p(), set);
+            l.setState(State.UNSELECTED);
+            labels[x][y] = labels[x][y].swapPerson(null);
+        }
+        else
+        {
+            DebugMethods.error("Unknown state");
+        }
+
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Wishes: %s", wishes);
+    }
+
+    /**
+     * Handles skip action.
+     *
+     * @param x the x-coord.
+     * @param y the y-coord.
+     * */
+    private void handleSkip(int x, int y)
+    {
+        if (labels[x][y].label().getState().equals(State.SKIP))
+            labels[x][y].label().setState(State.UNSELECTED);
+        else
+            labels[x][y].label().setState(State.SKIP);
     }
 
     /**
@@ -305,6 +383,15 @@ public class CSVFrame extends JFrame
                 label.getXCoordinate(),
                 label.getYCoordinate()
             );
+            case WISH -> handleWish(
+                label.getXCoordinate(),
+                label.getYCoordinate()
+            );
+            case SKIP -> handleSkip(
+                label.getXCoordinate(),
+                label.getYCoordinate()
+            );
+            default -> label.setState(state);
         }
     }
 
@@ -319,21 +406,6 @@ public class CSVFrame extends JFrame
             callbacks.add(ac);
     }
 
-    /** The enum for the state. */
-    private enum State
-    {
-        PERSON(Utils.LIGHT_GREEN),
-        WISH(Utils.LIGHT_BLUE),
-        SKIP(Utils.LIGHT_RED);
-
-        public final Color c;
-
-        State(Color c)
-        {
-            this.c = c;
-        }
-    }
-
     /** The record for keeping tack on label and person relationship. */
     private record PersonLabelRecord(CSVLabel label, Person p)
     {
@@ -345,6 +417,12 @@ public class CSVFrame extends JFrame
         public PersonLabelRecord swapPerson(Person p)
         {
             return new PersonLabelRecord(label, p);
+        }
+
+        @Override
+        public String toString()
+        {
+            return p != null ? p.toString() : "null";
         }
     }
 }

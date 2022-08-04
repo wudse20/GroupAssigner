@@ -1,5 +1,7 @@
 package se.skorup.main.gui.components;
 
+import se.skorup.API.util.Utils;
+import se.skorup.main.gui.components.enums.State;
 import se.skorup.main.gui.helper.hover.HoverEffectEnter;
 import se.skorup.main.gui.helper.hover.HoverEffectExit;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
@@ -7,27 +9,48 @@ import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A CSVLabel in the GUI for CSV editing.
  * */
 public class CSVLabel extends JLabel implements MouseListener
 {
+    private static int id = 0;
+
+    /** The background for persons. */
+    public static final Color PERSON_COLOR = Utils.LIGHT_GREEN;
+
+    /** The background for wishes. */
+    public static final Color WISH_COLOR = Utils.LIGHT_BLUE;
+
+    /** The background for skipping. */
+    public static final Color SKIP_COLOR = Utils.LIGHT_RED;
+
+    /** The background for unselected. */
+    public static final Color UNSELECTED_COLOR = Color.WHITE;
+
     private final int x;
     private final int y;
+    private final int labelID;
 
     private final List<HoverEffectEnter<CSVLabel>> enterList = new ArrayList<>();
     private final List<HoverEffectExit<CSVLabel>> exitList = new ArrayList<>();
     private final List<ActionCallbackWithParam<CSVLabel>> callbacks = new ArrayList<>();
 
-    private boolean selected = false;
+    private boolean shouldRunTimer = true;
+
+    private State state = State.UNSELECTED;
 
     private Color savedBackground;
+    private Timer t;
 
     /**
      * Creates a new CSV label with a label,
@@ -46,6 +69,7 @@ public class CSVLabel extends JLabel implements MouseListener
 
         this.x = x;
         this.y = y;
+        this.labelID = ++id;
         this.savedBackground = background;
 
         this.setForeground(foreground);
@@ -130,27 +154,69 @@ public class CSVLabel extends JLabel implements MouseListener
     }
 
     /**
-     * If {@code true} the label is selected,
-     * else {@code false}.
+     * Starts flashing the color of the button text - i.e. the
+     * foreground color, with an interval of speedMs in millis seconds.
+     * The colors it will flash with are the current base color and the
+     * colors passed in the var args.
      *
-     * @return {@code true} if selected, else {@code false}.
+     * @param speedMS the interval that the code will change color with.
+     * @param flashColor the colors that will be cycled through.
+     * @throws IllegalArgumentException iff speedMs < 25 or flashColor == {@code null} || flashColor.length = 0
      * */
-    public boolean isSelected()
+    public void startFlashing(int speedMS, Color... flashColor) throws IllegalArgumentException
     {
-        return selected;
+        stopFlashing();
+
+        if (speedMS < 25)
+            throw new IllegalArgumentException("The passed value cannot be smaller than 25ms.");
+        else if (flashColor == null || flashColor.length == 0)
+            throw new IllegalArgumentException("You must pass at least on color.");
+
+        final var i = new AtomicInteger();
+        final var list = new ArrayList<>(Arrays.asList(flashColor)); // To prevent the immutable list.
+
+        t = new Timer(speedMS, e -> {
+            if (shouldRunTimer)
+                this.setBackground(list.get(i.getAndIncrement() % list.size()));
+        });
+
+        t.start();
     }
 
     /**
-     * Sets the status of selected. This will invoke
-     * the callbacks as if the label was clicked.
-     *
-     * @param selected if {@code true} it will be selected,
-     *                 if {@code false} it will be deselected.
+     * Stops the flashing of the button.
      * */
-    public void setSelected(boolean selected)
+    public void stopFlashing()
     {
-        this.selected = selected;
-        callbacks.forEach(c -> c.action(this));
+        if (t != null)
+        {
+            t.stop();
+            this.setBackground(savedBackground);
+        }
+    }
+
+    /**
+     * Setter for: State. <br><br>
+     *
+     * It will update the color of the label.
+     *
+     * @param newState the new state of the label.
+     * */
+    public void setState(State newState)
+    {
+        this.state = newState;
+        this.setBackground(state.color);
+        this.setSavedBackground(state.color);
+    }
+
+    /**
+     * Getter for: State.
+     *
+     * @return the state of the label.
+     * */
+    public State getState()
+    {
+        return this.state;
     }
 
     @Override
@@ -163,18 +229,33 @@ public class CSVLabel extends JLabel implements MouseListener
     public void mouseReleased(MouseEvent e)
     {
         callbacks.forEach(c -> c.action(this));
-        this.selected = !this.selected;
     }
 
     @Override
     public void mouseEntered(MouseEvent e)
     {
         enterList.forEach(ef -> ef.onEnter(this));
+        shouldRunTimer = false;
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
         exitList.forEach(ef -> ef.onExit(this));
+        shouldRunTimer = true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return getText().hashCode() + id;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return o instanceof CSVLabel l &&
+               l.labelID == labelID    &&
+               l.getText().equals(getText());
     }
 }
