@@ -1,6 +1,7 @@
 package se.skorup.main;
 
 import se.skorup.main.gui.frames.MainFrame;
+import se.skorup.network.VersionChecker;
 
 import javax.swing.SwingUtilities;
 
@@ -17,6 +18,7 @@ public class Main
      * */
     public static void main(String[] args)
     {
-        SwingUtilities.invokeLater(MainFrame::new);
+        VersionChecker.checkVersion(); // Checks the version.
+        SwingUtilities.invokeLater(MainFrame::new); // Starts program.
     }
 }
