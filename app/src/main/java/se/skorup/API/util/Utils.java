@@ -11,8 +11,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
@@ -337,5 +339,46 @@ public class Utils
             return sb.append("0</p></html>").toString();
 
         return sb.delete(sb.length() - 2, sb.length()).append("</p></html>").toString();
+    }
+
+    /**
+     * Downloads the content of a website and returns
+     * the contents of the URL if successful wrapped
+     * in an Optional, if it fails it will return
+     * {@code Optional.empty}.
+     *
+     * @param url The URL of the target.
+     * @return the content of the target, {@code Optional.empty}
+     *         if it fails.
+     * */
+    public static Optional<String> getContentOfURL(String url)
+    {
+        try
+        {
+            var u = new URL(url);
+            var sc = new Scanner(u.openStream());
+            var sb = new StringBuilder();
+
+            while (sc.hasNext())
+                sb.append(sc.next());
+
+            DebugMethods.logF(
+                DebugMethods.LogType.DEBUG,
+                "Grabbed data: %s",
+                sb
+            );
+
+            return Optional.of(sb.toString());
+        }
+        catch (IOException e)
+        {
+            DebugMethods.logF(
+                DebugMethods.LogType.ERROR,
+                "Error getting version: %s",
+                e.getLocalizedMessage()
+            );
+
+            return Optional.empty();
+        }
     }
 }
