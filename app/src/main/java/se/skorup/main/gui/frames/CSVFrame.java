@@ -58,6 +58,7 @@ public class CSVFrame extends JFrame implements KeyListener
         "Välj en ruta som kommer att hoppas över. Detta är valfritt och behöver inte göras.";
 
     private State state = State.PERSON;
+    private FrameState fs = FrameState.NORMAL;
     private PersonLabelRecord wishPerson;
 
     private boolean isCtrlDown = false;
@@ -79,8 +80,13 @@ public class CSVFrame extends JFrame implements KeyListener
     private final JRadioButton radioPerson = new JRadioButton("   Välj en person           ");
     private final JRadioButton radioWish = new JRadioButton("   Välj en önskning         ");
     private final JRadioButton radioSkip = new JRadioButton("   Välj en att hoppa över   ");
+    private final JRadioButton radioNormal = new JRadioButton("   Normal ifyllnad          ");
+    private final JRadioButton radioRow = new JRadioButton("   Fyll i rad               ");
+    private final JRadioButton radioColumn = new JRadioButton("   Fyll i kolumn            ");
+    private final JRadioButton radioTemplate = new JRadioButton("   Fyll i med mall          ");
 
-    private final ButtonGroup btnGroup = new ButtonGroup();
+    private final ButtonGroup bgMode = new ButtonGroup();
+    private final ButtonGroup bgEditMode = new ButtonGroup();
 
     private final JLabel lblInfo = new JLabel(WISH_INFO);
 
@@ -88,6 +94,7 @@ public class CSVFrame extends JFrame implements KeyListener
     private final JPanel pButtons = new JPanel();
     private final JPanel pSelector = new JPanel();
     private final JPanel pInfo = new JPanel();
+    private final JPanel pEditMode = new JPanel();
 
     private final JScrollPane scrCSV = new JScrollPane(pCSV);
 
@@ -186,15 +193,51 @@ public class CSVFrame extends JFrame implements KeyListener
         radioSkip.setBackground(SKIP_COLOR);
         radioSkip.setFont(font);
 
-        btnGroup.add(radioPerson);
-        btnGroup.add(radioWish);
-        btnGroup.add(radioSkip);
+        bgMode.add(radioPerson);
+        bgMode.add(radioWish);
+        bgMode.add(radioSkip);
+
+        radioNormal.setSelected(true);
+        radioNormal.setBackground(Utils.BACKGROUND_COLOR);
+        radioNormal.setForeground(Utils.FOREGROUND_COLOR);
+        radioNormal.setSelected(true);
+        radioNormal.setFont(font);
+        radioNormal.addActionListener(e -> fs = FrameState.NORMAL);
+
+        radioColumn.setSelected(true);
+        radioColumn.setBackground(Utils.BACKGROUND_COLOR);
+        radioColumn.setForeground(Utils.FOREGROUND_COLOR);
+        radioColumn.setSelected(false);
+        radioColumn.setFont(font);
+        radioColumn.addActionListener(e -> fs = FrameState.FILL_COLUMN);
+
+        radioRow.setSelected(true);
+        radioRow.setBackground(Utils.BACKGROUND_COLOR);
+        radioRow.setForeground(Utils.FOREGROUND_COLOR);
+        radioRow.setSelected(false);
+        radioRow.setFont(font);
+        radioRow.addActionListener(e -> fs = FrameState.FILL_ROW);
+
+        radioTemplate.setSelected(true);
+        radioTemplate.setBackground(Utils.BACKGROUND_COLOR);
+        radioTemplate.setForeground(Utils.FOREGROUND_COLOR);
+        radioTemplate.setSelected(true);
+        radioTemplate.setFont(font);
+        radioTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE);
+
+        bgEditMode.add(radioNormal);
+        bgEditMode.add(radioColumn);
+        bgEditMode.add(radioRow);
+        bgEditMode.add(radioTemplate);
 
         lblInfo.setForeground(Utils.FOREGROUND_COLOR);
         lblInfo.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
 
         pInfo.setBackground(Utils.BACKGROUND_COLOR);
         pInfo.setLayout(new BoxLayout(pInfo, BoxLayout.Y_AXIS));
+
+        pEditMode.setBackground(Utils.BACKGROUND_COLOR);
+        pEditMode.setLayout(new BoxLayout(pEditMode, BoxLayout.Y_AXIS));
     }
 
     /**
@@ -208,11 +251,17 @@ public class CSVFrame extends JFrame implements KeyListener
         cont.add(new JLabel("   "));
         cont.add(pInfo);
 
+        var innerCont2 = new JPanel();
+        innerCont2.setLayout(new GridLayout(2, 1));
+        innerCont2.setBackground(Utils.BACKGROUND_COLOR);
+        innerCont2.add(pSelector);
+        innerCont2.add(pEditMode);
+
         var cont2 = new JPanel();
         cont2.setBackground(Utils.BACKGROUND_COLOR);
         cont2.setLayout(new FlowLayout(FlowLayout.LEFT));
         cont2.add(new JLabel("   "));
-        cont2.add(pSelector);
+        cont2.add(innerCont2);
         cont2.add(new JLabel("   "));
 
         pButtons.add(btnCancel);
@@ -224,6 +273,14 @@ public class CSVFrame extends JFrame implements KeyListener
         pSelector.add(radioWish);
         pSelector.add(new JLabel(" "));
         pSelector.add(radioSkip);
+
+        pEditMode.add(radioNormal);
+        pEditMode.add(new JLabel(" "));
+        pEditMode.add(radioRow);
+        pEditMode.add(new JLabel(" "));
+        pEditMode.add(radioColumn);
+        pEditMode.add(new JLabel(" "));
+        pEditMode.add(radioTemplate);
 
         pInfo.add(new JLabel(" "));
         pInfo.add(lblInfo);
@@ -523,5 +580,10 @@ public class CSVFrame extends JFrame implements KeyListener
         {
             return p != null ? p.toString() : "null";
         }
+    }
+
+    private enum FrameState
+    {
+        NORMAL, FILL_ROW, FILL_COLUMN, FILL_TEMPLATE
     }
 }
