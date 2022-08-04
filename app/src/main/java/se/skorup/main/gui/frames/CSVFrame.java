@@ -196,6 +196,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioNormal.setSelected(true);
         radioNormal.setFont(font);
         radioNormal.addActionListener(e -> fs = FrameState.NORMAL);
+        radioNormal.addActionListener(e -> radioWish.setEnabled(true));
 
         radioColumn.setSelected(true);
         radioColumn.setBackground(Utils.BACKGROUND_COLOR);
@@ -210,6 +211,15 @@ public class CSVFrame extends JFrame implements KeyListener
         radioRow.setSelected(false);
         radioRow.setFont(font);
         radioRow.addActionListener(e -> fs = FrameState.FILL_ROW);
+        radioRow.addActionListener(e -> {
+            radioWish.setEnabled(false);
+
+            if (state.equals(State.WISH))
+            {
+                radioPerson.setSelected(true);
+                state = State.PERSON;
+            }
+        });
 
         radioTemplate.setSelected(true);
         radioTemplate.setBackground(Utils.BACKGROUND_COLOR);
@@ -305,6 +315,19 @@ public class CSVFrame extends JFrame implements KeyListener
             if (isCtrlDown)
                 clicked(c);
         }
+        else if (fs.equals(FrameState.FILL_ROW))
+        {
+            var rows = data[0].length;
+            selected = new CSVLabel[rows];
+
+            for (var i = 0; i < selected.length; i++)
+            {
+                var l = labels[x][i].label();
+                l.setSavedBackground(l.getBackground());
+                l.setBackground(Utils.SELECTED_COLOR);
+                selected[i] = l;
+            }
+        }
 
         this.requestFocus();
     }
@@ -393,12 +416,38 @@ public class CSVFrame extends JFrame implements KeyListener
         var p = pr.p();
         var l = pr.label();
 
-        if (l.getState().equals(State.PERSON)) // Deselection.
+        if (fs.equals(FrameState.NORMAL)) // Normal selection.
+        {
+            handlePersonSelectionLogic(x, y, p, l);
+        }
+        else if (fs.equals(FrameState.FILL_ROW)) // Fill row.
+        {
+            for (var i = 0; i < selected.length; i++)
+            {
+                var label = labels[x][i].label();
+                handlePersonSelectionLogic(x, i, p, label);
+            }
+        }
+
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
+    }
+
+    /**
+     * The logic for handling selection and deselection of persons.
+     *
+     * @param x the current x-coord.
+     * @param y the current y-coord.
+     * @param p the current person of the position.
+     * @param label the label of position (x, y).
+     * */
+    private void handlePersonSelectionLogic(int x, int y, Person p, CSVLabel label)
+    {
+        if (label.getState().equals(State.PERSON)) // Deselection.
         {
             persons.remove(p);
             gm.removePerson(p.getId());
-            l.setSavedBackground(UNSELECTED_COLOR);
-            l.setBackground(UNSELECTED_COLOR);
+            label.setSavedBackground(UNSELECTED_COLOR);
+            label.setBackground(UNSELECTED_COLOR);
             var wishes =
                 Optional.ofNullable(this.wishes.remove(p))
                         .orElse(new HashSet<>());
@@ -410,16 +459,14 @@ public class CSVFrame extends JFrame implements KeyListener
                 plr.label().setState(State.UNSELECTED);
             }
 
-            l.setState(State.UNSELECTED);
+            label.setState(State.UNSELECTED);
             labels[x][y] = labels[x][y].swapPerson(null);
         }
         else // Selection
         {
-            handleAlreadyExistingPerson(x, y, p, l);
-            l.setState(State.PERSON);
+            handleAlreadyExistingPerson(x, y, p, label);
+            label.setState(State.PERSON);
         }
-
-        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
     }
 
     /**
@@ -456,7 +503,7 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private void handleWish(int x, int y)
     {
-            var pr = labels[x][y];
+        var pr = labels[x][y];
         var p = pr.p();
         var l = pr.label();
         var s = l.getState();
@@ -526,10 +573,23 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private void handleSkip(int x, int y)
     {
-        if (labels[x][y].label().getState().equals(State.SKIP))
-            labels[x][y].label().setState(State.UNSELECTED);
-        else
-            labels[x][y].label().setState(State.SKIP);
+        if (fs.equals(FrameState.NORMAL)) // Normal selection.
+        {
+            if (labels[x][y].label().getState().equals(State.SKIP))
+                labels[x][y].label().setState(State.UNSELECTED);
+            else
+                labels[x][y].label().setState(State.SKIP);
+        }
+        else if (fs.equals(FrameState.FILL_ROW)) // Filling row
+        {
+            for (int i = 0; i < selected.length; i++)
+            {
+                if (labels[x][i].label().getState().equals(State.SKIP))
+                    labels[x][i].label().setState(State.UNSELECTED);
+                else
+                    labels[x][i].label().setState(State.SKIP);
+            }
+        }
     }
 
     /**
