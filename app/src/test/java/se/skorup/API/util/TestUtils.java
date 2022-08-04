@@ -202,4 +202,20 @@ public class TestUtils
     {
         assertEquals(expected, Utils.formatSizeString(header, color, size), "TEST WITH FORMAT SIZE");
     }
+
+    public static Stream<Arguments> getURLData()
+    {
+        return Stream.of(
+            Arguments.of("https://skorup.se/test/dont_exist", Optional.empty()),
+            Arguments.of("https://skorup.se/test/test_file1", Optional.of("Connection!")),
+            Arguments.of("https://skorup.se/test/empty", Optional.of(""))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getURLData")
+    public void testGetContentOfURL(String url, Optional<String> expected)
+    {
+        assertEquals(expected, Utils.getContentOfURL(url));
+    }
 }
