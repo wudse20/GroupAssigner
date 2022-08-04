@@ -26,6 +26,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ import static se.skorup.main.gui.components.CSVLabel.WISH_COLOR;
  * The frame that houses the custom CSV parsing
  * of groups.
  * */
-public class CSVFrame extends JFrame
+public class CSVFrame extends JFrame implements KeyListener
 {
     private static final String PERSON_INFO =
         "Välj en person, genom att klicka på den rutan som personer motsvarar!";
@@ -57,6 +59,8 @@ public class CSVFrame extends JFrame
 
     private State state = State.PERSON;
     private PersonLabelRecord wishPerson;
+
+    private boolean isCtrlDown = false;
 
     private final PersonLabelRecord[][] labels;
     private final String[][] data;
@@ -112,6 +116,7 @@ public class CSVFrame extends JFrame
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(1600, 900));
+        this.addKeyListener(this);
 
         cp.setLayout(new BorderLayout());
         cp.setBackground(Utils.BACKGROUND_COLOR);
@@ -129,8 +134,16 @@ public class CSVFrame extends JFrame
                 label.addEnterEffect(c -> {
                     c.setSavedBackground(c.getBackground());
                     c.setBackground(Utils.SELECTED_COLOR);
+
+                    if (isCtrlDown)
+                        clicked(c);
+
+                    this.requestFocus();
                 });
-                label.addExitEffect(c -> c.setBackground(c.getSavedBackground()));
+                label.addExitEffect(c -> {
+                    c.setBackground(c.getSavedBackground());
+                    this.requestFocus();
+                });
                 label.addActionCallback(this::clicked);
                 pCSV.add(label);
                 labels[i][ii] = new PersonLabelRecord(label, null);
@@ -315,6 +328,7 @@ public class CSVFrame extends JFrame
             }
 
             l.setState(State.UNSELECTED);
+            labels[x][y] = labels[x][y].swapPerson(null);
         }
         else // Selection
         {
@@ -439,6 +453,8 @@ public class CSVFrame extends JFrame
      * */
     private void clicked(CSVLabel label)
     {
+        this.requestFocus();
+
         switch (state)
         {
             case PERSON -> handlePerson(
@@ -466,6 +482,24 @@ public class CSVFrame extends JFrame
     {
         if (ac != null)
             callbacks.add(ac);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e)
+    {
+        this.isCtrlDown = e.isControlDown();
+
+        if (isCtrlDown)
+            DebugMethods.log("Control is down!", DebugMethods.LogType.DEBUG);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+        this.isCtrlDown = e.isControlDown();
     }
 
     /** The record for keeping tack on label and person relationship. */
