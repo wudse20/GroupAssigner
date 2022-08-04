@@ -52,7 +52,11 @@ public class Utils
 
     /** The about string. */
     public static final String ABOUT =
-            "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
+        "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
+
+    /** The url of the version. */
+    public static final String VERSION_URL =
+        "https://www.skorup.se/top_secret/secret_please_dont_steal_you_will_not_gain_anything_from_this";
 
     /** The regex pattern for a double. Stolen from: https://stackoverflow.com/a/16078719 */
     private static final Pattern DOUBLE_PATTERN = Pattern.compile(
