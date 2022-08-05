@@ -425,7 +425,8 @@ public class CSVFrame extends JFrame implements KeyListener
             for (var i = 0; i < selected.length; i++)
             {
                 var label = labels[x][i].label();
-                handlePersonSelectionLogic(x, i, p, label);
+                var person = labels[x][i].p();
+                handlePersonSelectionLogic(x, i, person, label);
             }
         }
 

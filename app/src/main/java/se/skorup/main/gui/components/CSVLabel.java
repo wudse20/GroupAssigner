@@ -259,6 +259,6 @@ public class CSVLabel extends JLabel implements MouseListener
     @Override
     public String toString()
     {
-        return getText();
+        return "%s (%s)".formatted(getText(), getState());
     }
 }
