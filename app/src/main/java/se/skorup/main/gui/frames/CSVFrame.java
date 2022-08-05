@@ -204,6 +204,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioColumn.setSelected(false);
         radioColumn.setFont(font);
         radioColumn.addActionListener(e -> fs = FrameState.FILL_COLUMN);
+        radioColumn.addActionListener(e -> wishDeactivation());
 
         radioRow.setSelected(true);
         radioRow.setBackground(Utils.BACKGROUND_COLOR);
@@ -211,15 +212,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioRow.setSelected(false);
         radioRow.setFont(font);
         radioRow.addActionListener(e -> fs = FrameState.FILL_ROW);
-        radioRow.addActionListener(e -> {
-            radioWish.setEnabled(false);
-
-            if (state.equals(State.WISH))
-            {
-                radioPerson.setSelected(true);
-                state = State.PERSON;
-            }
-        });
+        radioRow.addActionListener(e -> wishDeactivation());
 
         radioTemplate.setSelected(true);
         radioTemplate.setBackground(Utils.BACKGROUND_COLOR);
@@ -297,6 +290,20 @@ public class CSVFrame extends JFrame implements KeyListener
     }
 
     /**
+     * The code for deactivating wishes.
+     * */
+    private void wishDeactivation()
+    {
+        radioWish.setEnabled(false);
+
+        if (state.equals(State.WISH))
+        {
+            radioPerson.setSelected(true);
+            state = State.PERSON;
+        }
+    }
+
+    /**
      * Handles hover enter foreach CSVLabel.
      *
      * @param c the label itself.
@@ -328,10 +335,26 @@ public class CSVFrame extends JFrame implements KeyListener
                 selected[i] = l;
             }
         }
+        else if (fs.equals(FrameState.FILL_COLUMN))
+        {
+            var cols = data.length;
+            selected = new CSVLabel[cols];
+
+            for (var i = 0; i < selected.length; i++)
+            {
+                var l = labels[i][y].label();
+                l.setSavedBackground(l.getBackground());
+                l.setBackground(Utils.SELECTED_COLOR);
+                selected[i] = l;
+            }
+        }
 
         this.requestFocus();
     }
 
+    /**
+     * The code that runs on hover exit.
+     * */
     private void hoverExit()
     {
         for (var l : selected)
@@ -427,6 +450,15 @@ public class CSVFrame extends JFrame implements KeyListener
                 var label = labels[x][i].label();
                 var person = labels[x][i].p();
                 handlePersonSelectionLogic(x, i, person, label);
+            }
+        }
+        else if (fs.equals(FrameState.FILL_COLUMN)) // Fill column
+        {
+            for (var i = 0; i < selected.length; i++)
+            {
+                var label = labels[i][y].label();
+                var person = labels[i][y].p();
+                handlePersonSelectionLogic(i, y, person, label);
             }
         }
 
@@ -587,6 +619,13 @@ public class CSVFrame extends JFrame implements KeyListener
             for (int i = 0; i < selected.length; i++)
             {
                 skipDeselectionLogic(x, i);
+            }
+        }
+        else if (fs.equals(FrameState.FILL_COLUMN)) // Filling column
+        {
+            for (int i = 0; i < selected.length; i++)
+            {
+                skipDeselectionLogic(i, y);
             }
         }
 
