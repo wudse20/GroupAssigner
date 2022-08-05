@@ -78,6 +78,8 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private final JButton btnCancel = new JButton("Avbryt");
     private final JButton btnAdd = new JButton("Lägg till");
+    private final JButton btnCreateTemplate = new JButton("Skapa mall");
+    private final JButton btnFinishTemplate = new JButton("Avsluta mall");
 
     private final JRadioButton radioPerson = new JRadioButton("   Välj en person           ");
     private final JRadioButton radioWish = new JRadioButton("   Välj en önskning         ");
@@ -90,6 +92,7 @@ public class CSVFrame extends JFrame implements KeyListener
     private final ButtonGroup bgMode = new ButtonGroup();
     private final ButtonGroup bgEditMode = new ButtonGroup();
 
+
     private final JLabel lblInfo = new JLabel(WISH_INFO);
 
     private final JPanel pCSV = new JPanel();
@@ -97,6 +100,7 @@ public class CSVFrame extends JFrame implements KeyListener
     private final JPanel pSelector = new JPanel();
     private final JPanel pInfo = new JPanel();
     private final JPanel pEditMode = new JPanel();
+    private final JPanel pTemplateButtons = new JPanel();
 
     private final JScrollPane scrCSV = new JScrollPane(pCSV);
 
@@ -234,6 +238,17 @@ public class CSVFrame extends JFrame implements KeyListener
 
         pEditMode.setBackground(Utils.BACKGROUND_COLOR);
         pEditMode.setLayout(new BoxLayout(pEditMode, BoxLayout.Y_AXIS));
+
+        pTemplateButtons.setBackground(Utils.BACKGROUND_COLOR);
+        pTemplateButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        btnCreateTemplate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnCreateTemplate.setForeground(Utils.FOREGROUND_COLOR);
+        btnCreateTemplate.setEnabled(false);
+
+        btnFinishTemplate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnFinishTemplate.setForeground(Utils.FOREGROUND_COLOR);
+        btnFinishTemplate.setEnabled(false);
     }
 
     /**
@@ -247,11 +262,20 @@ public class CSVFrame extends JFrame implements KeyListener
         cont.add(new JLabel("   "));
         cont.add(pInfo);
 
+        var cont3 = new JPanel();
+        cont3.setBackground(Utils.BACKGROUND_COLOR);
+        cont3.setLayout(new BoxLayout(cont3, BoxLayout.Y_AXIS));
+        cont3.add(new JLabel(" "));
+        cont3.add(new JLabel(" "));
+        cont3.add(new JLabel(" "));
+        cont3.add(pTemplateButtons);
+
         var innerCont2 = new JPanel();
-        innerCont2.setLayout(new GridLayout(2, 1));
+        innerCont2.setLayout(new GridLayout(3, 1));
         innerCont2.setBackground(Utils.BACKGROUND_COLOR);
         innerCont2.add(pSelector);
         innerCont2.add(pEditMode);
+        innerCont2.add(cont3);
 
         var cont2 = new JPanel();
         cont2.setBackground(Utils.BACKGROUND_COLOR);
@@ -259,6 +283,10 @@ public class CSVFrame extends JFrame implements KeyListener
         cont2.add(new JLabel("   "));
         cont2.add(innerCont2);
         cont2.add(new JLabel("   "));
+
+        pTemplateButtons.add(btnCreateTemplate);
+        pTemplateButtons.add(new JLabel(" ".repeat(10)));
+        pTemplateButtons.add(btnFinishTemplate);
 
         pButtons.add(btnCancel);
         pButtons.add(btnAdd);
