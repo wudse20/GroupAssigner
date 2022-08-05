@@ -431,6 +431,7 @@ public class CSVFrame extends JFrame implements KeyListener
         }
 
         DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Wishes:  %s", wishes);
     }
 
     /**
@@ -477,8 +478,9 @@ public class CSVFrame extends JFrame implements KeyListener
      * @param y the y-coord of the existing person.
      * @param p the already existing person
      * @param l the label that's affected.
+     * @return the person that has been found or created.
      * */
-    private void handleAlreadyExistingPerson(int x, int y, Person p, CSVLabel l)
+    private Person handleAlreadyExistingPerson(int x, int y, Person p, CSVLabel l)
     {
         if (p == null)
         {
@@ -494,6 +496,8 @@ public class CSVFrame extends JFrame implements KeyListener
         }
 
         labels[x][y] = labels[x][y].swapPerson(p);
+
+        return p;
     }
 
     /**
@@ -521,7 +525,7 @@ public class CSVFrame extends JFrame implements KeyListener
         {
             l.setSavedBackground(PERSON_COLOR);
             l.setBackground(PERSON_COLOR);
-            handleAlreadyExistingPerson(x, y, p, l);
+            p = handleAlreadyExistingPerson(x, y, p, l);
             wishPerson = labels[x][y];
             wishes.put(p, wishes.getOrDefault(p, new HashSet<>()));
             l.startFlashing(500, PERSON_COLOR, WISH_COLOR);
@@ -549,7 +553,7 @@ public class CSVFrame extends JFrame implements KeyListener
         else if (
             s.equals(State.WISH) && wishPerson != null && wishPerson != pr &&
             wishes.getOrDefault(wishPerson.p, new HashSet<>()).contains(pr)
-        ) // Removing wish.
+        ) // Removing wish when selected wish person.
         {
             var set = wishes.getOrDefault(wishPerson.p(), new HashSet<>());
             set.remove(pr);
@@ -576,20 +580,46 @@ public class CSVFrame extends JFrame implements KeyListener
     {
         if (fs.equals(FrameState.NORMAL)) // Normal selection.
         {
-            if (labels[x][y].label().getState().equals(State.SKIP))
-                labels[x][y].label().setState(State.UNSELECTED);
-            else
-                labels[x][y].label().setState(State.SKIP);
+            skipDeselectionLogic(x, y);
         }
         else if (fs.equals(FrameState.FILL_ROW)) // Filling row
         {
             for (int i = 0; i < selected.length; i++)
             {
-                if (labels[x][i].label().getState().equals(State.SKIP))
-                    labels[x][i].label().setState(State.UNSELECTED);
-                else
-                    labels[x][i].label().setState(State.SKIP);
+                skipDeselectionLogic(x, i);
             }
+        }
+
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Persons: %s", persons);
+        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Wishes:  %s", wishes);
+    }
+
+    /**
+     * The logic for deselecting when using the skip
+     * state.
+     *
+     * @param x the x-coord of the label.
+     * @param y the y-coord of the label.
+     * */
+    private void skipDeselectionLogic(int x, int y)
+    {
+        var l = labels[x][y].label();
+        var p = labels[x][y].p();
+
+        if (l.getState().equals(State.SKIP))
+        {
+            l.setState(State.UNSELECTED);
+        }
+        else
+        {
+            if (l.getState().equals(State.PERSON))
+                handlePersonSelectionLogic(x, y, p, l);
+            else if (l.getState().equals(State.WISH) && wishPerson != null)
+                handleWish(x, y);
+            else if (l.getState().equals(State.WISH))
+                return;
+
+            l.setState(State.SKIP);
         }
     }
 
