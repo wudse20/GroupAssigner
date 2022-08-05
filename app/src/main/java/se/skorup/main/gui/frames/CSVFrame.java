@@ -78,6 +78,7 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private final JButton btnCancel = new JButton("Avbryt");
     private final JButton btnAdd = new JButton("Lägg till");
+    private final JButton btnHelp = new JButton("Hjälp!");
     private final JButton btnCreateTemplate = new JButton("Skapa mall");
     private final JButton btnFinishTemplate = new JButton("Avsluta mall");
 
@@ -164,6 +165,10 @@ public class CSVFrame extends JFrame implements KeyListener
         btnCancel.setForeground(Utils.FOREGROUND_COLOR);
         btnCancel.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCancel.addActionListener(e -> this.dispose());
+
+        btnHelp.setForeground(Utils.FOREGROUND_COLOR);
+        btnHelp.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnHelp.addActionListener(e -> Utils.openHelpPages());
 
         pSelector.setBackground(Utils.BACKGROUND_COLOR);
         pSelector.setLayout(new BoxLayout(pSelector, BoxLayout.Y_AXIS));
@@ -288,6 +293,7 @@ public class CSVFrame extends JFrame implements KeyListener
         pTemplateButtons.add(new JLabel(" ".repeat(10)));
         pTemplateButtons.add(btnFinishTemplate);
 
+        pButtons.add(btnHelp);
         pButtons.add(btnCancel);
         pButtons.add(btnAdd);
         pButtons.add(new JLabel(" "));
