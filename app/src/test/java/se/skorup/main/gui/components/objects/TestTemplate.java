@@ -112,4 +112,16 @@ public class TestTemplate
         if (b != null)
             assertEquals(expected, b.equals(a), "b.equals(a)");
     }
+
+    @ParameterizedTest
+    @MethodSource("getAddingData")
+    public void testIsEmpty(List<TemplateItem> items, int expectedSize)
+    {
+        var template = new Template(0);
+
+        for (var i : items)
+            template.addTemplateItem(i);
+
+        assertEquals(expectedSize == 0, template.isEmpty());
+    }
 }
