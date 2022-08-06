@@ -5,6 +5,8 @@ import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.CSVLabel;
 import se.skorup.main.gui.components.enums.State;
+import se.skorup.main.gui.components.objects.Template;
+import se.skorup.main.gui.components.objects.TemplateItem;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
@@ -60,8 +62,10 @@ public class CSVFrame extends JFrame implements KeyListener
     private State state = State.PERSON;
     private FrameState fs = FrameState.NORMAL;
     private PersonLabelRecord wishPerson;
+    private  Template template;
 
     private boolean isCtrlDown = false;
+    private boolean flashing = false;
 
     private CSVLabel[] selected = new CSVLabel[0];
 
@@ -92,7 +96,6 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private final ButtonGroup bgMode = new ButtonGroup();
     private final ButtonGroup bgEditMode = new ButtonGroup();
-
 
     private final JLabel lblInfo = new JLabel(WISH_INFO);
 
@@ -231,6 +234,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE_CREATING);
         radioTemplate.addActionListener(e -> radioWish.setEnabled(true));
         radioTemplate.addActionListener(e -> setLabelInfoText());
+        radioTemplate.addActionListener(e -> template = null);
 
         bgEditMode.add(radioNormal);
         bgEditMode.add(radioColumn);
@@ -364,7 +368,7 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private void hoverEnter(CSVLabel c, int x, int y)
     {
-        if (fs.equals(FrameState.NORMAL))
+        if (fs.equals(FrameState.NORMAL) || fs.equals(FrameState.FILL_TEMPLATE_CREATING))
         {
             c.setSavedBackground(c.getBackground());
             c.setBackground(Utils.SELECTED_COLOR);
@@ -721,24 +725,67 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private void clicked(CSVLabel label)
     {
-        this.requestFocus();
-
-        switch (state)
+        if (fs.equals(FrameState.FILL_TEMPLATE_CREATING))
         {
-            case PERSON -> handlePerson(
-                label.getXCoordinate(),
-                label.getYCoordinate()
-            );
-            case WISH -> handleWish(
-                label.getXCoordinate(),
-                label.getYCoordinate()
-            );
-            case SKIP -> handleSkip(
-                label.getXCoordinate(),
-                label.getYCoordinate()
-            );
-            default -> label.setState(state);
+            if (template == null)
+            {
+                template = new Template(label.getXCoordinate());
+                flashing = false;
+            }
+
+            template.addTemplateItem(new TemplateItem(state, label.getYCoordinate()));
+            btnFinishTemplate.setEnabled(true);
+            DebugMethods.log(template, DebugMethods.LogType.DEBUG);
+            DebugMethods.logF(DebugMethods.LogType.DEBUG, "State: %s, Label: %s", label.getState(), label);
+
+            if (
+                state.equals(State.WISH) && !flashing &&
+                (label.getSavedBackground().equals(UNSELECTED_COLOR) ||
+                 label.getSavedBackground().equals(PERSON_COLOR))
+            )
+            {
+                flashing = true;
+                label.startFlashing(500, PERSON_COLOR, WISH_COLOR);
+            }
+            else if (label.isFlashing())
+            {
+                flashing = false;
+                label.stopFlashing();
+                label.setSavedBackground(PERSON_COLOR);
+                label.setBackground(PERSON_COLOR);
+            }
+            else if (!label.getSavedBackground().equals(UNSELECTED_COLOR))
+            {
+                label.setBackground(UNSELECTED_COLOR);
+                label.setSavedBackground(UNSELECTED_COLOR);
+            }
+            else
+            {
+                label.setBackground(state.color);
+                label.setSavedBackground(state.color);
+            }
         }
+        else
+        {
+            switch (state)
+            {
+                case PERSON -> handlePerson(
+                        label.getXCoordinate(),
+                        label.getYCoordinate()
+                );
+                case WISH -> handleWish(
+                        label.getXCoordinate(),
+                        label.getYCoordinate()
+                );
+                case SKIP -> handleSkip(
+                        label.getXCoordinate(),
+                        label.getYCoordinate()
+                );
+                default -> label.setState(state);
+            }
+        }
+
+        this.requestFocus();
     }
 
     /**

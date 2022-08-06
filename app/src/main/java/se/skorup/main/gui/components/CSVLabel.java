@@ -192,6 +192,21 @@ public class CSVLabel extends JLabel implements MouseListener
     }
 
     /**
+     * Check for if the labels flasher is
+     * running or not.
+     *
+     * @return {@code true} iff it's flashing,
+     *         {@code false} iff it isn't flashing.
+     * */
+    public boolean isFlashing()
+    {
+        if (t == null)
+            return false;
+
+        return t.isRunning();
+    }
+
+    /**
      * Setter for: State. <br><br>
      *
      * It will update the color of the label.
