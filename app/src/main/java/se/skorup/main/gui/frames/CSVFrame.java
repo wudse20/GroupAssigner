@@ -68,6 +68,7 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private boolean isCtrlDown = false;
     private boolean flashing = false;
+    private boolean hasClickedTemplate = false;
 
     private CSVLabel[] selected = new CSVLabel[0];
 
@@ -366,8 +367,14 @@ public class CSVFrame extends JFrame implements KeyListener
         if (template == null)
             return;
 
-        for (var i : template)
-            labels[template.getY()][i.x()].label.setState(State.UNSELECTED);
+        if (!hasClickedTemplate)
+        {
+            for (var i : template)
+            {
+                labels[template.getY()][i.x()].label()
+                                              .setState(State.UNSELECTED);
+            }
+        }
 
         template = null;
 
@@ -793,10 +800,14 @@ public class CSVFrame extends JFrame implements KeyListener
     {
         if (fs.equals(FrameState.FILL_TEMPLATE_CREATING))
         {
+            if (template != null && label.getXCoordinate() != template.getY())
+                return;
+
             if (template == null)
             {
                 template = new Template(label.getXCoordinate());
                 flashing = false;
+                hasClickedTemplate = false;
             }
 
             template.addTemplateItem(new TemplateItem(state, label.getYCoordinate()));
@@ -830,6 +841,32 @@ public class CSVFrame extends JFrame implements KeyListener
                 label.setBackground(state.color);
                 label.setSavedBackground(state.color);
             }
+        }
+        else if (fs.equals(FrameState.FILL_TEMPLATE_CREATED))
+        {
+            // Save org. state.
+            var orgState = state;
+
+            // Templates will be added as if they are entered in normal mode.
+            fs = FrameState.NORMAL;
+
+            hasClickedTemplate = true;
+
+            for (var i : template)
+            {
+                DebugMethods.logF(DebugMethods.LogType.DEBUG, "Handling item: %s", i);
+
+                state = i.state();
+
+                var label1 = labels[label.getXCoordinate()][i.x()].label;
+                clicked(label1);
+
+                DebugMethods.logF(DebugMethods.LogType.DEBUG, "Label just handled: %s", label1);
+            }
+
+            // Reset state.
+            fs = FrameState.FILL_TEMPLATE_CREATED;
+            state = orgState;
         }
         else
         {
