@@ -77,6 +77,7 @@ public class CSVFrame extends JFrame implements KeyListener
     private final List<ActionCallbackWithParam<GroupManager>> callbacks = new ArrayList<>();
     private final Set<Person> persons = new HashSet<>();
     private final Map<Person, Set<PersonLabelRecord>> wishes = new HashMap<>();
+    private final Map<Person, Integer> personCount = new HashMap<>();
 
     private final GroupManager gm = new GroupManager("");
 
@@ -606,8 +607,7 @@ public class CSVFrame extends JFrame implements KeyListener
     {
         if (label.getState().equals(State.PERSON)) // Deselection.
         {
-            persons.remove(p);
-            gm.removePerson(p.getId());
+            safeRemovePerson(p);
             label.setSavedBackground(UNSELECTED_COLOR);
             label.setBackground(UNSELECTED_COLOR);
             var wishes =
@@ -619,6 +619,7 @@ public class CSVFrame extends JFrame implements KeyListener
                 plr.label().setSavedBackground(Color.WHITE);
                 plr.label().setBackground(Color.WHITE);
                 plr.label().setState(State.UNSELECTED);
+                personCount.put(plr.p, personCount.getOrDefault(plr.p, 1) - 1);
             }
 
             label.setState(State.UNSELECTED);
@@ -659,16 +660,39 @@ public class CSVFrame extends JFrame implements KeyListener
             {
                 p = gm.registerPerson(l.getText(), Person.Role.CANDIDATE);
                 persons.add(p);
+                personCount.put(p, personCount.getOrDefault(p, 0) + 1);
             }
             else
             {
                 p = gm.getPersonFromName(l.getText()).get(0);
+                personCount.put(p, personCount.getOrDefault(p, 0) + 1);
             }
         }
 
         labels[x][y] = labels[x][y].swapPerson(p);
 
         return p;
+    }
+
+    /**
+     * Safely removes a person.
+     *
+     * @param p the person to be removed.
+     * */
+    private void safeRemovePerson(Person p)
+    {
+        var count = personCount.getOrDefault(p, 0) - 1;
+
+        if (count <= 0)
+        {
+            persons.remove(p);
+            personCount.remove(p);
+            gm.removePerson(p.getId());
+        }
+        else
+        {
+            personCount.put(p, count);
+        }
     }
 
     /**
