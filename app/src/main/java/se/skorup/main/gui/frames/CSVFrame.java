@@ -10,7 +10,6 @@ import se.skorup.main.gui.components.objects.TemplateItem;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
-import se.skorup.main.objects.Tuple;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -627,8 +626,10 @@ public class CSVFrame extends JFrame implements KeyListener
         }
         else // Selection
         {
-            handleAlreadyExistingPerson(x, y, p, label);
-            label.setState(State.PERSON);
+            p = handleAlreadyExistingPerson(x, y, p, label);
+
+            if (p != null)
+                label.setState(State.PERSON);
         }
     }
 
@@ -643,6 +644,15 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private Person handleAlreadyExistingPerson(int x, int y, Person p, CSVLabel l)
     {
+        if (l.getText().trim().length() < 2)
+        {
+            JOptionPane.showMessageDialog(
+                this, "Namnet måste vara minst 2 bokstäver långt.",
+                "För kort namn", JOptionPane.ERROR_MESSAGE
+            );
+            return null;
+        }
+
         if (p == null)
         {
             if (gm.getPersonFromName(l.getText()).isEmpty())
@@ -684,9 +694,13 @@ public class CSVFrame extends JFrame implements KeyListener
         }
         else if (s.equals(State.UNSELECTED) && wishPerson == null && !persons.contains(p)) // First wish person and someone isn't a person
         {
+            p = handleAlreadyExistingPerson(x, y, p, l);
+
+            if (p == null)
+                return;
+
             l.setSavedBackground(PERSON_COLOR);
             l.setBackground(PERSON_COLOR);
-            p = handleAlreadyExistingPerson(x, y, p, l);
             wishPerson = labels[x][y];
             wishes.put(p, wishes.getOrDefault(p, new HashSet<>()));
             l.startFlashing(500, PERSON_COLOR, WISH_COLOR);
@@ -706,7 +720,11 @@ public class CSVFrame extends JFrame implements KeyListener
         {
             var set = wishes.getOrDefault(wishPerson.p(), new HashSet<>());
 
-            handleAlreadyExistingPerson(x, y, p, l);
+            p = handleAlreadyExistingPerson(x, y, p, l);
+
+            if (p == null)
+                return;
+
             set.add(labels[x][y]);
             wishes.put(wishPerson.p(), set);
             l.setState(State.WISH);
@@ -942,6 +960,7 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private enum FrameState
     {
-        NORMAL, FILL_ROW, FILL_COLUMN, FILL_TEMPLATE_CREATING, FILL_TEMPLATE_CREATED
+        NORMAL, FILL_ROW, FILL_COLUMN,
+        FILL_TEMPLATE_CREATING, FILL_TEMPLATE_CREATED
     }
 }
