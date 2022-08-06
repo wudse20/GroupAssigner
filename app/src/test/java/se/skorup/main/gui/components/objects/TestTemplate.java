@@ -38,10 +38,10 @@ public class TestTemplate
     }
 
     public static Stream<Arguments> equalityTest() {
-        var t1 = new Template();
-        var t2 = new Template();
-        var t3 = new Template();
-        var t4 = new Template();
+        var t1 = new Template(0);
+        var t2 = new Template(0);
+        var t3 = new Template(0);
+        var t4 = new Template(0);
 
         var al1 = new ArrayList<TemplateItem>();
         var al2 = new ArrayList<TemplateItem>();
@@ -65,9 +65,9 @@ public class TestTemplate
             t4.addTemplateItem(i);
 
         return Stream.of(
-            Arguments.of(new Template(), new Template(), true),
-            Arguments.of(new Template(), new TemplateItem(State.WISH, 0), false),
-            Arguments.of(new Template(), null, false),
+            Arguments.of(new Template(0), new Template(0), true),
+            Arguments.of(new Template(0), new TemplateItem(State.WISH, 0), false),
+            Arguments.of(new Template(0), null, false),
             Arguments.of(t1, t2, true),
             Arguments.of(t1, t3, true),
             Arguments.of(t2, t3, true),
@@ -81,7 +81,7 @@ public class TestTemplate
     @MethodSource("getAddingData")
     public void testAdding(List<TemplateItem> items, int expectedSize)
     {
-        var template = new Template();
+        var template = new Template(0);
         var count = 0;
 
         assertEquals(count, template.size(), "Should be empty on creation.");
