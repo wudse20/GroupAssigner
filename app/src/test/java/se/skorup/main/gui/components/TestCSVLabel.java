@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.awt.Color;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +27,33 @@ public class TestCSVLabel
         );
     }
 
+    public static Stream<Arguments> getFlashingData()
+    {
+        var l1 = new CSVLabel("", 0, 0, null, null);
+        l1.startFlashing(100, Color.WHITE, Color.BLUE);
+
+        var l2 = new CSVLabel("", 0, 0, null, null);
+        l2.startFlashing(100, Color.WHITE, Color.BLUE);
+        l2.stopFlashing();
+
+        var l3 = new CSVLabel("", 0, 0, null, null);
+        l3.startFlashing(100, Color.WHITE, Color.BLUE);
+        l3.stopFlashing();
+        l3.startFlashing(100, Color.WHITE, Color.BLUE);
+
+        var l4 = new CSVLabel(",", 0, 0, null, null);
+        l4.stopFlashing();
+        l4.stopFlashing();
+
+        return Stream.of(
+            Arguments.of(new CSVLabel("", 0, 0, null, null), false),
+            Arguments.of(l1, true),
+            Arguments.of(l2, false),
+            Arguments.of(l3, true),
+            Arguments.of(l4, false)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("getEqualsData")
     public void testEquals(CSVLabel a, CSVLabel b, boolean expected)
@@ -38,5 +66,12 @@ public class TestCSVLabel
                 a.hashCode() == b.hashCode(), expected
             )
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getFlashingData")
+    public void testIsFlashing(CSVLabel label, boolean excepted)
+    {
+        assertEquals(excepted, label.isFlashing());
     }
 }

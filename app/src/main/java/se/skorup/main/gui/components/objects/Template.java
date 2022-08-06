@@ -10,12 +10,14 @@ import java.util.List;
 public class Template implements Iterable<TemplateItem>
 {
     private final List<TemplateItem> items;
+    private final int y;
 
     /**
      * Creates a new template.
      * */
-    public Template()
+    public Template(int y)
     {
+        this.y = y;
         this.items = new ArrayList<>();
     }
 
@@ -40,6 +42,16 @@ public class Template implements Iterable<TemplateItem>
         return items.size();
     }
 
+    /**
+     * Getter for: y
+     *
+     * @return the value of y.
+     * */
+    public int getY()
+    {
+        return y;
+    }
+
     @Override
     public int hashCode()
     {
@@ -56,7 +68,7 @@ public class Template implements Iterable<TemplateItem>
     @Override
     public String toString()
     {
-        return "Template: %s".formatted(items);
+        return "Template(%d): %s".formatted(y, items);
     }
 
     @Override
