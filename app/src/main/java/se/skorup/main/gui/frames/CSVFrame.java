@@ -10,6 +10,7 @@ import se.skorup.main.gui.components.objects.TemplateItem;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.Tuple;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -18,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -209,6 +211,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioNormal.setFont(font);
         radioNormal.addActionListener(e -> fs = FrameState.NORMAL);
         radioNormal.addActionListener(e -> radioWish.setEnabled(true));
+        radioNormal.addActionListener(e -> resetTemplate());
 
         radioColumn.setSelected(true);
         radioColumn.setBackground(Utils.BACKGROUND_COLOR);
@@ -217,6 +220,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioColumn.setFont(font);
         radioColumn.addActionListener(e -> fs = FrameState.FILL_COLUMN);
         radioColumn.addActionListener(e -> wishDeactivation());
+        radioColumn.addActionListener(e -> resetTemplate());
 
         radioRow.setSelected(true);
         radioRow.setBackground(Utils.BACKGROUND_COLOR);
@@ -225,6 +229,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioRow.setFont(font);
         radioRow.addActionListener(e -> fs = FrameState.FILL_ROW);
         radioRow.addActionListener(e -> wishDeactivation());
+        radioRow.addActionListener(e -> resetTemplate());
 
         radioTemplate.setSelected(true);
         radioTemplate.setBackground(Utils.BACKGROUND_COLOR);
@@ -234,7 +239,7 @@ public class CSVFrame extends JFrame implements KeyListener
         radioTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE_CREATING);
         radioTemplate.addActionListener(e -> radioWish.setEnabled(true));
         radioTemplate.addActionListener(e -> setLabelInfoText());
-        radioTemplate.addActionListener(e -> template = null);
+        radioTemplate.addActionListener(e -> resetTemplate());
 
         bgEditMode.add(radioNormal);
         bgEditMode.add(radioColumn);
@@ -256,10 +261,34 @@ public class CSVFrame extends JFrame implements KeyListener
         btnCreateTemplate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCreateTemplate.setForeground(Utils.FOREGROUND_COLOR);
         btnCreateTemplate.setEnabled(false);
+        btnCreateTemplate.addActionListener(e -> resetTemplate());
+        btnCreateTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE_CREATING);
 
         btnFinishTemplate.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnFinishTemplate.setForeground(Utils.FOREGROUND_COLOR);
         btnFinishTemplate.setEnabled(false);
+        btnFinishTemplate.addActionListener(e -> {
+            if (template.isEmpty())
+            {
+                JOptionPane.showMessageDialog(
+                    this, "Du måste ha minst en handling i mallen!",
+                    "För få handlingar", JOptionPane.ERROR_MESSAGE
+                );
+
+                return;
+            }
+
+            fs = FrameState.FILL_TEMPLATE_CREATED;
+            btnCreateTemplate.setEnabled(true);
+            btnFinishTemplate.setEnabled(false);
+
+            for (var i : template)
+            {
+                var label = labels[template.getY()][i.x()].label;
+                label.stopFlashing();
+                label.setState(State.UNSELECTED);
+            }
+        });
     }
 
     /**
@@ -327,6 +356,23 @@ public class CSVFrame extends JFrame implements KeyListener
         cp.add(scrCSV, BorderLayout.CENTER);
         cp.add(new JLabel("   "), BorderLayout.LINE_END);
         cp.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Resets the template and clears its selection.
+     * */
+    private void resetTemplate()
+    {
+        if (template == null)
+            return;
+
+        for (var i : template)
+            labels[template.getY()][i.x()].label.setState(State.UNSELECTED);
+
+        template = null;
+
+        btnCreateTemplate.setEnabled(false);
+        btnFinishTemplate.setEnabled(false);
     }
 
     /**
@@ -404,6 +450,25 @@ public class CSVFrame extends JFrame implements KeyListener
                 selected[i] = l;
             }
         }
+        else if (fs.equals(FrameState.FILL_TEMPLATE_CREATED))
+        {
+            selected = new CSVLabel[Math.min(data[0].length, template.size())];
+            var set = new HashSet<CSVLabel>();
+            var count = 0;
+
+            for (var i : template)
+            {
+                var l = labels[x][i.x()].label();
+
+                if (set.contains(l))
+                    continue;
+
+                set.add(l);
+                l.setSavedBackground(l.getState().color);
+                l.setBackground(Utils.SELECTED_COLOR);
+                selected[count++] = l;
+            }
+        }
 
         this.requestFocus();
     }
@@ -415,7 +480,8 @@ public class CSVFrame extends JFrame implements KeyListener
     {
         for (var l : selected)
         {
-            l.setBackground(l.getSavedBackground());
+            if (l != null)
+                l.setBackground(l.getSavedBackground());
         }
 
         this.requestFocus();
@@ -745,7 +811,7 @@ public class CSVFrame extends JFrame implements KeyListener
             )
             {
                 flashing = true;
-                label.startFlashing(500, PERSON_COLOR, WISH_COLOR);
+                label.startFlashing(500, WISH_COLOR, PERSON_COLOR);
             }
             else if (label.isFlashing())
             {

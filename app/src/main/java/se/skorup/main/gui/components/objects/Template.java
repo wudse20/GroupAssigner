@@ -52,6 +52,17 @@ public class Template implements Iterable<TemplateItem>
         return y;
     }
 
+    /**
+     * Checks if the template is empty.
+     *
+     * @return {@code false} iff it has any items,
+     *         {@code true} iff it has no items.
+     * */
+    public boolean isEmpty()
+    {
+        return size() == 0;
+    }
+
     @Override
     public int hashCode()
     {
