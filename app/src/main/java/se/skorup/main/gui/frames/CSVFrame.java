@@ -114,11 +114,11 @@ public class CSVFrame extends JFrame implements KeyListener
     /**
      * Creates a new CSVFrame.
      * */
-    public CSVFrame()
+    public CSVFrame(String[][] data)
     {
         super("Skapa grupper utifrån CSV");
 
-        this.data = loadFile();
+        this.data = data;
         this.labels = new PersonLabelRecord[data.length][data.length];
 
         this.setProperties();
@@ -519,30 +519,6 @@ public class CSVFrame extends JFrame implements KeyListener
             this.invokeCallbacks(res);
             this.dispose();
         });
-    }
-
-    /**
-     * Loads the file from the system and returns
-     * the CSV-file as a 2D-matrix. It will also
-     * allow the user to select the file.
-     *
-     * @return the loaded file from the data.
-     * */
-    private String[][] loadFile()
-    {
-        var fc = new JFileChooser(".");
-        fc.setMultiSelectionEnabled(false);
-        var selection = fc.showDialog(this, "Välj");
-
-        if (selection == JFileChooser.APPROVE_OPTION)
-        {
-            var f = fc.getSelectedFile();
-            return CSVParser.parseCSV(f.getAbsolutePath());
-        }
-        else
-        {
-            return new String[0][0];
-        }
     }
 
     /**
