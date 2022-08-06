@@ -2,12 +2,10 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.CSVParser;
 import se.skorup.API.util.DebugMethods;
-import se.skorup.API.util.FormsParser;
-import se.skorup.API.util.MyFileReader;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.AddGroupFrame;
-import se.skorup.main.gui.frames.CSVFrame;
 import se.skorup.main.gui.frames.EditGroupFrame;
+import se.skorup.main.gui.frames.ImportFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.GroupManager;
 
@@ -22,8 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +31,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     /** The enum for the different buttons. */
     private enum Buttons
     {
-        ADD, EDIT, DELETE, IMPORT_FORMS, IMPORT_CSV
+        ADD, EDIT, DELETE, IMPORT
     }
 
     private final List<GroupManager> managers;
@@ -47,8 +43,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     private final JButton btnAdd = new JButton("Skapa en ny grupp");
     private final JButton btnEdit = new JButton("Ändra denna grupp");
     private final JButton btnDelete = new JButton("Ta bort denna grupp");
-    private final JButton btnImportForms = new JButton("Importera från Google Forms");
-    private final JButton btnImportCSV = new JButton("Importera från CSV-fil");
+    private final JButton btnImport = new JButton("Importera");
 
     private final FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 
@@ -95,15 +90,10 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         btnDelete.setActionCommand(Buttons.DELETE.toString());
         btnDelete.addActionListener(this);
 
-        btnImportForms.setForeground(Utils.FOREGROUND_COLOR);
-        btnImportForms.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnImportForms.setActionCommand(Buttons.IMPORT_FORMS.toString());
-        btnImportForms.addActionListener(this);
-
-        btnImportCSV.setForeground(Utils.FOREGROUND_COLOR);
-        btnImportCSV.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        btnImportCSV.setActionCommand(Buttons.IMPORT_CSV.toString());
-        btnImportCSV.addActionListener(this);
+        btnImport.setForeground(Utils.FOREGROUND_COLOR);
+        btnImport.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
+        btnImport.setActionCommand(Buttons.IMPORT.toString());
+        btnImport.addActionListener(this);
 
         this.updateManagers();
     }
@@ -115,34 +105,9 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
     {
         this.add(cbManagers);
         this.add(btnAdd);
-        this.add(btnImportCSV);
-        this.add(btnImportForms);
+        this.add(btnImport);
         this.add(btnEdit);
         this.add(btnDelete);
-    }
-
-    /**
-     * Loads the file from the system and returns
-     * the CSV-file as a 2D-matrix. It will also
-     * allow the user to select the file.
-     *
-     * @return the loaded file from the data.
-     * */
-    private String[][] loadFile()
-    {
-        var fc = new JFileChooser(".");
-        fc.setMultiSelectionEnabled(false);
-        var selection = fc.showDialog(this, "Välj");
-
-        if (selection == JFileChooser.APPROVE_OPTION)
-        {
-            var f = fc.getSelectedFile();
-            return CSVParser.parseCSV(f.getAbsolutePath());
-        }
-        else
-        {
-            return new String[0][0];
-        }
     }
 
     /**
@@ -230,52 +195,9 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
             if (input == JOptionPane.YES_OPTION)
                 mf.removeCurrentGroupManager();
         }
-        else if (cmd.equals(Buttons.IMPORT_FORMS.toString()))
+        else if (cmd.equals(Buttons.IMPORT.toString()))
         {
-            var fc = new JFileChooser(".");
-            fc.setMultiSelectionEnabled(true);
-            var selection = fc.showDialog(mf, "Välj");
-
-            if (selection == JFileChooser.APPROVE_OPTION)
-            {
-                var sb = new StringBuilder();
-                for (var f : fc.getSelectedFiles())
-                    sb.append(f.getName()).append(" + ");
-
-                var result = new GroupManager(sb.substring(0, sb.length() - 3));
-
-                try
-                {
-                    for (var str : MyFileReader.readFiles(fc.getSelectedFiles()))
-                        FormsParser.parseFormData(str, result);
-                }
-                catch (IOException ex)
-                {
-                    DebugMethods.log(ex, DebugMethods.LogType.ERROR);
-                    JOptionPane.showMessageDialog(
-                        this,
-                        "Kunde inte läsa fil!\nFelmeddelande%s".formatted(ex.getLocalizedMessage()),
-                        "Kunde inte läsa fil", JOptionPane.ERROR_MESSAGE
-                    );
-                }
-
-                mf.addGroupManager(result);
-                this.updateManagers();
-            }
-        }
-        else if (cmd.equals(Buttons.IMPORT_CSV.toString()))
-        {
-            var data = loadFile();
-
-            if (Arrays.deepEquals(data, new String[0][0]))
-                return;
-
-            var frame = new CSVFrame(data);
-            frame.addActionCallback(gm -> {
-                mf.addGroupManager(gm);
-                this.updateManagers();
-                frame.dispose();
-            });
+            new ImportFrame(mf, this);
         }
     }
 }
