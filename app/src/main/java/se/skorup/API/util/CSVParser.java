@@ -65,8 +65,8 @@ public class CSVParser
                                .map(l -> l.stream().map(Utils::toNameCase).toList())
                                .map(l -> l.toArray(new String[0]))
                                .toArray(String[][]::new);
-        }
-        catch (IOException e)
+        } // Catching IndexOutOfBounds, since if it isn't a CSV file it will most likely be thrown.
+        catch (IOException | IndexOutOfBoundsException e)
         {
             DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
             return new String[0][0];

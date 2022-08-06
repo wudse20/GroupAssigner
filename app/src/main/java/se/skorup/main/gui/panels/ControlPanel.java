@@ -1,5 +1,6 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.util.CSVParser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.FormsParser;
 import se.skorup.API.util.MyFileReader;
@@ -22,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -117,6 +119,30 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         this.add(btnImportForms);
         this.add(btnEdit);
         this.add(btnDelete);
+    }
+
+    /**
+     * Loads the file from the system and returns
+     * the CSV-file as a 2D-matrix. It will also
+     * allow the user to select the file.
+     *
+     * @return the loaded file from the data.
+     * */
+    private String[][] loadFile()
+    {
+        var fc = new JFileChooser(".");
+        fc.setMultiSelectionEnabled(false);
+        var selection = fc.showDialog(this, "Välj");
+
+        if (selection == JFileChooser.APPROVE_OPTION)
+        {
+            var f = fc.getSelectedFile();
+            return CSVParser.parseCSV(f.getAbsolutePath());
+        }
+        else
+        {
+            return new String[0][0];
+        }
     }
 
     /**
@@ -239,7 +265,12 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         }
         else if (cmd.equals(Buttons.IMPORT_CSV.toString()))
         {
-            var frame = new CSVFrame();
+            var data = loadFile();
+
+            if (Arrays.deepEquals(data, new String[0][0]))
+                return;
+
+            var frame = new CSVFrame(data);
             frame.addActionCallback(gm -> {
                 mf.addGroupManager(gm);
                 this.updateManagers();
