@@ -174,21 +174,21 @@ public class CSVFrame extends JFrame implements KeyListener
         pSelector.setLayout(new BoxLayout(pSelector, BoxLayout.Y_AXIS));
 
         var font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
-        radioPerson.addActionListener(e -> lblInfo.setText(PERSON_INFO));
+        radioPerson.addActionListener(e -> setLabelInfoText());
         radioPerson.addActionListener(e -> state = State.PERSON);
         radioPerson.setSelected(true);
         radioPerson.setForeground(Color.BLACK);
         radioPerson.setBackground(PERSON_COLOR);
         radioPerson.setFont(font);
 
-        radioWish.addActionListener(e -> lblInfo.setText(WISH_INFO));
+        radioWish.addActionListener(e -> setLabelInfoText());
         radioWish.addActionListener(e -> state = State.WISH);
         radioWish.setSelected(false);
         radioWish.setForeground(Color.BLACK);
         radioWish.setBackground(WISH_COLOR);
         radioWish.setFont(font);
 
-        radioSkip.addActionListener(e -> lblInfo.setText(SKIP_INFO));
+        radioSkip.addActionListener(e -> setLabelInfoText());
         radioSkip.addActionListener(e -> state = State.SKIP);
         radioSkip.setSelected(false);
         radioSkip.setForeground(Color.BLACK);
@@ -228,7 +228,9 @@ public class CSVFrame extends JFrame implements KeyListener
         radioTemplate.setForeground(Utils.FOREGROUND_COLOR);
         radioTemplate.setSelected(true);
         radioTemplate.setFont(font);
-        radioTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE);
+        radioTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE_CREATING);
+        radioTemplate.addActionListener(e -> radioWish.setEnabled(true));
+        radioTemplate.addActionListener(e -> setLabelInfoText());
 
         bgEditMode.add(radioNormal);
         bgEditMode.add(radioColumn);
@@ -321,6 +323,22 @@ public class CSVFrame extends JFrame implements KeyListener
         cp.add(scrCSV, BorderLayout.CENTER);
         cp.add(new JLabel("   "), BorderLayout.LINE_END);
         cp.add(pButtons, BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Sets the correct text for the info label.
+     * */
+    private void setLabelInfoText()
+    {
+        lblInfo.setText(
+            switch (state)
+            {
+                case PERSON -> PERSON_INFO;
+                case WISH -> WISH_INFO;
+                case SKIP -> SKIP_INFO;
+                default -> "";
+            }
+        );
     }
 
     /**
@@ -774,6 +792,6 @@ public class CSVFrame extends JFrame implements KeyListener
 
     private enum FrameState
     {
-        NORMAL, FILL_ROW, FILL_COLUMN, FILL_TEMPLATE
+        NORMAL, FILL_ROW, FILL_COLUMN, FILL_TEMPLATE_CREATING, FILL_TEMPLATE_CREATED
     }
 }
