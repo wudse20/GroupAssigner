@@ -77,11 +77,11 @@ public class ImportFrame extends JFrame
         lblInfo.setForeground(Utils.FOREGROUND_COLOR);
 
         btnCSVParsing.setForeground(Utils.FOREGROUND_COLOR);
-        btnCSVParsing.setBackground(Utils.BACKGROUND_COLOR);
+        btnCSVParsing.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnCSVParsing.addActionListener(e -> parseCSV());
 
         btnGoogleForms.setForeground(Utils.FOREGROUND_COLOR);
-        btnGoogleForms.setBackground(Utils.BACKGROUND_COLOR);
+        btnGoogleForms.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         btnGoogleForms.addActionListener(e -> importGoogleForms());
     }
 

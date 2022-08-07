@@ -1,6 +1,5 @@
 package se.skorup.main.gui.panels;
 
-import se.skorup.API.util.CSVParser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.AddGroupFrame;
@@ -11,7 +10,6 @@ import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;

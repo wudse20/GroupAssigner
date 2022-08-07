@@ -1,6 +1,5 @@
 package se.skorup.main.gui.frames;
 
-import se.skorup.API.util.CSVParser;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.components.CSVLabel;
@@ -15,7 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -60,6 +58,13 @@ public class CSVFrame extends JFrame implements KeyListener
     private static final String SKIP_INFO =
         "Välj en ruta som kommer att hoppas över. Detta är valfritt och behöver inte göras.";
 
+    private static final String CREATING_INFO =
+        "Klicka på de rutorna - i den ordningen du önskar, för att skapa en mall. Tryck därefter på 'Avsluta mall'. " +
+        "Det går bara att arbeta på en rad i taget.";
+
+    private static final String CREATED_INFO =
+        "Välj de rader du vill att mallen skall apliceras på. Vill du skapa en ny mall klicka på 'Skapa mall'.";
+
     private State state = State.PERSON;
     private FrameState fs = FrameState.NORMAL;
     private PersonLabelRecord wishPerson;
@@ -100,7 +105,7 @@ public class CSVFrame extends JFrame implements KeyListener
     private final ButtonGroup bgMode = new ButtonGroup();
     private final ButtonGroup bgEditMode = new ButtonGroup();
 
-    private final JLabel lblInfo = new JLabel(WISH_INFO);
+    private final JLabel lblInfo = new JLabel(PERSON_INFO);
 
     private final JPanel pCSV = new JPanel();
     private final JPanel pButtons = new JPanel();
@@ -210,37 +215,48 @@ public class CSVFrame extends JFrame implements KeyListener
         radioNormal.setForeground(Utils.FOREGROUND_COLOR);
         radioNormal.setSelected(true);
         radioNormal.setFont(font);
-        radioNormal.addActionListener(e -> fs = FrameState.NORMAL);
-        radioNormal.addActionListener(e -> radioWish.setEnabled(true));
-        radioNormal.addActionListener(e -> resetTemplate());
+        radioNormal.addActionListener(e -> {
+            fs = FrameState.NORMAL;
+            radioWish.setEnabled(true);
+            resetTemplate();
+            setLabelInfoText();
+        });
 
         radioColumn.setSelected(true);
         radioColumn.setBackground(Utils.BACKGROUND_COLOR);
         radioColumn.setForeground(Utils.FOREGROUND_COLOR);
         radioColumn.setSelected(false);
         radioColumn.setFont(font);
-        radioColumn.addActionListener(e -> fs = FrameState.FILL_COLUMN);
-        radioColumn.addActionListener(e -> wishDeactivation());
-        radioColumn.addActionListener(e -> resetTemplate());
+        radioColumn.addActionListener(e -> {
+            fs = FrameState.FILL_COLUMN;
+            wishDeactivation();
+            resetTemplate();
+            setLabelInfoText();
+        });
 
         radioRow.setSelected(true);
         radioRow.setBackground(Utils.BACKGROUND_COLOR);
         radioRow.setForeground(Utils.FOREGROUND_COLOR);
         radioRow.setSelected(false);
         radioRow.setFont(font);
-        radioRow.addActionListener(e -> fs = FrameState.FILL_ROW);
-        radioRow.addActionListener(e -> wishDeactivation());
-        radioRow.addActionListener(e -> resetTemplate());
+        radioRow.addActionListener(e -> {
+            fs = FrameState.FILL_ROW;
+            wishDeactivation();
+            resetTemplate();
+            setLabelInfoText();
+        });
 
         radioTemplate.setSelected(true);
         radioTemplate.setBackground(Utils.BACKGROUND_COLOR);
         radioTemplate.setForeground(Utils.FOREGROUND_COLOR);
         radioTemplate.setSelected(true);
         radioTemplate.setFont(font);
-        radioTemplate.addActionListener(e -> fs = FrameState.FILL_TEMPLATE_CREATING);
-        radioTemplate.addActionListener(e -> radioWish.setEnabled(true));
-        radioTemplate.addActionListener(e -> setLabelInfoText());
-        radioTemplate.addActionListener(e -> resetTemplate());
+        radioTemplate.addActionListener(e -> {
+            fs = FrameState.FILL_TEMPLATE_CREATING;
+            radioWish.setEnabled(true);
+            resetTemplate();
+            setLabelInfoText();
+        });
 
         bgEditMode.add(radioNormal);
         bgEditMode.add(radioColumn);
@@ -289,6 +305,8 @@ public class CSVFrame extends JFrame implements KeyListener
                 label.stopFlashing();
                 label.setState(State.UNSELECTED);
             }
+
+            setLabelInfoText();
         });
     }
 
@@ -387,7 +405,9 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private void setLabelInfoText()
     {
-        lblInfo.setText(
+        var sb = new StringBuilder("<html>");
+
+        sb.append(
             switch (state)
             {
                 case PERSON -> PERSON_INFO;
@@ -396,6 +416,20 @@ public class CSVFrame extends JFrame implements KeyListener
                 default -> "";
             }
         );
+
+        sb.append("<br>");
+        sb.append(
+            switch (fs)
+            {
+                case FILL_TEMPLATE_CREATING -> CREATING_INFO;
+                case FILL_TEMPLATE_CREATED -> CREATED_INFO;
+                default -> "";
+            }
+        );
+
+        sb.append("</html>");
+
+        lblInfo.setText(sb.toString());
     }
 
     /**
