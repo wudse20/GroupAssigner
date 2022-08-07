@@ -1,4 +1,4 @@
-package se.skorup.network;
+package se.skorup.version;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
@@ -30,7 +30,7 @@ public class VersionChecker
         var ver = getContentOfURL(Utils.VERSION_URL).orElse(FAILED);
 
         DebugMethods.logF(DebugMethods.LogType.DEBUG, "Current version: %s", VERSION);
-        DebugMethods.logF(DebugMethods.LogType.DEBUG, "Newest version: %s", ver);
+        DebugMethods.logF(DebugMethods.LogType.NETWORK, "Newest version: %s", ver);
 
         if (VERSION.contains("Indev"))
         {
@@ -58,7 +58,8 @@ public class VersionChecker
         if (data == JOptionPane.YES_OPTION)
         {
             Utils.openWebpage("https://www.skorup.se/download/");
-            DebugMethods.log("Opening download page and closing application", DebugMethods.LogType.DEBUG);
+            DebugMethods.log("Opening download website", DebugMethods.LogType.NETWORK);
+            DebugMethods.log("Closing application", DebugMethods.LogType.DEBUG);
             System.exit(0);
         }
 

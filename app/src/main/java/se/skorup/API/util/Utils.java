@@ -126,6 +126,7 @@ public class Utils
         try
         {
             Desktop.getDesktop().browse(new URI(url));
+            DebugMethods.logF(DebugMethods.LogType.NETWORK, "Opening website: %s", url);
         }
         catch (IOException | URISyntaxException ex)
         {

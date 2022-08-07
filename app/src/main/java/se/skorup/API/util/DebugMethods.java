@@ -16,7 +16,9 @@ public class DebugMethods
         /** The error status. */
         ERROR,
         /** The debug status. */
-        DEBUG
+        DEBUG,
+        /** The network status, used for networking calls. */
+        NETWORK
     }
 
     /**
@@ -30,6 +32,8 @@ public class DebugMethods
         var oldColor = Console.getColor();
         if (type.equals(LogType.ERROR))
             Console.setColor(ConsoleColor.RED);
+        else if (type.equals(LogType.NETWORK))
+            Console.setColor(ConsoleColor.BLUE);
 
         System.out.printf("[%s/%s] %s%n", getCurrentTime(), type, message);
 

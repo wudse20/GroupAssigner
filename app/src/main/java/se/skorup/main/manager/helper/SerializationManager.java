@@ -37,6 +37,7 @@ public class SerializationManager
 
         if (object instanceof Serializable s)
         {
+            createFileIfNotExists(new File(path));
             var fos = new FileOutputStream(path);
             var oos = new ObjectOutputStream(fos);
 
