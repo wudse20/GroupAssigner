@@ -27,6 +27,7 @@ public class Main
         "inte stämma överrens så kommer den att fråga ifall du vill ladda ned den nyare " +
         "versionen. <br><br> Allt den kommer hämta är innehållet av denna fil: " +
         "%s<br> Namnet är lite av ett skämt...".formatted(Utils.VERSION_URL);
+
     /**
      * The main method starts the program.
      *
