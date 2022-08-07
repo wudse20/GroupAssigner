@@ -30,7 +30,6 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -136,9 +135,6 @@ public class CSVFrame extends JFrame implements KeyListener
      * */
     private void setProperties()
     {
-        if (Arrays.deepEquals(data, new String[0][0]))
-            return;
-
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(1600, 900));
         this.addKeyListener(this);
