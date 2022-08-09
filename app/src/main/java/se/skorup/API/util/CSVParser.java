@@ -42,7 +42,7 @@ public class CSVParser
             // Want a mutable list, so the detour off creating arraylists.
             var splitByComma =
                 Arrays.stream(splitByLine)
-                      .map(s -> s.split(","))
+                      .map(s -> s.split(s.indexOf(',') != -1 ? "," : ";"))
                       .map(arr -> {
                           var al = new ArrayList<String>();
                           Collections.addAll(al, arr);

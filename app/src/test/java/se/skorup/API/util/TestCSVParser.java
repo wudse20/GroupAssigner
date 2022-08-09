@@ -47,13 +47,25 @@ public class TestCSVParser
             { "T9", "Stella", "Isabelle", "Allie", "" }
         };
 
+        var testData3 = new String[][] {
+            {"Person", "Telefonnummer"},
+            {"A", "1"},
+            {"B", "2"},
+            {"C", "3"},
+            {"D", "4"},
+            {"E", "5"},
+            {"F", "6"}
+        };
+
         return Stream.of(
             Arguments.of(UUID.randomUUID().toString(), new String[0][0], "Non-existent path"),
             Arguments.of("./src/test/testData/empty.csv", new String[0][0], "Empty file"),
             Arguments.of("./src/test/testData/wierd_csv.csv", wierdCSV, "wierd_csv.csv"),
             Arguments.of("./src/test/testData/test_data.csv", testData, "test_data.csv"),
             Arguments.of("./src/test/testData/test_data2.csv", testData2, "test_data2.csv"),
-            Arguments.of("./src/test/testData/test_data3.csv", testData2, "test_data3.csv (NameCase)")
+            Arguments.of("./src/test/testData/test_data3.csv", testData2, "test_data3.csv (NameCase)"),
+            Arguments.of("./src/test/testData/CSV_SEMI.csv", testData3, "CSV_SEMI.csv (Semicolon)"),
+            Arguments.of("./src/test/testData/CSV_SEMI_MIXED.csv", testData3, "CSV_SEMI_MIXED.csv (Semicolon and comma)")
         );
     }
 

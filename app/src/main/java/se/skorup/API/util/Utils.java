@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Scanner;
@@ -156,6 +157,11 @@ public class Utils
 
         var names = input.split("\\s+");
         var sb = new StringBuilder();
+
+        // Removing empty strings that snuck in from the splitter.
+        names = Arrays.stream(names)
+                      .filter(s -> !s.trim().isEmpty())
+                      .toArray(String[]::new);
 
         for (var name : names)
             sb.append(new StringBuilder(
