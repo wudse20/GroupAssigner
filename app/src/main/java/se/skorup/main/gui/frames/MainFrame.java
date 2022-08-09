@@ -263,6 +263,7 @@ public class MainFrame extends JFrame
 
         refreshSidePanel();
         ctrPanel.updateManagers();
+        personPanel.setPerson(null);
     }
 
     /**

@@ -18,7 +18,7 @@ public class PersonListModel extends AbstractListModel<Person>
 
     /**
      * Creates a new PersonListModel. If persons
-     * is null an empty array list will takes its
+     * is null an empty array list will take its
      * place.
      *
      * @param persons the persons in the list. If
@@ -41,8 +41,12 @@ public class PersonListModel extends AbstractListModel<Person>
      * */
     public void addItem(Person p)
     {
-        this.persons.add(p);
-        this.sort();
+        var index = persons.size();
+
+        persons.add(p);
+        this.persons.sort(Comparator.comparing(Person::getName));
+
+        fireIntervalAdded(this, index, index);
     }
 
     /**
@@ -51,19 +55,16 @@ public class PersonListModel extends AbstractListModel<Person>
      *
      * @param persons the persons to be added.
      * */
-    public void addItems(Collection<Person> persons)
+    public void addItems(Collection<? extends Person> persons)
     {
-        this.persons.addAll(persons);
-        this.sort();
-    }
+        if (persons.isEmpty())
+            return;
 
-    /**
-     * Sorts the data.
-     * */
-    public void sort()
-    {
+        int startIndex = getSize();
+
+        this.persons.addAll(persons);
         this.persons.sort(Comparator.comparing(Person::getName));
-        fireContentsChanged(this, 0, persons.size());
+        fireIntervalAdded(this, startIndex, getSize() - 1);
     }
 
     /**
@@ -71,9 +72,11 @@ public class PersonListModel extends AbstractListModel<Person>
      * */
     public void removeAll()
     {
-        this.persons.clear();
-        // Index1 is 0, since persons will be cleared.
-        fireContentsChanged(this, 0, 0);
+        var index1 = persons.size()-1;
+        persons.clear();
+
+        if (index1 >= 0)
+            fireIntervalRemoved(this, 0, index1);
     }
 
     /**
@@ -84,8 +87,13 @@ public class PersonListModel extends AbstractListModel<Person>
      * */
     public void removeItem(Person p)
     {
-        persons.remove(p);
-        this.sort();
+        var index = persons.indexOf(p);
+
+        if (index == -1)
+            return;
+
+        persons.remove(index);
+        fireIntervalRemoved(this, index, index);
     }
 
     @Override

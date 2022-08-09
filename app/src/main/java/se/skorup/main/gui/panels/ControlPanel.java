@@ -144,8 +144,9 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
                 var add = new AddGroupFrame();
                 add.addAddListener((event) -> {
                     mf.addGroupManager(event.result());
-                    event.frame().dispose();
+                    mf.setCurrentGroupManager(0);
                     this.updateManagers();
+                    event.frame().dispose();
                 });
             });
         }

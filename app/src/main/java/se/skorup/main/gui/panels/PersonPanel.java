@@ -71,9 +71,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private final ListPanel wishlist;
     private final ListPanel denylist;
 
-    private final PersonListModel mainGroup1Model = new PersonListModel(new ArrayList<>());
-    private final PersonListModel mainGroup2Model = new PersonListModel(new ArrayList<>());
-
     private final JList<Person> mainGroup1 = new JList<>();
     private final JList<Person> mainGroup2 = new JList<>();
 
@@ -90,6 +87,9 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
     private final JCheckBox cbSameMainGroup = new JCheckBox("Visa endast deltagare av huvudgrupp");
     private final JButton btnChangeRole = new JButton("Byt roll");
+
+    private PersonListModel mainGroup1Model = new PersonListModel(new ArrayList<>());
+    private PersonListModel mainGroup2Model = new PersonListModel(new ArrayList<>());
 
     /**
      * Creates a new person panel.
@@ -356,19 +356,20 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private void initNoPersonSelected()
     {
         var gm = mf.getCurrentGroup();
+        lblGroupData.setText(getGroupDataFormatted());
 
         if (gm == null)
             return;
 
-        mainGroup1Model.removeAll();
-        mainGroup1Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
+        mainGroup1Model =
+            new PersonListModel(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
         mainGroup1.clearSelection();
+        mainGroup1.setModel(mainGroup1Model);
 
-        mainGroup2Model.removeAll();
-        mainGroup2Model.addItems(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1));
+        mainGroup2Model =
+            new PersonListModel(gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2));
         mainGroup2.clearSelection();
-
-        lblGroupData.setText(getGroupDataFormatted());
+        mainGroup2.setModel(mainGroup2Model);
 
         search();
     }
@@ -424,26 +425,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
             radioMG1.setSelected(true);
         else
             radioMG2.setSelected(true);
-    }
-
-    /**
-     * Setup for the panel
-     * */
-    private void setup()
-    {
-        resetList(mainGroup1);
-        resetList(mainGroup2);
-        setSizes();
-
-        if (p == null) // If there's no person, then display overview.
-            initNoPersonSelected();
-        else // Initialize the panel with a person.
-            initPerson();
-
-        this.removeAll();
-        this.addComponents();
-        this.revalidate();
-        this.repaint();
     }
 
     /**
@@ -602,14 +583,38 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private String getGroupDataFormatted()
     {
         var gm = mf.getCurrentGroup();
-        return ("<html><br>Totalt antal personer: %d<br>" +
+        var message = "<html><br>Totalt antal personer: %d<br>" +
                 "<p color=\"lime\">Antal personer i huvudgrupp 1: %d</p>" +
-                "<p color=\"#00ffff\">Antal personer i huvudgrupp 2: %d</p></html>"
-        ).formatted(
+                "<p color=\"#00ffff\">Antal personer i huvudgrupp 2: %d</p></html>";
+
+        if (gm == null)
+            return message.formatted(0, 0, 0);
+
+        return message.formatted(
             gm.getMemberCount(),
             gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_1).size(),
             gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2).size()
         );
+    }
+
+    /**
+     * Setup for the panel
+     * */
+    public void setup()
+    {
+        resetList(mainGroup1);
+        resetList(mainGroup2);
+        setSizes();
+
+        if (p == null) // If there's no person, then display overview.
+            initNoPersonSelected();
+        else // Initialize the panel with a person.
+            initPerson();
+
+        this.removeAll();
+        this.addComponents();
+        this.revalidate();
+        this.repaint();
     }
 
     /**
