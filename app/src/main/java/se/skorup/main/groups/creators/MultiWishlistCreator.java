@@ -1,6 +1,7 @@
 package se.skorup.main.groups.creators;
 
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
+import se.skorup.API.collections.mutable_collections.BlockingQueue;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
@@ -131,6 +132,20 @@ public class MultiWishlistCreator implements GroupCreator
      * */
     private List<List<Set<Integer>>> getBestGroups(GroupAction ga) throws NoGroupAvailableException
     {
+        return gm.getAllOfRoll(Person.Role.CANDIDATE).size() > 20 ?
+               multiThreadedBestGroup(ga)                         :
+               singleThreadedBestGroups(ga);
+    }
+
+    /**
+     * Finds the best group according to a given score, using a single thread.
+     *
+     * @param ga the action used to generate the group.
+     * @return the best groups that has the same and highest score.
+     * */
+    private List<List<Set<Integer>>> singleThreadedBestGroups(GroupAction ga) throws NoGroupAvailableException
+    {
+        DebugMethods.log("Running single threaded!", DebugMethods.LogType.DEBUG);
         var allGroups = new HashSet<Set<Set<Integer>>>();
 
         for (var p : gm.getAllOfRoll(Person.Role.CANDIDATE))
@@ -141,22 +156,124 @@ public class MultiWishlistCreator implements GroupCreator
         }
 
         var max =
-            allGroups.stream()
-                     .mapToDouble(this::getScore)
-                     .max()
-                     .orElse(Double.MIN_VALUE);
+                allGroups.stream()
+                        .mapToDouble(this::getScore)
+                        .max()
+                        .orElse(Double.MIN_VALUE);
 
         var res = new ArrayList<List<Set<Integer>>>();
         allGroups.stream()
-                 .map(g -> new IntermediateResult(new ArrayList<>(g), getScore(g)))
-                 .forEach(ir -> {
-                     if (ir.score == max)
-                         res.add(ir.groups);
-                 });
+                .map(g -> new IntermediateResult(new ArrayList<>(g), getScore(g)))
+                .forEach(ir -> {
+                    if (ir.score == max)
+                        res.add(ir.groups);
+                });
 
         DebugMethods.log("Score of group (PSI): %f".formatted(max), DebugMethods.LogType.DEBUG);
 
         return res;
+    }
+
+    /**
+     * Finds the best group according to a given score, using multiple threads.
+     *
+     * @param ga the action used to generate the group.
+     * @return the best groups that has the same and highest score.
+     * */
+    private ArrayList<List<Set<Integer>>> multiThreadedBestGroup(GroupAction ga)
+    {
+        try
+        {
+            DebugMethods.log("Running multi threaded! 4 threads in use!", DebugMethods.LogType.DEBUG);
+            var allGroups = new BlockingQueue<IntermediateResult>();
+            var allCandidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
+            var l1 = allCandidates.subList(0, allCandidates.size() / 4);
+            var l2 = allCandidates.subList(allCandidates.size() / 4, 2 * (allCandidates.size() / 4));
+            var l3 = allCandidates.subList(2 * (allCandidates.size() / 4), 3 * (allCandidates.size() / 4));
+            var l4 = allCandidates.subList(3 * (allCandidates.size() / 4), allCandidates.size());
+
+            var t1 = new Thread(() -> threadCode(ga, allGroups, l1));
+            var t2 = new Thread(() -> threadCode(ga, allGroups, l2));
+            var t3 = new Thread(() -> threadCode(ga, allGroups, l3));
+            var t4 = new Thread(() -> threadCode(ga, allGroups, l4));
+
+            t1.setDaemon(true);
+            t2.setDaemon(true);
+            t3.setDaemon(true);
+            t4.setDaemon(true);
+
+            t1.start();
+            t2.start();
+            t3.start();
+            t4.start();
+
+            t1.join();
+            t2.join();
+            t3.join();
+            t4.join();
+
+            var bestScore = 0D;
+            var bestGroups = new HashSet<List<Set<Integer>>>();
+
+            var first = allGroups.dequeue();
+            bestScore = first.score;
+            bestGroups.add(first.groups);
+
+            while (!allGroups.isEmpty()) // Safe, since all other threads using the queue are dead.
+            {
+                var g = allGroups.dequeue();
+
+                if (g.score > bestScore)
+                {
+                    bestScore = g.score;
+                    bestGroups.clear();
+                    bestGroups.add(g.groups);
+                }
+                else if (g.score == bestScore)
+                {
+                    bestGroups.add(g.groups);
+                }
+            }
+
+            DebugMethods.logF(
+                DebugMethods.LogType.DEBUG, "Number of groups with best PSI (%f): %d",
+                bestScore, bestGroups.size()
+            );
+
+            return new ArrayList<>(bestGroups);
+        }
+        catch (Exception e)
+        {
+            DebugMethods.error(e.getLocalizedMessage());
+            throw new NoGroupAvailableException(e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * The code that runs inside the threads that generates the groups.
+     *
+     * @param ga the group action.
+     * @param allGroups the blocking queue in use.
+     * @param persons the persons of this thread.
+     * */
+    private void threadCode(GroupAction ga, BlockingQueue<IntermediateResult> allGroups, List<Person> persons)
+    {
+        try
+        {
+            for (var c : persons)
+            {
+                var gc = new WishlistGroupCreator(gm, c);
+                var res = ga.action(gc);
+                var score = this.getScore(res);
+                var imRes = new IntermediateResult(res, score);
+                allGroups.enqueue(imRes);
+            }
+        }
+        catch (Exception e)
+        {
+            DebugMethods.error(e.getLocalizedMessage());
+            throw new Error(e);
+        }
     }
 
     @Override
