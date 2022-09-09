@@ -604,6 +604,8 @@ public class SubgroupPanel extends JPanel
                 frame.dispose();
                 gf.setVisible(true);
             });
+
+            frame.addCancelCallback(() -> gf.setVisible(true));
         });
     }
 

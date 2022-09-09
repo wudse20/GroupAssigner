@@ -2,6 +2,7 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.gui.panels.SubgroupDisplayPanel;
 import se.skorup.main.manager.GroupManager;
@@ -38,6 +39,7 @@ public class SubgroupListFrame extends JFrame implements ActionListener, Compone
     private final GroupManager gm;
 
     private final List<ActionCallbackWithParam<Subgroups>> callbacks = new Vector<>();
+    private final List<ActionCallback> callbacksDispose = new Vector<>();
 
     private final Container cp = this.getContentPane();
 
@@ -172,6 +174,26 @@ public class SubgroupListFrame extends JFrame implements ActionListener, Compone
             return;
 
         callbacks.add(a);
+    }
+
+    /**
+     * Adds a cancel callback that will be invoked when the frame is close without
+     * choosing a group.
+     *
+     * @param callback the callback that should happen. Cannot be {@code null}, if {@code null}
+     *                 then nothing will happen.
+     * */
+    public void addCancelCallback(ActionCallback callback)
+    {
+        if (callback != null)
+            callbacksDispose.add(callback);
+    }
+
+    @Override
+    public void dispose()
+    {
+        callbacksDispose.forEach(ActionCallback::callback);
+        super.dispose();
     }
 
     @Override
