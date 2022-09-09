@@ -189,7 +189,7 @@ public class MultiWishlistCreator implements GroupCreator
             var allGroups = new BlockingQueue<IntermediateResult>();
             var allCandidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
             var bestGroups = new HashSet<List<Set<Integer>>>();
-            final var bestScore = new AtomicDouble(-Double.MIN_VALUE);
+            final var bestScore = new AtomicDouble(Double.NEGATIVE_INFINITY);
             final var count = new AtomicInteger(0);
             final var size = allCandidates.size();
 
@@ -222,6 +222,8 @@ public class MultiWishlistCreator implements GroupCreator
                 DebugMethods.LogType.DEBUG, "Number of groups with best PSI (%f): %d",
                 bestScore.get(), bestGroups.size()
             );
+
+            DebugMethods.logF(DebugMethods.LogType.DEBUG, "Number of groups generated: %s", count.get());
 
             return new ArrayList<>(bestGroups);
         }
