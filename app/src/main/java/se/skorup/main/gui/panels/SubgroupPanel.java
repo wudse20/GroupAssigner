@@ -78,7 +78,7 @@ public class SubgroupPanel extends JPanel
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
 
-        gf.addActionListener(e -> gf.waitCursorAction(this::generateGroups), GroupButtonPanel.Buttons.CREATE);
+        gf.addActionListener(e -> new Thread(() -> gf.waitCursorAction(this::generateGroups)).start(), GroupButtonPanel.Buttons.CREATE);
         gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
         gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
         gf.addActionListener(e -> print(), GroupButtonPanel.Buttons.PRINT);
