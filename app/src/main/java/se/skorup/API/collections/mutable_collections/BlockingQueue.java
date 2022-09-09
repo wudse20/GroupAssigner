@@ -80,7 +80,12 @@ public class BlockingQueue<E>
      * Checks if the queue is empty at this point in time. Might not hold
      * if many threads access the queue at the same time. Then it could get
      * false positives. It will wait for the queue to be free until it queries
-     * and checks if the queue is empty.
+     * and checks if the queue is empty.<br><br>
+     *
+     * <b>WARNING!</b> <i>If used in a multi threaded context
+     * then the result of the operation might not hold. It can be the case that
+     * it is empty whilst checking but before the result is useful it can be falsified
+     * by another thread adding another element.</i>
      *
      * @return {@code true} iff it is empty at the time of querying, else
      *         {@code false}. <b>WARNING!</b> <i>If used in a multi threaded context
