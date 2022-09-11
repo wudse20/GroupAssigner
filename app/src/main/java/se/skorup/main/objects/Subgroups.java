@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: TESTS NEEDED FOR THIS CODE!
- *
  * The record for the subgroup. The iterable will be the same as
  * {@code instance.groups().iterable()}.
  *
@@ -130,6 +128,16 @@ public record Subgroups(
 
         assert group != null;
         return wishes.intersection(group).size();
+    }
+
+    /**
+     * Used only for unit tests.
+     *
+     * @return the serial version UUID of this class.
+     * */
+    long getSerialVersionUID()
+    {
+        return serialVersionUID;
     }
 
     @Override
