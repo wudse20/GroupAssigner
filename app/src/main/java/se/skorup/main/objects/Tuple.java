@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * TODO: Split into two classes Tuple and Graph.
+ *
  * A tuple of two integers.
  * */
 public record Tuple(int a, int b)

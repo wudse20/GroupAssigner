@@ -146,12 +146,11 @@ public class CSVFrame extends JFrame implements KeyListener
         pCSV.setLayout(new GridLayout(data.length, data[0].length));
 
         scrCSV.setBorder(BorderFactory.createEmptyBorder());
-
         for (var i = 0; i < data.length; i++)
         {
             for (var ii = 0; ii < data[i].length; ii++)
             {
-                var label = new CSVLabel(data[i][ii], i, ii, Color.WHITE, Color.BLACK);
+                var label = new CSVLabel(data[i][ii], i, ii, Color.WHITE, Color.DARK_GRAY);
                 var fi = i;
                 var fii = ii;
                 label.addEnterEffect(c -> hoverEnter(c, fi, fii));

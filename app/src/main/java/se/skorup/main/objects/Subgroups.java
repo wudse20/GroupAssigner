@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * TODO: TESTS NEEDED FOR THIS CODE!
+ *
  * The record for the subgroup. The iterable will be the same as
  * {@code instance.groups().iterable()}.
  *

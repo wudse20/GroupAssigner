@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class CSVLabel extends JLabel implements MouseListener
         this.setOpaque(true);
         this.setBorder(BorderFactory.createLineBorder(foreground));
         this.addMouseListener(this);
+        this.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
     }
 
     /**
