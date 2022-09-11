@@ -14,11 +14,26 @@ public class DebugMethods
     public enum LogType
     {
         /** The error status. */
-        ERROR,
+        ERROR("ERROR"),
         /** The debug status. */
-        DEBUG,
+        DEBUG("DEBUG"),
         /** The network status, used for networking calls. */
-        NETWORK
+        NETWORK("NETWORK"),
+        /** The debug status, used for emphasizing messages. */
+        EMPHASIZE("DEBUG");
+
+        private final String STRING_REP;
+
+        LogType(String stringRep)
+        {
+            this.STRING_REP = stringRep;
+        }
+
+        @Override
+        public String toString()
+        {
+            return STRING_REP;
+        }
     }
 
     /**
@@ -34,6 +49,8 @@ public class DebugMethods
             Console.setColor(ConsoleColor.RED);
         else if (type.equals(LogType.NETWORK))
             Console.setColor(ConsoleColor.BLUE);
+        else if (type.equals(LogType.EMPHASIZE))
+            Console.setColor(ConsoleColor.GREEN);
 
         System.out.printf("[%s/%s] %s%n", getCurrentTime(), type, message);
 

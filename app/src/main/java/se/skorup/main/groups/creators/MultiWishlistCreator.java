@@ -146,6 +146,7 @@ public class MultiWishlistCreator implements GroupCreator
      * */
     private List<List<Set<Integer>>> singleThreadedBestGroups(GroupAction ga) throws NoGroupAvailableException
     {
+        var t0 = System.currentTimeMillis();
         DebugMethods.log("Running single threaded!", DebugMethods.LogType.DEBUG);
         var allGroups = new HashSet<Set<Set<Integer>>>();
 
@@ -171,7 +172,7 @@ public class MultiWishlistCreator implements GroupCreator
                 });
 
         DebugMethods.log("Score of group (PSI): %f".formatted(max), DebugMethods.LogType.DEBUG);
-
+        DebugMethods.logF(DebugMethods.LogType.EMPHASIZE, "Time taken: %sms", System.currentTimeMillis() - t0);
         return res;
     }
 
@@ -183,9 +184,10 @@ public class MultiWishlistCreator implements GroupCreator
      * */
     private ArrayList<List<Set<Integer>>> multiThreadedBestGroup(GroupAction ga)
     {
+        var t0 = System.currentTimeMillis();
         try
         {
-            DebugMethods.log("Running multi threaded! 6 threads in use!", DebugMethods.LogType.DEBUG);
+            DebugMethods.log("Running multi threaded! 5 threads in use!", DebugMethods.LogType.DEBUG);
             var allGroups = new BlockingQueue<IntermediateResult>();
             var allCandidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
             var bestGroups = new HashSet<List<Set<Integer>>>();
@@ -193,10 +195,10 @@ public class MultiWishlistCreator implements GroupCreator
             final var count = new AtomicInteger(0);
             final var size = allCandidates.size();
 
-            var l1 = allCandidates.subList(0, allCandidates.size() / 4);
-            var l2 = allCandidates.subList(allCandidates.size() / 4, 2 * (allCandidates.size() / 4));
-            var l3 = allCandidates.subList(2 * (allCandidates.size() / 4), 3 * (allCandidates.size() / 4));
-            var l4 = allCandidates.subList(3 * (allCandidates.size() / 4), allCandidates.size());
+            var l1 = allCandidates.subList(0, size / 4);
+            var l2 = allCandidates.subList(size / 4, size / 2);
+            var l3 = allCandidates.subList(size / 2, 3 * (size / 4));
+            var l4 = allCandidates.subList(3 * (size / 4), size);
 
             var t1 = new Thread(() -> producer(ga, allGroups, l1));
             var t2 = new Thread(() -> producer(ga, allGroups, l2));
@@ -231,6 +233,10 @@ public class MultiWishlistCreator implements GroupCreator
         {
             DebugMethods.error(e.getLocalizedMessage());
             throw new NoGroupAvailableException(e.getLocalizedMessage());
+        }
+        finally
+        {
+            DebugMethods.logF(DebugMethods.LogType.EMPHASIZE, "Time taken: %sms", System.currentTimeMillis() - t0);
         }
     }
 
