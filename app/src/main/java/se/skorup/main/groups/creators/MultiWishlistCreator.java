@@ -12,10 +12,12 @@ import se.skorup.main.objects.Tuple;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -75,10 +77,10 @@ public class MultiWishlistCreator implements GroupCreator
             x[wishes.intersection(group).size()] += 1;
         }
 
-        var w = 0; // Highest wish count
-        for (int i = 0; i < x.length; i++)
-            if (x[i] != 0)
-                w = i;
+        var w =
+            Arrays.stream(x)
+                  .parallel()
+                  .reduce(Integer.MIN_VALUE, Math::max); // Highest wish count
 
         var numerator = 0d;
         for (var i = 0; i < w; i++)
@@ -147,7 +149,7 @@ public class MultiWishlistCreator implements GroupCreator
     private List<List<Set<Integer>>> singleThreadedBestGroups(GroupAction ga) throws NoGroupAvailableException
     {
         var t0 = System.currentTimeMillis();
-        DebugMethods.log("Running single threaded!", DebugMethods.LogType.DEBUG);
+        DebugMethods.log("Running single threaded!", DebugMethods.LogType.EMPHASIZE);
         var allGroups = new HashSet<Set<Set<Integer>>>();
 
         for (var p : gm.getAllOfRoll(Person.Role.CANDIDATE))
@@ -187,7 +189,10 @@ public class MultiWishlistCreator implements GroupCreator
         var t0 = System.currentTimeMillis();
         try
         {
-            DebugMethods.log("Running multi threaded! 5 threads in use!", DebugMethods.LogType.DEBUG);
+            var numThreads = Runtime.getRuntime().availableProcessors();
+            var consumers = 1;
+            var producers = Math.max(4, numThreads - consumers);
+            DebugMethods.logF(DebugMethods.LogType.EMPHASIZE, "Running multi threaded! %s threads in use!", producers + 1);
             var allGroups = new BlockingQueue<IntermediateResult>();
             var allCandidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
             var bestGroups = new HashSet<List<Set<Integer>>>();
@@ -195,30 +200,20 @@ public class MultiWishlistCreator implements GroupCreator
             final var count = new AtomicInteger(0);
             final var size = allCandidates.size();
 
-            var l1 = allCandidates.subList(0, size / 4);
-            var l2 = allCandidates.subList(size / 4, size / 2);
-            var l3 = allCandidates.subList(size / 2, 3 * (size / 4));
-            var l4 = allCandidates.subList(3 * (size / 4), size);
+            var pool = Executors.newFixedThreadPool(producers);
 
-            var t1 = new Thread(() -> producer(ga, allGroups, l1));
-            var t2 = new Thread(() -> producer(ga, allGroups, l2));
-            var t3 = new Thread(() -> producer(ga, allGroups, l3));
-            var t4 = new Thread(() -> producer(ga, allGroups, l4));
-            var t5 = new Thread(() -> consumer(allGroups, bestGroups, bestScore, size, count));
+            for (var i = 0; i < producers; i++)
+            {
+                var list = allCandidates.subList((i * size) / producers, ((i + 1) * size) / producers);
+                pool.submit(() -> producer(ga, allGroups, list));
+            }
 
-            t1.setDaemon(true);
-            t2.setDaemon(true);
-            t3.setDaemon(true);
-            t4.setDaemon(true);
-            t5.setDaemon(true);
+            var consumer = new Thread(() -> consumer(allGroups, bestGroups, bestScore, size, count));
 
-            t1.start();
-            t2.start();
-            t3.start();
-            t4.start();
-            t5.start();
-
-            t5.join();
+            consumer.setDaemon(true);
+            consumer.start();
+            consumer.join();
+            pool.shutdown(); // Will always be finished because of consumer.join().
 
             DebugMethods.logF(
                 DebugMethods.LogType.DEBUG, "Number of groups with best PSI (%f): %d",
