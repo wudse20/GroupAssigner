@@ -56,12 +56,11 @@ public class MultiWishlistCreator implements GroupCreator
      * */
     private double getScore(Collection<Set<Integer>> groups)
     {
-        var candidates = new ImmutableHashSet<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
+        var candidates = gm.getAllOfRoll(Person.Role.CANDIDATE);
         var n = candidates.size();
         var x = new int[n];
 
-        for (var p : candidates)
-        {
+        candidates.forEach(p -> {
             var wishes = new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), p.getId()));
             ImmutableHashSet<Integer> group = null;
             for (var g : groups)
@@ -75,12 +74,9 @@ public class MultiWishlistCreator implements GroupCreator
 
             assert group != null;
             x[wishes.intersection(group).size()] += 1;
-        }
+        });
 
-        var w =
-            Arrays.stream(x)
-                  .parallel()
-                  .reduce(Integer.MIN_VALUE, Math::max); // Highest wish count
+        var w = Arrays.stream(x).reduce(Integer.MIN_VALUE, Math::max); // Highest wish count
 
         var numerator = 0d;
         for (var i = 0; i < w; i++)
