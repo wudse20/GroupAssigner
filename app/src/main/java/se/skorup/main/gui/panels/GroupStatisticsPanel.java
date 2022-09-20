@@ -9,9 +9,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
 
 import static se.skorup.API.util.Utils.padString;
 
@@ -19,7 +17,7 @@ import static se.skorup.API.util.Utils.padString;
  * Formats the data of the group manager to
  * a panel.
  * */
-public class GroupStatisticsPanel extends JPanel
+public final class GroupStatisticsPanel extends AbstractStatisticsPanel
 {
     private final GroupManager gm;
     private final JLabel lblPersons = new JLabel();
@@ -37,17 +35,12 @@ public class GroupStatisticsPanel extends JPanel
      * */
     public GroupStatisticsPanel(GroupManager gm)
     {
+        super();
         this.gm = gm;
-
-        this.setProperties();
-        this.updateData();
-        this.addComponents();
     }
 
-    /**
-     * Sets the properties of everything and anything.
-     * */
-    private void setProperties()
+    @Override
+    protected void setProperties()
     {
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
@@ -62,25 +55,8 @@ public class GroupStatisticsPanel extends JPanel
         setUpLabel(lblDenyItems, Utils.LIGHT_RED);
     }
 
-    /**
-     * Setup for the labels to all look and feel the same.
-     *
-     * @param label the label that is being affected.
-     * @param color the color that is the color of the ground of the label.
-     * @return it will return itself. So when done it is will invoke {@code return label;}.
-     * */
-    private JLabel setUpLabel(JLabel label, Color color)
-    {
-        label.setForeground(color);
-        label.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
-
-        return label;
-    }
-
-    /**
-     * Adds the components.
-     * */
-    private void addComponents()
+    @Override
+    protected void addComponents()
     {
         var cont = new JPanel();
         cont.setBackground(Utils.BACKGROUND_COLOR);
@@ -117,10 +93,8 @@ public class GroupStatisticsPanel extends JPanel
         this.add(new JLabel(" "), BorderLayout.PAGE_END);
     }
 
-    /**
-     * Updates the data.
-     * */
-    private void updateData()
+    @Override
+    protected void updateData()
     {
         var total = gm.getMemberCount();
         var leaders = gm.getMemberCountOfRole(Person.Role.LEADER);
