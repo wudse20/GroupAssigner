@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -155,12 +156,14 @@ public class GroupFrame extends JFrame implements ChangeListener
      * Runs an action with the spiny, spiny
      * cursor.
      *
-     * @param r the action to be ran.
+     * @param r the action to be run.
      * */
     public void waitCursorAction(Runnable r)
     {
-        for (var c : this.getComponents())
-            c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        SwingUtilities.invokeLater(() -> {
+            for (var c : this.getComponents())
+                c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        });
 
         try
         {
@@ -168,14 +171,18 @@ public class GroupFrame extends JFrame implements ChangeListener
         }
         catch (Exception e)
         {
-            for (var c : this.getComponents())
-                c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            SwingUtilities.invokeLater(() -> {
+                for (var c : this.getComponents())
+                    c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            });
 
             throw e;
         }
 
-        for (var c : this.getComponents())
-            c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        SwingUtilities.invokeLater(() -> {
+            for (var c : this.getComponents())
+                c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        });
     }
 
 
