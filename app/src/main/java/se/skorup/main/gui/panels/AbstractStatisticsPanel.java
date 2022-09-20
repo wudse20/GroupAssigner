@@ -1,7 +1,11 @@
 package se.skorup.main.gui.panels;
 
+import se.skorup.API.util.Utils;
+
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -36,6 +40,21 @@ public abstract sealed class AbstractStatisticsPanel extends JPanel permits Grou
         label.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
 
         return label;
+    }
+
+    /**
+     * Gets the surrounding border.
+     *
+     * @param label the text that will be displayed on the border.
+     * */
+    protected Border getBorder(String label)
+    {
+        var border = BorderFactory.createTitledBorder(
+            BorderFactory.createDashedBorder(null, 1.25f, 6, 4, true), label
+        );
+
+        border.setTitleColor(Utils.FOREGROUND_COLOR);
+        return border;
     }
 
     /**
