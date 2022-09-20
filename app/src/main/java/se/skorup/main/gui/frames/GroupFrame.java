@@ -6,6 +6,7 @@ import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.panels.CalculatorPanel;
 import se.skorup.main.gui.panels.GroupButtonPanel;
+import se.skorup.main.gui.panels.StatisticsPanel;
 import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
@@ -63,6 +64,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     private final SubgroupPanel sgp;
     private final CalculatorPanel calc;
     private final GroupButtonPanel gbp;
+    private final StatisticsPanel sp;
 
     /**
      * Creates a new group frame.
@@ -79,6 +81,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         this.sgsp = new SubgroupSettingsPanel(this);
         this.sgp = new SubgroupPanel(this);
         this.calc = new CalculatorPanel(manager);
+        this.sp = new StatisticsPanel();
 
         this.setProperties();
         this.addComponents();
@@ -137,6 +140,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         tabs.addTab("Inställningar", sgsp);
         tabs.addTab("Miniräknare", calc);
         tabs.addTab("Undergrupper", sgp);
+        tabs.addTab("Statistik", sp);
 
         this.add(tabs, BorderLayout.CENTER);
         this.add(gbp, BorderLayout.PAGE_END);
@@ -376,6 +380,11 @@ public class GroupFrame extends JFrame implements ChangeListener
             gbp.populateButtons(calc);
             cp.updateConstantButtons();
             this.setSize(new Dimension(460, 800));
+        }
+        else if (tabs.getSelectedComponent() instanceof StatisticsPanel sp)
+        {
+            DebugMethods.log("Selected statitics", DebugMethods.LogType.DEBUG);
+            gbp.populateButtons(sp);
         }
         else
         {
