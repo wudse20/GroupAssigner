@@ -81,7 +81,7 @@ public class GroupFrame extends JFrame implements ChangeListener
         this.sgsp = new SubgroupSettingsPanel(this);
         this.sgp = new SubgroupPanel(this);
         this.calc = new CalculatorPanel(manager);
-        this.sp = new StatisticsPanel();
+        this.sp = new StatisticsPanel(manager);
 
         this.setProperties();
         this.addComponents();
