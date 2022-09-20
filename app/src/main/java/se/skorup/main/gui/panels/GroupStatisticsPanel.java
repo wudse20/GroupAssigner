@@ -4,7 +4,6 @@ import se.skorup.API.util.Utils;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,6 +19,7 @@ import static se.skorup.API.util.Utils.padString;
 public final class GroupStatisticsPanel extends AbstractStatisticsPanel
 {
     private final GroupManager gm;
+
     private final JLabel lblPersons = new JLabel();
     private final JLabel lblLeaders = new JLabel();
     private final JLabel lblCandidates = new JLabel();
@@ -77,13 +77,7 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
         contCont.setBackground(Utils.BACKGROUND_COLOR);
         contCont.setForeground(Utils.FOREGROUND_COLOR);
         contCont.setLayout(new FlowLayout(FlowLayout.CENTER));
-        var border = BorderFactory.createTitledBorder(
-            BorderFactory.createDashedBorder(null, 1.25f, 6, 4, true),
-            gm.getName()
-        );
-
-        border.setTitleColor(Utils.FOREGROUND_COLOR);
-        contCont.setBorder(border);
+        contCont.setBorder(getBorder(gm.getName()));
         contCont.add(cont);
 
         this.add(new JLabel(" "), BorderLayout.PAGE_START);

@@ -13,7 +13,6 @@ import java.awt.GridLayout;
 public class StatisticsPanel extends JPanel
 {
     private final GroupManager gm;
-
     private final GroupStatisticsPanel gsp;
 
     /**
