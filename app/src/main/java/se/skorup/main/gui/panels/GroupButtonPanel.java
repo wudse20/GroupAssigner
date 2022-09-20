@@ -91,8 +91,11 @@ public class GroupButtonPanel extends JPanel
     {
         this.removeAll();
 
-        if (panel instanceof SubgroupSettingsPanel ||
-            panel instanceof CalculatorPanel)
+        if (
+            panel instanceof SubgroupSettingsPanel ||
+            panel instanceof CalculatorPanel       ||
+            panel instanceof StatisticsPanel
+        )
         {
             this.add(btnClose);
             this.add(btnHelp);
