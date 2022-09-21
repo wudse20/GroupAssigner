@@ -14,6 +14,7 @@ public class StatisticsPanel extends JPanel
 {
     private final GroupManager gm;
     private final GroupStatisticsPanel gsp;
+    private final SubgroupStatisticsPanel ssp;
 
     /**
      * Creates a new Statistics panel.
@@ -24,6 +25,7 @@ public class StatisticsPanel extends JPanel
     {
         this.gm = gm;
         this.gsp = new GroupStatisticsPanel(gm);
+        this.ssp = new SubgroupStatisticsPanel();
 
         this.setProperties();
         this.addComponents();
@@ -44,5 +46,6 @@ public class StatisticsPanel extends JPanel
     private void addComponents()
     {
         this.add(gsp);
+        this.add(ssp);
     }
 }

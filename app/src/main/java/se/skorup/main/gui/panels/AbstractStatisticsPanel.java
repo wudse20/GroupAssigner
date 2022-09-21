@@ -1,6 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
+import se.skorup.main.objects.Subgroups;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -8,22 +9,20 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Optional;
 
 /**
  * The base class for the statistics panels.
  * */
-public abstract sealed class AbstractStatisticsPanel extends JPanel permits GroupStatisticsPanel
+public abstract sealed class AbstractStatisticsPanel extends JPanel permits GroupStatisticsPanel, SubgroupStatisticsPanel
 {
     /**
-     * Creates an abstract statistics panel.
-     * <br><br>
-     * This will create update the data, set the properties
-     * and add the components.
+     * Initializes the panel.
      * */
-    public AbstractStatisticsPanel()
+    protected final void init(Optional<Subgroups> sg)
     {
         this.setProperties();
-        this.updateData();
+        this.updateData(sg);
         this.addComponents();
     }
 
@@ -70,5 +69,5 @@ public abstract sealed class AbstractStatisticsPanel extends JPanel permits Grou
     /**
      * Updates the data.
      * */
-    protected abstract void updateData();
+    protected abstract void updateData(Optional<Subgroups> sg);
 }
