@@ -198,10 +198,22 @@ public class MultiWishlistCreator implements GroupCreator
 
             var pool = Executors.newFixedThreadPool(producers);
 
-            for (var i = 0; i < producers; i++)
+            for (var c : allCandidates)
             {
-                var list = allCandidates.subList((i * size) / producers, ((i + 1) * size) / producers);
-                pool.submit(() -> producer(ga, allGroups, list));
+                pool.submit(() -> {
+                    try
+                    {
+                        var gc = new WishlistGroupCreator(gm, c);
+                        var res = ga.action(gc);
+                        var score = this.getScore(res);
+                        var imRes = new IntermediateResult(res, score);
+                        allGroups.enqueue(imRes);
+                    }
+                    catch (InterruptedException unexpected)
+                    {
+                        throw new Error(unexpected);
+                    }
+                });
             }
 
             var consumer = new Thread(() -> consumer(allGroups, bestGroups, bestScore, size, count));
@@ -268,33 +280,6 @@ public class MultiWishlistCreator implements GroupCreator
         catch (InterruptedException e)
         {
             throw new NoGroupAvailableException(e.getLocalizedMessage());
-        }
-    }
-
-    /**
-     * The code that runs inside the threads that generates the groups.
-     *
-     * @param ga the group action.
-     * @param allGroups the blocking queue in use.
-     * @param persons the persons of this thread.
-     * */
-    private void producer(GroupAction ga, BlockingQueue<IntermediateResult> allGroups, List<Person> persons)
-    {
-        try
-        {
-            for (var c : persons)
-            {
-                var gc = new WishlistGroupCreator(gm, c);
-                var res = ga.action(gc);
-                var score = this.getScore(res);
-                var imRes = new IntermediateResult(res, score);
-                allGroups.enqueue(imRes);
-            }
-        }
-        catch (Exception e)
-        {
-            DebugMethods.error(e.getLocalizedMessage());
-            throw new Error(e);
         }
     }
 
