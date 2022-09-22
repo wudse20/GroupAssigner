@@ -411,7 +411,7 @@ public class Utils
                 sb.append(sc.next());
 
             DebugMethods.logF(
-                DebugMethods.LogType.DEBUG,
+                DebugMethods.LogType.NETWORK,
                 "Grabbed data: %s",
                 sb
             );

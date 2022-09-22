@@ -1,6 +1,5 @@
 package se.skorup.API.util;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
