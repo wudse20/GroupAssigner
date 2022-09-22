@@ -140,10 +140,11 @@ public class SubgroupPanel extends JPanel
 
             frame.addActionCallback(sg -> {
                 frame.dispose();
-                gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 2 : 0);
+                gf.getCbCreators().setSelectedIndex(sg.isWishListMode() ? 1 : 0);
                 current = sg;
                 sdp.reset();
                 sdp.displaySubgroup(current, gm);
+                gf.updateStatistics(sg);
             });
         });
     }
