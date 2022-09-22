@@ -60,9 +60,9 @@ public class Utils
 
     // About
     /** The version of the program. */
-    public static final String VERSION = "0.4.3.2-Indev";
+    public static final String VERSION = "0.4.3.2";
 
-    /** The about string. */
+    /** The about-string. */
     public static final String ABOUT =
         "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
 
@@ -70,7 +70,7 @@ public class Utils
     public static final String VERSION_URL =
         "https://www.skorup.se/top_secret/secret_please_dont_steal_you_will_not_gain_anything_from_this";
 
-    /** The regex pattern for a double. Stolen from: https://stackoverflow.com/a/16078719 */
+    /** The regex pattern for a double. Stolen from: <a href="https://stackoverflow.com/a/16078719">stolen from</a> */
     private static final Pattern DOUBLE_PATTERN = Pattern.compile(
             "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)" +
                     "([eE][+-]?(\\p{Digit}+))?)|(\\.((\\d+))([eE][+-]?(\\d+))?)|" +
