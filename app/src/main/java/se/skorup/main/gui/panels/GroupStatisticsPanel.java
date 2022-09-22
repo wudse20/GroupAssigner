@@ -20,8 +20,6 @@ import static se.skorup.API.util.Utils.padString;
  * */
 public final class GroupStatisticsPanel extends AbstractStatisticsPanel
 {
-    private final GroupManager gm;
-
     private final JLabel lblPersons = new JLabel();
     private final JLabel lblLeaders = new JLabel();
     private final JLabel lblCandidates = new JLabel();
@@ -37,15 +35,13 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
      * */
     public GroupStatisticsPanel(GroupManager gm)
     {
-        this.gm = gm;
+        super(gm);
         this.init(Optional.empty());
     }
 
     @Override
     protected void setProperties()
     {
-        this.setBackground(Utils.BACKGROUND_COLOR);
-        this.setForeground(Utils.FOREGROUND_COLOR);
         this.setLayout(new BorderLayout());
 
         setUpLabel(lblPersons, Utils.FOREGROUND_COLOR);
@@ -60,6 +56,7 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
     @Override
     protected void addComponents()
     {
+        this.removeAll();
         var cont = new JPanel();
         cont.setBackground(Utils.BACKGROUND_COLOR);
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
@@ -75,18 +72,7 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
         cont.add(lblDenyItems);
         cont.add(new JLabel(" "));
 
-        var contCont = new JPanel(); // Nice name; or not.
-        contCont.setBackground(Utils.BACKGROUND_COLOR);
-        contCont.setForeground(Utils.FOREGROUND_COLOR);
-        contCont.setLayout(new FlowLayout(FlowLayout.CENTER));
-        contCont.setBorder(getBorder(gm.getName()));
-        contCont.add(cont);
-
-        this.add(new JLabel(" "), BorderLayout.PAGE_START);
-        this.add(new JLabel("   "), BorderLayout.LINE_START);
-        this.add(contCont, BorderLayout.CENTER);
-        this.add(new JLabel("   "), BorderLayout.LINE_END);
-        this.add(new JLabel(" "), BorderLayout.PAGE_END);
+        basicLayout(cont, gm.getName());
     }
 
     @Override
@@ -99,7 +85,6 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
         var mg2 = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, Person.MainGroup.MAIN_GROUP_2).size();
         var denies = gm.getDenyGraph().size();
         var wishes = gm.getWishGraph().size();
-        var len = "Total antal denylist placeringar: ".length();
 
         lblPersons.setText("%s%d".formatted(padString("Antal personer:", ' ', len), total));
         lblLeaders.setText("%s%d".formatted(padString("Antal ledare:", ' ', len), leaders));

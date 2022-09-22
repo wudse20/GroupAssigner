@@ -572,6 +572,7 @@ public class SubgroupPanel extends JPanel
             SwingUtilities.invokeLater(() -> {
                 sdp.reset();
                 sdp.displaySubgroup(current, gm);
+                gf.updateStatistics(current);
             });
 
             return;
@@ -602,12 +603,16 @@ public class SubgroupPanel extends JPanel
                 sdp.reset();
                 sdp.displaySubgroup(sg, gm);
                 current = sg;
+                gf.updateStatistics(sg);
 
                 frame.dispose();
                 gf.setVisible(true);
             });
 
-            frame.addCancelCallback(() -> gf.setVisible(true));
+            frame.addCancelCallback(() -> {
+                gf.setVisible(true);
+                gf.updateStatistics(null);
+            });
         });
     }
 

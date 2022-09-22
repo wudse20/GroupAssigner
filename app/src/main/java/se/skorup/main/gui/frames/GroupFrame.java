@@ -11,6 +11,7 @@ import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.gui.panels.SubgroupSettingsPanel;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.Subgroups;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -348,6 +349,16 @@ public class GroupFrame extends JFrame implements ChangeListener
     public void shouldUseMainGroups(boolean shouldUseMainGroups)
     {
         this.shouldUseMainGroups = shouldUseMainGroups;
+    }
+
+    /**
+     * Updates the statistics of the frame.
+     *
+     * @param sg the subgroups that the statistics should be based on.
+     * */
+    public void updateStatistics(Subgroups sg)
+    {
+        sp.updateStatistics(sg);
     }
 
     @Override
