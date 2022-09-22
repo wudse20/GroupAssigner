@@ -2,9 +2,11 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
 import se.skorup.main.manager.GroupManager;
+import se.skorup.main.objects.Subgroups;
 
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import java.util.Optional;
 
 /**
  * The panel used for displaying statistic about subgroups
@@ -25,7 +27,7 @@ public class StatisticsPanel extends JPanel
     {
         this.gm = gm;
         this.gsp = new GroupStatisticsPanel(gm);
-        this.ssp = new SubgroupStatisticsPanel();
+        this.ssp = new SubgroupStatisticsPanel(gm);
 
         this.setProperties();
         this.addComponents();
@@ -47,5 +49,15 @@ public class StatisticsPanel extends JPanel
     {
         this.add(gsp);
         this.add(ssp);
+    }
+
+    /**
+     * Updates the statistics of the subgroup part of this frame..
+     *
+     * @param sg the subgroups that the statistics should be based on.
+     * */
+    public void updateStatistics(Subgroups sg)
+    {
+        ssp.updateStatistics(Optional.ofNullable(sg));
     }
 }
