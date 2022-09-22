@@ -27,8 +27,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
 
     private boolean isEmpty = true;
     private boolean isWishListMode = false;
-
-    private String name;
+    private String name = "";
 
     private final JLabel lblNoGroup = new JLabel(NO_GROUPS);
     private final JLabel lblGroups = new JLabel();
@@ -66,7 +65,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
             }
         }
 
-        basicLayout(cont, name);
+        basicLayout(cont, name.trim().isEmpty() ? "Undergrupper" : name);
         this.revalidate();
     }
 
@@ -92,7 +91,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
 
         var s = sg.get();
         this.isEmpty = false;
-        this.name = s.name();
+        this.name = s.name() == null ? "" : s.name();
         this.isWishListMode = s.isWishListMode();
 
         var groups = s.getGroupCount();
@@ -120,7 +119,9 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
                 x[wishes.intersection(group).size()] += 1;
             });
 
-            var w = Arrays.stream(x).reduce(Integer.MIN_VALUE, Math::max); // Highest wish count
+            var w = 0;
+            for (var i = 0; i < x.length; i++)
+                w += i * x[i];
 
             lblWishesGranted.setText("%s%d".formatted(padString("Totalt antal uppfyllda önskningar:", ' ', len), w));
 
@@ -138,7 +139,9 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
 
             for (var i = 0; i <= lastIndexUsed; i++) // <= safe, since lastIndexUsed is at most x.length - 1.
             {
-                sb.append(padString("Antal personer med %d önskningar uppfyllda:", ' ', len).formatted(i));
+                var baseText = "Antal personer med %d önskningar uppfyllda:";
+                var text = x[i] < 100 ? baseText + "&nbsp;&nbsp;" : baseText;
+                sb.append(padString(text, "&nbsp;", len - text.length()).formatted(i));
                 sb.append(x[i]);
                 sb.append("<br>");
             }

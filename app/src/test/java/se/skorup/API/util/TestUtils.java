@@ -1,5 +1,6 @@
 package se.skorup.API.util;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Tests the Utils methods.
@@ -75,6 +77,35 @@ public class TestUtils
         assertEquals(expected, Utils.isValidDouble(input), input);
     }
 
+    public static Stream<Arguments> getPadData2()
+    {
+        return Stream.of(
+            Arguments.of("", "a", 5, "aaaaa"),
+            Arguments.of("hej", "a", 1, "heja"),
+            Arguments.of("hej", "aa", 5, "hejaaaaaaaaaa"),
+            Arguments.of("hej", "!", 5 - "hej".length(), "hej!!"),
+            Arguments.of("hej", "!", -1, "hej"),
+            Arguments.of("hej", "", Utils.pow(2, 10), "hej")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getPadData2")
+    public void testPadStringWithString(String org, String pad, int repeats, String expected)
+    {
+        var str = Utils.padString(org, pad, repeats);
+        assertEquals(expected, str, "Strings do not match.");
+
+        if (repeats > 0)
+        {
+            assertNotEquals(-1, str.indexOf(pad), "Pad aren't in the string :(");
+        }
+        else
+        {
+            assertEquals(-1, str.indexOf(pad), "Pad are in string when not supposed to.");
+        }
+    }
+
     public static Stream<Arguments> getPadData()
     {
         return Stream.of(
@@ -88,19 +119,19 @@ public class TestUtils
 
     @ParameterizedTest
     @MethodSource("getPadData")
-    public void testPadString(String org, char pad, int length, String expected)
+    public void testPadStringWithChar(String org, char pad, int length, String expected)
     {
         var str = Utils.padString(org, pad, length);
-        assertEquals(expected, str);
+        assertEquals(expected, str, "Strings do not match.");
 
         if (org.length() < length)
         {
-            assertEquals(length, str.length());
-            assertEquals(pad, str.charAt(org.length()));
+            assertEquals(length, str.length(), "Lengths aren't correct.");
+            assertEquals(pad, str.charAt(org.length()), "Chars do not match!");
         }
         else
         {
-            assertEquals(org, str);
+            assertEquals(org, str, "The original string and the generated string do not match, when supposed to.");
         }
     }
 

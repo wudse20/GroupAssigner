@@ -276,7 +276,7 @@ public class Utils
      * Pads a string to a specified length. If
      * {@code org.length() >= length} then the
      * org will be return. So if we have a length
-     * that is larger or equal to the legnth of the
+     * that is larger or equal to the length of the
      * string then it won't do anything.
      *
      * @param org the String to be padded.
@@ -292,7 +292,26 @@ public class Utils
         if (org.length() >= length)
             return org;
 
-        return org + Character.toString(pad).repeat(length - org.length());
+        return padString(org, Character.toString(pad), length - org.length());
+    }
+
+    /**
+     * Pads a string to with the given sequence - pad, repeats number
+     * of times. The string that will be the result is: org + pad * repeats.
+     * This means the total length of the resulting string will be:
+     * {@code org.length() + pad.length() * repeats}.
+     *
+     * @param org the String to be padded.
+     * @param pad the padding string.
+     * @param repeats the number of times pad will be appended to the string by.
+     * @return a string where pad has been appended to it repeat times.
+     * */
+    public static String padString(String org, String pad, int repeats)
+    {
+        if (repeats <= 0)
+            return org;
+
+        return org + pad.repeat(repeats);
     }
 
     /**
