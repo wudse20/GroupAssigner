@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.util.Arrays;
 import java.util.Optional;
 
 import static se.skorup.API.util.Utils.padString;
@@ -28,11 +27,14 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
     private boolean isEmpty = true;
     private boolean isWishListMode = false;
     private String name = "";
+    private int[] x;
 
     private final JLabel lblNoGroup = new JLabel(NO_GROUPS);
     private final JLabel lblGroups = new JLabel();
     private final JLabel lblWishesGranted = new JLabel();
     private final JLabel lblPersonsWithWishes = new JLabel();
+
+    private final DataGraphPanel pGraph = new DataGraphPanel(x);
 
     public SubgroupStatisticsPanel(GroupManager gm)
     {
@@ -62,6 +64,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
                 cont.add(lblWishesGranted);
                 cont.add(setUpLabel(new JLabel(" "), Utils.FOREGROUND_COLOR));
                 cont.add(lblPersonsWithWishes);
+                cont.add(pGraph);
             }
         }
 
@@ -137,17 +140,12 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
                 }
             }
 
-            for (var i = 0; i <= lastIndexUsed; i++) // <= safe, since lastIndexUsed is at most x.length - 1.
-            {
-                var baseText = "Antal personer med %d önskningar uppfyllda:";
-                var text = x[i] < 100 ? baseText + "&nbsp;&nbsp;" : baseText;
-                sb.append(padString(text, "&nbsp;", len - text.length()).formatted(i));
-                sb.append(x[i]);
-                sb.append("<br>");
-            }
             sb.append("</html>");
-
             lblPersonsWithWishes.setText(sb.toString());
+
+            this.x = new int[lastIndexUsed + 1];
+            System.arraycopy(x, 0, this.x, 0, lastIndexUsed + 1);
+            pGraph.setData(this.x);
         }
     }
 }
