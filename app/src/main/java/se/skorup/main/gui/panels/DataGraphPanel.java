@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -38,6 +39,12 @@ public class DataGraphPanel extends JPanel
 
     /** The delta between each step in pixels in y.*/
     private int singleStepYDelta;
+
+    private final Color[] colors = {
+        Color.GREEN, Color.BLUE, Color.MAGENTA,
+        Color.ORANGE, Color.CYAN, Color.RED,
+        Color.PINK, Color.YELLOW, new Color(108, 31, 153)
+    };
 
     /**
      * Creates a new DataGraphPanel with
@@ -82,7 +89,7 @@ public class DataGraphPanel extends JPanel
         for (var i = 0; i < data.length; i++)
         {
             // Coloring
-            g.setColor(Utils.MAIN_GROUP_1_COLOR); // TODO: Random color for each pillar.
+            g.setColor(colors[i % colors.length]);
 
             // Calculating pillar values.
             var x1 = spacer * (i + 1) + marginLR + pillarWidth * i;
@@ -101,7 +108,7 @@ public class DataGraphPanel extends JPanel
             var fontWidth = fm.stringWidth(yVal);
 
             // Coloring
-            g.setColor(Utils.MAIN_GROUP_1_COLOR.darker());
+            g.setColor(Utils.FOREGROUND_COLOR);
 
             // Drawing y-value string.
             g.drawString(yVal, x1 + (x2 - x1) / 2 - fontWidth / 2, y2 - fontHeight);
