@@ -130,7 +130,7 @@ public class DataGraphPanel extends JPanel
     public void setData(int[] data)
     {
         this.data = data;
-        this.totalElements = Arrays.stream(data).sum();
+        this.totalElements = data == null ? 0 : Arrays.stream(data).sum();
         this.repaint();
     }
 
@@ -165,6 +165,12 @@ public class DataGraphPanel extends JPanel
         // Drawing :)
         drawPillars(g);
         drawAxes(g);
+    }
+
+    @Override
+    public Dimension getPreferredSize()
+    {
+        return new Dimension(100, 200);
     }
 
     /**
