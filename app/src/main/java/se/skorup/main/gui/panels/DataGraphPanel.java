@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Arrays;
@@ -78,17 +79,30 @@ public class DataGraphPanel extends JPanel
 
     private void drawPillars(Graphics2D g)
     {
-        // Coloring
-        g.setColor(Utils.MAIN_GROUP_1_COLOR); // TODO: Random color for each pillar.
-
         for (var i = 0; i < data.length; i++)
         {
+            // Coloring
+            g.setColor(Utils.MAIN_GROUP_1_COLOR); // TODO: Random color for each pillar.
+
+            // Calculating pillar values.
             var x1 = spacer * (i + 1) + marginLR + pillarWidth * i;
             var x2 = x1 + pillarWidth;
             var y1 = this.getHeight() - marginTB;
             var y2 = y1 - (singleStepYDelta * data[i]);
 
+            // Drawing pillar.
             g.drawRect(x1, y1, x2 - x1, y2 - y1);
+
+            // Drawing value
+            var fm = g.getFontMetrics();
+            var fontHeight = fm.getHeight();
+            var fontWidth = fm.stringWidth(Integer.toString(data[i]));
+
+            // Coloring
+            g.setColor(Utils.MAIN_GROUP_1_COLOR.darker());
+
+            // Drawing value string.
+            g.drawString(Integer.toString(data[i]), x1 + (x2 - x1) / 2 - fontWidth / 2, y2 - fontHeight);
         }
     }
 
@@ -120,6 +134,7 @@ public class DataGraphPanel extends JPanel
         // Setup
         super.paintComponent(gOld);
         var g = (Graphics2D) gOld;
+        g.setFont(new Font(Font.DIALOG, Font.BOLD, 14));
 
         // When empty do nothing.
         if (data == null || data.length == 0)
@@ -146,7 +161,7 @@ public class DataGraphPanel extends JPanel
     public static void main(String[] args)
     {
         SwingUtilities.invokeLater(() -> {
-            var data = new int[] { 6, 3, 2, 1 };
+            var data = new int[] { 12, 2, 2, 2, 0 };
             var p = new DataGraphPanel(data);
             var frame = new JFrame("Graph Demo");
 
