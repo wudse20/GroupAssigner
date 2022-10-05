@@ -93,16 +93,24 @@ public class DataGraphPanel extends JPanel
             // Drawing pillar.
             g.drawRect(x1, y1, x2 - x1, y2 - y1);
 
-            // Drawing value
+            // Drawing values
+            var yVal = Integer.toString(data[i]);
+            var xVal = Integer.toString(i);
             var fm = g.getFontMetrics();
             var fontHeight = fm.getHeight();
-            var fontWidth = fm.stringWidth(Integer.toString(data[i]));
+            var fontWidth = fm.stringWidth(yVal);
 
             // Coloring
             g.setColor(Utils.MAIN_GROUP_1_COLOR.darker());
 
-            // Drawing value string.
-            g.drawString(Integer.toString(data[i]), x1 + (x2 - x1) / 2 - fontWidth / 2, y2 - fontHeight);
+            // Drawing y-value string.
+            g.drawString(yVal, x1 + (x2 - x1) / 2 - fontWidth / 2, y2 - fontHeight);
+
+            // Updating data
+            fontWidth = fm.stringWidth(xVal);
+
+            // Drawing x-value string.
+            g.drawString(xVal, x1 + (x2 - x1) / 2 - fontWidth / 2, y1 + fontHeight);
         }
     }
 
