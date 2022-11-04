@@ -66,6 +66,11 @@ public class VersionChecker
         DebugMethods.log("User wants to use old version!", DebugMethods.LogType.DEBUG);
     }
 
+    /**
+     * Runs a test to get content of a URL.
+     *
+     * @param args the passed arguments to the program.
+     * */
     public static void main(String[] args)
     {
         DebugMethods.logF(

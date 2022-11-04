@@ -91,6 +91,17 @@ public class DebugMethods
     }
 
     /**
+     * Logs a formatted message to the console.
+     *
+     * @param b the boolean to be logged.
+     * @param type the type of the message.
+     * */
+    public static void log(boolean b, LogType type)
+    {
+        log(Boolean.toString(b), type);
+    }
+
+    /**
      * Logs a formatted message to the console. This
      * will work like {@link java.io.PrintStream#printf System.out.printf}.
      * It uses {@link DebugMethods#log log(message, type)} with the message:

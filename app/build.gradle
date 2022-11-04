@@ -29,6 +29,13 @@ application {
     mainClass = 'se.skorup.main.Main'
 }
 
+task runVersionCheckerTermsFrame(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "se.skorup.version.gui.VersionCheckerTermsFrame"
+}
+
 test {
     testLogging {
         events "skipped", "failed", "passed"

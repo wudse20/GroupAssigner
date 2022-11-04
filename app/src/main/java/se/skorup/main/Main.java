@@ -6,8 +6,8 @@ import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.version.VersionChecker;
 import se.skorup.version.VersionCheckerSettings;
+import se.skorup.version.gui.VersionCheckerTermsFrame;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.IOException;
@@ -18,15 +18,7 @@ import java.io.IOException;
  * */
 public class Main
 {
-    private static final String MESSAGE =
-        "<html>Vill du att programmet ska kolla ifall det har släppts en ny version " +
-        "varje gång det startar? <br>Det som krävs för att detta skall fungera är " +
-        "en internetuppkoppling. Det enda som den kommer att göra är en förfrågan " +
-        "till en webserver. <br> Websevern skickar den senaste versionen och därefter" +
-        "kollar programmet lokalt ifall versionerna stämmer överrens. <br> Skulle de " +
-        "inte stämma överrens så kommer den att fråga ifall du vill ladda ned den nyare " +
-        "versionen. <br><br> Allt den kommer hämta är innehållet av denna fil: " +
-        "%s<br> Namnet är lite av ett skämt...".formatted(Utils.VERSION_URL);
+    private static final String VERSION_PATH = Utils.getFolderName() + "settings/version_checking.data";
 
     /**
      * The main method starts the program.
@@ -44,8 +36,7 @@ public class Main
      * */
     private void startProgram()
     {
-        var path = Utils.getFolderName() + "settings/version_checking.data";
-        var settingsFile = new File(path);
+        var settingsFile = new File(VERSION_PATH);
 
         if (settingsFile.exists())
         {
@@ -56,29 +47,41 @@ public class Main
         }
         else
         {
-            var ans = JOptionPane.showConfirmDialog(
-                null, MESSAGE, "Versionskontroll",
-                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE
-            );
+            final var mon = new VersionCheckerMonitor();
 
-            VersionCheckerSettings set;
-            if (ans == JOptionPane.YES_OPTION)
-            {
-                set = new VersionCheckerSettings(true);
-                VersionChecker.checkVersion();
-            }
-            else
-            {
-                set =  new VersionCheckerSettings(false);
-            }
+            SwingUtilities.invokeLater(() -> {
+                new VersionCheckerTermsFrame(shouldCheck -> {
+                    var set = new VersionCheckerSettings(shouldCheck);
+                    new Thread(() -> { // No running this on the EDT.
+                        try
+                        {
+                            SerializationManager.serializeObject(VERSION_PATH, set);
+                        }
+                        catch (IOException e)
+                        {
+                            DebugMethods.errorF("Fel: %s", e.getLocalizedMessage());
+                        }
+                        finally
+                        {
+                            mon.reportFinished();
+                        }
+                    }, "Serializer").start();
+                });
+            });
 
             try
             {
-                SerializationManager.serializeObject(path, set);
+                mon.awaitAnswer();
+                var shouldCheck = shouldCheckVersion(new File(VERSION_PATH));
+
+                if (shouldCheck)
+                    VersionChecker.checkVersion();
             }
-            catch (IOException e)
+            catch (InterruptedException unexpected)
             {
-                DebugMethods.errorF("Fel: %s", e.getLocalizedMessage());
+                // Should never happen, but I want an error
+                // if it by some unknown reason happens.
+                throw new RuntimeException(unexpected);
             }
         }
 
@@ -105,4 +108,32 @@ public class Main
         }
     }
 
+    /**
+     * A simple monitor to wait for the user's answer.
+     * */
+    private static class VersionCheckerMonitor
+    {
+        private boolean shouldWait = true;
+
+        /**
+         * Awaits an answer from the user.
+         *
+         * @throws InterruptedException iff the thread is interrupted.
+         * */
+        private synchronized void awaitAnswer() throws InterruptedException
+        {
+            while (shouldWait)
+                wait();
+        }
+
+        /**
+         * Reports finished to the monitor and
+         * wakes the waiting threads.
+         * */
+        private synchronized void reportFinished()
+        {
+            shouldWait = false;
+            notifyAll(); // Could probably be the method notify, but no risks taken here.
+        }
+    }
 }
