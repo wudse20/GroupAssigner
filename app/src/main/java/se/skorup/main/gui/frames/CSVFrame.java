@@ -67,7 +67,7 @@ public class CSVFrame extends JFrame implements KeyListener
     private State state = State.PERSON;
     private FrameState fs = FrameState.NORMAL;
     private PersonLabelRecord wishPerson;
-    private  Template template;
+    private Template template;
 
     private boolean isCtrlDown = false;
     private boolean flashing = false;
@@ -117,6 +117,8 @@ public class CSVFrame extends JFrame implements KeyListener
 
     /**
      * Creates a new CSVFrame.
+     *
+     * @param data the data that will be displayed in the CSVFrame.
      * */
     public CSVFrame(String[][] data)
     {
@@ -146,6 +148,8 @@ public class CSVFrame extends JFrame implements KeyListener
         pCSV.setLayout(new GridLayout(data.length, data[0].length));
 
         scrCSV.setBorder(BorderFactory.createEmptyBorder());
+        scrCSV.getVerticalScrollBar().setUnitIncrement(16);
+
         for (var i = 0; i < data.length; i++)
         {
             for (var ii = 0; ii < data[i].length; ii++)
