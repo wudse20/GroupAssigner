@@ -1,6 +1,5 @@
 package se.skorup.version;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,6 +10,5 @@ import java.io.Serializable;
  * */
 public record VersionCheckerSettings(boolean shouldCheck) implements Serializable
 {
-    @Serial
-    private static final long serialVersionUID = 2797690461233526703L;
+    static final long serialVersionUID = 2797690461233526703L;
 }

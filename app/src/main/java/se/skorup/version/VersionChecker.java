@@ -32,7 +32,7 @@ public class VersionChecker
         DebugMethods.logF(DebugMethods.LogType.DEBUG, "Current version: %s", VERSION);
         DebugMethods.logF(DebugMethods.LogType.NETWORK, "Newest version: %s", ver);
 
-        if (VERSION.contains("Indev"))
+        if (VERSION.toUpperCase().contains("INDEV"))
         {
             DebugMethods.log("Indev version no check!", DebugMethods.LogType.DEBUG);
             return;
