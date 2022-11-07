@@ -1,7 +1,6 @@
 package se.skorup.main.objects;
 
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
-import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.manager.GroupManager;
 
 import java.io.Serial;

@@ -2,7 +2,6 @@ package se.skorup.main.gui.frames;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.panels.CalculatorPanel;
 import se.skorup.main.gui.panels.GroupButtonPanel;

@@ -2,10 +2,6 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.creators.WishlistGroupCreator;
-import se.skorup.main.groups.creators.GroupCreator;
-import se.skorup.main.groups.creators.MultiWishlistCreator;
-import se.skorup.main.groups.creators.RandomGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
