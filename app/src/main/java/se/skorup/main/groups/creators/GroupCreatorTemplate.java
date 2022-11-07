@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public abstract class GroupCreatorTemplate implements GroupCreator
 {
     /** No one should instantiate this class anomalously. */
-    private GroupCreatorTemplate() {}
+    protected GroupCreatorTemplate() {}
 
     /**
      * Gets the next person.
@@ -44,8 +44,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      * */
     protected boolean isPersonAllowed(int id, Collection<Integer> current, GroupManager gm)
     {
-        return current.stream()
-                      .noneMatch(id2 -> Tuple.imageOf(gm.getDenyGraph(), id2).contains(id));
+        return current.stream().noneMatch(id2 -> Tuple.imageOf(gm.getDenyGraph(), id2).contains(id));
     }
 
     @Override

@@ -2,6 +2,8 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.main.groups.creators.GroupCreator;
+import se.skorup.main.groups.creators.RandomGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
@@ -328,17 +330,7 @@ public class SubgroupPanel extends JPanel
             var gm = new GroupManager(mg.toString());
             persons.forEach(gm::registerPerson);
 
-            GroupCreator res;
-
-            if (gc instanceof RandomGroupCreator)
-                res = new RandomGroupCreator();
-            else if (gc instanceof MultiWishlistCreator)
-                res = new MultiWishlistCreator(gm);
-            else if (gc instanceof WishlistGroupCreator)
-                res = new WishlistGroupCreator(gm);
-            else
-                res = new WishlistGroupCreator(gm);
-
+            GroupCreator res = new RandomGroupCreator();
             return new GroupCreatorResult(res, gm);
         }
 
@@ -421,27 +413,31 @@ public class SubgroupPanel extends JPanel
         if (!gf.shouldOverflow())
         {
             return switch (gf.getSizeState()) {
-                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm);
-                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false);
+                case NUMBER_GROUPS -> () -> gc.generate(
+                    gm, gm.getMemberCountOfRole(Person.Role.CANDIDATE) / sizes.get(0), false
+                );
+                case NUMBER_PERSONS -> () -> gc.generate(gm, sizes.get(0), false);
                 case PAIR_WITH_LEADERS -> {
                     var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                    yield () -> gc.generate(
+                        gm, gm.getMemberCountOfRole(Person.Role.CANDIDATE) / sizes.get(0), shouldOverflow
+                    );
                 }
-                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+                case DIFFERENT_GROUP_SIZES -> () -> gc.generate(gm, sizes);
             };
         }
 
         return switch (gf.getSizeState()) {
             case NUMBER_GROUPS -> {
                 var nbrPersons = (int) Math.ceil(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) sizes.get(0));
-                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm);
+                yield () -> gc.generate(gm, calculateOptimalSize(nbrPersons, gm), true);
             }
-            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true);
+            case NUMBER_PERSONS -> () -> gc.generate(gm, calculateOptimalSize(sizes.get(0), gm), true);
             case PAIR_WITH_LEADERS -> {
                 var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                yield () -> gc.generate(gm, sizes.get(0), shouldOverflow);
             }
-            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+            case DIFFERENT_GROUP_SIZES -> () -> gc.generate(gm, sizes);
         };
     }
 
@@ -559,7 +555,7 @@ public class SubgroupPanel extends JPanel
         {
             current = new Subgroups(
                null, groups.get(0), gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
+                false, // TODO: FIX WHEN IMPLEMENTED AGAIN
                 new String[groups.get(0).size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
             );
 
@@ -583,7 +579,7 @@ public class SubgroupPanel extends JPanel
             {
                 sgs.add(new Subgroups(
                     "Förslag: %d".formatted(i++), g, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                    gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
+                    false, // TODO: FIX WHEN ALL TYPES ARE IN!
                     new String[g.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
                 ));
             }

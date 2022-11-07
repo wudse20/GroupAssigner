@@ -14,6 +14,9 @@ import java.util.Set;
  * */
 public class RandomGroupCreator extends GroupCreatorTemplate
 {
+    /** Creates a new RandomGroupCreator. Does nothing, actually. */
+    public RandomGroupCreator() {}
+
     @Override
     protected int getNextPerson(
         GroupManager gm, Set<Integer> left, Set<Integer> current
@@ -38,5 +41,11 @@ public class RandomGroupCreator extends GroupCreatorTemplate
 
         // If we are here we have failed.
         throw new NoGroupAvailableException("Too many denylist items");
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Slumpmässig grupp";
     }
 }
