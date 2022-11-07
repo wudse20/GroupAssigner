@@ -331,7 +331,7 @@ public class SubgroupPanel extends JPanel
             GroupCreator res;
 
             if (gc instanceof RandomGroupCreator)
-                res = new RandomGroupCreator(gm);
+                res = new RandomGroupCreator();
             else if (gc instanceof MultiWishlistCreator)
                 res = new MultiWishlistCreator(gm);
             else if (gc instanceof WishlistGroupCreator)

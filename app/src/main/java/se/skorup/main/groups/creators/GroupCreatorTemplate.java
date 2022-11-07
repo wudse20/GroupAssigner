@@ -3,8 +3,10 @@ package se.skorup.main.groups.creators;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
+import se.skorup.main.objects.Tuple;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,9 +26,27 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      *
      * @param gm the instance of the GroupManger resonsible for the group.
      * @param left the id's of the persons that are left.
+     * @param current the current group being worked on.
+     * @throws NoGroupAvailableException iff there is no possible person to be chosen.
      * @return the id of the person that's the next person.
+     */
+    protected abstract int getNextPerson(
+        GroupManager gm, Set<Integer> left, Set<Integer> current
+    ) throws NoGroupAvailableException;
+
+    /**
+     * Checks if a person is allowed in the group.
+     *
+     * @param id the id of the person to tested.
+     * @param current the current group in creation.
+     * @param gm the group manager in charge of the group.
+     * @return {@code true} iff the person is allowed to exist in current.
      * */
-    protected abstract int getNextPerson(GroupManager gm, Set<Integer> left);
+    protected boolean isPersonAllowed(int id, Collection<Integer> current, GroupManager gm)
+    {
+        return current.stream()
+                      .noneMatch(id2 -> Tuple.imageOf(gm.getDenyGraph(), id2).contains(id));
+    }
 
     @Override
     public List<List<Set<Integer>>> generate(
@@ -53,7 +73,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
                 current = new HashSet<>();
             }
 
-            current.add(getNextPerson(gm, left));
+            current.add(getNextPerson(gm, left, current));
             currentCount++;
         }
 
@@ -88,7 +108,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
                 current = new HashSet<>();
             }
 
-            current.add(getNextPerson(gm, left));
+            current.add(getNextPerson(gm, left, current));
             currentCount++;
         }
 
