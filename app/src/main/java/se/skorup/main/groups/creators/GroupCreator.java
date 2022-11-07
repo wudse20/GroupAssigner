@@ -25,6 +25,7 @@ public interface GroupCreator
      *                 will create one extra group.
      * @throws NoGroupAvailableException iff there is no way to create a group.
      * @throws IllegalArgumentException iff size < 2.
+     * @return A list of generated subgroups.
      * */
     List<List<Set<Integer>>> generate(
         GroupManager gm, int size, boolean overflow
@@ -42,6 +43,7 @@ public interface GroupCreator
      * @param sizes the sizes of the subgroups.
      * @throws NoGroupAvailableException iff there is no way to create a group.
      * @throws IllegalArgumentException iff size < 2.
+     * @return A list of generated subgroups.
      * */
     List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws NoGroupAvailableException;
 }
