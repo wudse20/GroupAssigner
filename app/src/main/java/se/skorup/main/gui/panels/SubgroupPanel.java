@@ -4,6 +4,7 @@ import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
+import se.skorup.main.groups.creators.WishesGroupCreator;
 import se.skorup.main.groups.exceptions.NoGroupAvailableException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
@@ -323,18 +324,20 @@ public class SubgroupPanel extends JPanel
     private GroupCreatorResult getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
     {
         var gc = gf.getGroupSelectedGroupCreator();
+        var res =
+            gc instanceof RandomGroupCreator ?
+            new RandomGroupCreator()         :
+            new WishesGroupCreator();
 
         if (shouldUseOneMainGroup)
         {
             var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, mg);
             var gm = new GroupManager(mg.toString());
             persons.forEach(gm::registerPerson);
-
-            GroupCreator res = new RandomGroupCreator();
             return new GroupCreatorResult(res, gm);
         }
 
-        return new GroupCreatorResult(gc, this.gm);
+        return new GroupCreatorResult(res, this.gm);
     }
 
     /**
@@ -555,8 +558,8 @@ public class SubgroupPanel extends JPanel
         {
             current = new Subgroups(
                null, groups.get(0), gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                false, // TODO: FIX WHEN IMPLEMENTED AGAIN
-                new String[groups.get(0).size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+                gc instanceof WishesGroupCreator, new String[groups.get(0).size()],
+                new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
             );
 
             DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
@@ -579,8 +582,7 @@ public class SubgroupPanel extends JPanel
             {
                 sgs.add(new Subgroups(
                     "Förslag: %d".formatted(i++), g, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                    false, // TODO: FIX WHEN ALL TYPES ARE IN!
-                    new String[g.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+                    gc instanceof WishesGroupCreator, new String[g.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
                 ));
             }
 

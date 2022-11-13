@@ -4,12 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import se.skorup.API.collections.immutable_collections.ImmutableArray;
-import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests the immutable hash set.
  * */
-public class ImmutableHashSetTester
+public class TestImmutableHashSet
 {
     /**
      * Tests the equals method and hashCode method.
@@ -499,4 +498,26 @@ public class ImmutableHashSetTester
         assertEquals(expected.size(), set.toSet().size(), "Set size off");
         assertEquals(expected, set.toSet(), "Set equality");
     }
+
+    /**
+     * Tests the fromCollection-method.
+     * */
+    @Test
+    public void testFromCollection()
+    {
+        var set = new HashSet<Integer>();
+        var r = new Random("kaka".hashCode());
+
+        for (var i = 0; i < 10000; i++)
+            set.add(r.nextInt(10000));
+
+        var imSet = ImmutableHashSet.fromCollection(set);
+        assertEquals(set.size(), imSet.size(), "The sizes are supposed to match :(");
+
+        for (var n : set)
+        {
+            assertTrue(imSet.contains(n), "ImmutableHashSet is supposed to have %d in it, but doesn't".formatted(n));
+        }
+    }
+
 }

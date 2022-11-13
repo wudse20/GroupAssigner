@@ -435,4 +435,16 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
     {
         return '[' + mkString(", ") + ']';
     }
+
+    /**
+     * Creates an ImmutableHashSet from a collection c.
+     *
+     * @param <T> The type of the elements in the collection.
+     * @param c The collection to be converted.
+     * @return An ImmutableHashSet containing the elements of c.
+     * */
+    public static <T> ImmutableHashSet<T> fromCollection(Collection<T> c)
+    {
+        return new ImmutableHashSet<>(c);
+    }
 }

@@ -152,7 +152,6 @@ public class GroupManager implements Serializable
      *
      * @param r the roll that's wanted.
      * @return a set of persons with only the role r.
-     * @throws IllegalArgumentException iff r is {@code null}.
      * */
     public Set<Person> getAllOfRoll(final Person.Role r)
     {
@@ -163,6 +162,24 @@ public class GroupManager implements Serializable
                         x instanceof Leader :
                         x instanceof Candidate
                     ).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    /**
+     * Gets all persons' ids of roll r.
+     *
+     * @param r the roll that's wanted.
+     * @return a set of ids where the roll of the ids are r.
+     * */
+    public Set<Integer> getAllIdsOfRoll(final Person.Role r)
+    {
+        return group.values()
+                    .stream()
+                    .filter(x ->
+                        r.equals(Person.Role.LEADER) ?
+                        x instanceof Leader :
+                        x instanceof Candidate
+                    ).map(Person::getId)
+                    .collect(Collectors.toCollection(HashSet::new));
     }
 
     /**

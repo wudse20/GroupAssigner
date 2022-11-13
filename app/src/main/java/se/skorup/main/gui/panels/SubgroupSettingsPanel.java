@@ -3,6 +3,7 @@ package se.skorup.main.gui.panels;
 import se.skorup.API.util.Utils;
 import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
+import se.skorup.main.groups.creators.WishesGroupCreator;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.objects.Person;
 
@@ -97,7 +98,7 @@ public final class SubgroupSettingsPanel extends SettingsPanel
         cbCreators.setForeground(Utils.FOREGROUND_COLOR);
         cbCreators.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         cbCreators.addItem(new RandomGroupCreator());
-//        cbCreators.addItem(new MultiWishlistCreator(gf.getManager())); TODO: DO WHEN IMPLEMENTED
+        cbCreators.addItem(new WishesGroupCreator());
 
         boxOneMainGroup.setBackground(Utils.BACKGROUND_COLOR);
         boxOneMainGroup.setForeground(Utils.FOREGROUND_COLOR);

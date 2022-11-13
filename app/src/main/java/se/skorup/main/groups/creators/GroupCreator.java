@@ -46,4 +46,10 @@ public interface GroupCreator
      * @return A list of generated subgroups.
      * */
     List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws NoGroupAvailableException;
+
+    /**
+     * Interrupts the group creation. This is optional to implement
+     * and by default it does nothing.
+     * */
+    default void interrupt() {}
 }

@@ -5,7 +5,6 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 #
-# TODO: JDK 19 when supported.
 
 name: Java CI with Gradle
 
@@ -21,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 18
-      uses: actions/setup-java@v2
+    - uses: actions/checkout@v3
+    - name: Set up JDK 19
+      uses: actions/setup-java@v3
       with:
-        java-version: '18'
+        java-version: '19'
         distribution: 'adopt'
     - name: Build with Gradle
       run: ./gradlew build

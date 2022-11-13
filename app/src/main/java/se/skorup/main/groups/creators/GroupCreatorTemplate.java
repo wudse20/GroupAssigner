@@ -27,11 +27,13 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      * @param gm the instance of the GroupManger resonsible for the group.
      * @param left the id's of the persons that are left.
      * @param current the current group being worked on.
-     * @throws NoGroupAvailableException iff there is no possible person to be chosen.
+     * @param lastId the id that was the last chosen.
      * @return the id of the person that's the next person.
-     */
+     * @throws NoGroupAvailableException iff there is no possible person to be chosen.
+     * */
     protected abstract int getNextPerson(
-        GroupManager gm, Set<Integer> left, Set<Integer> current
+        GroupManager gm, Set<Integer> left, Set<Integer> current,
+        int lastId
     ) throws NoGroupAvailableException;
 
     /**
@@ -61,10 +63,14 @@ public abstract class GroupCreatorTemplate implements GroupCreator
               .collect(Collectors.toCollection(HashSet::new));
 
         var currentCount = 0;
+        var last = -1;
         var current = new HashSet<Integer>();
 
         for (var i = 0; i < count; i++)
         {
+            if (Thread.interrupted())
+                return List.of();
+
             if (currentCount == size)
             {
                 currentCount = 0;
@@ -72,7 +78,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
                 current = new HashSet<>();
             }
 
-            current.add(getNextPerson(gm, left, current));
+            current.add(last = getNextPerson(gm, left, current, last));
             currentCount++;
         }
 
@@ -95,10 +101,14 @@ public abstract class GroupCreatorTemplate implements GroupCreator
 
         var currentCount = 0;
         var sizePointer = 0;
+        var last = -1;
         var current = new HashSet<Integer>();
 
         for (var i = 0; i < count; i++)
         {
+            if (Thread.interrupted())
+                return List.of();
+
             if (sizePointer < sizes.size() && currentCount == sizes.get(sizePointer))
             {
                 currentCount = 0;
@@ -107,7 +117,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
                 current = new HashSet<>();
             }
 
-            current.add(getNextPerson(gm, left, current));
+            current.add(last = getNextPerson(gm, left, current, last));
             currentCount++;
         }
 

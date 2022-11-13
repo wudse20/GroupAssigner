@@ -19,7 +19,8 @@ public class RandomGroupCreator extends GroupCreatorTemplate
 
     @Override
     protected int getNextPerson(
-        GroupManager gm, Set<Integer> left, Set<Integer> current
+        GroupManager gm, Set<Integer> left,
+        Set<Integer> current, int lastId
     ) throws NoGroupAvailableException
     {
         var leftList = new ArrayList<>(left);
