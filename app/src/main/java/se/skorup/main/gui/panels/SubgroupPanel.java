@@ -5,7 +5,8 @@ import se.skorup.API.util.Utils;
 import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
 import se.skorup.main.groups.creators.WishesGroupCreator;
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.creators.WishlistGroupCreator;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
 import se.skorup.main.gui.interfaces.GroupGenerator;
@@ -325,9 +326,11 @@ public class SubgroupPanel extends JPanel
     {
         var gc = gf.getGroupSelectedGroupCreator();
         var res =
-            gc instanceof RandomGroupCreator ?
-            new RandomGroupCreator()         :
-            new WishesGroupCreator();
+            gc instanceof RandomGroupCreator   ?
+            new RandomGroupCreator()           :
+            gc instanceof WishesGroupCreator ?
+            new WishesGroupCreator()           :
+            new WishlistGroupCreator();
 
         if (shouldUseOneMainGroup)
         {
@@ -346,23 +349,24 @@ public class SubgroupPanel extends JPanel
      *
      * @param gg the generator that generates the groups.
      * @return the generated groups.
-     * @throws NoGroupAvailableException iff the group creation failed.
+     * @throws GroupCreationFailedException iff the group creation failed.
      */
-    private List<List<Set<Integer>>> tryGenerateGroups(GroupGenerator gg) throws NoGroupAvailableException
+    private List<List<Set<Integer>>> tryGenerateGroups(GroupGenerator gg) throws GroupCreationFailedException
     {
-        for (int i = 0; i < 1000; i++)
+        var msg = "";
+        for (int i = 0; i < 100; i++)
         {
             try
             {
                 return gg.generate();
             }
-            catch (NoGroupAvailableException e)
+            catch (GroupCreationFailedException e)
             {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+                DebugMethods.log(msg = e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
             }
         }
 
-        throw new NoGroupAvailableException("There are no possible groups, too many denylist items.");
+        throw new GroupCreationFailedException(msg);
     }
 
     /**
@@ -463,7 +467,7 @@ public class SubgroupPanel extends JPanel
         {
             return tryGenerateGroups(getGroupGenerator(gc, sizes, gm));
         }
-        catch (NoGroupAvailableException | IllegalArgumentException e)
+        catch (GroupCreationFailedException | IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(
                 this,
@@ -513,7 +517,7 @@ public class SubgroupPanel extends JPanel
 
             return groups;
         }
-        catch (NoGroupAvailableException | IllegalArgumentException e)
+        catch (GroupCreationFailedException | IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(
                 this,

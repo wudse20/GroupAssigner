@@ -1,9 +1,8 @@
 package se.skorup.main.groups.creators;
 
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.manager.GroupManager;
-import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
 import java.util.Collection;
@@ -18,17 +17,28 @@ import java.util.stream.Collectors;
  * trying to fulfill as many wishes as possible. This algorithm
  * will not generate multiple results.
  * */
-class WishlistGroupCreator extends GroupCreatorTemplate
+public class WishlistGroupCreator extends GroupCreatorTemplate
 {
     private final int startingPerson;
     private boolean shouldUseStartPerson;
+
+    /**
+     * Creates a new GroupCreator, without a starting person.
+     * <br><br>
+     * This is used for debugging purposes.
+     * */
+    public WishlistGroupCreator()
+    {
+        this(-1);
+        this.shouldUseStartPerson = false;
+    }
 
     /**
      * Creates a new GroupCreator, with a starting person.
      *
      * @param p the person to start with.
      * */
-    protected WishlistGroupCreator(int p)
+    public WishlistGroupCreator(int p)
     {
         this.startingPerson = p;
         this.shouldUseStartPerson = true;
@@ -45,8 +55,7 @@ class WishlistGroupCreator extends GroupCreatorTemplate
      * */
     private List<Integer> getWishes(GroupManager gm, Set<Integer> left, int id)
     {
-        var added = new ImmutableHashSet<>(gm.getAllIdsOfRoll(Person.Role.CANDIDATE)).diff(left);
-        return new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), id)).diff(added).toList();
+        return new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), id)).intersection(left).toList();
     }
 
     /**
@@ -58,9 +67,11 @@ class WishlistGroupCreator extends GroupCreatorTemplate
      * @param ids the ids that are the targets in the check.
      * @return a set containing the result.
      * */
-    private Set<Integer> getWishedForIdsInLeft(GroupManager gm, Set<Integer> left, Set<Integer> ids)
+    private Set<Integer> getWishedForIdsInLeft(GroupManager gm, Collection<Integer> left, Set<Integer> ids)
     {
-        return Tuple.imageOfSet(gm.getWishGraph(), ids);
+        var res = Tuple.imageOfSet(gm.getWishGraph(), ids);
+        res.retainAll(left);
+        return res;
     }
 
     /**
@@ -82,12 +93,13 @@ class WishlistGroupCreator extends GroupCreatorTemplate
      *
      * @param gm the GroupManager in charge.
      * @param candidates the candidates for this.
-     * @throws NoGroupAvailableException iff it isn't possible to get an id.
-     * @return the id of the person with the fewest wishes left.
+     * @throws GroupCreationFailedException iff it isn't possible to get an id.
+     * @return the id of the person with the fewest wishes left. -1 if and only
+     *         if it fails with the creation.
      * */
     private int getIdWithLeastWishes(
         GroupManager gm, Set<Integer> candidates, Collection<Integer> current
-    ) throws NoGroupAvailableException
+    ) throws GroupCreationFailedException
     {
         var list =
             candidates.stream()
@@ -96,12 +108,11 @@ class WishlistGroupCreator extends GroupCreatorTemplate
                       .map(PersonWishEntry::id)
                       .collect(Collectors.toCollection(LinkedList::new));
 
-
         var id = list.remove(0);
-        while (!isPersonAllowed(id, current, gm))
+        while (!isPersonAllowed(id, current, gm) || current.contains(id))
         {
             if (list.isEmpty())
-                throw new NoGroupAvailableException("Cannot create subgroups, too many denylist items");
+                return -1;
 
             id = list.remove(0);
         }
@@ -125,8 +136,15 @@ class WishlistGroupCreator extends GroupCreatorTemplate
         if (current.isEmpty())
         {
             var id = getIdWithLeastWishes(gm, left, current);
-            left.remove(id);
-            return id;
+
+            if (current.contains(id))
+                throw new GroupCreationFailedException("Please report! current.contains(id) :: new subgroup");
+
+            if (id != -1)
+            {
+                left.remove(id);
+                return id;
+            }
         }
 
         // If we are continuing with a group then choose the person with the fewest wishes left.
@@ -135,8 +153,15 @@ class WishlistGroupCreator extends GroupCreatorTemplate
         if (!wishes.isEmpty())
         {
             var id = getIdWithLeastWishes(gm, wishes, current);
-            left.remove(id);
-            return id;
+
+            if (current.contains(id))
+                throw new GroupCreationFailedException("Please report! current.contains(id) :: wishes");
+
+            if (id != -1)
+            {
+                left.remove(id);
+                return id;
+            }
         }
 
         var candidates = getWishedForIdsInLeft(gm, left, current);
@@ -144,18 +169,30 @@ class WishlistGroupCreator extends GroupCreatorTemplate
         if (!candidates.isEmpty())
         {
             var id = getIdWithLeastWishes(gm, candidates, current);
-            left.remove(id);
-            return id;
+
+            if (current.contains(id))
+                throw new GroupCreationFailedException("Please report! current.contains(id) :: optimal");
+
+            if (id != -1)
+            {
+                left.remove(id);
+                return id;
+            }
         }
 
-        return getIdWithLeastWishes(gm, left, current);
+        var id = getIdWithLeastWishes(gm, left, current);
+
+        if (id == -1)
+            throw new GroupCreationFailedException("GroupCreation failed, too many denylist items.");
+
+        return id;
     }
 
     @Override
     protected int getNextPerson(
         GroupManager gm, Set<Integer> left,
         Set<Integer> current, int lastId
-    ) throws NoGroupAvailableException
+    ) throws GroupCreationFailedException
     {
         if (shouldUseStartPerson)
         {
@@ -165,6 +202,12 @@ class WishlistGroupCreator extends GroupCreatorTemplate
         }
 
         return getOptimalPerson(gm, left, current, lastId);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "REPORT IF YOU SEE THIS; RAPPORTERA OM DU SER DETTA!";
     }
 
     private record PersonWishEntry(int id, int nbrWishes) implements Comparable<PersonWishEntry>

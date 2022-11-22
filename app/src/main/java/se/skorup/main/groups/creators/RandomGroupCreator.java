@@ -1,6 +1,6 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.manager.GroupManager;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class RandomGroupCreator extends GroupCreatorTemplate
     protected int getNextPerson(
         GroupManager gm, Set<Integer> left,
         Set<Integer> current, int lastId
-    ) throws NoGroupAvailableException
+    ) throws GroupCreationFailedException
     {
         var leftList = new ArrayList<>(left);
 
@@ -41,7 +41,7 @@ public class RandomGroupCreator extends GroupCreatorTemplate
         }
 
         // If we are here we have failed.
-        throw new NoGroupAvailableException("Too many denylist items");
+        throw new GroupCreationFailedException("Too many denylist items");
     }
 
     @Override

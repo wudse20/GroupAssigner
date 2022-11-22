@@ -1,6 +1,6 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
@@ -29,12 +29,12 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      * @param current the current group being worked on.
      * @param lastId the id that was the last chosen.
      * @return the id of the person that's the next person.
-     * @throws NoGroupAvailableException iff there is no possible person to be chosen.
+     * @throws GroupCreationFailedException iff there is no possible person to be chosen.
      * */
     protected abstract int getNextPerson(
         GroupManager gm, Set<Integer> left, Set<Integer> current,
         int lastId
-    ) throws NoGroupAvailableException;
+    ) throws GroupCreationFailedException;
 
     /**
      * Checks if a person is allowed in the group.
@@ -52,7 +52,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
     @Override
     public List<List<Set<Integer>>> generate(
         GroupManager gm, int size, boolean overflow
-    ) throws NoGroupAvailableException, IllegalArgumentException
+    ) throws GroupCreationFailedException, IllegalArgumentException
     {
         var res = new ArrayList<Set<Integer>>();
         var count = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
@@ -75,11 +75,18 @@ public abstract class GroupCreatorTemplate implements GroupCreator
             {
                 currentCount = 0;
                 res.add(current);
+
+                if (current.size() != size)
+                    throw new GroupCreationFailedException("Wrong size of group; Please report!");
+
                 current = new HashSet<>();
             }
 
             current.add(last = getNextPerson(gm, left, current, last));
             currentCount++;
+
+            if (currentCount != current.size())
+                throw new GroupCreationFailedException("Wrong size of group; Please report!");
         }
 
         if (currentCount != 0)
@@ -89,15 +96,15 @@ public abstract class GroupCreatorTemplate implements GroupCreator
     }
 
     @Override
-    public List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws NoGroupAvailableException
+    public List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws GroupCreationFailedException
     {
         var res = new ArrayList<Set<Integer>>();
         var count = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
         var left =
                 gm.getAllOfRoll(Person.Role.CANDIDATE)
-                        .stream()
-                        .map(Person::getId)
-                        .collect(Collectors.toCollection(HashSet::new));
+                  .stream()
+                  .map(Person::getId)
+                  .collect(Collectors.toCollection(HashSet::new));
 
         var currentCount = 0;
         var sizePointer = 0;
@@ -111,6 +118,9 @@ public abstract class GroupCreatorTemplate implements GroupCreator
 
             if (sizePointer < sizes.size() && currentCount == sizes.get(sizePointer))
             {
+                if (sizes.get(sizePointer) != current.size())
+                    throw new GroupCreationFailedException("Wrong group size; please report!");
+
                 currentCount = 0;
                 sizePointer++;
                 res.add(current);
@@ -119,6 +129,9 @@ public abstract class GroupCreatorTemplate implements GroupCreator
 
             current.add(last = getNextPerson(gm, left, current, last));
             currentCount++;
+
+            if (currentCount != current.size())
+                throw new GroupCreationFailedException("Wrong size of group; Please report!");
         }
 
         if (currentCount != 0)

@@ -1,6 +1,6 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.manager.GroupManager;
 
 import java.util.List;
@@ -23,13 +23,13 @@ public interface GroupCreator
      * @param overflow If the sizes do not match then it will overflow and add the remaining
      *                 people to the last group and overflow is set to {@code true}, else it
      *                 will create one extra group.
-     * @throws NoGroupAvailableException iff there is no way to create a group.
+     * @throws GroupCreationFailedException iff there is no way to create a group.
      * @throws IllegalArgumentException iff size < 2.
      * @return A list of generated subgroups.
      * */
     List<List<Set<Integer>>> generate(
         GroupManager gm, int size, boolean overflow
-    ) throws NoGroupAvailableException, IllegalArgumentException;
+    ) throws GroupCreationFailedException, IllegalArgumentException;
 
     /**
      * Generates subgroups of sizes matching the list of sizes provided
@@ -41,11 +41,11 @@ public interface GroupCreator
      *
      * @param gm the GroupManger responsible for the group to create subgroups in.
      * @param sizes the sizes of the subgroups.
-     * @throws NoGroupAvailableException iff there is no way to create a group.
+     * @throws GroupCreationFailedException iff there is no way to create a group.
      * @throws IllegalArgumentException iff size < 2.
      * @return A list of generated subgroups.
      * */
-    List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws NoGroupAvailableException;
+    List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws GroupCreationFailedException;
 
     /**
      * Interrupts the group creation. This is optional to implement

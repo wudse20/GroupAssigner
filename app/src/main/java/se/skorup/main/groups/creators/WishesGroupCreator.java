@@ -1,20 +1,16 @@
 package se.skorup.main.groups.creators;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -160,7 +156,7 @@ public final class WishesGroupCreator implements GroupCreator
     @Override
     public List<List<Set<Integer>>> generate(
             GroupManager gm, int size, boolean overflow
-    ) throws NoGroupAvailableException, IllegalArgumentException
+    ) throws GroupCreationFailedException, IllegalArgumentException
     {
         return generate(
             id -> new WishlistGroupCreator(id).generate(gm, size, overflow), gm
@@ -170,7 +166,7 @@ public final class WishesGroupCreator implements GroupCreator
     @Override
     public List<List<Set<Integer>>> generate(
             GroupManager gm, List<Integer> sizes
-    ) throws NoGroupAvailableException
+    ) throws GroupCreationFailedException
     {
         return generate(
             id -> new WishlistGroupCreator(id).generate(gm, sizes), gm

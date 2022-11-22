@@ -1,17 +1,16 @@
 package se.skorup.main.groups.exceptions;
 
 /**
- * The exception thrown iff there is no
- * possible way to create a group.
+ * The exception thrown iff the creation of Groups fail.
  * */
-public class NoGroupAvailableException extends RuntimeException
+public class GroupCreationFailedException extends RuntimeException
 {
     /**
      * Creates a new Exception, with a message.
      *
      * @param msg the message of the exception.
      * */
-    public NoGroupAvailableException(String msg)
+    public GroupCreationFailedException(String msg)
     {
         super(msg);
     }
