@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
  * */
 public class WishlistGroupCreator extends GroupCreatorTemplate
 {
-    private final int startingPerson;
+    /** The id of the starting person. */
+    protected final int startingPerson;
     private boolean shouldUseStartPerson;
 
     /**

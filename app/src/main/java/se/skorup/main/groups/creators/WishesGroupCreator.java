@@ -103,6 +103,7 @@ public final class WishesGroupCreator implements GroupCreator
         {
             var task = tpProd.submit(() -> {
                 var res = g.apply(id).get(0);
+                DebugMethods.logF(DebugMethods.LogType.EMPHASIZE, "Starting with: %d, Found: %s%n", id, res);
                 var score = getScore(res, gm);
                 DebugMethods.logF(DebugMethods.LogType.DEBUG, "Score: %s%n", score);
                 process.add(new Result(res, score));

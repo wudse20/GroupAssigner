@@ -43,6 +43,7 @@ public class TestGroupCreator
         return Stream.of(
             Arguments.of(new RandomGroupCreator()),
             Arguments.of(new WishlistGroupCreator()),
+            Arguments.of(new WishlistGroupCreator(0)),
             Arguments.of(new WishesGroupCreator())
         );
     }
@@ -51,10 +52,12 @@ public class TestGroupCreator
     @MethodSource("getTestData")
     public void testGroupCreator(GroupCreator gc)
     {
+        var gcString = gc instanceof WishlistGroupCreator wc ? wc.toString() + wc.startingPerson : gc.toString();
         var res = new AtomicReference<List<List<Set<Integer>>>>();
+
         assertDoesNotThrow(
             () -> res.set(gc.generate(gm, 3, false)),
-            "Failed group creation with %s".formatted(gc)
+            "Failed group creation with %s".formatted(gcString)
         );
 
         for (var r : res.get())
@@ -66,8 +69,8 @@ public class TestGroupCreator
 
             assertEquals(
                 gm.getAllIdsOfRoll(Person.Role.CANDIDATE).size(), all.size(),
-                "The sizes doesn't match up correctly!%n All: %s,%n current: %s,%n creator: %s%n"
-                .formatted(res.get(), r, gc)
+                "The sizes doesn't match up correctly!%n All: %s,%n current: %s,%n all: %s%n creator: %s%n"
+                .formatted(res.get(), r, all, gcString)
             );
         }
     }

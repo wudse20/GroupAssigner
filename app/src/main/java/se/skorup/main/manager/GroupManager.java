@@ -76,8 +76,8 @@ public class GroupManager implements Serializable
             throw new IllegalArgumentException("The provided role cannot be null.");
         else if (name.trim().length() < 2)
             throw new IllegalArgumentException(
-                    "The provided name needs to be at least of length 2, provided length %d"
-                    .formatted(name.trim().length())
+                "The provided name needs to be at least of length 2, provided length %d"
+                .formatted(name.trim().length())
             );
 
         var p = (r.equals(Person.Role.LEADER)) ? new Leader(name, id) : new Candidate(name, id);
