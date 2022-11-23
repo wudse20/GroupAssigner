@@ -562,8 +562,8 @@ public class SubgroupPanel extends JPanel
         {
             current = new Subgroups(
                null, groups.get(0), gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                gc instanceof WishesGroupCreator, new String[groups.get(0).size()],
-                new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+                gc instanceof WishesGroupCreator || gc instanceof WishlistGroupCreator,
+                new String[groups.get(0).size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
             );
 
             DebugMethods.log("Generated groups: ", DebugMethods.LogType.DEBUG);
@@ -586,7 +586,8 @@ public class SubgroupPanel extends JPanel
             {
                 sgs.add(new Subgroups(
                     "Förslag: %d".formatted(i++), g, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                    gc instanceof WishesGroupCreator, new String[g.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+                    gc instanceof WishesGroupCreator || gc instanceof WishlistGroupCreator, new String[g.size()],
+                    new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER))
                 ));
             }
 
@@ -619,7 +620,8 @@ public class SubgroupPanel extends JPanel
      * Shows and hides the colors of the names from the main groups.
      *
      * @param shouldDisplayMainGroups if {@code true} it will display the colors,
-     *                               else if {@code false} it will display the standard forground color.
+     *                               else if {@code false} it will display the standard
+     *                               foreground color.
      * */
     public void setMainGroupDisplay(boolean shouldDisplayMainGroups)
     {
