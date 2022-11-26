@@ -545,7 +545,19 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
     private void search()
     {
         var input = txfSearch.getText();
+
+        if (input.equalsIgnoreCase("snake"))
+        {
+            SwingUtilities.invokeLater(SnakeFrame::new);
+            txfSearch.setText("");
+            search();
+        }
+
         var gm = mf.getCurrentGroup();
+
+        if (gm == null)
+            return;
+
         var candidates = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.CANDIDATE), input);
         var leaders = getSearchResultOfRole(gm.getAllOfRoll(Person.Role.LEADER), input);
         var mg1 = getSearchResultOfRole(
@@ -565,13 +577,6 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
 
         mainGroup2Model.removeAll();
         mainGroup2Model.addItems(mg2);
-
-        if (input.equalsIgnoreCase("snake"))
-        {
-            SwingUtilities.invokeLater(SnakeFrame::new);
-            txfSearch.setText("");
-            search();
-        }
     }
 
     /**
