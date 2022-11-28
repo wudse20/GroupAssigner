@@ -1,7 +1,7 @@
 package se.skorup.main.groups.creators;
 
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -19,8 +19,8 @@ public class RandomGroupCreator extends GroupCreatorTemplate
 
     @Override
     protected int getNextPerson(
-        GroupManager gm, Set<Integer> left,
-        Set<Integer> current, int lastId
+            Group gm, Set<Integer> left,
+            Set<Integer> current, int lastId
     ) throws GroupCreationFailedException
     {
         var leftList = new ArrayList<>(left);

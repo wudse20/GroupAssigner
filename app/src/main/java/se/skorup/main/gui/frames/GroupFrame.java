@@ -9,7 +9,7 @@ import se.skorup.main.gui.panels.GroupButtonPanel;
 import se.skorup.main.gui.panels.StatisticsPanel;
 import se.skorup.main.gui.panels.SubgroupPanel;
 import se.skorup.main.gui.panels.SubgroupSettingsPanel;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 
@@ -54,7 +54,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     private State sizeState = State.NUMBER_GROUPS;
 
     private final List<ActionCallback> callbacks = new Vector<>();
-    private final GroupManager manager;
+    private final Group manager;
 
     private final Container cp = this.getContentPane();
     private final BorderLayout layout = new BorderLayout();
@@ -72,7 +72,7 @@ public class GroupFrame extends JFrame implements ChangeListener
      *
      * @param manager the group manager in use.
      * */
-    public GroupFrame(GroupManager manager)
+    public GroupFrame(Group manager)
     {
         super("Skapa undergrupper!");
 
@@ -284,7 +284,7 @@ public class GroupFrame extends JFrame implements ChangeListener
      *
      * @return the current group manager.
      * */
-    public GroupManager getManager()
+    public Group getManager()
     {
         return manager;
     }

@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 /**
  * Tests the immutable hash set.
@@ -520,4 +520,34 @@ public class TestImmutableHashSet
         }
     }
 
+    @Test
+    public void testStaticEmpty()
+    {
+        var empty = ImmutableHashSet.empty();
+        assertNotNull(empty, "Empty should not be null.");
+        assertEquals(0, empty.size(), "The empty set should have size 0.");
+        assertTrue(empty.isEmpty(), "ImmutableHashSet#empty should return true for the empty set.");
+    }
+
+    @Test
+    public void testStaticEmptyNotSame()
+    {
+        var empties = List.of(ImmutableHashSet.empty(), ImmutableHashSet.empty(), ImmutableHashSet.empty());
+
+        for (var empty : empties)
+        {
+            assertNotNull(empty, "Empty should not be null.");
+            assertEquals(0, empty.size(), "The empty set should have size 0.");
+            assertTrue(empty.isEmpty(), "ImmutableHashSet#empty should return true for the empty set.");
+        }
+
+        for (var i = 0; i < empties.size(); i++)
+        {
+            for (var ii = i + 1; ii < empties.size(); ii++)
+            {
+                assertNotSame(empties.get(i), empties.get(ii), "They should never be the same instance.");
+            }
+        }
+
+    }
 }

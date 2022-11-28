@@ -7,6 +7,7 @@ import se.skorup.main.gui.components.enums.State;
 import se.skorup.main.gui.components.objects.Template;
 import se.skorup.main.gui.components.objects.TemplateItem;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -78,12 +79,12 @@ public class CSVFrame extends JFrame implements KeyListener
     private final PersonLabelRecord[][] labels;
     private final String[][] data;
 
-    private final List<ActionCallbackWithParam<GroupManager>> callbacks = new ArrayList<>();
+    private final List<ActionCallbackWithParam<Group>> callbacks = new ArrayList<>();
     private final Set<Person> persons = new HashSet<>();
     private final Map<Person, Set<PersonLabelRecord>> wishes = new HashMap<>();
     private final Map<Person, Integer> personCount = new HashMap<>();
 
-    private final GroupManager gm = new GroupManager("");
+    private final Group gm = new GroupManager("");
 
     private final Container cp = this.getContentPane();
 
@@ -559,7 +560,7 @@ public class CSVFrame extends JFrame implements KeyListener
      *
      * @param gm the created group manager.
      * */
-    private void invokeCallbacks(GroupManager gm)
+    private void invokeCallbacks(Group gm)
     {
         callbacks.forEach(ac -> ac.action(gm));
     }
@@ -947,7 +948,7 @@ public class CSVFrame extends JFrame implements KeyListener
      *
      * @param ac the action callback to be added.
      * */
-    public void addActionCallback(ActionCallbackWithParam<GroupManager> ac)
+    public void addActionCallback(ActionCallbackWithParam<Group> ac)
     {
         if (ac != null)
             callbacks.add(ac);

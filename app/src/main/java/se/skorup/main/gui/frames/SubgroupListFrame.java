@@ -5,6 +5,7 @@ import se.skorup.API.util.Utils;
 import se.skorup.main.gui.interfaces.ActionCallback;
 import se.skorup.main.gui.interfaces.ActionCallbackWithParam;
 import se.skorup.main.gui.panels.SubgroupDisplayPanel;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Subgroups;
 
@@ -36,7 +37,7 @@ public class SubgroupListFrame extends JFrame implements ActionListener, Compone
 {
     private final List<Subgroups> groups;
 
-    private final GroupManager gm;
+    private final Group gm;
 
     private final List<ActionCallbackWithParam<Subgroups>> callbacks = new Vector<>();
     private final List<ActionCallback> callbacksDispose = new Vector<>();
@@ -64,7 +65,7 @@ public class SubgroupListFrame extends JFrame implements ActionListener, Compone
      *           the subgroups.
      * @param buttonLabel The label of the button.
      * */
-    public SubgroupListFrame(List<Subgroups> groups, GroupManager gm, String buttonLabel)
+    public SubgroupListFrame(List<Subgroups> groups, Group gm, String buttonLabel)
     {
         super("Undergrupper!");
         this.groups = groups;

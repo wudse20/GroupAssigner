@@ -1,7 +1,7 @@
 package se.skorup.main.groups.creators;
 
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 
 import java.util.List;
 import java.util.Set;
@@ -28,7 +28,7 @@ public interface GroupCreator
      * @return A list of generated subgroups.
      * */
     List<List<Set<Integer>>> generate(
-        GroupManager gm, int size, boolean overflow
+            Group gm, int size, boolean overflow
     ) throws GroupCreationFailedException, IllegalArgumentException;
 
     /**
@@ -45,7 +45,7 @@ public interface GroupCreator
      * @throws IllegalArgumentException iff size < 2.
      * @return A list of generated subgroups.
      * */
-    List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws GroupCreationFailedException;
+    List<List<Set<Integer>>> generate(Group gm, List<Integer> sizes) throws GroupCreationFailedException;
 
     /**
      * Interrupts the group creation. This is optional to implement

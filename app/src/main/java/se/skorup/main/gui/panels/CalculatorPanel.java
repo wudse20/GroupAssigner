@@ -17,7 +17,7 @@ import se.skorup.main.gui.components.ExpressionSyntaxHighlighting;
 import se.skorup.main.gui.components.TerminalInput;
 import se.skorup.main.gui.components.TerminalOutput;
 import se.skorup.main.gui.components.TerminalPane;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 
 import javax.swing.BorderFactory;
@@ -85,7 +85,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
      *
      * @param manager the group manager in use.
      * */
-    public CalculatorPanel(GroupManager manager)
+    public CalculatorPanel(Group manager)
     {
         this.vars = new HashMap<>();
         this.cmds = new HashMap<>();
@@ -246,7 +246,7 @@ public class CalculatorPanel extends JPanel implements Environment, CommandEnvir
      * @param manager the manager that's the source of
      *                the data.
      * */
-    private void setUpConstants(GroupManager manager)
+    private void setUpConstants(Group manager)
     {
         vars.put("medlämmar", manager.getMemberCount());
         vars.put("ledare", manager.getMemberCountOfRole(Person.Role.LEADER));

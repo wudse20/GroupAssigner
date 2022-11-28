@@ -10,6 +10,7 @@ import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
 import se.skorup.main.gui.interfaces.GroupGenerator;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
 public class SubgroupPanel extends JPanel
 {
     private final GroupFrame gf;
-    private final GroupManager gm;
+    private final Group gm;
     private final SubgroupDisplayPanel sdp;
     private Subgroups current;
 
@@ -376,7 +377,7 @@ public class SubgroupPanel extends JPanel
      * @param size the size of the group
      * @param gm the group manager in use.
      * */
-    private int calculateOptimalSize(int size, GroupManager gm)
+    private int calculateOptimalSize(int size, Group gm)
     {
         var total = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
 
@@ -415,7 +416,7 @@ public class SubgroupPanel extends JPanel
      * @param gm the group manager in use.
      * @return the correct GroupGenerator.
      * */
-    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes, GroupManager gm)
+    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes, Group gm)
     {
         if (!gf.shouldOverflow())
         {
@@ -456,7 +457,7 @@ public class SubgroupPanel extends JPanel
      * @return the List of Lists of Sets consisting of
      *         the newly created subgroups.
      */
-    private List<List<Set<Integer>>> generateSingleSubgroup(GroupCreator gc, GroupManager gm)
+    private List<List<Set<Integer>>> generateSingleSubgroup(GroupCreator gc, Group gm)
     {
         final var sizes = gf.getUserInput();
 
@@ -637,5 +638,5 @@ public class SubgroupPanel extends JPanel
         super.repaint();
     }
 
-    private record GroupCreatorResult(GroupCreator gc, GroupManager gm) {}
+    private record GroupCreatorResult(GroupCreator gc, Group gm) {}
 }

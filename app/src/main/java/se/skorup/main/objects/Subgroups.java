@@ -1,6 +1,7 @@
 package se.skorup.main.objects;
 
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 
 import java.io.Serial;
@@ -111,7 +112,7 @@ public record Subgroups(
      * @param id the id of the person.
      * @param gm the group manager in use.
      * */
-    public int getNumberOfWishes(int id, GroupManager gm)
+    public int getNumberOfWishes(int id, Group gm)
     {
         var wishes = new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), id));
 

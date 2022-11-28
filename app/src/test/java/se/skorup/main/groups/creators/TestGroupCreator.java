@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.FormsParser;
 import se.skorup.API.util.MyFileReader;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -23,19 +24,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestGroupCreator
 {
-    private GroupManager gm;
+    private List<Group> gms;
 
     @BeforeEach
     public void setUp() throws IOException
     {
-        gm = new GroupManager("Kaka");
-        FormsParser.parseFormData(MyFileReader.readFile(new File("./src/test/testData/test_data.csv")), gm);
+        this.gms = List.of(
+            new GroupManager("Kaka"),
+            new GroupManager("Kaka2")
+        );
+
+        FormsParser.parseFormData(
+            MyFileReader.readFile(new File("./src/test/testData/test_data.csv")), gms.get(0)
+        );
+
+        FormsParser.parseFormData(
+            MyFileReader.readFile(new File("./src/test/testData/test_data_some_what_bigger.csv")),
+            gms.get(1)
+        );
     }
 
     @AfterEach
     public void tearDown()
     {
-        this.gm = null;
+        this.gms = null;
     }
 
     public static Stream<Arguments> getTestData()
@@ -53,25 +65,29 @@ public class TestGroupCreator
     public void testGroupCreator(GroupCreator gc)
     {
         var gcString = gc instanceof WishlistGroupCreator wc ? wc.toString() + wc.startingPerson : gc.toString();
-        var res = new AtomicReference<List<List<Set<Integer>>>>();
 
-        assertDoesNotThrow(
-            () -> res.set(gc.generate(gm, 3, false)),
-            "Failed group creation with %s".formatted(gcString)
-        );
-
-        for (var r : res.get())
+        for (var gm : gms)
         {
-            var all = new ImmutableHashSet<Integer>();
+            var res = new AtomicReference<List<List<Set<Integer>>>>();
 
-            for (var g : r)
-               all = all.union(g);
-
-            assertEquals(
-                gm.getAllIdsOfRoll(Person.Role.CANDIDATE).size(), all.size(),
-                "The sizes doesn't match up correctly!%n All: %s,%n current: %s,%n all: %s%n creator: %s%n"
-                .formatted(res.get(), r, all, gcString)
+            assertDoesNotThrow(
+                () -> res.set(gc.generate(gm, 3, false)),
+                "Failed group creation with %s%ngm: %s%n".formatted(gcString, gm)
             );
+
+            for (var r : res.get())
+            {
+                var all = new ImmutableHashSet<Integer>();
+
+                for (var g : r)
+                    all = all.union(g);
+
+                assertEquals(
+                   gm.getAllIdsOfRoll(Person.Role.CANDIDATE).size(), all.size(),
+                   "The sizes doesn't match up correctly!%n All: %s,%n current: %s,%n all: %s%n creator: %s%n gm: %s%n"
+                    .formatted(res.get(), r, all, gcString, gm)
+                );
+            }
         }
     }
 }

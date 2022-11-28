@@ -1,6 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Subgroups;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
  * */
 public abstract sealed class AbstractStatisticsPanel extends JPanel permits GroupStatisticsPanel, SubgroupStatisticsPanel
 {
-    protected final GroupManager gm;
+    protected final Group gm;
     protected final int len = "Antal personer med 100 önskningar uppfyllda:".length();
 
     /**
@@ -28,7 +29,7 @@ public abstract sealed class AbstractStatisticsPanel extends JPanel permits Grou
      *
      * @param gm the instance of the group manager in use.
      * */
-    protected AbstractStatisticsPanel(GroupManager gm)
+    protected AbstractStatisticsPanel(Group gm)
     {
         this.gm = gm;
     }

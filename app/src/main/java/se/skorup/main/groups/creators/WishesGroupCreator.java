@@ -3,20 +3,16 @@ package se.skorup.main.groups.creators;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.function.IntFunction;
 
 /**
  * A GroupCreator that creates all the best groups
@@ -51,7 +47,7 @@ public final class WishesGroupCreator implements GroupCreator
      * @param groups the groups.
      * @return the score of the group.
      * */
-    private double getScore(Iterable<Set<Integer>> groups, GroupManager gm)
+    private double getScore(Iterable<Set<Integer>> groups, Group gm)
     {
         var candidates = gm.getAllIdsOfRoll(Person.Role.CANDIDATE);
         var x = new int[candidates.size()];
@@ -84,8 +80,12 @@ public final class WishesGroupCreator implements GroupCreator
         return psi - omega(x[0]) * x[0];
     }
 
-
-    private List<List<Set<Integer>>> generate(IntFunction<List<List<Set<Integer>>>> g, GroupManager gm)
+    /**
+     * Generates the groups using a multithreaded system for generating the best alternatives.
+     *
+     * @param gm the ins
+     * */
+    private List<List<Set<Integer>>> generate(Group gm, List<Integer> sizes, boolean overflow)
     {
         var consumers = 2;
         var producers = Math.max(Runtime.getRuntime().availableProcessors() - consumers - 1, 2);
@@ -94,7 +94,7 @@ public final class WishesGroupCreator implements GroupCreator
             producers, consumers
         );
 
-        var cl = new CountDownLatch(gm.getMemberCountOfRole(Person.Role.CANDIDATE));
+        final var cl = new CountDownLatch(gm.getMemberCountOfRole(Person.Role.CANDIDATE));
         var tpProd = Executors.newFixedThreadPool(producers);
         var process = new LinkedBlockingQueue<Result>();
         var candidates = gm.getAllIdsOfRoll(Person.Role.CANDIDATE);
@@ -102,7 +102,22 @@ public final class WishesGroupCreator implements GroupCreator
         for (var id : candidates)
         {
             var task = tpProd.submit(() -> {
-                var res = g.apply(id).get(0);
+                List<Set<Integer>> res;
+
+                try
+                {
+                    if (sizes.size() == 1)
+                        res = new WishlistGroupCreator().generate(gm, sizes.get(0), overflow).get(0);
+                    else
+                        res = new WishlistGroupCreator().generate(gm, sizes).get(0);
+                }
+                catch (GroupCreationFailedException e)
+                {
+                    cl.countDown(); // Skip if fails.
+                    DebugMethods.errorF("Error in creating groups: %s", e.getLocalizedMessage());
+                    throw e;
+                }
+
                 DebugMethods.logF(DebugMethods.LogType.EMPHASIZE, "Starting with: %d, Found: %s%n", id, res);
                 var score = getScore(res, gm);
                 DebugMethods.logF(DebugMethods.LogType.DEBUG, "Score: %s%n", score);
@@ -156,22 +171,18 @@ public final class WishesGroupCreator implements GroupCreator
 
     @Override
     public List<List<Set<Integer>>> generate(
-            GroupManager gm, int size, boolean overflow
+        Group gm, int size, boolean overflow
     ) throws GroupCreationFailedException, IllegalArgumentException
     {
-        return generate(
-            id -> new WishlistGroupCreator(id).generate(gm, size, overflow), gm
-        );
+        return generate(gm, Collections.singletonList(size), overflow);
     }
 
     @Override
     public List<List<Set<Integer>>> generate(
-            GroupManager gm, List<Integer> sizes
+        Group gm, List<Integer> sizes
     ) throws GroupCreationFailedException
     {
-        return generate(
-            id -> new WishlistGroupCreator(id).generate(gm, sizes), gm
-        );
+        return generate(gm, sizes, false);
     }
 
     /**

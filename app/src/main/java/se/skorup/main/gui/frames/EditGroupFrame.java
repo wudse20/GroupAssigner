@@ -1,6 +1,7 @@
 package se.skorup.main.gui.frames;
 
 import se.skorup.API.util.DebugMethods;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 
@@ -16,7 +17,7 @@ public final class EditGroupFrame extends AbstractGroupFrame
      *
      * @param gm the current GroupManager.
      * */
-    public EditGroupFrame(GroupManager gm)
+    public EditGroupFrame(Group gm)
     {
         super("Uppdatera en grupp", gm);
 
@@ -31,7 +32,7 @@ public final class EditGroupFrame extends AbstractGroupFrame
 
 
     @Override
-    protected GroupManager groupAction(GroupManager gm)
+    protected Group groupAction(Group gm)
     {
         gm.setName(pName.getText());
         var names = new HashSet<>(gm.getNames());

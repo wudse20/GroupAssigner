@@ -1,7 +1,7 @@
 package se.skorup.main.groups.creators;
 
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
@@ -32,8 +32,8 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      * @throws GroupCreationFailedException iff there is no possible person to be chosen.
      * */
     protected abstract int getNextPerson(
-        GroupManager gm, Set<Integer> left, Set<Integer> current,
-        int lastId
+            Group gm, Set<Integer> left, Set<Integer> current,
+            int lastId
     ) throws GroupCreationFailedException;
 
     /**
@@ -44,14 +44,14 @@ public abstract class GroupCreatorTemplate implements GroupCreator
      * @param gm the group manager in charge of the group.
      * @return {@code true} iff the person is allowed to exist in current.
      * */
-    protected boolean isPersonAllowed(int id, Collection<Integer> current, GroupManager gm)
+    protected boolean isPersonAllowed(int id, Collection<Integer> current, Group gm)
     {
         return current.stream().noneMatch(id2 -> Tuple.imageOf(gm.getDenyGraph(), id2).contains(id));
     }
 
     @Override
     public List<List<Set<Integer>>> generate(
-        GroupManager gm, int size, boolean overflow
+            Group gm, int size, boolean overflow
     ) throws GroupCreationFailedException, IllegalArgumentException
     {
         var res = new ArrayList<Set<Integer>>();
@@ -63,6 +63,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
               .collect(Collectors.toCollection(HashSet::new));
 
         var currentCount = 0;
+        var addedCount = 0;
         var last = -1;
         var current = new HashSet<Integer>();
 
@@ -78,6 +79,10 @@ public abstract class GroupCreatorTemplate implements GroupCreator
 
                 if (current.size() != size)
                     throw new GroupCreationFailedException("Wrong size of group; Please report!");
+
+                addedCount += current.size();
+                if (addedCount + left.size() != count)
+                    throw new GroupCreationFailedException("Please Report: One or more persons are used more than once!");
 
                 current = new HashSet<>();
             }
@@ -96,7 +101,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
     }
 
     @Override
-    public List<List<Set<Integer>>> generate(GroupManager gm, List<Integer> sizes) throws GroupCreationFailedException
+    public List<List<Set<Integer>>> generate(Group gm, List<Integer> sizes) throws GroupCreationFailedException
     {
         var res = new ArrayList<Set<Integer>>();
         var count = gm.getMemberCountOfRole(Person.Role.CANDIDATE);

@@ -447,4 +447,15 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
     {
         return new ImmutableHashSet<>(c);
     }
+
+    /**
+     * Creates a new empty ImmutableHashSet.
+     *
+     * @param <T> The type of the elements.
+     * @return An empty ImmutableHashSet.
+     * */
+    public static <T> ImmutableHashSet<T> empty()
+    {
+        return ImmutableHashSet.fromCollection(List.of());
+    }
 }
