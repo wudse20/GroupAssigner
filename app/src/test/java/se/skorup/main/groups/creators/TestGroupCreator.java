@@ -1,5 +1,6 @@
 package se.skorup.main.groups.creators;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,6 +14,10 @@ import se.skorup.main.objects.Person;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -100,5 +105,22 @@ public class TestGroupCreator
                 .formatted(res.get(), r, all, gcString, gm)
             );
         }
+    }
+
+    @Test
+    public synchronized void testInterrupt() throws ExecutionException, InterruptedException, TimeoutException
+    {
+        var gc = new WishesGroupCreator();
+        var tp = Executors.newSingleThreadExecutor();
+
+        var task = tp.submit(() -> gc.generate(gms.get(1), 6, false));
+
+        while (!gc.hasStarted.get())
+            wait(10);
+
+        gc.interrupt();
+        var res = task.get(30, TimeUnit.SECONDS);
+
+        assertEquals(List.of(), res, "The interrupted result should be empty.");
     }
 }

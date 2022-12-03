@@ -341,6 +341,9 @@ public class SubgroupPanel extends JPanel
             return new GroupCreatorResult(res, gm);
         }
 
+        if (res instanceof WishesGroupCreator) // Interruption for the multithreaded group.
+            gf.addActionCallback(res::interrupt);
+
         return new GroupCreatorResult(res, this.gm);
     }
 

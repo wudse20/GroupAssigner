@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A GroupCreator that creates all the best groups
@@ -22,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 public final class WishesGroupCreator implements GroupCreator
 {
     private final Monitor monitor;
+
+    /** Only used for testing of the class. */
+    AtomicBoolean hasStarted = new AtomicBoolean(false);
 
     /**
      * Creates a new WishesGroupCreator.
@@ -118,7 +122,7 @@ public final class WishesGroupCreator implements GroupCreator
                     throw e;
                 }
 
-                DebugMethods.logF(DebugMethods.LogType.EMPHASIZE, "Starting with: %d, Found: %s%n", id, res);
+                DebugMethods.logF(DebugMethods.LogType.DEBUG, "Starting with: %d, Found: %s%n", id, res);
                 var score = getScore(res, gm);
                 DebugMethods.logF(DebugMethods.LogType.DEBUG, "Score: %s%n", score);
                 process.add(new Result(res, score));
@@ -149,10 +153,10 @@ public final class WishesGroupCreator implements GroupCreator
             monitor.addThread(t);
         }
 
-        monitor.addThread(Thread.currentThread());
-
         try
         {
+            monitor.addClThread(Thread.currentThread());
+            hasStarted.set(true);
             var success = cl.await(5, TimeUnit.MINUTES);
 
             if (!success)
@@ -163,7 +167,8 @@ public final class WishesGroupCreator implements GroupCreator
         }
         catch (InterruptedException e)
         {
-            return List.of(); // Want it to exit
+            DebugMethods.log("HERE", DebugMethods.LogType.DEBUG);
+            return List.of(); // Want it to exit and return nothing.
         }
 
         return monitor.getResult().stream().toList();
@@ -210,6 +215,8 @@ public final class WishesGroupCreator implements GroupCreator
         private final List<Thread> threads;
         private final Set<List<Set<Integer>>> result;
 
+        private Thread clThread;
+
         private double currentBest = Double.NEGATIVE_INFINITY;
 
         private Monitor()
@@ -249,16 +256,24 @@ public final class WishesGroupCreator implements GroupCreator
             threads.add(t);
         }
 
+        private synchronized void addClThread(Thread t)
+        {
+            clThread = t;
+        }
+
         private synchronized void interrupt()
         {
-            for (var t : tasks)
-            {
-                t.cancel(true);
-            }
+            DebugMethods.log("Interrupting creation of groups", DebugMethods.LogType.EMPHASIZE);
+            clThread.interrupt();
 
             for (var t : threads)
             {
                 t.interrupt();
+            }
+
+            for (var t : tasks)
+            {
+                t.cancel(true);
             }
         }
     }
