@@ -25,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The class responsible for testing
  * the group manager.
  * */
-public class GroupManagerTester
+public class TestGroupManager
 {
     /**
      * Tests the register person method,
-     * were everything is fine.
+     * where everything is fine.
      * */
     @Test
     public void testRegisterPerson()
@@ -53,7 +53,7 @@ public class GroupManagerTester
 
     /**
      * Tests the register person method,
-     * were everything isn't fine.
+     * where everything isn't fine.
      * */
     @Test
     public void testRegisterPersonThrows()
@@ -90,7 +90,7 @@ public class GroupManagerTester
     }
 
     /**
-     * Test the get all persons method.
+     * Test the get all persons-method.
      * */
     @Test
     public void testGetAllPersons()
@@ -110,7 +110,7 @@ public class GroupManagerTester
     }
 
     /**
-     * Test the get all of roll method.
+     * Test the get all roll method.
      * */
     @Test
     public void testGetAllOfRole()
@@ -118,21 +118,47 @@ public class GroupManagerTester
         var gm = new GroupManager("");
 
         var ctr = new HashSet<>(
-                Collections.singletonList(
-                        gm.registerPerson("Anton", Person.Role.LEADER)
-                )
+            Collections.singletonList(
+                gm.registerPerson("Anton", Person.Role.LEADER)
+            )
         );
 
         var ctr2 = new HashSet<>(
-                Collections.singletonList(
-                        gm.registerPerson("Sebbe", Person.Role.CANDIDATE)
-                )
+            Collections.singletonList(
+                gm.registerPerson("Sebbe", Person.Role.CANDIDATE)
+            )
         );
 
         assertEquals(ctr.size(), gm.getAllOfRoll(Person.Role.LEADER).size());
         assertEquals(ctr, gm.getAllOfRoll(Person.Role.LEADER));
         assertEquals(ctr2.size(), gm.getAllOfRoll(Person.Role.CANDIDATE).size());
         assertEquals(ctr2, gm.getAllOfRoll(Person.Role.CANDIDATE));
+    }
+
+    /**
+     * Test the getAllIdsOfRoll-method.
+     * */
+    @Test
+    public void testGetAllIdsOfRoll()
+    {
+        var gm = new GroupManager("");
+
+        var ctr = new HashSet<>(
+            Collections.singletonList(
+                gm.registerPerson("Anton", Person.Role.LEADER).getId()
+            )
+        );
+
+        var ctr2 = new HashSet<>(
+            Collections.singletonList(
+                gm.registerPerson("Sebbe", Person.Role.CANDIDATE).getId()
+            )
+        );
+
+        assertEquals(ctr.size(), gm.getAllIdsOfRoll(Person.Role.LEADER).size());
+        assertEquals(ctr, gm.getAllIdsOfRoll(Person.Role.LEADER));
+        assertEquals(ctr2.size(), gm.getAllIdsOfRoll(Person.Role.CANDIDATE).size());
+        assertEquals(ctr2, gm.getAllIdsOfRoll(Person.Role.CANDIDATE));
     }
 
     /**
@@ -202,7 +228,7 @@ public class GroupManagerTester
         assertEquals(i - 1, gm.getMemberCount());
 
         try { gm.registerPerson(null, null); }
-        catch (IllegalArgumentException e) {}
+        catch (IllegalArgumentException e) { /* Disregard error */}
 
         assertEquals(i - 1, gm.getMemberCount());
     }
@@ -227,7 +253,7 @@ public class GroupManagerTester
     }
 
     /**
-     * Tests the get all of role but method.
+     * Tests the get allOfRole but method.
      * */
     @Test
     public void testGetAllOfRoleBut()
@@ -256,7 +282,7 @@ public class GroupManagerTester
     }
 
     /**
-     * Tests the equals method.
+     * Tests the equals-method.
      * */
     @Test
     public void testEquals()
@@ -349,7 +375,7 @@ public class GroupManagerTester
 
         var p1 = gm.registerPerson("Kaka", Person.Role.CANDIDATE);
         var p2 = gm.registerPerson("Syltkaka", Person.Role.CANDIDATE);
-        var p3 = gm.registerPerson("Krokdoil", Person.Role.CANDIDATE);
+        var p3 = gm.registerPerson("Kronor", Person.Role.CANDIDATE);
         var p4 = gm.registerPerson("Ölkorv", Person.Role.CANDIDATE);
         gm.registerPerson("Sebbe", Person.Role.LEADER);
 

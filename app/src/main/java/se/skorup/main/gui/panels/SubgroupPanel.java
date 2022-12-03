@@ -2,14 +2,15 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.creators.GroupCreator;
-import se.skorup.main.groups.creators.MultiWishlistCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.creators.WishesGroupCreator;
+import se.skorup.main.groups.creators.WishlistGroupCreator;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
 import se.skorup.main.gui.interfaces.GroupGenerator;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
 public class SubgroupPanel extends JPanel
 {
     private final GroupFrame gf;
-    private final GroupManager gm;
+    private final Group gm;
     private final SubgroupDisplayPanel sdp;
     private Subgroups current;
 
@@ -325,28 +326,22 @@ public class SubgroupPanel extends JPanel
     private GroupCreatorResult getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
     {
         var gc = gf.getGroupSelectedGroupCreator();
+        var res =
+            gc instanceof RandomGroupCreator   ?
+            new RandomGroupCreator()           :
+            gc instanceof WishesGroupCreator ?
+            new WishesGroupCreator()           :
+            new WishlistGroupCreator();
 
         if (shouldUseOneMainGroup)
         {
             var persons = gm.getAllOfMainGroupAndRoll(Person.Role.CANDIDATE, mg);
             var gm = new GroupManager(mg.toString());
             persons.forEach(gm::registerPerson);
-
-            GroupCreator res;
-
-            if (gc instanceof RandomGroupCreator)
-                res = new RandomGroupCreator(gm);
-            else if (gc instanceof MultiWishlistCreator)
-                res = new MultiWishlistCreator(gm);
-            else if (gc instanceof WishlistGroupCreator)
-                res = new WishlistGroupCreator(gm);
-            else
-                res = new WishlistGroupCreator(gm);
-
             return new GroupCreatorResult(res, gm);
         }
 
-        return new GroupCreatorResult(gc, this.gm);
+        return new GroupCreatorResult(res, this.gm);
     }
 
     /**
@@ -355,23 +350,24 @@ public class SubgroupPanel extends JPanel
      *
      * @param gg the generator that generates the groups.
      * @return the generated groups.
-     * @throws NoGroupAvailableException iff the group creation failed.
+     * @throws GroupCreationFailedException iff the group creation failed.
      */
-    private List<List<Set<Integer>>> tryGenerateGroups(GroupGenerator gg) throws NoGroupAvailableException
+    private List<List<Set<Integer>>> tryGenerateGroups(GroupGenerator gg) throws GroupCreationFailedException
     {
-        for (int i = 0; i < 1000; i++)
+        var msg = "";
+        for (int i = 0; i < 100; i++)
         {
             try
             {
                 return gg.generate();
             }
-            catch (NoGroupAvailableException e)
+            catch (GroupCreationFailedException e)
             {
-                DebugMethods.log(e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
+                DebugMethods.log(msg = e.getLocalizedMessage(), DebugMethods.LogType.ERROR);
             }
         }
 
-        throw new NoGroupAvailableException("There are no possible groups, too many denylist items.");
+        throw new GroupCreationFailedException(msg);
     }
 
     /**
@@ -381,7 +377,7 @@ public class SubgroupPanel extends JPanel
      * @param size the size of the group
      * @param gm the group manager in use.
      * */
-    private int calculateOptimalSize(int size, GroupManager gm)
+    private int calculateOptimalSize(int size, Group gm)
     {
         var total = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
 
@@ -420,32 +416,36 @@ public class SubgroupPanel extends JPanel
      * @param gm the group manager in use.
      * @return the correct GroupGenerator.
      * */
-    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes, GroupManager gm)
+    private GroupGenerator getGroupGenerator(GroupCreator gc, List<Integer> sizes, Group gm)
     {
         if (!gf.shouldOverflow())
         {
             return switch (gf.getSizeState()) {
-                case NUMBER_GROUPS -> () -> gc.generateGroupNbrGroups(sizes.get(0), false, gm);
-                case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(sizes.get(0), false);
+                case NUMBER_GROUPS -> () -> gc.generate(
+                    gm, gm.getMemberCountOfRole(Person.Role.CANDIDATE) / sizes.get(0), false
+                );
+                case NUMBER_PERSONS -> () -> gc.generate(gm, sizes.get(0), false);
                 case PAIR_WITH_LEADERS -> {
                     var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                    yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                    yield () -> gc.generate(
+                        gm, gm.getMemberCountOfRole(Person.Role.CANDIDATE) / sizes.get(0), shouldOverflow
+                    );
                 }
-                case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+                case DIFFERENT_GROUP_SIZES -> () -> gc.generate(gm, sizes);
             };
         }
 
         return switch (gf.getSizeState()) {
             case NUMBER_GROUPS -> {
                 var nbrPersons = (int) Math.ceil(gm.getMemberCountOfRole(Person.Role.CANDIDATE) / (double) sizes.get(0));
-                yield () -> gc.generateGroupNbrGroups(calculateOptimalSize(nbrPersons, gm), true, gm);
+                yield () -> gc.generate(gm, calculateOptimalSize(nbrPersons, gm), true);
             }
-            case NUMBER_PERSONS -> () -> gc.generateGroupNbrPeople(calculateOptimalSize(sizes.get(0), gm), true);
+            case NUMBER_PERSONS -> () -> gc.generate(gm, calculateOptimalSize(sizes.get(0), gm), true);
             case PAIR_WITH_LEADERS -> {
                 var shouldOverflow = gm.getMemberCountOfRole(Person.Role.CANDIDATE) % sizes.get(0) != 0;
-                yield () -> gc.generateGroupNbrGroups(sizes.get(0), shouldOverflow, gm);
+                yield () -> gc.generate(gm, sizes.get(0), shouldOverflow);
             }
-            case DIFFERENT_GROUP_SIZES -> () -> gc.generateGroupNbrGroups(sizes);
+            case DIFFERENT_GROUP_SIZES -> () -> gc.generate(gm, sizes);
         };
     }
 
@@ -457,7 +457,7 @@ public class SubgroupPanel extends JPanel
      * @return the List of Lists of Sets consisting of
      *         the newly created subgroups.
      */
-    private List<List<Set<Integer>>> generateSingleSubgroup(GroupCreator gc, GroupManager gm)
+    private List<List<Set<Integer>>> generateSingleSubgroup(GroupCreator gc, Group gm)
     {
         final var sizes = gf.getUserInput();
 
@@ -468,7 +468,7 @@ public class SubgroupPanel extends JPanel
         {
             return tryGenerateGroups(getGroupGenerator(gc, sizes, gm));
         }
-        catch (NoGroupAvailableException | IllegalArgumentException e)
+        catch (GroupCreationFailedException | IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(
                 this,
@@ -518,7 +518,7 @@ public class SubgroupPanel extends JPanel
 
             return groups;
         }
-        catch (NoGroupAvailableException | IllegalArgumentException e)
+        catch (GroupCreationFailedException | IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(
                 this,
@@ -563,7 +563,7 @@ public class SubgroupPanel extends JPanel
         {
             current = new Subgroups(
                null, groups.get(0), gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
+                gc instanceof WishesGroupCreator || gc instanceof WishlistGroupCreator,
                 new String[groups.get(0).size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
             );
 
@@ -587,8 +587,8 @@ public class SubgroupPanel extends JPanel
             {
                 sgs.add(new Subgroups(
                     "Förslag: %d".formatted(i++), g, gf.getSizeState().equals(GroupFrame.State.PAIR_WITH_LEADERS),
-                    gc instanceof WishlistGroupCreator || gc instanceof MultiWishlistCreator,
-                    new String[g.size()], new Vector<>(gm.getAllOfRoll(Person.Role.LEADER))
+                    gc instanceof WishesGroupCreator || gc instanceof WishlistGroupCreator, new String[g.size()],
+                    new ArrayList<>(gm.getAllOfRoll(Person.Role.LEADER))
                 ));
             }
 
@@ -621,7 +621,8 @@ public class SubgroupPanel extends JPanel
      * Shows and hides the colors of the names from the main groups.
      *
      * @param shouldDisplayMainGroups if {@code true} it will display the colors,
-     *                               else if {@code false} it will display the standard forground color.
+     *                               else if {@code false} it will display the standard
+     *                               foreground color.
      * */
     public void setMainGroupDisplay(boolean shouldDisplayMainGroups)
     {
@@ -637,5 +638,5 @@ public class SubgroupPanel extends JPanel
         super.repaint();
     }
 
-    private record GroupCreatorResult(GroupCreator gc, GroupManager gm) {}
+    private record GroupCreatorResult(GroupCreator gc, Group gm) {}
 }

@@ -1,6 +1,6 @@
 package se.skorup.main.gui.interfaces;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 
 import java.util.List;
 import java.util.Set;
@@ -15,7 +15,7 @@ public interface GroupGenerator
      * The generator method.
      *
      * @return the generated method.
-     * @throws NoGroupAvailableException iff the group cannot be created.
+     * @throws GroupCreationFailedException iff the group cannot be created.
      */
-    List<List<Set<Integer>>> generate() throws NoGroupAvailableException;
+    List<List<Set<Integer>>> generate() throws GroupCreationFailedException;
 }

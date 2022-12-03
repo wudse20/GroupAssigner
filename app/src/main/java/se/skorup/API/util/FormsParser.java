@@ -1,7 +1,7 @@
 package se.skorup.API.util;
 
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 
 /**
@@ -17,7 +17,7 @@ public class FormsParser
      * @param data the data to be parsed.
      * @param gm the group manager.
      * */
-    public static void parseFormData(String data, GroupManager gm)
+    public static void parseFormData(String data, Group gm)
     {
         data = data.trim();
         data = ImmutableArray.fromArray(data.split("")).dropMatching("\"").mkString("");

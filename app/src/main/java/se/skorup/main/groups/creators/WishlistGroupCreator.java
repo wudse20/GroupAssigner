@@ -1,162 +1,176 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
-import se.skorup.main.manager.GroupManager;
-import se.skorup.main.objects.Person;
+import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Tuple;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * An alternate GroupCreator for wishlist generation.
+ * Creates subgroups respecting the wishes by the candidates,
+ * trying to fulfill as many wishes as possible. This algorithm
+ * will not generate multiple results.
  * */
-public final class WishlistGroupCreator extends GroupCreatorTemplate
+public class WishlistGroupCreator extends GroupCreatorTemplate
 {
+    /** The id of the starting person. */
+    protected final int startingPerson;
     private boolean shouldUseStartPerson;
-    private Person startingPerson;
 
     /**
-     * Creates a new GroupCreator.
-     *
-     * @param gm the group manager used to create
-     *           the subgroups.
+     * Creates a new GroupCreator, without a starting person.
+     * <br><br>
+     * This is used for debugging purposes.
      * */
-    public WishlistGroupCreator(GroupManager gm)
+    public WishlistGroupCreator()
     {
-        super(gm);
+        this(-1);
+        this.shouldUseStartPerson = false;
     }
 
     /**
      * Creates a new GroupCreator, with a starting person.
      *
-     * @param gm the group manager used to create the subgroups.
      * @param p the person to start with.
      * */
-    public WishlistGroupCreator(GroupManager gm, Person p)
+    public WishlistGroupCreator(int p)
     {
-        this(gm);
         this.startingPerson = p;
         this.shouldUseStartPerson = true;
     }
 
     /**
-     * Gets the next person.
+     * Gets the wishes of a person with id: id. This method will only
+     * return the persons that aren't included in any subgroup.
      *
-     * @param current the currently worked on group.
-     * @param candidates the unused candidates.
-     * @param wish the wishes of this group.
-     * @param deny the denylist of this group.
-     * @param added the persons that are already used.
-     * @param p the current person.
-     * @throws NoGroupAvailableException iff there are no possible groups.
+     * @param gm the Group in charge.
+     * @param left the persons that aren't yet used.
+     * @param id the id of the person to be checked against.
+     * @return a list with the wishes for this id.
      * */
-    private Person getNextPerson(
-        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-        Set<Tuple> deny, Set<Integer> added, Person p
-    ) throws NoGroupAvailableException
+    private List<Integer> getWishes(Group gm, Set<Integer> left, int id)
     {
-        if (current.size() == 0) // Starting a new subgroup.
+        return new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), id)).intersection(left).toList();
+    }
+
+    /**
+     * Gets the number wishes of a person with id: id. This method will only
+     * return the persons that aren't included in any subgroup.
+     *
+     * @param gm   the Group in charge.
+     * @param left the persons that aren't yet used.
+     * @param id   the id of the person to be checked against.
+     * @return the number of wishes for this id.
+     */
+    private int getNumberWishes(Group gm, Set<Integer> left, int id)
+    {
+        return getWishes(gm, left, id).size();
+    }
+
+    /**
+     * Gets the person with the least wishes left int the stream.
+     *
+     * @param candidates the candidets to be choosen from.
+     * @param gm the Group in charge.
+     * @param left the persons left to use.
+     * */
+    private int getLeastWishes(Stream<Integer> candidates, Group gm, HashSet<Integer> left)
+    {
+        return candidates.map(x -> new PersonWishEntry(x, getNumberWishes(gm, left, x)))
+                         .sorted()
+                         .toList()
+                         .get(0)
+                         .id;
+    }
+
+    /**
+     * Gets the optimal person at this moment, this is very greedy
+     * and might not give an optimal solution, but is good enough.
+     *
+     * @param gm the Group in charge.
+     * @param left the unused ids.
+     * @param current the currently worked on subgroup.
+     * @param lastId the id of the last person chosen.
+     * @return the id of the next optimal person.
+     * */
+    private int getOptimalPerson(Group gm, Set<Integer> left, Set<Integer> current, int lastId)
+    {
+        var l = // Removes all the id:s that aren't allowed.
+            left.stream()
+                .filter(i -> isPersonAllowed(i, current, gm))
+                .collect(Collectors.toCollection(HashSet::new));
+
+        if (l.isEmpty())
+            throw new GroupCreationFailedException("Cannot create group, too many denylist items!");
+
+        if (current.isEmpty()) // First person of the subgroup
         {
-            if (added.size() == 0) // The first person.
-            {
-                p = getRandomPerson(candidates); // Gets a random person to start with.
-            }
-            else // We've already added a person, i.e. not first group; then we pick the person with the fewest wishes left.
-            {
-                // Takes the person with the fewest wishes left.
-                p = candidates.stream()
-                              .map(x -> new PersonWithWishesLeft(x, getWishes(wish, added, x.getId()).size()))
-                              .sorted(Comparator.comparingInt(a -> a.wishes))
-                              .toList()
-                              .get(0)
-                              .p();
-            }
-        }
-        else // The group is already started.
-        {
-            var wishes = getWishes(wish, added, p.getId()); // The wishes of p.
-
-            if (wishes.isEmpty()) // If there are no wishes left.
-            {
-                var list = new ArrayList<Person>();
-
-                // Get all the persons that has wished for p.
-                for (var c : candidates)
-                {
-                    if (getWishes(wish, added, c.getId()).contains(p.getId()))
-                    {
-                        list.add(c);
-                    }
-                }
-
-                // No persons then just get a person that is allowed.
-                if (list.isEmpty())
-                {
-                    p = getAllowedPerson(deny, current, candidates, added, p);
-                }
-                else
-                {
-                    p = list.stream()
-                            .map(x -> new PersonWithWishesLeft(x, getWishes(wish, added, x.getId()).size()))
-                            .sorted(Comparator.comparingInt(a -> a.wishes))
-                            .toList()
-                            .get(0)
-                            .p();
-                }
-            }
-            else
-            {
-                p = wishes.stream()
-                          .map(gm::getPersonFromId)
-                          .map(x -> new PersonWithWishesLeft(x, getWishes(wish, added, x.getId()).size()))
-                          .sorted(Comparator.comparingInt(a -> a.wishes))
-                          .toList()
-                          .get(0)
-                          .p();
-            }
+            return getLeastWishes(l.stream(), gm, l);
         }
 
-        return p;
+        // The subgroup is already started.
+        var wishes = getWishes(gm, l, lastId);
+
+        if (wishes.isEmpty()) // If there are no wishes left.
+        {
+            var list = new ArrayList<Integer>();
+
+            // Get all the persons that has wished for c.
+            for (var c : l) {
+                if (getWishes(gm, l, c).contains(lastId))
+                    list.add(c);
+            }
+
+            if (list.isEmpty()) {
+                // Get a random person that hasn't been used.
+                return new ArrayList<>(l).get(new Random().nextInt(l.size()));
+            } else {
+                return getLeastWishes(list.stream(), gm, l);
+            }
+        }
+        else
+        {
+            return getLeastWishes(wishes.stream(), gm, l);
+        }
     }
 
     @Override
-    protected Person getPerson(
-        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-        Set<Tuple> deny, Set<Integer> added, Person p
-    ) throws NoGroupAvailableException
+    protected int getNextPerson(
+        Group gm, Set<Integer> left,
+        Set<Integer> current, int lastId
+    ) throws GroupCreationFailedException
     {
-        if (shouldUseStartPerson && startingPerson != null)
+        if (shouldUseStartPerson)
         {
-            var person = startingPerson;
-            startingPerson = null;
-            return person;
+            shouldUseStartPerson = false;
+            left.remove(startingPerson);
+            return startingPerson;
         }
 
-        return getNextPerson(current, candidates, wish, deny, added, p);
+        var opt = getOptimalPerson(gm, left, current, lastId);
+        left.remove(opt);
+        return opt;
     }
 
     @Override
     public String toString()
     {
-        return "Skapa grupper efter önskningar (borde aldrig synas)";
+        return "REPORT IF YOU SEE THIS; RAPPORTERA OM DU SER DETTA!";
     }
 
-    @Override
-    public int hashCode()
+    private record PersonWishEntry(int id, int nbrWishes) implements Comparable<PersonWishEntry>
     {
-        return gm.hashCode();
+        @Override
+        public int compareTo(PersonWishEntry other)
+        {
+            return Integer.compare(nbrWishes, other.nbrWishes);
+        }
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        return o instanceof WishlistGroupCreator wgc &&
-               wgc.gm.equals(gm);
-    }
-
-    private record PersonWithWishesLeft(Person p, int wishes) {}
 }

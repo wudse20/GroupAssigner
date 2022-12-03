@@ -6,7 +6,7 @@ import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
 import se.skorup.main.gui.panels.PersonPanel;
 import se.skorup.main.gui.panels.SidePanel;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.helper.SerializationManager;
 import se.skorup.main.objects.Person;
 
@@ -31,9 +31,9 @@ public class MainFrame extends JFrame
     private static final String savePath =
         "%ssaves/save.data".formatted(Utils.getFolderName());
 
-    private final List<GroupManager> managers = new ArrayList<>();
+    private final List<Group> managers = new ArrayList<>();
 
-    private GroupManager currentGroupManager;
+    private Group currentGroupManager;
 
     private final Container cp = this.getContentPane();
 
@@ -66,7 +66,7 @@ public class MainFrame extends JFrame
     {
         try
         {
-            managers.addAll((List<GroupManager>) SerializationManager.deserializeObject(savePath));
+            managers.addAll((List<Group>) SerializationManager.deserializeObject(savePath));
         }
         catch (Exception e)
         {
@@ -230,7 +230,7 @@ public class MainFrame extends JFrame
      *
      * @param manager the new GroupManager.
      * */
-    public void addGroupManager(GroupManager manager)
+    public void addGroupManager(Group manager)
     {
         this.managers.add(manager);
     }
@@ -241,7 +241,7 @@ public class MainFrame extends JFrame
      * @return the current group manager, iff no exist
      *         managers it will return {@code null}.
      * */
-    public GroupManager getCurrentGroup()
+    public Group getCurrentGroup()
     {
         return currentGroupManager;
     }

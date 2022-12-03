@@ -8,6 +8,7 @@ import se.skorup.main.gui.helper.layout.DoubleColumnGenerator;
 import se.skorup.main.gui.helper.layout.LayoutGenerator;
 import se.skorup.main.gui.helper.layout.SingleColumnGenerator;
 import se.skorup.main.gui.helper.layout.TripleColumnGenerator;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
@@ -218,7 +219,7 @@ public class SubgroupDisplayPanel extends JPanel
      * @param gm the group manager in use.
      * @return the proper color of a person.
      * */
-    private Color getColor(int id, GroupManager gm)
+    private Color getColor(int id, Group gm)
     {
         if (!shouldDisplayMainGroups)
             return Utils.FOREGROUND_COLOR;
@@ -235,7 +236,7 @@ public class SubgroupDisplayPanel extends JPanel
      * @param subgroups the subgroups to be displayed.
      * @param manager the group manager in use.
      * */
-    public void displaySubgroup(Subgroups subgroups, GroupManager manager)
+    public void displaySubgroup(Subgroups subgroups, Group manager)
     {
         if (subgroups == null || manager == null)
             return;
@@ -334,7 +335,7 @@ public class SubgroupDisplayPanel extends JPanel
         }
     }
 
-    private String getLabel(int p, GroupManager manager, Subgroups sg)
+    private String getLabel(int p, Group manager, Subgroups sg)
     {
         if (sg.isWishListMode())
             return "%s (%d)".formatted(

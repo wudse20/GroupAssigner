@@ -5,7 +5,7 @@ import se.skorup.main.gui.events.AddEvent;
 import se.skorup.main.gui.interfaces.AddListener;
 import se.skorup.main.gui.models.NameListModel;
 import se.skorup.main.gui.panels.InputPanel;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -45,7 +45,7 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
     protected final NameListModel nameModel = new NameListModel(new ArrayList<>());
     protected final List<String> removed = new ArrayList<>();
 
-    private GroupManager result;
+    private Group result;
     private final List<AddListener> addListeners = new ArrayList<>();
     private final Container cp = this.getContentPane();
 
@@ -79,7 +79,7 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      * @param title the title of the frame.
      * @param gm the GroupManager that it should be initialized with.
      * */
-    protected AbstractGroupFrame(String title, GroupManager gm)
+    protected AbstractGroupFrame(String title, Group gm)
     {
         this(title);
         this.result = gm;
@@ -269,7 +269,7 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      *
      * @param gm the group manager to be the result.
      * */
-    protected void setResult(GroupManager gm)
+    protected void setResult(Group gm)
     {
         if (gm == null)
             return;
@@ -290,8 +290,8 @@ public abstract sealed class AbstractGroupFrame extends JFrame implements KeyLis
      * The action used when interacting with the GroupManager.
      *
      * @param gm the current GroupManager.
-     * */
-    protected abstract GroupManager groupAction(GroupManager gm);
+     */
+    protected abstract Group groupAction(Group gm);
 
     /**
      * Adds an AddListener to the frame.

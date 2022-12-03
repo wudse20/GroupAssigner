@@ -1,54 +1,52 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
-import se.skorup.main.manager.GroupManager;
-import se.skorup.main.objects.Person;
-import se.skorup.main.objects.Tuple;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
+import se.skorup.main.manager.Group;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Set;
 
 /**
- * The class used to generate random groups.
+ * The group creator for totally random groups. This generator
+ * will not generate multiple subgroup alternatives. It will
+ * pick an id whilst respecting the denylist.
  * */
 public class RandomGroupCreator extends GroupCreatorTemplate
 {
-    /**
-     * Creates a random group creator.
-     *
-     * @param gm the group manager used to create
-     *           the subgroups.
-     */
-    public RandomGroupCreator(GroupManager gm)
-    {
-        super(gm);
-    }
+    /** Creates a new RandomGroupCreator. Does nothing, actually. */
+    public RandomGroupCreator() {}
 
     @Override
-    protected Person getPerson(
-        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-        Set<Tuple> deny, Set<Integer> added, Person p
-    ) throws NoGroupAvailableException
+    protected int getNextPerson(
+            Group gm, Set<Integer> left,
+            Set<Integer> current, int lastId
+    ) throws GroupCreationFailedException
     {
-        return getAllowedPerson(deny, current, candidates, getRandomPerson(candidates));
+        var leftList = new ArrayList<>(left);
+
+        while (!leftList.isEmpty())
+        {
+            var p = leftList.get(new Random().nextInt(leftList.size()));
+
+            if (isPersonAllowed(p, current, gm))
+            {
+                left.remove(p);
+                return p;
+            }
+            else
+            {
+                leftList.remove(p);
+            }
+        }
+
+        // If we are here we have failed.
+        throw new GroupCreationFailedException("Too many denylist items");
     }
 
     @Override
     public String toString()
     {
         return "Slumpmässig grupp";
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return toString().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        return o instanceof RandomGroupCreator gc &&
-               this.toString().equals(gc.toString());
     }
 }

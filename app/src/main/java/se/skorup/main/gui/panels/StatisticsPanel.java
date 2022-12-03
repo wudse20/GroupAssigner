@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Subgroups;
 
 import javax.swing.JPanel;
@@ -14,7 +14,7 @@ import java.util.Optional;
  * */
 public class StatisticsPanel extends JPanel
 {
-    private final GroupManager gm;
+    private final Group gm;
     private final GroupStatisticsPanel gsp;
     private final SubgroupStatisticsPanel ssp;
 
@@ -23,7 +23,7 @@ public class StatisticsPanel extends JPanel
      *
      * @param gm the instance of the GroupManager in use.
      * */
-    public StatisticsPanel(GroupManager gm)
+    public StatisticsPanel(Group gm)
     {
         this.gm = gm;
         this.gsp = new GroupStatisticsPanel(gm);

@@ -1,118 +1,147 @@
 package se.skorup.main.groups.creators;
 
-import se.skorup.main.groups.exceptions.NoGroupAvailableException;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.groups.exceptions.GroupCreationFailedException;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-/** The template for a GroupCreator. */
+/**
+ * A template class for a group creator.
+ * */
 public abstract class GroupCreatorTemplate implements GroupCreator
 {
-    protected final GroupManager gm;
-
-    /**
-     * Creates a template group creator.
-     *
-     * @param gm the group manager used to create
-     *           the subgroups.
-     */
-    public GroupCreatorTemplate(GroupManager gm)
-    {
-        this.gm = gm;
-    }
+    /** No one should instantiate this class anomalously. */
+    protected GroupCreatorTemplate() {}
 
     /**
      * Gets the next person.
      *
-     * @param current the currently worked on group.
-     * @param candidates the unused candidates.
-     * @param wish the wishes of this group.
-     * @param deny the denylist of this group.
-     * @param added the persons that are already used.
-     * @param p the current person.
-     * @throws NoGroupAvailableException iff there are no possible groups.
+     * @param gm the instance of the GroupManger resonsible for the group.
+     * @param left the id's of the persons that are left.
+     * @param current the current group being worked on.
+     * @param lastId the id that was the last chosen.
+     * @return the id of the person that's the next person.
+     * @throws GroupCreationFailedException iff there is no possible person to be chosen.
      * */
-    protected abstract Person getPerson(
-        Set<Integer> current, List<Person> candidates, Set<Tuple> wish,
-        Set<Tuple> deny, Set<Integer> added, Person p
-    ) throws NoGroupAvailableException;
+    protected abstract int getNextPerson(
+            Group gm, Set<Integer> left, Set<Integer> current,
+            int lastId
+    ) throws GroupCreationFailedException;
 
-    @Override
-    public final List<List<Set<Integer>>> generateGroup(int size, boolean overflow) throws NoGroupAvailableException
+    /**
+     * Checks if a person is allowed in the group.
+     *
+     * @param id the id of the person to tested.
+     * @param current the current group in creation.
+     * @param gm the group manager in charge of the group.
+     * @return {@code true} iff the person is allowed to exist in current.
+     * */
+    protected boolean isPersonAllowed(int id, Collection<Integer> current, Group gm)
     {
-        var result = new ArrayList<Set<Integer>>();
-        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
-        var wish = gm.getWishGraph();
-        var deny = gm.getDenyGraph();
-        var added = new HashSet<Integer>();
-
-        int i = 0;
-        Set<Integer> current = null; // Just to have it initialized.
-        Person p = null; // Just to have it initialized.
-        while (candidates.size() != 0)
-        {
-            if (shouldCreateNewGroup(i++, size))
-                current = addGroup(result, current, candidates, overflow, size);
-
-            assert current != null; // To stop it from complaining.
-            p = getPerson(current, candidates, wish, deny, added, p);
-            current.add(p.getId());
-            candidates.remove(p);
-            added.add(p.getId());
-        }
-
-        if (current != null)
-            result.add(current);
-
-        return List.of(result);
+        return current.stream().noneMatch(id2 -> Tuple.imageOf(gm.getDenyGraph(), id2).contains(id));
     }
 
     @Override
-    public final List<List<Set<Integer>>> generateGroupNbrGroups(List<Integer> sizes) throws IllegalArgumentException, NoGroupAvailableException
+    public List<List<Set<Integer>>> generate(
+            Group gm, int size, boolean overflow
+    ) throws GroupCreationFailedException, IllegalArgumentException
     {
-        if (sizes == null)
-            throw new IllegalArgumentException("Not enough groups 0");
-        else if (sizes.size() < 2)
-            throw new IllegalArgumentException(
-                    "Not enough groups %d".formatted(Objects.requireNonNullElse(sizes.size(), 0))
-            );
+        var res = new ArrayList<Set<Integer>>();
+        var count = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
+        var left =
+            gm.getAllOfRoll(Person.Role.CANDIDATE)
+              .stream()
+              .map(Person::getId)
+              .collect(Collectors.toCollection(HashSet::new));
 
-        var result = new ArrayList<Set<Integer>>();
-        var candidates = new ArrayList<>(gm.getAllOfRoll(Person.Role.CANDIDATE));
-        var wish = gm.getWishGraph();
-        var deny = gm.getDenyGraph();
-        var added = new HashSet<Integer>();
+        var currentCount = 0;
+        var addedCount = 0;
+        var last = -1;
+        var current = new HashSet<Integer>();
 
-        int i = 0;
-        int ii = 0;
-        Set<Integer> current = new HashSet<>();
-        Person p = null; // Just to have it initialized.
-        while (candidates.size() != 0)
+        for (var i = 0; i < count; i++)
         {
-            p = getPerson(current, candidates, wish, deny, added, p);
-            current.add(p.getId());
-            added.add(p.getId());
+            if (Thread.interrupted())
+                return List.of();
 
-            if (i != sizes.size() && sizes.get(i) == ++ii)
+            if (currentCount == size)
             {
-                ii = 0;
-                i++;
+                currentCount = 0;
+                res.add(current);
 
-                result.add(current);
+                if (current.size() != size)
+                    throw new GroupCreationFailedException("Wrong size of group; Please report!");
+
+                addedCount += current.size();
+                if (addedCount + left.size() != count)
+                    throw new GroupCreationFailedException("Please Report: One or more persons are used more than once!");
+
                 current = new HashSet<>();
             }
+
+            current.add(last = getNextPerson(gm, left, current, last));
+            currentCount++;
+
+            if (currentCount != current.size())
+                throw new GroupCreationFailedException("Wrong size of group; Please report!");
         }
 
-        if (current.size() != 0 && !result.contains(current))
-            result.add(current);
+        if (currentCount != 0)
+            res.add(current);
 
-        return Collections.singletonList(result);
+        return Collections.singletonList(res);
+    }
+
+    @Override
+    public List<List<Set<Integer>>> generate(Group gm, List<Integer> sizes) throws GroupCreationFailedException
+    {
+        var res = new ArrayList<Set<Integer>>();
+        var count = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
+        var left =
+                gm.getAllOfRoll(Person.Role.CANDIDATE)
+                  .stream()
+                  .map(Person::getId)
+                  .collect(Collectors.toCollection(HashSet::new));
+
+        var currentCount = 0;
+        var sizePointer = 0;
+        var last = -1;
+        var current = new HashSet<Integer>();
+
+        for (var i = 0; i < count; i++)
+        {
+            if (Thread.interrupted())
+                return List.of();
+
+            if (sizePointer < sizes.size() && currentCount == sizes.get(sizePointer))
+            {
+                if (sizes.get(sizePointer) != current.size())
+                    throw new GroupCreationFailedException("Wrong group size; please report!");
+
+                currentCount = 0;
+                sizePointer++;
+                res.add(current);
+                current = new HashSet<>();
+            }
+
+            current.add(last = getNextPerson(gm, left, current, last));
+            currentCount++;
+
+            if (currentCount != current.size())
+                throw new GroupCreationFailedException("Wrong size of group; Please report!");
+        }
+
+        if (currentCount != 0)
+            res.add(current);
+
+        return Collections.singletonList(res);
     }
 }

@@ -1,7 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.Utils;
-import se.skorup.main.manager.GroupManager;
+import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 
@@ -9,7 +9,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.util.Optional;
 
 import static se.skorup.API.util.Utils.padString;
@@ -33,7 +32,7 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
      *
      * @param gm the instance of the GroupManager in use.
      * */
-    public GroupStatisticsPanel(GroupManager gm)
+    public GroupStatisticsPanel(Group gm)
     {
         super(gm);
         this.init(Optional.empty());

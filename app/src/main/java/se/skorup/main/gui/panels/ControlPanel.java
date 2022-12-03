@@ -6,6 +6,7 @@ import se.skorup.main.gui.frames.AddGroupFrame;
 import se.skorup.main.gui.frames.EditGroupFrame;
 import se.skorup.main.gui.frames.ImportFrame;
 import se.skorup.main.gui.frames.MainFrame;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 
 import javax.swing.JButton;
@@ -32,11 +33,11 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         ADD, EDIT, DELETE, IMPORT
     }
 
-    private final List<GroupManager> managers;
+    private final List<Group> managers;
 
     private final MainFrame mf;
 
-    private final JComboBox<GroupManager> cbManagers = new JComboBox<>();
+    private final JComboBox<Group> cbManagers = new JComboBox<>();
 
     private final JButton btnAdd = new JButton("Skapa en ny grupp");
     private final JButton btnEdit = new JButton("Ändra denna grupp");
@@ -51,7 +52,7 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
      * @param mf the instance of the mainframe.
      * @param managers the instance of the managers.
      * */
-    public ControlPanel(MainFrame mf, List<GroupManager> managers)
+    public ControlPanel(MainFrame mf, List<Group> managers)
     {
         this.mf = mf;
         this.managers = managers;
@@ -126,8 +127,9 @@ public class ControlPanel extends JPanel implements ItemListener, ActionListener
         var index = cbManagers.getSelectedIndex();
         if (index != -1 && e.getStateChange() == ItemEvent.SELECTED)
         {
-            ((GroupManager) Objects.requireNonNull(cbManagers.getSelectedItem()))
-                    .getAllPersons().forEach(x -> DebugMethods.log(x.toString(), DebugMethods.LogType.DEBUG));
+            ((Group) Objects.requireNonNull(cbManagers.getSelectedItem()))
+                            .getAllPersons()
+                            .forEach(x -> DebugMethods.log(x.toString(), DebugMethods.LogType.DEBUG));
 
             mf.setCurrentGroupManager(index);
         }

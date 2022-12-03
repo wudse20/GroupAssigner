@@ -2,6 +2,7 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.Utils;
+import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
@@ -36,7 +37,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
 
     private final DataGraphPanel pGraph = new DataGraphPanel(x);
 
-    public SubgroupStatisticsPanel(GroupManager gm)
+    public SubgroupStatisticsPanel(Group gm)
     {
         super(gm);
         this.init(Optional.empty());
