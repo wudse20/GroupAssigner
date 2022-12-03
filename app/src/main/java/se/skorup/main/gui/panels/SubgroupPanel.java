@@ -43,7 +43,7 @@ public class SubgroupPanel extends JPanel
     private final GroupFrame gf;
     private final Group gm;
     private final SubgroupDisplayPanel sdp;
-    private Subgroups current;
+    private volatile Subgroups current;
 
     /**
      * Creates a new SubgroupSettingsPanel.
@@ -603,19 +603,21 @@ public class SubgroupPanel extends JPanel
             frame.addActionCallback(sg -> {
                 DebugMethods.log("Chosen groups:", DebugMethods.LogType.DEBUG);
                 DebugMethods.log(sg, DebugMethods.LogType.DEBUG);
-
-                sdp.reset();
-                sdp.displaySubgroup(sg, gm);
-                current = sg;
-                gf.updateStatistics(sg);
-
-                frame.dispose();
-                gf.setVisible(true);
+                SwingUtilities.invokeLater(() -> {
+                    sdp.reset();
+                    sdp.displaySubgroup(sg, gm);
+                    current = sg;
+                    gf.updateStatistics(sg);
+                    frame.dispose();
+                    gf.setVisible(true);
+                });
             });
 
             frame.addCancelCallback(() -> {
-                gf.setVisible(true);
-                gf.updateStatistics(null);
+                SwingUtilities.invokeLater(() -> {
+                    gf.setVisible(true);
+                    gf.updateStatistics(null);
+                });
             });
         });
     }
@@ -630,6 +632,14 @@ public class SubgroupPanel extends JPanel
     public void setMainGroupDisplay(boolean shouldDisplayMainGroups)
     {
         sdp.setMainGroupDisplay(shouldDisplayMainGroups);
+    }
+
+    /**
+     * Getter for the current subgroups.
+     * */
+    public Subgroups getCurrent()
+    {
+        return current;
     }
 
     @Override

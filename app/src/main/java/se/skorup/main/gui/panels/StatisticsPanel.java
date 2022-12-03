@@ -14,7 +14,6 @@ import java.util.Optional;
  * */
 public class StatisticsPanel extends JPanel
 {
-    private final Group gm;
     private final GroupStatisticsPanel gsp;
     private final SubgroupStatisticsPanel ssp;
 
@@ -25,7 +24,6 @@ public class StatisticsPanel extends JPanel
      * */
     public StatisticsPanel(Group gm)
     {
-        this.gm = gm;
         this.gsp = new GroupStatisticsPanel(gm);
         this.ssp = new SubgroupStatisticsPanel(gm);
 

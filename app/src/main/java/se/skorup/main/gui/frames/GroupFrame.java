@@ -397,6 +397,7 @@ public class GroupFrame extends JFrame implements ChangeListener
             DebugMethods.log("Selected statitics", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(sp);
             this.setSize(new Dimension(600, 800));
+            sp.updateStatistics(sgp.getCurrent());
         }
         else
         {
