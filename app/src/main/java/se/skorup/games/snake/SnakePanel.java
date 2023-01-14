@@ -1,7 +1,8 @@
-package se.skorup.snake;
+package se.skorup.games.snake;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.games.base.Score;
 import se.skorup.main.manager.helper.SerializationManager;
 
 import javax.swing.JOptionPane;

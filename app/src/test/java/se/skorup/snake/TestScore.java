@@ -3,6 +3,7 @@ package se.skorup.snake;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import se.skorup.games.base.Score;
 
 import java.util.stream.Stream;
 
