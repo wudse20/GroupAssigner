@@ -23,9 +23,7 @@ public final class SnakeFrame extends GameFrame
     public SnakeFrame()
     {
         super("Snake", WIDTH - 7, HEIGHT - 3);
-
-        SnakePanel sp = new SnakePanel(this);
-
+        var sp = new SnakePanel(this);
         this.getContentPane().add(sp);
         this.addKeyListener(sp);
         this.center();
