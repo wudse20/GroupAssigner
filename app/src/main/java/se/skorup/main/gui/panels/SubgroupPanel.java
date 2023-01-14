@@ -9,6 +9,7 @@ import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
+import se.skorup.main.gui.helper.progress.ProgressMonitor;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
@@ -79,7 +80,11 @@ public class SubgroupPanel extends JPanel
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
 
-        gf.addActionListener(e -> new Thread(() -> gf.waitCursorAction(this::generateGroups)).start(), GroupButtonPanel.Buttons.CREATE);
+        gf.addActionListener(e -> new Thread(() -> gf.waitCursorAction(() -> {
+            gf.setButtonEnabled(GroupButtonPanel.Buttons.CREATE, false);
+            this.generateGroups();
+            gf.setButtonEnabled(GroupButtonPanel.Buttons.CREATE, true);
+        })).start(), GroupButtonPanel.Buttons.CREATE);
         gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
         gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
         gf.addActionListener(e -> print(), GroupButtonPanel.Buttons.PRINT);
@@ -326,11 +331,12 @@ public class SubgroupPanel extends JPanel
     private GroupCreatorResult getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
     {
         var gc = gf.getGroupSelectedGroupCreator();
+        var p = new ProgressMonitor(sdp.getProgress());
         var res =
-            gc instanceof RandomGroupCreator   ?
-            new RandomGroupCreator()           :
-            gc instanceof WishesGroupCreator ?
-            new WishesGroupCreator()           :
+            gc instanceof RandomGroupCreator    ?
+            new RandomGroupCreator()            :
+            gc instanceof WishesGroupCreator    ?
+            new WishesGroupCreator(p)           :
             new WishlistGroupCreator();
 
         if (shouldUseOneMainGroup)

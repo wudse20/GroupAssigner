@@ -69,11 +69,11 @@ public class TestGroupCreator
             Arguments.of(new RandomGroupCreator(), 3, gms.get(0)),
             Arguments.of(new WishlistGroupCreator(), 3, gms.get(0)),
             Arguments.of(new WishlistGroupCreator(0), 3, gms.get(0)),
-            Arguments.of(new WishesGroupCreator(), 3, gms.get(0)),
+            Arguments.of(new WishesGroupCreator(a -> {}), 3, gms.get(0)),
             Arguments.of(new RandomGroupCreator(), 10, gms.get(1)),
             Arguments.of(new WishlistGroupCreator(), 10, gms.get(1)),
             Arguments.of(new WishlistGroupCreator(0), 10, gms.get(1)),
-            Arguments.of(new WishesGroupCreator(), 10, gms.get(1))
+            Arguments.of(new WishesGroupCreator(a -> {}), 10, gms.get(1))
         );
     }
 
@@ -110,7 +110,7 @@ public class TestGroupCreator
     @Test
     public synchronized void testInterrupt() throws ExecutionException, InterruptedException, TimeoutException
     {
-        var gc = new WishesGroupCreator();
+        var gc = new WishesGroupCreator(a -> {});
         var tp = Executors.newSingleThreadExecutor();
 
         var task = tp.submit(() -> gc.generate(gms.get(1), 6, false));

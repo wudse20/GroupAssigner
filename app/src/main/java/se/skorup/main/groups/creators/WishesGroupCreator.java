@@ -3,6 +3,7 @@ package se.skorup.main.groups.creators;
 import se.skorup.API.collections.immutable_collections.ImmutableHashSet;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
+import se.skorup.main.gui.helper.progress.Progress;
 import se.skorup.main.manager.Group;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Tuple;
@@ -26,13 +27,15 @@ public final class WishesGroupCreator implements GroupCreator
 
     /** Only used for testing of the class. */
     AtomicBoolean hasStarted = new AtomicBoolean(false);
+    private final Progress progress;
 
     /**
      * Creates a new WishesGroupCreator.
      */
-    public WishesGroupCreator()
+    public WishesGroupCreator(Progress progress)
     {
         this.monitor = new Monitor();
+        this.progress = progress;
     }
 
     private int n(int i)
@@ -102,6 +105,7 @@ public final class WishesGroupCreator implements GroupCreator
         var tpProd = Executors.newFixedThreadPool(producers);
         var process = new LinkedBlockingQueue<Result>();
         var candidates = gm.getAllIdsOfRoll(Person.Role.CANDIDATE);
+        var delta = 1_000_000 / (candidates.size() * 2); // The delta that should be added each time.
 
         for (var id : candidates)
         {
@@ -120,6 +124,11 @@ public final class WishesGroupCreator implements GroupCreator
                     cl.countDown(); // Skip if fails.
                     DebugMethods.errorF("Error in creating groups: %s", e.getLocalizedMessage());
                     throw e;
+                }
+                finally
+                {
+                    // Updates the progress and adds it to the progress bar.
+                    progress.onProgress(delta);
                 }
 
                 DebugMethods.logF(DebugMethods.LogType.DEBUG, "Starting with: %d, Found: %s%n", id, res);
@@ -140,6 +149,7 @@ public final class WishesGroupCreator implements GroupCreator
                     {
                         var r = process.take();
                         monitor.updateResult(r.groups, r.score);
+                        progress.onProgress(delta);
                         cl.countDown();
                         DebugMethods.log(cl.getCount(), DebugMethods.LogType.DEBUG);
                     }
@@ -162,15 +172,18 @@ public final class WishesGroupCreator implements GroupCreator
             if (!success)
             {
                 DebugMethods.error("GroupCreation timed out!");
+                tpProd.shutdownNow();
                 return List.of();
             }
         }
         catch (InterruptedException e)
         {
-            DebugMethods.log("HERE", DebugMethods.LogType.DEBUG);
+            tpProd.shutdownNow();
             return List.of(); // Want it to exit and return nothing.
         }
 
+        progress.onProgress(1_000_000);
+        tpProd.shutdownNow();
         return monitor.getResult().stream().toList();
     }
 
@@ -263,7 +276,6 @@ public final class WishesGroupCreator implements GroupCreator
 
         private synchronized void interrupt()
         {
-            DebugMethods.log("Interrupting creation of groups", DebugMethods.LogType.EMPHASIZE);
             clThread.interrupt();
 
             for (var t : threads)

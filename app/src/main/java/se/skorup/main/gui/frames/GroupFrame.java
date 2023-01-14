@@ -361,6 +361,18 @@ public class GroupFrame extends JFrame implements ChangeListener
         sp.updateStatistics(sg);
     }
 
+    /**
+     * Enables and or disables a button.
+     *
+     * @param b the button to be affected.
+     * @param enabled if {@code true} it will be enabled,
+     *                else if {@code false} it will be disabled.
+     * */
+    public void setButtonEnabled(GroupButtonPanel.Buttons b, boolean enabled)
+    {
+        gbp.setButtonEnabled(b, enabled);
+    }
+
     @Override
     public void dispose()
     {

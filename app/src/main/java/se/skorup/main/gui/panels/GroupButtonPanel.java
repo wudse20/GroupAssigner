@@ -153,4 +153,27 @@ public class GroupButtonPanel extends JPanel
             case TOGGLE_MAIN_GROUPS -> btnToggleMainGroups.addActionListener(al);
         }
     }
+
+    /**
+     * Enables and or disables a button.
+     *
+     * @param b the button to be affected.
+     * @param enabled if {@code true} it will be enabled,
+     *                else if {@code false} it will be disabled.
+     * */
+    public void setButtonEnabled(Buttons b, boolean enabled)
+    {
+        switch (b)
+        {
+            case HELP -> btnHelp.setEnabled(enabled);
+            case CLOSE -> btnClose.setEnabled(enabled);
+            case LOAD -> btnLoad.setEnabled(enabled);
+            case SAVE -> btnSave.setEnabled(enabled);
+            case CREATE -> btnCreate.setEnabled(enabled);
+            case TO_FILE -> btnToFile.setEnabled(enabled);
+            case TO_DENYLIST -> btnToDenylist.setEnabled(enabled);
+            case PRINT -> btnPrint.setEnabled(enabled);
+            case TOGGLE_MAIN_GROUPS -> btnToggleMainGroups.setEnabled(enabled);
+        }
+    }
 }

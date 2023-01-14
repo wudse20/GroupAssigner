@@ -2,6 +2,7 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.collections.immutable_collections.ImmutableArray;
 import se.skorup.API.util.Utils;
+import se.skorup.main.gui.components.PPMProgressBar;
 import se.skorup.main.gui.components.SubgroupItemButton;
 import se.skorup.main.gui.helper.Selection;
 import se.skorup.main.gui.helper.layout.DoubleColumnGenerator;
@@ -19,6 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -33,10 +35,11 @@ import java.util.Comparator;
  * */
 public class SubgroupDisplayPanel extends JPanel
 {
-    /** The state for the buttons. */
+    /** The state for the buttons and the panel. */
     enum State { NOTHING_SELECTED, NAME_SELECTED }
 
     private final JComponent parent;
+    private final JProgressBar progress;
     private final boolean disableActions;
 
     private LayoutGenerator gen;
@@ -44,6 +47,7 @@ public class SubgroupDisplayPanel extends JPanel
     private Selection selected = Selection.empty();
     private ImmutableArray<SubgroupItemButton> groupButtons = ImmutableArray.empty();
     private boolean shouldDisplayMainGroups = false;
+    private boolean shouldDisplayProgress = false;
 
     /**
      * Creates a new SubgroupDisplayPanel
@@ -70,6 +74,7 @@ public class SubgroupDisplayPanel extends JPanel
     {
         this.parent = parent;
         this.disableActions = disableActions;
+        this.progress = new PPMProgressBar();
         this.setProperties();
     }
 
@@ -238,6 +243,16 @@ public class SubgroupDisplayPanel extends JPanel
      * */
     public void displaySubgroup(Subgroups subgroups, Group manager)
     {
+        if (subgroups != null)
+            shouldDisplayProgress = false;
+
+        if (shouldDisplayProgress)
+        {
+            this.removeAll();
+            this.add(progress);
+            return;
+        }
+
         if (subgroups == null || manager == null)
             return;
 
@@ -370,5 +385,17 @@ public class SubgroupDisplayPanel extends JPanel
     {
         this.shouldDisplayMainGroups = shouldDisplayMainGroups;
         parent.repaint();
+    }
+
+    /**
+     * Gets the progress bar and displays it to the screen.
+     *
+     * @return the progress bar in use.
+     * */
+    public JProgressBar getProgress()
+    {
+        shouldDisplayProgress = true;
+        this.displaySubgroup(null, null);
+        return progress;
     }
 }
