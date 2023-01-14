@@ -34,8 +34,8 @@ public final class SnakePanel extends JPanel implements KeyListener
 
     private final int blockSize = 20;
     private int score = 0;
-    private final int blocksX = SnakeFrame.WIDTH / blockSize;
-    private final int blocksY = SnakeFrame.HEIGHT / blockSize;
+    private final int blocksX;
+    private final int blocksY;
 
     private Direction direction = Direction.RIGHT;
     private Direction nextDirection = Direction.RIGHT;
@@ -54,6 +54,8 @@ public final class SnakePanel extends JPanel implements KeyListener
     public SnakePanel(SnakeFrame sf)
     {
         this.sf = sf;
+        this.blocksX = sf.width() / blockSize;
+        this.blocksY = sf.height() / blockSize;
         this.head = new SnakeBlock(blocksX / 2, blocksY / 2 - 1);
 
         this.loadHighscore();
@@ -213,7 +215,7 @@ public final class SnakePanel extends JPanel implements KeyListener
     private void drawBackground(Graphics2D g)
     {
         g.setColor(Utils.BACKGROUND_COLOR);
-        g.fillRect(0, 0, SnakeFrame.WIDTH, SnakeFrame.HEIGHT);
+        g.fillRect(0, 0, sf.width(), sf.height());
     }
 
     /**
@@ -271,7 +273,7 @@ public final class SnakePanel extends JPanel implements KeyListener
         var width = g.getFontMetrics().stringWidth("Press 'Enter' to start!");
         g.drawString(
             "Press 'Enter' to start!",
-            (SnakeFrame.WIDTH - 7) / 2 - width / 2, SnakeFrame.HEIGHT / 2 - 25
+            (sf.width() - 7) / 2 - width / 2, sf.height() / 2 - 25
         );
     }
 
