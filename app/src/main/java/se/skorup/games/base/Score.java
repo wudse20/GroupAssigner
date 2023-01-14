@@ -1,4 +1,4 @@
-package se.skorup.snake;
+package se.skorup.games.base;
 
 import java.io.Serial;
 import java.io.Serializable;

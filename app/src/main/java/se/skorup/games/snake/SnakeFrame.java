@@ -1,4 +1,6 @@
-package se.skorup.snake;
+package se.skorup.games.snake;
+
+import se.skorup.games.base.GameFrame;
 
 import javax.swing.JFrame;
 import java.awt.Dimension;
@@ -7,7 +9,7 @@ import java.awt.Toolkit;
 /**
  * A snake game that is cool and stuff.
  * */
-public final class SnakeFrame extends JFrame
+public final class SnakeFrame extends GameFrame
 {
     /** The width of the frame. */
     public static final int WIDTH = 600;
@@ -20,22 +22,13 @@ public final class SnakeFrame extends JFrame
      * */
     public SnakeFrame()
     {
-        super("Snake");
+        super("Snake", WIDTH - 7, HEIGHT - 3);
 
         SnakePanel sp = new SnakePanel(this);
-        this.setResizable(false);
-        this.setSize(new Dimension(WIDTH - 7, HEIGHT - 3)); // -7 & -3 was needed.
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         this.getContentPane().add(sp);
         this.addKeyListener(sp);
-
-        var dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        this.setLocation(
-            dim.width / 2 - this.getSize().width / 2,
-            dim.height / 2 - this.getSize().height / 2
-        );
+        this.center();
     }
 
     /**

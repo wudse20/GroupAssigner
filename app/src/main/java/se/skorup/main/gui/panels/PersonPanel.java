@@ -7,7 +7,7 @@ import se.skorup.main.gui.models.PersonListModel;
 import se.skorup.main.objects.Candidate;
 import se.skorup.main.objects.Leader;
 import se.skorup.main.objects.Person;
-import se.skorup.snake.SnakeFrame;
+import se.skorup.games.snake.SnakeFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
