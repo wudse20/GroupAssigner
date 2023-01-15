@@ -58,7 +58,7 @@ public final class SnakePanel extends GamePanel implements KeyListener
         this.blocksY = sf.height() / blockSize;
         this.head = new SnakeBlock(blocksX / 2, blocksY / 2 - 1);
 
-        this.loadHighscore();
+        this.highscore = this.loadHighscore(SNAKE_SCORE_PATH);
 
         // Starting snake
         snake.addFirst(new SnakeBlock(blocksX / 2 - 4, blocksY / 2 - 1));
@@ -73,25 +73,6 @@ public final class SnakePanel extends GamePanel implements KeyListener
             snakeGame();
             this.repaint();
         });
-    }
-
-    /**
-     * Loads the highscore.
-     * */
-    private void loadHighscore()
-    {
-        Score hs = null;
-
-        try
-        {
-            hs = (Score) SerializationManager.deserializeObject(SNAKE_SCORE_PATH);
-        }
-        catch (IOException | ClassNotFoundException e)
-        {
-            DebugMethods.log(e, DebugMethods.LogType.ERROR);
-        }
-
-        this.highscore = hs == null ? new Score(0) : hs;
     }
 
     /**
