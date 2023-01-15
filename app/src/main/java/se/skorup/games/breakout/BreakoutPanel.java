@@ -24,6 +24,8 @@ public class BreakoutPanel extends JPanel implements KeyListener
     private final BreakoutComponent paddle;
     private final boolean[] pressed = new boolean[2];
 
+    private List<Pos> directions = new ArrayList<>();
+
     /**
      * Creates the breakout panel.
      *
@@ -44,6 +46,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
         this.setUpBalls();
 
         var t = new Timer(1000 / 60, (e) -> {
+            this.moveBall();
             this.handlePaddle();
             this.revalidate();
             this.repaint();
@@ -52,6 +55,21 @@ public class BreakoutPanel extends JPanel implements KeyListener
         t.start();
     }
 
+    /**
+     * Moves the ball.
+     * */
+    private void moveBall()
+    {
+        for (int i = 0; i < balls.size(); i++)
+        {
+            var movement = directions.get(i).multiply(5);
+            balls.get(i).move(movement.x(), movement.y());
+        }
+    }
+
+    /**
+     * Handles the paddle movement.
+     * */
     private void handlePaddle()
     {
         if (pressed[0])
@@ -94,6 +112,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
     {
         var ball = new BreakoutBall(new Pos(bf.width() / 2 - 5, bf.height() / 2), 10, 10);
         balls.add(ball);
+        directions.add(new Pos(1, 1));
     }
 
     /**
