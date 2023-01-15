@@ -3,10 +3,11 @@ package se.skorup.games.breakout;
 import se.skorup.API.util.Utils;
 import se.skorup.games.base.GamePanel;
 import se.skorup.games.base.Pos;
+import se.skorup.games.base.Score;
 
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -22,6 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * */
 public class BreakoutPanel extends GamePanel implements KeyListener
 {
+    /** The path of the score. */
+    public static final String BREAKOUT_SCORE_PATH = Utils.getFolderName() + "breakout/score.data";
     private static final int RIGHT_OFFSET = 17;
 
     private final BreakoutFrame bf;
@@ -39,6 +42,7 @@ public class BreakoutPanel extends GamePanel implements KeyListener
     private long frame = 0;
     private boolean hasStarted = false;
     private final Timer t;
+    private Score highscore;
 
     /**
      * Creates the breakout panel.
@@ -58,6 +62,7 @@ public class BreakoutPanel extends GamePanel implements KeyListener
 
         this.setUpBlocks();
         this.spawnBall();
+        this.highscore = this.loadHighscore(BREAKOUT_SCORE_PATH);
 
         this.t = new Timer(1000 / 60, (e) -> {
             if (hasStarted)
@@ -137,7 +142,38 @@ public class BreakoutPanel extends GamePanel implements KeyListener
                 balls.remove(ball);
 
                 if (balls.isEmpty())
+                {
                     t.stop();
+                    JOptionPane.showMessageDialog(
+                        bf, "GAME OVER! YOU LOST!",
+                        "GAME OVER", JOptionPane.INFORMATION_MESSAGE
+                    );
+                    bf.dispose();
+                }
+            }
+
+            if (blocks.isEmpty())
+            {
+                t.stop();
+
+                if (highscore.isScoreBeaten(balls.size()))
+                {
+                    highscore = new Score(balls.size());
+                    JOptionPane.showMessageDialog(
+                        bf, "<html>GAME OVER! <br><br> YOU WON! <br>NEW HIGHSCORE! <br><br>SCORE: %s</html>"
+                            .formatted(balls.size()), "NEW HIGHSCORE", JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(
+                        bf, "<html>GAME OVER! <br><br> YOU WON! <br><br>SCORE: %s</html>"
+                            .formatted(balls.size()), "NEW HIGHSCORE", JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+
+                this.saveHighscore(BREAKOUT_SCORE_PATH, highscore);
+                bf.dispose();
             }
         }
     }
