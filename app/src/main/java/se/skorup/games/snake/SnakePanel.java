@@ -2,11 +2,11 @@ package se.skorup.games.snake;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.games.base.GamePanel;
 import se.skorup.games.base.Score;
 import se.skorup.main.manager.helper.SerializationManager;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -22,7 +22,7 @@ import java.util.Random;
 /**
  * The snake panel that is the game itself.
  * */
-public final class SnakePanel extends JPanel implements KeyListener
+public final class SnakePanel extends GamePanel implements KeyListener
 {
     /** The path of the score. */
     public static final String SNAKE_SCORE_PATH = Utils.getFolderName() + "snake/score.data";
@@ -268,13 +268,7 @@ public final class SnakePanel extends JPanel implements KeyListener
             return;
         }
 
-        g.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
-        g.setColor(Utils.SELECTED_COLOR);
-        var width = g.getFontMetrics().stringWidth("Press 'Enter' to start!");
-        g.drawString(
-            "Press 'Enter' to start!",
-            (sf.width() - 7) / 2 - width / 2, sf.height() / 2 - 25
-        );
+        drawStart(g, sf);
     }
 
     @Override
