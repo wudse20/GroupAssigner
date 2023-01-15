@@ -44,6 +44,7 @@ public class TestHitBox
         );
     }
 
+
     @ParameterizedTest
     @MethodSource("getTestData")
     public void testInBounds(HitBox h, List<Test> tests)
@@ -59,4 +60,30 @@ public class TestHitBox
     }
 
     record Test(Pos p, boolean res) {}
+
+    public static Stream<Arguments> getTestData2()
+    {
+        var h1 = new HitBox(new Pos(5, 5), 50, 50);
+        var h2 = new HitBox(new Pos(20, 10), 60, 40);
+
+        var h3 = new HitBox(new Pos(10, 10), 50, 50);
+        var h4 = new HitBox(new Pos(20, 10), 60, 40);
+
+        var h5 = new HitBox(new Pos(5, 5), 5, 5);
+        var h6 = new HitBox(new Pos(20, 10), 5, 5);
+
+        return Stream.of(
+            Arguments.of(h1, h2, true),
+            Arguments.of(h3, h4, true),
+            Arguments.of(h5, h6, false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestData2")
+    public void testHitBoxOverlapping(HitBox h1, HitBox h2, boolean expected)
+    {
+        assertEquals(expected, h1.isHitBoxOverlapping(h2));
+        assertEquals(expected, h2.isHitBoxOverlapping(h1));
+    }
 }
