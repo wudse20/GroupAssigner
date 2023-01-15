@@ -11,6 +11,8 @@ import java.awt.Graphics2D;
  * */
 public class BreakoutBall extends BreakoutComponent
 {
+    private Pos d;
+
     /**
      * Creates a new BreakoutBall.
      *
@@ -24,10 +26,40 @@ public class BreakoutBall extends BreakoutComponent
         super(new Pos(start.x(), start.y() - height), width, height, id);
     }
 
+    /**
+     * Sets the direction of the ball.
+     *
+     * @param x the x direction.
+     * @param y the y direction.
+     * */
+    public void setDirection(int x, int y)
+    {
+        this.d = new Pos(x, y);
+    }
+
+    /**
+     * Sets the direction of the ball.
+     *
+     * @param d the new direction.
+     * */
+    public void setDirection(Pos d)
+    {
+        this.d = d;
+    }
+
+    /**
+     * Getter for: direction
+     *
+     * @return the direction of the ball.
+     * */
+    public Pos getDirection()
+    {
+        return d;
+    }
+
     @Override
     protected void design(Graphics2D g, Color c, HitBox hb)
     {
-        hb.draw(g, Color.WHITE, 1);
         g.setColor(c);
         g.fillOval(hb.p().x(), hb.p().y() + hb.height(), hb.width(), hb.height());
     }
