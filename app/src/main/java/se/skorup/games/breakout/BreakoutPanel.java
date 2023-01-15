@@ -11,20 +11,26 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The panel that is the action breakout game.
  * */
 public class BreakoutPanel extends JPanel implements KeyListener
 {
+    private static final int RIGHT_OFFSET = 17;
+
     private final BreakoutFrame bf;
-    private final List<BreakoutComponent> blocks = new ArrayList<>();
+    private final List<BreakoutBlock> blocks = new ArrayList<>();
     private final List<BreakoutComponent> balls = new ArrayList<>();
+    private final List<Pos> directions = new ArrayList<>();
     private final BreakoutComponent paddle;
     private final boolean[] pressed = new boolean[2];
 
-    private List<Pos> directions = new ArrayList<>();
+    private int id = -1;
+    private Timer t;
 
     /**
      * Creates the breakout panel.
@@ -39,20 +45,109 @@ public class BreakoutPanel extends JPanel implements KeyListener
                 bf.width() / 2 - 20,
                 bf.height() - 75
             ),
-            40, 10
+            40, 10, id++
         );
 
         this.setUpBlocks();
         this.setUpBalls();
 
-        var t = new Timer(1000 / 60, (e) -> {
+        this.t = new Timer(1000 / 60, (e) -> {
+            this.movePaddle();
+            this.handleBallCollisions();
             this.moveBall();
-            this.handlePaddle();
             this.revalidate();
             this.repaint();
         });
 
-        t.start();
+        this.t.start();
+    }
+
+    /**
+     * Handles the all the ball collisions.
+     * */
+    private void handleBallCollisions()
+    {
+        var shouldSwap = new AtomicBoolean(false);
+        var b = new HashSet<NewDirection>();
+        // Collisions with block
+        balls.forEach(ball -> new ArrayList<>(blocks).forEach(block -> {
+            // There is a collision, now we have to figure out what the new direction is.
+            if (block.isCollision(ball))
+            {
+                blocks.remove(block);
+                shouldSwap.getAndSet(true);
+                b.add(new NewDirection(
+                    ball, block.nextDir(
+                        ball.getPosition().x(),
+                        ball.getPosition().y(),
+                        ball.getWidth()
+                )));
+            }
+        }));
+
+        for (var ball : b)
+        {
+            ballCollision(ball.comp, ball.newDir);
+        }
+
+        // Collisions with paddle
+        balls.forEach(ball -> {
+            if (ball.isCollision(paddle))
+            {
+                ballCollision(ball, 1, -1);
+            }
+        });
+
+        // Walls, roof and pit of death.
+        new ArrayList<>(balls).forEach(ball -> {
+            if (ball.getPosition().x() <= 0) // Left wall
+            {
+                ballCollision(ball, -1, 1);
+            }
+
+            if (ball.getPosition().x() + ball.getWidth() >= bf.width() - RIGHT_OFFSET) // Right wall
+            {
+                ballCollision(ball, -1, 1);
+            }
+
+            if (ball.getPosition().y() <= 0) // Roof
+            {
+                ballCollision(ball, 1, -1);
+            }
+
+            if (ball.getPosition().y() >= bf.height()) // Floor
+            {
+                balls.remove(ball);
+
+                if (balls.isEmpty())
+                    t.stop();
+            }
+        });
+    }
+
+    /**
+     * Updates the direction on ballCollision by x, y.
+     *
+     * @param ball the ball to be affected.
+     * @param x the direction difference in x.
+     * @param y the direction difference in y.
+     * */
+    private void ballCollision(BreakoutComponent ball, int x, int y)
+    {
+        var index = balls.indexOf(ball);
+        var newDir = directions.get(index).multiply(new Pos(x, y));
+        directions.set(index, newDir);
+    }
+
+    /**
+     * Updates the direction on ballCollision by p.
+     *
+     * @param ball the ball to be affected.
+     * @param p the difference in direction.
+     * */
+    private void ballCollision(BreakoutComponent ball, Pos p)
+    {
+        ballCollision(ball, p.x(), p.y());
     }
 
     /**
@@ -62,7 +157,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
     {
         for (int i = 0; i < balls.size(); i++)
         {
-            var movement = directions.get(i).multiply(5);
+            var movement = directions.get(i).multiply(2);
             balls.get(i).move(movement.x(), movement.y());
         }
     }
@@ -70,12 +165,12 @@ public class BreakoutPanel extends JPanel implements KeyListener
     /**
      * Handles the paddle movement.
      * */
-    private void handlePaddle()
+    private void movePaddle()
     {
         if (pressed[0])
-            paddle.move(-5, 0, 0, bf.width());
+            paddle.move(-5, 0, 0, bf.width() - RIGHT_OFFSET);
         else if (pressed[1])
-            paddle.move(5, 0, 0, bf.width());
+            paddle.move(5, 0, 0, bf.width() - RIGHT_OFFSET);
     }
 
     /**
@@ -87,7 +182,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
         var height = bf.height();
         var spaceTop = 10;
         var blockWidth = 20;
-        var blockHeight = 10;
+        var blockHeight = 12;
 
         var blocksWidth = width / blockWidth;
         var blocksHeight = ((height / 4) - spaceTop) / blockHeight;
@@ -102,7 +197,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
                             3 + blockWidth * i,
                             spaceTop + blockHeight * ii
                         ),
-                        blockWidth, blockHeight
+                        blockWidth, blockHeight, id++
                     ));
             }
         }
@@ -110,7 +205,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
 
     private void setUpBalls()
     {
-        var ball = new BreakoutBall(new Pos(bf.width() / 2 - 5, bf.height() / 2), 10, 10);
+        var ball = new BreakoutBall(new Pos(bf.width() / 2 - 5, bf.height() / 2), 10, 10, id++);
         balls.add(ball);
         directions.add(new Pos(1, 1));
     }
@@ -194,4 +289,6 @@ public class BreakoutPanel extends JPanel implements KeyListener
             pressed[1] = false;
         }
     }
+
+    private record NewDirection(BreakoutComponent comp, Pos newDir) {}
 }

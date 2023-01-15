@@ -11,6 +11,8 @@ import java.awt.Graphics2D;
  * */
 public abstract class BreakoutComponent
 {
+    private final int id;
+
     private HitBox hb;
 
     /**
@@ -19,10 +21,12 @@ public abstract class BreakoutComponent
      * @param p the position.
      * @param width the width of the component.
      * @param height the height of the component.
+     * @param id the id of the component.
      * */
-    protected BreakoutComponent(Pos p, int width, int height)
+    protected BreakoutComponent(Pos p, int width, int height, int id)
     {
         this.hb = new HitBox(p, width, height);
+        this.id = id;
     }
 
     /**
@@ -91,11 +95,10 @@ public abstract class BreakoutComponent
      * */
     public final void move(int dx, int dy, int minX, int maxX)
     {
-        var offset = 17;
-        if (hb.p().x() + dx >= maxX - hb.width() - offset)
+        if (hb.p().x() + dx >= maxX - hb.width())
         {
             move(0, dy);
-            this.hb = new HitBox(new Pos(maxX - hb.width() - offset, hb.p().y()), hb.width(), hb.height());
+            this.hb = new HitBox(new Pos(maxX - hb.width(), hb.p().y()), hb.width(), hb.height());
         }
         else if (hb.p().x() + dx <= minX)
         {
@@ -105,5 +108,48 @@ public abstract class BreakoutComponent
         {
             move(dx, dy);
         }
+    }
+
+    /**
+     * Getter for: position
+     *
+     * @return the position of the left corner of the component.
+     * */
+    public final Pos getPosition()
+    {
+        return hb.p();
+    }
+
+    /**
+     * Getter for: width
+     *
+     * @return the width of the component.
+     * */
+    public int getWidth()
+    {
+        return hb.width();
+    }
+
+    /**
+     * Getter for: height
+     *
+     * @return the height of the component.
+     * */
+    public int getHeight()
+    {
+        return hb.height();
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        return other instanceof BreakoutComponent bc &&
+               id == bc.id;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id;
     }
 }
