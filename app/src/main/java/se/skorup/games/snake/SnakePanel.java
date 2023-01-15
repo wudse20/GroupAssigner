@@ -4,7 +4,6 @@ import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.games.base.GamePanel;
 import se.skorup.games.base.Score;
-import se.skorup.main.manager.helper.SerializationManager;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -13,8 +12,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
