@@ -15,13 +15,14 @@ public class BreakoutPaddle extends BreakoutComponent
     /**
      * Creates a new BreakoutPaddle.
      *
-     * @param p      the position.
-     * @param width  the width of the component.
+     * @param p the position.
+     * @param width the width of the component.
      * @param height the height of the component.
+     * @param id the id of the component.
      * */
-    protected BreakoutPaddle(Pos p, int width, int height)
+    protected BreakoutPaddle(Pos p, int width, int height, int id)
     {
-        super(p, width, height);
+        super(p, width, height, id);
     }
 
     @Override

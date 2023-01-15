@@ -17,10 +17,11 @@ public class BreakoutBall extends BreakoutComponent
      * @param start the starting position of the ball.
      * @param width the width of the ball.
      * @param height the height of the ball.
+     * @param id the id of the component.
      * */
-    public BreakoutBall(Pos start, int width, int height)
+    public BreakoutBall(Pos start, int width, int height, int id)
     {
-        super(new Pos(start.x(), start.y() - height), width, height);
+        super(new Pos(start.x(), start.y() - height), width, height, id);
     }
 
     @Override
