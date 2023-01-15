@@ -1,11 +1,12 @@
 package se.skorup.games.breakout;
 
 import se.skorup.API.util.Utils;
+import se.skorup.games.base.GamePanel;
 import se.skorup.games.base.Pos;
 
-import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * The panel that is the action breakout game.
  * */
-public class BreakoutPanel extends JPanel implements KeyListener
+public class BreakoutPanel extends GamePanel implements KeyListener
 {
     private static final int RIGHT_OFFSET = 17;
 
@@ -36,6 +37,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
 
     private int id = -1;
     private long frame = 0;
+    private boolean hasStarted = false;
     private final Timer t;
 
     /**
@@ -58,12 +60,16 @@ public class BreakoutPanel extends JPanel implements KeyListener
         this.spawnBall();
 
         this.t = new Timer(1000 / 60, (e) -> {
-            if (++frame % 120 == 0)
-                spawnBall();
+            if (hasStarted)
+            {
+                if (++frame % 120 == 0)
+                    spawnBall();
 
-            this.movePaddle();
-            this.handleBallCollisions();
-            this.moveBalls();
+                this.movePaddle();
+                this.handleBallCollisions();
+                this.moveBalls();
+            }
+
             this.revalidate();
             this.repaint();
         });
@@ -239,6 +245,12 @@ public class BreakoutPanel extends JPanel implements KeyListener
         // Background
         drawBackground(g);
 
+        if (!hasStarted)
+        {
+            drawStart(g, bf);
+            return;
+        }
+
         // Draw blocks
         drawBlocks(g);
 
@@ -269,6 +281,13 @@ public class BreakoutPanel extends JPanel implements KeyListener
     @Override
     public void keyReleased(KeyEvent e)
     {
+        if (!hasStarted && e.getKeyCode() == KeyEvent.VK_ENTER)
+        {
+            hasStarted = true;
+            t.start();
+            return;
+        }
+
         if (e.getKeyCode() == KeyEvent.VK_LEFT)
         {
             pressed[0] = false;
