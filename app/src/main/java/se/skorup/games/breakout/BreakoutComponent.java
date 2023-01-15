@@ -80,4 +80,30 @@ public abstract class BreakoutComponent
     {
         this.hb = new HitBox(new Pos(hb.p().x() + dx, hb.p().y() + dy), hb.width(), hb.height());
     }
+
+    /**
+     * Moves the component, but clamped between minX and maxX.
+     *
+     * @param dx the x distance to be moved.
+     * @param dy the y distance to be moved.
+     * @param minX the minimum x allowed.
+     * @param maxX the maximum x allowed.
+     * */
+    public final void move(int dx, int dy, int minX, int maxX)
+    {
+        var offset = 17;
+        if (hb.p().x() + dx >= maxX - hb.width() - offset)
+        {
+            move(0, dy);
+            this.hb = new HitBox(new Pos(maxX - hb.width() - offset, hb.p().y()), hb.width(), hb.height());
+        }
+        else if (hb.p().x() + dx <= minX)
+        {
+            move(-hb.p().x(), dy);
+        }
+        else
+        {
+            move(dx, dy);
+        }
+    }
 }

@@ -1,10 +1,10 @@
 package se.skorup.games.breakout;
 
-import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.games.base.Pos;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,6 +22,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
     private final List<BreakoutComponent> blocks = new ArrayList<>();
     private final List<BreakoutComponent> balls = new ArrayList<>();
     private final BreakoutComponent paddle;
+    private final boolean[] pressed = new boolean[2];
 
     /**
      * Creates the breakout panel.
@@ -31,9 +32,32 @@ public class BreakoutPanel extends JPanel implements KeyListener
     public BreakoutPanel(BreakoutFrame bf)
     {
         this.bf = bf;
-        this.paddle = new BreakoutPaddle(new Pos(bf.width() / 2 - 20, bf.height() - 75), 40, 10);
+        this.paddle = new BreakoutPaddle(
+            new Pos(
+                bf.width() / 2 - 20,
+                bf.height() - 75
+            ),
+            40, 10
+        );
+
         this.setUpBlocks();
         this.setUpBalls();
+
+        var t = new Timer(1000 / 60, (e) -> {
+            this.handlePaddle();
+            this.revalidate();
+            this.repaint();
+        });
+
+        t.start();
+    }
+
+    private void handlePaddle()
+    {
+        if (pressed[0])
+            paddle.move(-5, 0, 0, bf.width());
+        else if (pressed[1])
+            paddle.move(5, 0, 0, bf.width());
     }
 
     /**
@@ -64,8 +88,6 @@ public class BreakoutPanel extends JPanel implements KeyListener
                     ));
             }
         }
-
-        DebugMethods.log("Finished setting up blocks", DebugMethods.LogType.DEBUG);
     }
 
     private void setUpBalls()
@@ -108,7 +130,6 @@ public class BreakoutPanel extends JPanel implements KeyListener
     @Override
     public void paintComponent(Graphics gOld)
     {
-        DebugMethods.log("Started drawing", DebugMethods.LogType.DEBUG);
         var g = (Graphics2D) gOld;
 
         // Background
@@ -122,16 +143,36 @@ public class BreakoutPanel extends JPanel implements KeyListener
 
         // Draw paddle
         paddle.draw(g, Utils.LIGHT_BLUE);
-
-        DebugMethods.log("Finished drawing", DebugMethods.LogType.DEBUG);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT)
+        {
+            pressed[0] = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+        {
+            pressed[1] = true;
+        }
+    }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT)
+        {
+            pressed[0] = false;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+        {
+            pressed[1] = false;
+        }
+    }
 }
