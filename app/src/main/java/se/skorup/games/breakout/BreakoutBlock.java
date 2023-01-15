@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 public class BreakoutBlock extends BreakoutComponent
 {
     private HitBox hb;
+    private Color c;
 
     /**
      * Creates a new breakout block.
@@ -19,10 +20,12 @@ public class BreakoutBlock extends BreakoutComponent
      * @param width the width of the block.
      * @param height the height of the block.
      * @param id the id of the component.
+     * @param c the color of the block.
      * */
-    public BreakoutBlock(Pos p, int width, int height, int id)
+    public BreakoutBlock(Pos p, int width, int height, int id, Color c)
     {
         super(p, width, height, id);
+        this.c = c;
     }
 
     /**
@@ -52,7 +55,7 @@ public class BreakoutBlock extends BreakoutComponent
     }
 
     @Override
-    protected void design(Graphics2D g, Color c, HitBox hb)
+    protected void design(Graphics2D g, Color unused, HitBox hb)
     {
         this.hb = hb; // Stores the hit box for later use.
 

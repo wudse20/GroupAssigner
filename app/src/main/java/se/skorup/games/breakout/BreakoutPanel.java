@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -27,6 +28,11 @@ public class BreakoutPanel extends JPanel implements KeyListener
     private final List<BreakoutBall> balls = new ArrayList<>();
     private final BreakoutComponent paddle;
     private final boolean[] pressed = new boolean[2];
+    private final Color[] colors = {
+        Color.GREEN, Color.BLUE, Color.MAGENTA,
+        Color.ORANGE, Color.CYAN, new Color(255, 0, 238),
+        Color.RED, Color.YELLOW, new Color(108, 31, 153)
+    };
 
     private int id = -1;
     private long frame = 0;
@@ -137,7 +143,7 @@ public class BreakoutPanel extends JPanel implements KeyListener
     {
         for (BreakoutBall ball : balls)
         {
-            var movement = ball.getDirection().multiply(2);
+            var movement = ball.getDirection().multiply(3);
             ball.move(movement.x(), movement.y());
         }
     }
@@ -177,7 +183,8 @@ public class BreakoutPanel extends JPanel implements KeyListener
                             3 + blockWidth * i,
                             spaceTop + blockHeight * ii
                         ),
-                        blockWidth, blockHeight, id++
+                        blockWidth, blockHeight, id++,
+                        colors[new Random().nextInt(colors.length)]
                     ));
             }
         }
