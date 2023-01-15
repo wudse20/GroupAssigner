@@ -20,13 +20,14 @@ public class BreakoutBall extends BreakoutComponent
      * */
     public BreakoutBall(Pos start, int width, int height)
     {
-        super(start, width, height);
+        super(new Pos(start.x(), start.y() - height), width, height);
     }
 
     @Override
     protected void design(Graphics2D g, Color c, HitBox hb)
     {
+        hb.draw(g, Color.WHITE, 1);
         g.setColor(c);
-        g.fillOval(hb.p().x(), hb.p().y(), hb.width(), hb.height());
+        g.fillOval(hb.p().x(), hb.p().y() + hb.height(), hb.width(), hb.height());
     }
 }
