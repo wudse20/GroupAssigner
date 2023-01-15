@@ -2,6 +2,7 @@ package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
+import se.skorup.games.breakout.BreakoutFrame;
 import se.skorup.main.gui.frames.MainFrame;
 import se.skorup.main.gui.models.PersonListModel;
 import se.skorup.main.objects.Candidate;
@@ -549,6 +550,12 @@ public class PersonPanel extends JPanel implements ActionListener, WindowStateLi
         if (input.equalsIgnoreCase("snake"))
         {
             SwingUtilities.invokeLater(SnakeFrame::new);
+            txfSearch.setText("");
+            search();
+        }
+        else if (input.equalsIgnoreCase("breakout"))
+        {
+            SwingUtilities.invokeLater(BreakoutFrame::new);
             txfSearch.setText("");
             search();
         }
