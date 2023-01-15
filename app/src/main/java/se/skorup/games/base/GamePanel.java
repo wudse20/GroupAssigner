@@ -7,6 +7,7 @@ import se.skorup.main.manager.helper.SerializationManager;
 import javax.swing.JPanel;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
 
 public class GamePanel extends JPanel
@@ -42,5 +43,24 @@ public class GamePanel extends JPanel
         }
 
         return hs == null ? new Score(0) : hs;
+    }
+
+    /**
+     * Saves the highscore to a path.
+     *
+     * @param path the path of the score.
+     * @param score the new highscore.
+     * */
+    protected void saveHighscore(String path, Score score)
+    {
+        try
+        {
+            SerializationManager.createFileIfNotExists(new File(path));
+            SerializationManager.serializeObject(path, score);
+        }
+        catch (IOException e)
+        {
+            DebugMethods.log(e, DebugMethods.LogType.ERROR);
+        }
     }
 }

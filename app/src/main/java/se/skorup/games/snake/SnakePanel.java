@@ -138,16 +138,7 @@ public final class SnakePanel extends GamePanel implements KeyListener
             );
         }
 
-        try
-        {
-            SerializationManager.createFileIfNotExists(new File(SNAKE_SCORE_PATH));
-            SerializationManager.serializeObject(SNAKE_SCORE_PATH, highscore);
-        }
-        catch (IOException e)
-        {
-            DebugMethods.log(e, DebugMethods.LogType.ERROR);
-        }
-
+        this.saveHighscore(SNAKE_SCORE_PATH, highscore);
         sf.dispose();
     }
 
