@@ -81,9 +81,9 @@ public class SubgroupPanel extends JPanel
         this.setForeground(Utils.FOREGROUND_COLOR);
 
         gf.addActionListener(e -> new Thread(() -> gf.waitCursorAction(() -> {
-            gf.setButtonEnabled(GroupButtonPanel.Buttons.CREATE, false);
+            SwingUtilities.invokeLater(() -> gf.setButtonEnabled(GroupButtonPanel.Buttons.CREATE, false));
             this.generateGroups();
-            gf.setButtonEnabled(GroupButtonPanel.Buttons.CREATE, true);
+            SwingUtilities.invokeLater(() -> gf.setButtonEnabled(GroupButtonPanel.Buttons.CREATE, true));
         })).start(), GroupButtonPanel.Buttons.CREATE);
         gf.addActionListener(e -> toDenylist(), GroupButtonPanel.Buttons.TO_DENYLIST);
         gf.addActionListener(e -> toFile(), GroupButtonPanel.Buttons.TO_FILE);
@@ -518,7 +518,7 @@ public class SubgroupPanel extends JPanel
         {
             var gc1 = getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1);
             var gg1 = getGroupGenerator(gc1.gc, mg1Sizes, gc1.gm);
-            var groups = tryGenerateGroups(gg1);
+            var groups = new ArrayList<>(tryGenerateGroups(gg1));
 
             var gc2 = getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2);
             var gg2 = getGroupGenerator(gc2.gc, mg2Sizes, gc2.gm);
