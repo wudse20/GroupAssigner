@@ -332,7 +332,7 @@ public class GroupFrame extends JFrame implements ChangeListener
     }
 
     /**
-     * Setter for: shouldUseMainGroups
+     * Getter for: shouldUseMainGroups
      *
      * @return the state of shouldUseMainGroups.
      * */

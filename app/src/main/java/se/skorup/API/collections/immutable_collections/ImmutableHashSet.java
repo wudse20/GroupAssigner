@@ -102,7 +102,7 @@ public class ImmutableHashSet<E> implements ImmutableCollection<E>, Iterable<E>
      * The intersection between this set and the
      * other set.
      *
-     * @param other the other set. If {@code null} the it throws
+     * @param other the other set. If {@code null} then it throws
      *              NullPointerException.
      * @return A set containing the elements both in the other set and this set.
      * @throws NullPointerException iff other is {@code null}.

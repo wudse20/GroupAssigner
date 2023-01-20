@@ -9,6 +9,8 @@ import se.skorup.main.groups.creators.WishlistGroupCreator;
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
 import se.skorup.main.gui.frames.GroupFrame;
 import se.skorup.main.gui.frames.SubgroupListFrame;
+import se.skorup.main.gui.helper.progress.OverallProgressMonitor;
+import se.skorup.main.gui.helper.progress.Progress;
 import se.skorup.main.gui.helper.progress.ProgressMonitor;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.manager.Group;
@@ -45,6 +47,8 @@ public class SubgroupPanel extends JPanel
     private final Group gm;
     private final SubgroupDisplayPanel sdp;
     private volatile Subgroups current;
+
+    private volatile OverallProgressMonitor multipleProgress;
 
     /**
      * Creates a new SubgroupSettingsPanel.
@@ -320,6 +324,27 @@ public class SubgroupPanel extends JPanel
     }
 
     /**
+     * Gets the progress bar for the current settings.
+     * */
+    private Progress getProgress()
+    {
+        if (gf.shouldUseMainGroups() && multipleProgress != null)
+        {
+            return multipleProgress;
+        }
+        else if (gf.shouldUseMainGroups())
+        {
+            multipleProgress = new OverallProgressMonitor(sdp.getProgress());
+            // Could be: multipleProgress.registerProgress(2_000_000), but that's harder to grasp.
+            multipleProgress.registerProgress(1_000_000); // First main group
+            multipleProgress.registerProgress(1_000_000); // Second main group
+            return multipleProgress;
+        }
+
+        return new ProgressMonitor(sdp.getProgress());
+    }
+
+    /**
      * Gets the correct group generator,
      * based on all inputs.
      *
@@ -331,7 +356,7 @@ public class SubgroupPanel extends JPanel
     private GroupCreatorResult getGroupCreator(boolean shouldUseOneMainGroup, Person.MainGroup mg)
     {
         var gc = gf.getGroupSelectedGroupCreator();
-        var p = new ProgressMonitor(sdp.getProgress());
+        var p = getProgress();
         var res =
             gc instanceof RandomGroupCreator    ?
             new RandomGroupCreator()            :
@@ -518,14 +543,53 @@ public class SubgroupPanel extends JPanel
         {
             var gc1 = getGroupCreator(true, Person.MainGroup.MAIN_GROUP_1);
             var gg1 = getGroupGenerator(gc1.gc, mg1Sizes, gc1.gm);
-            var groups = new ArrayList<>(tryGenerateGroups(gg1));
+            var groups = tryGenerateGroups(gg1);
 
             var gc2 = getGroupCreator(true, Person.MainGroup.MAIN_GROUP_2);
             var gg2 = getGroupGenerator(gc2.gc, mg2Sizes, gc2.gm);
             var groups2 = tryGenerateGroups(gg2);
-            groups.addAll(groups2);
+            multipleProgress = null;
 
-            return groups;
+            // Merging the groups correctly.
+            var res = new ArrayList<List<Set<Integer>>>();
+
+            // They are the same size, so just merge 1:1.
+            if (groups.size() == groups2.size())
+            {
+                for (var i = 0; i < groups.size(); i++)
+                {
+                    var groupsA = groups.get(i);
+                    var groupsB = groups2.get(i);
+                    var g = new ArrayList<>(groupsA);
+                    g.addAll(groupsB);
+                    res.add(g);
+                }
+            }
+            // One is larger so merge 1:1 as long as possible, then just restart on the other group.
+            else if (groups.size() > groups2.size())
+            {
+                for (var i = 0; i < groups.size(); i++)
+                {
+                    var groupsA = groups.get(i);
+                    var groupsB = groups2.get(i % groups2.size());
+                    var g = new ArrayList<>(groupsA);
+                    g.addAll(groupsB);
+                    res.add(g);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < groups.size(); i++)
+                {
+                    var groupsA = groups.get(i % groups.size());
+                    var groupsB = groups2.get(i);
+                    var g = new ArrayList<>(groupsA);
+                    g.addAll(groupsB);
+                    res.add(g);
+                }
+            }
+
+            return res;
         }
         catch (GroupCreationFailedException | IllegalArgumentException e)
         {
@@ -534,6 +598,8 @@ public class SubgroupPanel extends JPanel
                 "Misslyckades att generera grupper.\nFelmeddeleande: %s".formatted(e.getLocalizedMessage()),
                 "Gruppgeneration misslyckades", JOptionPane.ERROR_MESSAGE
             );
+
+            multipleProgress = null;
             return List.of();
         }
     }
@@ -560,7 +626,7 @@ public class SubgroupPanel extends JPanel
             );
         }
 
-        var groups =
+        final var groups =
             gf.shouldUseMainGroups()   ?
             generateMultipleSubgroup() :
             generateSingleSubgroup(gc, gm);

@@ -276,7 +276,8 @@ public final class WishesGroupCreator implements GroupCreator
 
         private synchronized void interrupt()
         {
-            clThread.interrupt();
+            if (clThread != null)
+                clThread.interrupt();
 
             for (var t : threads)
             {

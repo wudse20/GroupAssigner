@@ -1,4 +1,4 @@
-package se.skorup.gane.base;
+package se.skorup.game.base;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
