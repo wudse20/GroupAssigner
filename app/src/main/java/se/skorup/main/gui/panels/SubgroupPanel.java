@@ -609,7 +609,9 @@ public class SubgroupPanel extends JPanel
      * */
     private void generateGroups()
     {
-        final var gc = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup()).gc;
+        final var res = getGroupCreator(gf.shouldUseOneMainGroup(), gf.getMainGroup());
+        var gm = res.gm;
+        var gc = res.gc;
         var leaders = gm.getMemberCountOfRole(Person.Role.LEADER);
         var candidates = gm.getMemberCountOfRole(Person.Role.CANDIDATE);
 
