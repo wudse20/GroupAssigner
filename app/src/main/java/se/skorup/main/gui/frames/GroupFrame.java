@@ -355,10 +355,11 @@ public class GroupFrame extends JFrame implements ChangeListener
      * Updates the statistics of the frame.
      *
      * @param sg the subgroups that the statistics should be based on.
+     * @param gm the group used to create the groups.
      * */
-    public void updateStatistics(Subgroups sg)
+    public void updateStatistics(Subgroups sg, Group gm)
     {
-        sp.updateStatistics(sg);
+        sp.updateStatistics(sg, gm);
     }
 
     /**
@@ -409,7 +410,7 @@ public class GroupFrame extends JFrame implements ChangeListener
             DebugMethods.log("Selected statitics", DebugMethods.LogType.DEBUG);
             gbp.populateButtons(sp);
             this.setSize(new Dimension(600, 800));
-            sp.updateStatistics(sgp.getCurrent());
+            sp.updateStatistics(sgp.getCurrent(), null);
         }
         else
         {

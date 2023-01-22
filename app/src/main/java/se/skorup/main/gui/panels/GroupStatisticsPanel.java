@@ -75,7 +75,7 @@ public final class GroupStatisticsPanel extends AbstractStatisticsPanel
     }
 
     @Override
-    protected void updateData(Optional<Subgroups> sg)
+    protected void updateData(Optional<Subgroups> sg, Group gm)
     {
         var total = gm.getMemberCount();
         var leaders = gm.getMemberCountOfRole(Person.Role.LEADER);

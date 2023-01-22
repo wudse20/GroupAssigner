@@ -29,6 +29,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
     private boolean isWishListMode = false;
     private String name = "";
     private int[] x;
+    private Group last;
 
     private final JLabel lblNoGroup = new JLabel(NO_GROUPS);
     private final JLabel lblGroups = new JLabel();
@@ -37,6 +38,11 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
 
     private final DataGraphPanel pGraph = new DataGraphPanel(x);
 
+    /**
+     * Creates a new SubgroupStatisticsPanel.
+     *
+     * @param gm the group manager to be used.
+     * */
     public SubgroupStatisticsPanel(Group gm)
     {
         super(gm);
@@ -84,7 +90,7 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
     }
 
     @Override
-    protected void updateData(Optional<Subgroups> sg)
+    protected void updateData(Optional<Subgroups> sg, Group gm)
     {
         if (sg.isEmpty())
         {
@@ -92,6 +98,11 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
             this.isEmpty = true;
             return;
         }
+
+        if (gm == null)
+            gm = last;
+        else
+            last = gm;
 
         var s = sg.get();
         this.isEmpty = false;
@@ -107,8 +118,9 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
             var n = candidates.size();
             var x = new int[n];
 
+            var finalGm = gm;
             candidates.forEach(p -> {
-                var wishes = new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), p.getId()));
+                var wishes = new ImmutableHashSet<>(Tuple.imageOf(finalGm.getWishGraph(), p.getId()));
                 ImmutableHashSet<Integer> group = null;
                 for (var g : s.groups())
                 {

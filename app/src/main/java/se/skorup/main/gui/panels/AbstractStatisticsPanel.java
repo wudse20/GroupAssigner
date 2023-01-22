@@ -21,13 +21,14 @@ import java.util.Optional;
  * */
 public abstract sealed class AbstractStatisticsPanel extends JPanel permits GroupStatisticsPanel, SubgroupStatisticsPanel
 {
-    protected final Group gm;
     protected final int len = "Antal personer med 100 önskningar uppfyllda:".length();
+
+    protected final Group gm;
 
     /**
      * Creates a new AbstractStatisticsPanel.
      *
-     * @param gm the instance of the group manager in use.
+     * @param gm the instance of the Group to used.
      * */
     protected AbstractStatisticsPanel(Group gm)
     {
@@ -38,10 +39,11 @@ public abstract sealed class AbstractStatisticsPanel extends JPanel permits Grou
      * Updates the information on the panel.
      *
      * @param sg the subgroups that might exist, when updating.
+     * @param gm the group used for the statistics.
      * */
-    public final void updateStatistics(Optional<Subgroups> sg)
+    public final void updateStatistics(Optional<Subgroups> sg, Group gm)
     {
-        this.updateData(sg);
+        this.updateData(sg, gm);
         this.addComponents();
     }
 
@@ -56,7 +58,7 @@ public abstract sealed class AbstractStatisticsPanel extends JPanel permits Grou
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setProperties();
-        this.updateData(sg);
+        this.updateData(sg, gm);
         this.addComponents();
     }
 
@@ -125,6 +127,9 @@ public abstract sealed class AbstractStatisticsPanel extends JPanel permits Grou
 
     /**
      * Updates the data.
+     *
+     * @param sg the subgroups that might be needed to update the data.
+     * @param gm the group that is supposed to be used in creation of the groups.
      * */
-    protected abstract void updateData(Optional<Subgroups> sg);
+    protected abstract void updateData(Optional<Subgroups> sg, Group gm);
 }

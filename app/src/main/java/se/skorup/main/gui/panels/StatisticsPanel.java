@@ -50,12 +50,13 @@ public class StatisticsPanel extends JPanel
     }
 
     /**
-     * Updates the statistics of the subgroup part of this frame..
+     * Updates the statistics of the subgroup part of this frame.
      *
      * @param sg the subgroups that the statistics should be based on.
+     * @param gm the group used to create the subgroups, sg.
      * */
-    public void updateStatistics(Subgroups sg)
+    public void updateStatistics(Subgroups sg, Group gm)
     {
-        ssp.updateStatistics(Optional.ofNullable(sg));
+        ssp.updateStatistics(Optional.ofNullable(sg), gm);
     }
 }
