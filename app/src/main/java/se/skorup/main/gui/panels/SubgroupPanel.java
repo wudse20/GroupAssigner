@@ -359,7 +359,7 @@ public class SubgroupPanel extends JPanel
         var p = getProgress();
         var res =
             gc instanceof RandomGroupCreator    ?
-            new RandomGroupCreator()            :
+            new RandomGroupCreator(p)            :
             gc instanceof WishesGroupCreator    ?
             new WishesGroupCreator(p)           :
             new WishlistGroupCreator();

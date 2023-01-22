@@ -98,7 +98,7 @@ public final class SubgroupSettingsPanel extends SettingsPanel
 
         cbCreators.setForeground(Utils.FOREGROUND_COLOR);
         cbCreators.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        cbCreators.addItem(new RandomGroupCreator());
+        cbCreators.addItem(new RandomGroupCreator(a -> {}));
         cbCreators.addItem(new WishesGroupCreator(a -> {})); // Don't care about the progress here!
 //        cbCreators.addItem(new WishlistGroupCreator()); // For debugging should never be in release.
 

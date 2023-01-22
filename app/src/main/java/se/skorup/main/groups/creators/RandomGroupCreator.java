@@ -1,7 +1,9 @@
 package se.skorup.main.groups.creators;
 
 import se.skorup.main.groups.exceptions.GroupCreationFailedException;
+import se.skorup.main.gui.helper.progress.Progress;
 import se.skorup.main.manager.Group;
+import se.skorup.main.objects.Person;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,8 +16,18 @@ import java.util.Set;
  * */
 public class RandomGroupCreator extends GroupCreatorTemplate
 {
-    /** Creates a new RandomGroupCreator. Does nothing, actually. */
-    public RandomGroupCreator() {}
+    private final Progress p;
+    private int delta = -1;
+
+    /**
+     * Creates a new RandomGroupCreator. Does nothing, actually.
+     *
+     * @param p the progress tracker.
+     * */
+    public RandomGroupCreator(Progress p)
+    {
+        this.p = p;
+    }
 
     @Override
     protected int getNextPerson(
@@ -23,6 +35,9 @@ public class RandomGroupCreator extends GroupCreatorTemplate
             Set<Integer> current, int lastId
     ) throws GroupCreationFailedException
     {
+        if (delta == -1)
+            delta = 1_000_000 / gm.getMemberCountOfRole(Person.Role.CANDIDATE);
+
         var leftList = new ArrayList<>(left);
 
         while (!leftList.isEmpty())
@@ -32,6 +47,7 @@ public class RandomGroupCreator extends GroupCreatorTemplate
             if (isPersonAllowed(p, current, gm))
             {
                 left.remove(p);
+                this.p.onProgress(delta);
                 return p;
             }
             else
@@ -41,6 +57,7 @@ public class RandomGroupCreator extends GroupCreatorTemplate
         }
 
         // If we are here we have failed.
+        this.p.onProgress(delta);
         throw new GroupCreationFailedException("Too many denylist items");
     }
 

@@ -66,11 +66,11 @@ public class TestGroupCreator
     public static Stream<Arguments> getTestData()
     {
         return Stream.of(
-            Arguments.of(new RandomGroupCreator(), 3, gms.get(0)),
+            Arguments.of(new RandomGroupCreator(a -> {}), 3, gms.get(0)),
             Arguments.of(new WishlistGroupCreator(), 3, gms.get(0)),
             Arguments.of(new WishlistGroupCreator(0), 3, gms.get(0)),
             Arguments.of(new WishesGroupCreator(a -> {}), 3, gms.get(0)),
-            Arguments.of(new RandomGroupCreator(), 10, gms.get(1)),
+            Arguments.of(new RandomGroupCreator(a -> {}), 10, gms.get(1)),
             Arguments.of(new WishlistGroupCreator(), 10, gms.get(1)),
             Arguments.of(new WishlistGroupCreator(0), 10, gms.get(1)),
             Arguments.of(new WishesGroupCreator(a -> {}), 10, gms.get(1))
