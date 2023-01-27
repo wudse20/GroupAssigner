@@ -27,6 +27,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * The panel that displays all the generated
@@ -256,17 +257,18 @@ public class SubgroupDisplayPanel extends JPanel
         if (subgroups == null || manager == null)
             return;
 
-        // Wrapping in ArrayList to prevent crashes, since .toList gives an immutable list.
-        var nameList = new ArrayList<>(
+        if (subgroups.groups() == null)
+            throw new RuntimeException("Why would this ever happen????");
+
+        var nameList =
             subgroups.groups()
-                     .parallelStream()
-                     .flatMap(Collection::parallelStream)
+                     .stream()
+                     .flatMap(Collection::stream)
                      .map(manager::getPersonFromId)
                      .map(Person::getName)
-                     .toList()
-        );
+                     .sorted(Comparator.comparingInt(String::length))
+                     .collect(Collectors.toCollection(ArrayList::new));
 
-        nameList.sort(Comparator.comparingInt(String::length));
         var longestNameLength = nameList.get(nameList.size() - 1).length();
         this.selectGen(longestNameLength, parent.getWidth());
 

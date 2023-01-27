@@ -118,9 +118,9 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
             var n = candidates.size();
             var x = new int[n];
 
-            var finalGm = gm;
-            candidates.forEach(p -> {
-                var wishes = new ImmutableHashSet<>(Tuple.imageOf(finalGm.getWishGraph(), p.getId()));
+            for (var p : candidates)
+            {
+                var wishes = new ImmutableHashSet<>(Tuple.imageOf(gm.getWishGraph(), p.getId()));
                 ImmutableHashSet<Integer> group = null;
                 for (var g : s.groups())
                 {
@@ -131,9 +131,11 @@ public final class SubgroupStatisticsPanel extends AbstractStatisticsPanel
                     }
                 }
 
-                assert group != null;
+                if (group == null)
+                    throw new RuntimeException("Group is null, person not found!%ngm: %s%np: %s%ns: %s".formatted(gm, p, s));
+
                 x[wishes.intersection(group).size()] += 1;
-            });
+            }
 
             var w = 0;
             for (var i = 0; i < x.length; i++)
