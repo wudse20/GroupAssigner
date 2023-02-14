@@ -21,62 +21,8 @@ import java.util.regex.Pattern;
 /**
  * Some util methods
  * */
-public class Utils
+public class Utils implements Constants
 {
-    //Backgrounds
-    /** The background color. */
-    public static final Color BACKGROUND_COLOR = new Color(64, 67, 71);
-
-    /** The component background color. */
-    public static final Color COMPONENT_BACKGROUND_COLOR = BACKGROUND_COLOR.brighter();
-
-    //Foregrounds
-    /** The foreground color. */
-    public static final Color FOREGROUND_COLOR = (Math.random() < 0.005) ? new Color(156, 95, 9) : Color.WHITE;
-
-    /** The color for the group names. */
-    public static final Color GROUP_NAME_COLOR = Color.RED;
-
-    /** The color used to show selection. */
-    public static final Color SELECTED_COLOR = Color.PINK;
-
-    /** The flashing color. */
-    public static final Color FLASH_COLOR = Color.BLUE;
-
-    /** The MainGroup 1 color. */
-    public static final Color MAIN_GROUP_1_COLOR = Color.GREEN;
-
-    /** The MainGroup 2 color. */
-    public static final Color MAIN_GROUP_2_COLOR = Color.CYAN;
-
-    /** The light green color.*/
-    public static final Color LIGHT_GREEN = new Color(194, 255, 190);
-
-    /** The light blue color. */
-    public static final Color LIGHT_BLUE = new Color(0, 187, 255);
-
-    /** The light red color. */
-    public static final Color LIGHT_RED = new Color(245, 37, 85);
-
-    // About
-    /** The version of the program. */
-    public static final String VERSION = "0.4.4.1 - indev";
-
-    /** The about-string. */
-    public static final String ABOUT =
-        "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
-
-    /** The url of the version. */
-    public static final String VERSION_URL =
-        "https://www.skorup.se/top_secret/secret_please_dont_steal_you_will_not_gain_anything_from_this";
-
-    /** The regex pattern for a double. Stolen from: <a href="https://stackoverflow.com/a/16078719">stolen from</a> */
-    private static final Pattern DOUBLE_PATTERN = Pattern.compile(
-            "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)" +
-                    "([eE][+-]?(\\p{Digit}+))?)|(\\.((\\d+))([eE][+-]?(\\d+))?)|" +
-                    "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
-                    "[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
-
     /**
      * Checks if the code is running on a window system or not.
      *
