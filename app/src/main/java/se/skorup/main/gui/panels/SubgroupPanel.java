@@ -673,7 +673,6 @@ public class SubgroupPanel extends JPanel
             DebugMethods.log(groups, DebugMethods.LogType.DEBUG);
             var frame = new SubgroupListFrame(sgs, gm, "Välj");
             gf.setVisible(false);
-
             frame.addActionCallback(sg -> {
                 DebugMethods.log("Chosen groups:", DebugMethods.LogType.DEBUG);
                 DebugMethods.log(sg, DebugMethods.LogType.DEBUG);
@@ -690,7 +689,8 @@ public class SubgroupPanel extends JPanel
             frame.addCancelCallback(() -> {
                 SwingUtilities.invokeLater(() -> {
                     gf.setVisible(true);
-                    gf.updateStatistics(null, gm);
+                    sdp.displaySubgroup(current, gm);
+                    gf.updateStatistics(current, gm);
                 });
             });
         });
