@@ -46,7 +46,7 @@ public interface Constants
 
     // About
     /** The version of the program. */
-    String VERSION = "0.4.4.1 - indev";
+    String VERSION = "0.4.4.2 - indev";
 
     /** The about-string. */
     String ABOUT = "Gruppskapare v.%s\n\nUtvecklare: Anton Skorup\nIdè:   Sebastian Wahlberg".formatted(VERSION);
