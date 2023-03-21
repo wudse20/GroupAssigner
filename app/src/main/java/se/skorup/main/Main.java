@@ -27,6 +27,7 @@ public class Main
      * */
     public static void main(String[] args)
     {
+        System.setProperty("sun.java2d.opengl", "true"); // So that we will use GPU if possible.
         new Main().startProgram();
     }
 
@@ -59,7 +60,7 @@ public class Main
                         }
                         catch (IOException e)
                         {
-                            DebugMethods.errorF("Fel: %s", e.getLocalizedMessage());
+                            DebugMethods.errorF("Error: %s", e.getLocalizedMessage());
                         }
                         finally
                         {

@@ -348,8 +348,8 @@ public class SubgroupPanel extends JPanel
      * Gets the correct group generator,
      * based on all inputs.
      *
-     * @param shouldUseOneMainGroup if {code true} it will create a new GroupCreator with
-     *                              only the provided main group, else it keep the selected
+     * @param shouldUseOneMainGroup if {@code true} it will create a new GroupCreator with
+     *                              only the provided main group, else it keeps the selected
      *                              GroupCreator.
      * @param mg the main group.
      * */
