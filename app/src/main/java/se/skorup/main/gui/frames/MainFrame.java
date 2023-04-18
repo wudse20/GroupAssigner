@@ -1,6 +1,7 @@
 package se.skorup.main.gui.frames;
 
 import se.skorup.API.util.DebugMethods;
+import se.skorup.API.util.EncryptedSerializationUtil;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.panels.ButtonPanel;
 import se.skorup.main.gui.panels.ControlPanel;
@@ -19,6 +20,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -61,12 +64,17 @@ public class MainFrame extends JFrame
      * Adds a demo group if debug param is {@code true},
      * else it will try to read from the file.
      * */
-    @SuppressWarnings("unchecked")
     private void addGroups()
     {
         try
         {
-            managers.addAll((List<Group>) SerializationUtil.deserializeObject(savePath));
+            if (new File(savePath + ".enc").exists())
+            {
+                managers.addAll(EncryptedSerializationUtil.deserializeObject(savePath + ".enc"));
+                return;
+            }
+
+            managers.addAll(SerializationUtil.deserializeObject(savePath));
         }
         catch (Exception e)
         {
@@ -164,22 +172,42 @@ public class MainFrame extends JFrame
         {
             DebugMethods.log("Starting saving process.", DebugMethods.LogType.DEBUG);
             SerializationUtil.createFileIfNotExists(new File(savePath));
-            SerializationUtil.serializeObject(savePath, managers);
+            EncryptedSerializationUtil.serializeObject(savePath + ".enc", (Serializable) managers);
             DebugMethods.log("Saving process finished correctly.", DebugMethods.LogType.DEBUG);
 
             return true;
         }
         catch (Exception e)
         {
-            // TODO: handle error
             e.printStackTrace();
 
             DebugMethods.log(
-                "Saving process failed: %s".formatted(e.getLocalizedMessage()),
+                "Encrypted saving process failed: %s".formatted(e.getLocalizedMessage()),
                 DebugMethods.LogType.ERROR
             );
 
-            return false;
+            // If save failed then try the unencrypted route.
+            try
+            {
+                SerializationUtil.serializeObject(savePath, (Serializable) managers);
+                DebugMethods.log(
+                    "Saving process finished correctly, although unencrypted.",
+                    DebugMethods.LogType.DEBUG
+                );
+
+                return true;
+            }
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+
+                DebugMethods.log(
+                    "Unencrypted saving process failed: %s".formatted(e.getLocalizedMessage()),
+                    DebugMethods.LogType.ERROR
+                );
+
+                return false;
+            }
         }
     }
 

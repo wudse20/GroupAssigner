@@ -4,22 +4,26 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 
 public class EncryptedSerializationUtil
 {
+    /** The storage location of the key, not the best to be honest but good enough. */
     public static String KEY_STORAGE = Utils.getFolderName() + "/saves/secret.data";
 
     /** The key that is used in encrypting the files. */
-    private static final SecretKey key;
+    public static final SecretKey key;
 
     static {
         try
         {
-            key = generateKey();
+            key = getKey();
+            SerializationUtil.serializeObject(KEY_STORAGE, key);
         }
-        catch (NoSuchAlgorithmException e)
+        catch (NoSuchAlgorithmException | IOException e)
         {
             DebugMethods.error(e);
             throw new RuntimeException(e);
@@ -69,5 +73,24 @@ public class EncryptedSerializationUtil
         var keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(256);
         return keyGenerator.generateKey();
+    }
+
+    private static SecretKey getKey() throws NoSuchAlgorithmException
+    {
+        var keyFile = new File(KEY_STORAGE);
+        if (keyFile.exists())
+        {
+            try
+            {
+                return (SecretKey) SerializationUtil.deserializeObject(KEY_STORAGE);
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+                DebugMethods.error(e);
+                return generateKey();
+            }
+        }
+
+        return generateKey();
     }
 }

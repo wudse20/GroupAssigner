@@ -30,27 +30,20 @@ public class SerializationUtil
      * @throws ClassCastException iff object doesn't implement serializable.
      * @throws IllegalArgumentException iff one of the params is null.
      * */
-    public static <T> void serializeObject(String path, T object) throws IOException, ClassCastException, IllegalArgumentException
+    public static <T extends Serializable> void serializeObject(String path, T object) throws IOException, ClassCastException, IllegalArgumentException
     {
         if (object == null || path == null)
             throw new IllegalArgumentException("Passed argument cannot be null");
 
-        if (object instanceof Serializable s)
-        {
-            createFileIfNotExists(new File(path));
-            var fos = new FileOutputStream(path);
-            var oos = new ObjectOutputStream(fos);
+        createFileIfNotExists(new File(path));
+        var fos = new FileOutputStream(path);
+        var oos = new ObjectOutputStream(fos);
 
-            oos.writeObject(s);
-            oos.flush();
-            oos.close();
+        oos.writeObject(object);
+        oos.flush();
+        oos.close();
 
-            fos.close();
-        }
-        else
-        {
-            throw new ClassCastException("%s is not an instanceof Serializable".formatted(object.getClass()));
-        }
+        fos.close();
     }
 
     /**
@@ -65,7 +58,8 @@ public class SerializationUtil
      * @throws ClassNotFoundException Class of a serialized object cannot be found.
      * @throws IllegalArgumentException iff path == null is true.
      * */
-    public static Object deserializeObject(String path) throws IOException, ClassNotFoundException, IllegalArgumentException
+    @SuppressWarnings("unchecked")
+    public static <T extends Serializable> T deserializeObject(String path) throws IOException, ClassNotFoundException, IllegalArgumentException
     {
         if (path == null)
             throw new IllegalArgumentException("Passed argument cannot be null");
@@ -73,7 +67,7 @@ public class SerializationUtil
         var fis = new FileInputStream(path);
         var ois = new ObjectInputStream(fis);
 
-        var obj = ois.readObject();
+        var obj = (T) ois.readObject();
 
         fis.close();
         ois.close();
