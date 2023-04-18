@@ -22,6 +22,7 @@ public abstract class GameFrame extends JFrame
     protected GameFrame(String name, int width, int height)
     {
         super(name);
+        System.setProperty("sun.java2d.opengl", "true");
         this.width = width;
         this.height = height;
         this.setResizable(false);
@@ -61,5 +62,12 @@ public abstract class GameFrame extends JFrame
             dim.width / 2 - width / 2,
             dim.height / 2 - height / 2
         );
+    }
+
+    @Override
+    public void dispose()
+    {
+        System.setProperty("sun.java2d.opengl", "false");
+        super.dispose();
     }
 }
