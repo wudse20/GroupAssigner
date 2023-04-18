@@ -57,7 +57,7 @@ public interface Constants
     /** The regex pattern for a double. Stolen from: <a href="https://stackoverflow.com/a/16078719">stolen from</a> */
     Pattern DOUBLE_PATTERN = Pattern.compile(
         "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)" +
-              "([eE][+-]?(\\p{Digit}+))?)|(\\.((\\d+))([eE][+-]?(\\d+))?)|" +
+              "([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|" +
               "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
               "[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
 }
