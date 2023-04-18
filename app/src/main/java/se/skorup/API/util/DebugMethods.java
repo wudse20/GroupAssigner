@@ -137,6 +137,16 @@ public class DebugMethods
     }
 
     /**
+     * Logs an error to the console.
+     *
+     * @param o the object that is logged.
+     * */
+    public static void error(Object o)
+    {
+        error(String.valueOf(o));
+    }
+
+    /**
      * Logs an error to the console. It utilizes
      * {@link String#formatted(Object...) formatted} to
      * use for formatting, so it has to abide by its laws.
