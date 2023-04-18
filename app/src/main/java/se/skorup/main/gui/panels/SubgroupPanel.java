@@ -15,7 +15,7 @@ import se.skorup.main.gui.helper.progress.ProgressMonitor;
 import se.skorup.main.gui.interfaces.GroupGenerator;
 import se.skorup.main.manager.Group;
 import se.skorup.main.manager.GroupManager;
-import se.skorup.main.manager.helper.SerializationManager;
+import se.skorup.API.util.SerializationUtil;
 import se.skorup.main.objects.Person;
 import se.skorup.main.objects.Subgroups;
 
@@ -126,7 +126,7 @@ public class SubgroupPanel extends JPanel
                                .map(f -> {
                                    try
                                    {
-                                       return (Subgroups) SerializationManager.deserializeObject(f.getAbsolutePath());
+                                       return (Subgroups) SerializationUtil.deserializeObject(f.getAbsolutePath());
                                    }
                                    catch (IOException | ClassNotFoundException e)
                                    {
@@ -204,8 +204,8 @@ public class SubgroupPanel extends JPanel
 
         try
         {
-            SerializationManager.createFileIfNotExists(new File(path));
-            SerializationManager.serializeObject(path, current.changeName(name));
+            SerializationUtil.createFileIfNotExists(new File(path));
+            SerializationUtil.serializeObject(path, current.changeName(name));
 
             JOptionPane.showMessageDialog(
                 this, "Du har sparat undergruppen!",

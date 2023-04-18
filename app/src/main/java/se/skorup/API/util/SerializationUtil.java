@@ -1,4 +1,4 @@
-package se.skorup.main.manager.helper;
+package se.skorup.API.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import java.io.Serializable;
  * of different objects that implements the
  * serialization interface.
  * */
-public class SerializationManager
+public class SerializationUtil
 {
     /**
      * Serializes an object to a file with path: path.

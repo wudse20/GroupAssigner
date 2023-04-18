@@ -1,4 +1,4 @@
-package se.skorup.main.manager.helper;
+package se.skorup.API.util;
 
 import org.junit.jupiter.api.Test;
 import se.skorup.main.manager.GroupManager;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * The class responsible for testing the serialization manager.
  * */
-public class SerializationManagerTester
+public class TestSerializationUtil
 {
     /**
      * Tests serialization and deserialization of an object.
@@ -30,8 +30,8 @@ public class SerializationManagerTester
 
         var path = "Hej.txt";
 
-        SerializationManager.serializeObject(path, gm);
-        var res = (GroupManager) SerializationManager.deserializeObject(path);
+        SerializationUtil.serializeObject(path, gm);
+        var res = (GroupManager) SerializationUtil.deserializeObject(path);
 
         assertEquals(gm, res);
 
@@ -46,17 +46,17 @@ public class SerializationManagerTester
     {
         assertThrows(
             IllegalArgumentException.class,
-            () -> SerializationManager.serializeObject(null, "")
+            () -> SerializationUtil.serializeObject(null, "")
         );
 
         assertThrows(
             IllegalArgumentException.class,
-            () -> SerializationManager.serializeObject("", null)
+            () -> SerializationUtil.serializeObject("", null)
         );
 
         assertThrows(
             IllegalArgumentException.class,
-            () -> SerializationManager.deserializeObject(null)
+            () -> SerializationUtil.deserializeObject(null)
         );
     }
 }

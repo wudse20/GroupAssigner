@@ -2,7 +2,7 @@ package se.skorup.games.base;
 
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
-import se.skorup.main.manager.helper.SerializationManager;
+import se.skorup.API.util.SerializationUtil;
 
 import javax.swing.JPanel;
 import java.awt.Font;
@@ -35,7 +35,7 @@ public class GamePanel extends JPanel
 
         try
         {
-            hs = (Score) SerializationManager.deserializeObject(path);
+            hs = (Score) SerializationUtil.deserializeObject(path);
         }
         catch (IOException | ClassNotFoundException e)
         {
@@ -55,8 +55,8 @@ public class GamePanel extends JPanel
     {
         try
         {
-            SerializationManager.createFileIfNotExists(new File(path));
-            SerializationManager.serializeObject(path, score);
+            SerializationUtil.createFileIfNotExists(new File(path));
+            SerializationUtil.serializeObject(path, score);
         }
         catch (IOException e)
         {

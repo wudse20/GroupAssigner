@@ -3,7 +3,7 @@ package se.skorup.main;
 import se.skorup.API.util.DebugMethods;
 import se.skorup.API.util.Utils;
 import se.skorup.main.gui.frames.MainFrame;
-import se.skorup.main.manager.helper.SerializationManager;
+import se.skorup.API.util.SerializationUtil;
 import se.skorup.version.VersionChecker;
 import se.skorup.version.VersionCheckerSettings;
 import se.skorup.version.gui.VersionCheckerTermsFrame;
@@ -55,7 +55,7 @@ public class Main
                     new Thread(() -> { // No running this on the EDT.
                         try
                         {
-                            SerializationManager.serializeObject(VERSION_PATH, set);
+                            SerializationUtil.serializeObject(VERSION_PATH, set);
                         }
                         catch (IOException e)
                         {
@@ -99,7 +99,7 @@ public class Main
     {
         try
         {
-            var set = (VersionCheckerSettings) SerializationManager.deserializeObject(f.getAbsolutePath());
+            var set = (VersionCheckerSettings) SerializationUtil.deserializeObject(f.getAbsolutePath());
             return set.shouldCheck();
         }
         catch (IOException | ClassNotFoundException e)

@@ -7,7 +7,7 @@ import se.skorup.main.gui.panels.ControlPanel;
 import se.skorup.main.gui.panels.PersonPanel;
 import se.skorup.main.gui.panels.SidePanel;
 import se.skorup.main.manager.Group;
-import se.skorup.main.manager.helper.SerializationManager;
+import se.skorup.API.util.SerializationUtil;
 import se.skorup.main.objects.Person;
 
 import javax.swing.BoxLayout;
@@ -66,7 +66,7 @@ public class MainFrame extends JFrame
     {
         try
         {
-            managers.addAll((List<Group>) SerializationManager.deserializeObject(savePath));
+            managers.addAll((List<Group>) SerializationUtil.deserializeObject(savePath));
         }
         catch (Exception e)
         {
@@ -163,8 +163,8 @@ public class MainFrame extends JFrame
         try
         {
             DebugMethods.log("Starting saving process.", DebugMethods.LogType.DEBUG);
-            SerializationManager.createFileIfNotExists(new File(savePath));
-            SerializationManager.serializeObject(savePath, managers);
+            SerializationUtil.createFileIfNotExists(new File(savePath));
+            SerializationUtil.serializeObject(savePath, managers);
             DebugMethods.log("Saving process finished correctly.", DebugMethods.LogType.DEBUG);
 
             return true;
