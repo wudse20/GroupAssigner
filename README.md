@@ -9,7 +9,7 @@ The program can be downloaded by following this [link](https://www.skorup.se/dow
 Some technical docs over groupgeneration - in swedish. [Take me there!](https://www.skorup.se/how)
 
 ## Versions
-Java: 19 <br>
+Java: 20 <br>
 Juniper JUnit (org.junit.jupiter:junit-jupiter:5.7.2)
 
 ## Compile and run

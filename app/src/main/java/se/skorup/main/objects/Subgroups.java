@@ -19,7 +19,7 @@ import java.util.Set;
  * @param groups the generated groups.
  * @param isLeaderMode if {@code true} the group, was paired with the leaders.
  * @param isWishListMode if {@code true} the groups where generated using this
- *                       {@link WishlistGroupCreator GroupCreator}.
+ *                       {@link se.skorup.main.groups.creators.WishesGroupCreator GroupCreator}.
  * @param labels the labels of the groups.
  * @param leaders the leaders of the group.
  * */

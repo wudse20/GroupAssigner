@@ -82,7 +82,7 @@ public class EncryptedSerializationUtil
         {
             try
             {
-                return (SecretKey) SerializationUtil.deserializeObject(KEY_STORAGE);
+                return SerializationUtil.deserializeObject(KEY_STORAGE);
             }
             catch (IOException | ClassNotFoundException e)
             {

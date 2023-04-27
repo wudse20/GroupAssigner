@@ -1,6 +1,7 @@
 package se.skorup.main.gui.panels;
 
 import se.skorup.API.util.DebugMethods;
+import se.skorup.API.util.EncryptedSerializationUtil;
 import se.skorup.API.util.Utils;
 import se.skorup.main.groups.creators.GroupCreator;
 import se.skorup.main.groups.creators.RandomGroupCreator;
@@ -126,9 +127,12 @@ public class SubgroupPanel extends JPanel
                                .map(f -> {
                                    try
                                    {
+                                       if (f.getAbsolutePath().contains(".enc"))
+                                           return EncryptedSerializationUtil.deserializeObject(f.getAbsolutePath());
+
                                        return (Subgroups) SerializationUtil.deserializeObject(f.getAbsolutePath());
                                    }
-                                   catch (IOException | ClassNotFoundException e)
+                                   catch (Exception e)
                                    {
                                        DebugMethods.log(e, DebugMethods.LogType.ERROR);
                                        throw new RuntimeException(e);
@@ -176,10 +180,10 @@ public class SubgroupPanel extends JPanel
         }
 
         var name =
-                JOptionPane.showInputDialog(
-                    this, "Vad heter gruppen?",
-                    "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
-                );
+            JOptionPane.showInputDialog(
+                this, "Vad heter gruppen?",
+                "Gruppens namn", JOptionPane.INFORMATION_MESSAGE
+            );
 
         if (name == null)
             return;
@@ -200,22 +204,33 @@ public class SubgroupPanel extends JPanel
         }
 
         current = current.changeName(name);
-        var path = "%s%s".formatted(gf.BASE_GROUP_PATH, "%s.data".formatted(current.name()));
+        var path = "%s%s".formatted(gf.BASE_GROUP_PATH, "%s.data.enc".formatted(current.name()));
 
         try
         {
             SerializationUtil.createFileIfNotExists(new File(path));
-            SerializationUtil.serializeObject(path, current.changeName(name));
+            EncryptedSerializationUtil.serializeObject(path, current.changeName(name));
 
             JOptionPane.showMessageDialog(
                 this, "Du har sparat undergruppen!",
                 "Du har sparat!", JOptionPane.INFORMATION_MESSAGE
             );
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
             DebugMethods.log(e, DebugMethods.LogType.ERROR);
+            DebugMethods.log("Attempting to save unencrypted data", DebugMethods.LogType.DEBUG);
+
+            try
+            {
+                SerializationUtil.createFileIfNotExists(new File(path));
+                SerializationUtil.serializeObject(path.substring(0, path.lastIndexOf('.')), current.changeName(name));
+            }
+            catch (IOException ex)
+            {
+                DebugMethods.log(ex, DebugMethods.LogType.ERROR);
+            }
 
             JOptionPane.showMessageDialog(
                 this, "Fel vid sparning!\nFel: %s".formatted(e.getLocalizedMessage()),

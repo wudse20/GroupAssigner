@@ -67,12 +67,12 @@ public class SerializationUtil
         var fis = new FileInputStream(path);
         var ois = new ObjectInputStream(fis);
 
-        var obj = (T) ois.readObject();
+        var obj = ois.readObject();
 
         fis.close();
         ois.close();
 
-        return obj;
+        return (T) obj;
     }
 
     /**
