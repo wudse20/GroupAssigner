@@ -20,6 +20,7 @@ public class Group implements Serializable
 
     private final Map<Integer, Person> persons;
     private final Map<Integer, Set<Integer>> denylist;
+    private final Map<Integer, Set<Integer>> wishlist;
 
     private final String name;
 
@@ -32,6 +33,7 @@ public class Group implements Serializable
     {
         this.persons = new HashMap<>();
         this.denylist = new HashMap<>();
+        this.wishlist = new HashMap<>();
         this.name = name;
     }
 
@@ -63,6 +65,32 @@ public class Group implements Serializable
     {
         return denylist.getOrDefault(id1, new HashSet<>()).contains(id2) ||
                denylist.getOrDefault(id2, new HashSet<>()).contains(id1);
+    }
+
+    /**
+     * Adds wished to wishers wishlist.
+     *
+     * @param wisher the id of the person doing the wish.
+     * @param wished the person that wisher is wishing for.
+     * */
+    public synchronized void addWishItem(int wisher, int wished)
+    {
+        var set = wishlist.getOrDefault(wisher, new HashSet<>());
+        set.add(wished);
+        wishlist.put(wisher, set);
+    }
+
+    /**
+     * Gets all the wished ids for a person. Note that this result
+     * might change, since it is only current value. This will not be
+     * updated and the return set is a copy, i.e. another instance.
+     *
+     * @param id the id that we are searching for.
+     * @return a set of the ids that id has wished for.
+     * */
+    public synchronized Set<Integer> getWishedIds(int id)
+    {
+        return new HashSet<>(wishlist.getOrDefault(id, new HashSet<>()));
     }
 
     /**

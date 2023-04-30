@@ -180,7 +180,6 @@ public class TestGroup
         }
 
         var threads = new ArrayList<Thread>();
-
         for (var i = 0; i < 4; i++)
         {
             threads.add(new Thread(() -> {
@@ -197,6 +196,90 @@ public class TestGroup
                     }
                 }
             }, "testDenyMultiThreaded-" + i));
+        }
+
+        threads.forEach(Thread::start);
+        for (var t : threads)
+            t.join();
+    }
+
+    @Test
+    public void testWishSingleThreaded()
+    {
+        var gr = new Group("Test");
+        var wish = new HashMap<Integer, Set<Integer>>();
+        var cnt = 10000;
+
+        // Register the persons
+        for (var i = 0; i < cnt; i++)
+            gr.registerPerson(UUID.randomUUID().toString());
+
+        // Add wish items
+        var random = new Random("kaka".hashCode()); // Seed to be the same each time.
+        for (var i = 0; i < cnt; i++)
+        {
+            var id1 = random.nextInt(0, cnt);
+            var id2 = random.nextInt(0, cnt);
+            do
+            {
+                id2 = random.nextInt(0, cnt);
+            } while(id1 == id2);
+
+            var s1 = wish.getOrDefault(id1, new HashSet<>());
+            s1.add(id2);
+            wish.put(id1, s1);
+            gr.addWishItem(id1, id2);
+        }
+
+        // Test with getWishedIds
+        for (var e : wish.entrySet())
+        {
+            var id = e.getKey();
+            assertFalse(gr.getWishedIds(id).contains(id), "%d should not wish for themselves.".formatted(id));
+            assertEquals(gr.getWishedIds(id), e.getValue(), "These should match if everything is correct.");
+        }
+    }
+
+    @Test
+    public void testWishMultiThreaded() throws InterruptedException
+    {
+        var gr = new Group("Test");
+        var wish = new HashMap<Integer, Set<Integer>>();
+        var cnt = 10000;
+
+        // Register the persons
+        for (var i = 0; i < cnt; i++)
+            gr.registerPerson(UUID.randomUUID().toString());
+
+        // Add wish items
+        var random = new Random("kaka".hashCode()); // Seed to be the same each time.
+        for (var i = 0; i < cnt; i++)
+        {
+            var id1 = random.nextInt(0, cnt);
+            var id2 = random.nextInt(0, cnt);
+            do
+            {
+                id2 = random.nextInt(0, cnt);
+            } while(id1 == id2);
+
+            var s1 = wish.getOrDefault(id1, new HashSet<>());
+            s1.add(id2);
+            wish.put(id1, s1);
+            gr.addWishItem(id1, id2);
+        }
+
+        var threads = new ArrayList<Thread>();
+        for (var i = 0; i < 4; i++)
+        {
+            threads.add(new Thread(() -> {
+                // Test with getWishedIds
+                for (var e : wish.entrySet())
+                {
+                    var id = e.getKey();
+                    assertFalse(gr.getWishedIds(id).contains(id), "%d should not wish for themselves.".formatted(id));
+                    assertEquals(gr.getWishedIds(id), e.getValue(), "These should match if everything is correct.");
+                }
+            }, "testWishMultiThreaded-" + i));
         }
 
         threads.forEach(Thread::start);
