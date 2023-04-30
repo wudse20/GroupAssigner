@@ -4,12 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGroup
 {
@@ -93,5 +97,110 @@ public class TestGroup
         );
 
         assertEquals(ids, gr.getIds(), "All ids should be there.");
+    }
+
+    @Test
+    public void testDenySingleThreaded()
+    {
+        var gr = new Group("Test");
+        var deny = new HashMap<Integer, Set<Integer>>();
+        var cnt = 10000;
+
+        // Register the persons
+        for (var i = 0; i < cnt; i++)
+            gr.registerPerson(UUID.randomUUID().toString());
+
+        // Add deny items
+        var random = new Random("kaka".hashCode()); // Seed to be the same each time.
+        for (var i = 0; i < cnt; i++)
+        {
+            var id1 = random.nextInt(0, cnt);
+            var id2 = random.nextInt(0, cnt);
+            do
+            {
+                id2 = random.nextInt(0, cnt);
+            } while(id1 == id2);
+
+            gr.addDenyItem(id1, id2);
+            var s1 = deny.getOrDefault(id1, new HashSet<>());
+            var s2 = deny.getOrDefault(id2, new HashSet<>());
+
+            s1.add(id2);
+            s2.add(id1);
+
+            deny.put(id1, s1);
+            deny.put(id2, s2);
+        }
+
+        // Test with isDenied
+        for (var e : deny.entrySet())
+        {
+            var id = e.getKey();
+            assertFalse(gr.isDenied(id, id), "%d should not be denied with itself.".formatted(id));
+
+            for (var p : e.getValue())
+            {
+                assertTrue(gr.isDenied(id, p), "%d should be on %d's denylist".formatted(p, id));
+                assertTrue(gr.isDenied(p, id), "%d should be on %d's denylist".formatted(id, p));
+            }
+        }
+    }
+
+    @Test
+    public void testDenyMultiThreaded() throws InterruptedException
+    {
+        var gr = new Group("Test");
+        var deny = new ConcurrentHashMap<Integer, Set<Integer>>();
+        var cnt = 10000;
+
+        // Register the persons
+        for (var i = 0; i < cnt; i++)
+            gr.registerPerson(UUID.randomUUID().toString());
+
+        // Add deny items
+        var random = new Random("kaka".hashCode()); // Seed to be the same each time.
+        for (var i = 0; i < cnt; i++)
+        {
+            var id1 = random.nextInt(0, cnt);
+            var id2 = random.nextInt(0, cnt);
+            do
+            {
+                id2 = random.nextInt(0, cnt);
+            } while(id1 == id2);
+
+            gr.addDenyItem(id1, id2);
+            var s1 = deny.getOrDefault(id1, new HashSet<>());
+            var s2 = deny.getOrDefault(id2, new HashSet<>());
+
+            s1.add(id2);
+            s2.add(id1);
+
+            deny.put(id1, s1);
+            deny.put(id2, s2);
+        }
+
+        var threads = new ArrayList<Thread>();
+
+        for (var i = 0; i < 4; i++)
+        {
+            threads.add(new Thread(() -> {
+                // Test with isDenied
+                for (var e : deny.entrySet())
+                {
+                    var id = e.getKey();
+                    assertFalse(gr.isDenied(id, id), "%d should not be denied with itself.".formatted(id));
+
+                    for (var p : e.getValue())
+                    {
+                        assertTrue(gr.isDenied(id, p), "%d should be on %d's denylist".formatted(p, id));
+                        assertTrue(gr.isDenied(p, id), "%d should be on %d's denylist".formatted(id, p));
+                    }
+                }
+            }, "testDenyMultiThreaded-" + i));
+        }
+
+        threads.forEach(Thread::start);
+        for (var t : threads)
+            t.join();
     }
 }
