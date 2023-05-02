@@ -30,6 +30,7 @@ public class TestGroup
             var name = UUID.randomUUID().toString();
             al.add(name);
             ids.add(gr.registerPerson(name));
+            assertEquals(i + 1, gr.size(), "The size should match!");
         }
 
         assertEquals(
@@ -47,6 +48,7 @@ public class TestGroup
         );
 
         assertEquals(ids, gr.getIds(), "All ids should be there.");
+        assertEquals(cnt, gr.size(), "The size must match!");
     }
 
     @Test
@@ -97,6 +99,7 @@ public class TestGroup
         );
 
         assertEquals(ids, gr.getIds(), "All ids should be there.");
+        assertEquals(cnt, gr.size(), "The size must match!");
     }
 
     @Test

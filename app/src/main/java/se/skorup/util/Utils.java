@@ -2,6 +2,7 @@ package se.skorup.util;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 /**
  * Utility methods that can be used to
@@ -61,5 +62,38 @@ public class Utils
     public static String getCurrentDateAndTime()
     {
         return "%s--%s".formatted(getCurrentDate(), getCurrentTime());
+    }
+
+    /**
+     * Converts a String to a name case.
+     *
+     * <code>
+     *  anton s -> Anton S,
+     *  ANTON S -> Anton S,
+     *  AnToN s -> Anton S
+     *</code>
+     *
+     * @param input the string to be converted.
+     * @return the converted string.
+     * */
+    public static String toNameCase(String input)
+    {
+        if (input.length() == 0)
+            return input;
+
+        var names = input.split("\\s+");
+        var sb = new StringBuilder();
+
+        // Removing empty strings that snuck in from the splitter.
+        names = Arrays.stream(names)
+                      .filter(s -> !s.trim().isEmpty())
+                      .toArray(String[]::new);
+
+        for (var name : names)
+            sb.append(new StringBuilder(
+                name.toLowerCase()).replace(0, 1, Character.toString(name.charAt(0)).toUpperCase()
+            )).append(' ');
+
+        return sb.toString().trim();
     }
 }

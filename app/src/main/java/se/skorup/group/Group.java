@@ -125,7 +125,18 @@ public class Group implements Serializable
      * */
     public synchronized Collection<Integer> getIds()
     {
-        return persons.keySet();
+        return new HashSet<>(persons.keySet());
+    }
+
+    /**
+     * Gets the size of the group, i.e., the number of
+     * persons in it.
+     *
+     * @return the number persons in the group.
+     * */
+    public synchronized int size()
+    {
+        return persons.size();
     }
 
     @Override
