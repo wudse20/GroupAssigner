@@ -6,6 +6,7 @@
  * User Manual available at https://docs.gradle.org/8.1-rc-4/userguide/building_java_projects.html
  */
 
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
@@ -39,4 +40,24 @@ application {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+
+version = '0.5'
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'GroupAssigner',
+                'Implementation-Version': version,
+                'Main-Class': application.mainClass
+    }
+}
+
+tasks.register('buildProject') {
+    dependsOn 'clean', 'jar'
 }
