@@ -12,12 +12,23 @@ Some technical docs over groupgeneration - in swedish. [Take me there!](https://
 Java: 20 <br>
 Juniper JUnit (org.junit.jupiter:junit-jupiter:5.7.2)
 
+## Build project
+
+To build the project and get a runnable jar file you run the following command:
+```powershell
+./gradlew buildProject
+```
+This generates a jar file that is located in `app/build/libs/` and the file name is `app-xxx.jar`. To run the jar file you just run the following command:
+```powershell
+java -jar app-xxx.jar
+```
+
 ## Compile and run
 
 ### Windows: <br>
 gradle:
 ```powershell
-gradlew run
+./gradlew run
 ```
 old way:
 ```powershell
