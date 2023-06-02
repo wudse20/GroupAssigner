@@ -60,12 +60,23 @@ public class Localization
      *
      * @param path the path of the lang file.
      * @return a Map with the key-value pairs from the language file.
-     * @throws IOException iff
+     * @throws IOException iff IO-opeartion fail.
      * */
     public static Map<String, String> parseLanguageFile(String path) throws IOException
     {
         var file = MyFileReader.readFile(new File(path));
         var lines = file.split("\n");
+        return parseLanguageFile(lines);
+    }
+
+    /**
+     * Parses and sets a language file to the current lang file that will be used.
+     *
+     * @param lines the lines of the lang file.
+     * @return a Map with the key-value pairs from the language file.
+     * */
+    public static Map<String, String> parseLanguageFile(String[] lines)
+    {
         var map = new HashMap<String, String>();
 
         for (var l : lines)
