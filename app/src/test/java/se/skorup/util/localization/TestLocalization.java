@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestLocalization
@@ -28,20 +29,13 @@ public class TestLocalization
 
     public static Stream<Arguments> getLocalizationData()
     {
-        var SV_se = Map.of(
-            "ui.button.save", "Spara",
-            "ui.button.exit", "Avsluta",
-            "ui.button.kaka", "Kaka: ",
-            "ui.button.krokodil", "Krokodil:"
-        );
-
         var resourceDirectory = Paths.get("src", "test", "resources");
         var SV_se_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se.lang";
         var SV_se_hard_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se_hard.lang";
 
         return Stream.of(
-            Arguments.of(SV_se, SV_se_PATH),
-            Arguments.of(SV_se, SV_se_hard_PATH)
+            Arguments.of(SV_SE, SV_se_PATH),
+            Arguments.of(SV_SE, SV_se_hard_PATH)
         );
     }
 
@@ -62,10 +56,23 @@ public class TestLocalization
         );
     }
 
+    public static Stream<Arguments> testGetMapData()
+    {
+        var resourceDirectory = Paths.get("src", "test", "resources");
+        var SV_se_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se.lang";
+        var SV_se_hard_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se_hard.lang";
+
+        return Stream.of(
+            Arguments.of(SV_SE, SV_se_PATH),
+            Arguments.of(SV_SE, SV_se_hard_PATH)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("getLocalizationData")
     public void testParseLocalization(Map<String, String> values, String path) throws IOException
     {
+        Localization.missing.clear();
         var res = Localization.parseLanguageFile(path);
         assertEquals(values, res, "The parsed values don't match the expected.");
     }
@@ -87,5 +94,15 @@ public class TestLocalization
             );
 
         assertEquals(expectedMissing, Localization.missing, "The expected missing elements did not match.");
+    }
+
+    @ParameterizedTest
+    @MethodSource("testGetMapData")
+    public void testGetMap(Map<String, String> expected, String path) throws IOException
+    {
+        Localization.missing.clear();
+        Localization.parseLanguageFile(path);
+        assertNotSame(expected, Localization.getLanguageMap(), "The maps should not be the same instance :(");
+        assertEquals(expected, Localization.getLanguageMap(), "The maps should have the same content :(");
     }
 }

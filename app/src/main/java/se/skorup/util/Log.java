@@ -27,7 +27,9 @@ public class Log
      * */
     public static <T> void error(T message)
     {
+        Console.setColor(ConsoleColor.RED);
         log("ERROR", message);
+        Console.resetColor();
     }
 
     /**

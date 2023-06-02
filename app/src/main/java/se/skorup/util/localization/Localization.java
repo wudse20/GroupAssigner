@@ -18,7 +18,8 @@ public class Localization
     /** The set of the missed lookups in the localization table. */
     protected static final Set<String> missing;
 
-    private static Map<String, String> map;
+    /** Protected for testing purposes. */
+    protected static Map<String, String> map;
 
     static {
         missing = ConcurrentHashMap.newKeySet();
@@ -53,6 +54,16 @@ public class Localization
             missing.add(key);
 
         return map.getOrDefault(key, key);
+    }
+
+    /**
+     * Gets a copy of the language map.
+     *
+     * @return a copy of the language map.
+     * */
+    public static Map<String, String> getLanguageMap()
+    {
+        return new HashMap<>(map);
     }
 
     /**
