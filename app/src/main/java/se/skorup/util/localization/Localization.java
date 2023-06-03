@@ -95,6 +95,9 @@ public class Localization
             if (l.trim().length() == 0)
                 continue;
 
+            if (l.trim().length() > 2 && l.charAt(0) == '/' && l.charAt(1) == '/')
+                continue;
+
             var keySb = new StringBuilder();
             var valueSb = new StringBuilder();
             var i = 0;
