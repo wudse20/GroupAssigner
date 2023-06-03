@@ -1,2 +1,4 @@
-ui.button.test:"Test"
+ui.button.test: "Test"
 ui.button.save: "Spara"
+
+ui.info.about: "Gruppskapare v.%s%n%nUtvecklare: Anton Skorup%nIdè:   Sebastian Wahlberg"

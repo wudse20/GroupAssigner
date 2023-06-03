@@ -3,11 +3,12 @@ package se.skorup.util;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Utility methods that can be used to
  * */
-public class Utils
+public class Utils implements Constants
 {
     /** You should not be able to instantiate a class of this object. */
     private Utils() {}
@@ -95,5 +96,22 @@ public class Utils
             )).append(' ');
 
         return sb.toString().trim();
+    }
+
+    /**
+     * Checks if a string is a valid double.
+     *
+     * @param str the string to be tested.
+     * @return {@code true} iff str is a valid double.
+     * */
+    public static boolean isValidDouble(String str)
+    {
+        var DOUBLE_PATTERN = Pattern.compile(
+        "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)" +
+            "([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|" +
+            "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
+            "[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*"
+        );
+        return DOUBLE_PATTERN.matcher(str).matches();
     }
 }

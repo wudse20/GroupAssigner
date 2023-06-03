@@ -84,15 +84,14 @@ public class ResourceLoader
     }
 
     /**
-     * Gets the builder for the resource
-     * loader.
+     * Gets the builder for the resource loader.
      * */
     public static LanguageStep getBuilder()
     {
         return new ResourceBuilder();
     }
 
-
+    /** The step where you specify which lang-file to use. */
     public interface LanguageStep
     {
         /**
@@ -105,6 +104,7 @@ public class ResourceLoader
         FinalStep initLangFile(String langFileName);
     }
 
+    /** The final step in building the resources. */
     public interface FinalStep
     {
         /**
@@ -115,10 +115,14 @@ public class ResourceLoader
         ResourceLoader build();
     }
 
+    /**
+     * The builder class used to build the resource loader.
+     * */
     public static class ResourceBuilder implements LanguageStep, FinalStep
     {
         private final ResourceLoader loader;
 
+        /** Should never be instantiated by another class. */
         private ResourceBuilder()
         {
             this.loader = new ResourceLoader();

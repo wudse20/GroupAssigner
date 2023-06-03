@@ -45,4 +45,29 @@ public class TestUtils
     {
         assertEquals(expected, Utils.toNameCase(input), input);
     }
+
+    public static Stream<Arguments> getDoubleData()
+    {
+        return Stream.of(
+                Arguments.of("5", true),
+                Arguments.of("555", true),
+                Arguments.of("10.32", true),
+                Arguments.of("kaka", false),
+                Arguments.of(".5", true),
+                Arguments.of("5.", true),
+                Arguments.of("5..", false),
+                Arguments.of("5..0", false),
+                Arguments.of("123443d", true),
+                Arguments.of("213123D", true),
+                Arguments.of("123443f", true),
+                Arguments.of("213123F", true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getDoubleData")
+    public void testIsValidDouble(String input, boolean expected)
+    {
+        assertEquals(expected, Utils.isValidDouble(input), input);
+    }
 }
