@@ -39,6 +39,42 @@ public class TestUtils
         );
     }
 
+    public static Stream<Arguments> getDoubleData()
+    {
+        return Stream.of(
+            Arguments.of("5", true),
+            Arguments.of("555", true),
+            Arguments.of("10.32", true),
+            Arguments.of("kaka", false),
+            Arguments.of(".5", true),
+            Arguments.of("5.", true),
+            Arguments.of("5..", false),
+            Arguments.of("5..0", false),
+            Arguments.of("123443d", true),
+            Arguments.of("213123D", true),
+            Arguments.of("123443f", true),
+            Arguments.of("213123F", true)
+        );
+    }
+
+    public static Stream<Arguments> getPowData()
+    {
+        return Stream.of(
+            Arguments.of(5, 2, 5 * 5),
+            Arguments.of(5, -2, 0),
+            Arguments.of(2, 31, Integer.MIN_VALUE),
+            Arguments.of(-5, 2, 25),
+            Arguments.of(-5, 3, -125),
+            Arguments.of(5, 5, (int) Math.pow(5, 5)),
+            Arguments.of(10, 3, 1000),
+            Arguments.of(10, 7, (int) Math.pow(10, 7)),
+            Arguments.of(7, 4, (int) Math.pow(7, 4)),
+            Arguments.of(1, (int) Math.pow(10, 100), 1),
+            Arguments.of(1413, 1, 1413),
+            Arguments.of(123, 0, 1)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("getNameCaseData")
     public void testToNameCase(String expected, String input)
@@ -46,28 +82,17 @@ public class TestUtils
         assertEquals(expected, Utils.toNameCase(input), input);
     }
 
-    public static Stream<Arguments> getDoubleData()
-    {
-        return Stream.of(
-                Arguments.of("5", true),
-                Arguments.of("555", true),
-                Arguments.of("10.32", true),
-                Arguments.of("kaka", false),
-                Arguments.of(".5", true),
-                Arguments.of("5.", true),
-                Arguments.of("5..", false),
-                Arguments.of("5..0", false),
-                Arguments.of("123443d", true),
-                Arguments.of("213123D", true),
-                Arguments.of("123443f", true),
-                Arguments.of("213123F", true)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("getDoubleData")
     public void testIsValidDouble(String input, boolean expected)
     {
         assertEquals(expected, Utils.isValidDouble(input), input);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getPowData")
+    public void testPowers(int b, int e, int expected)
+    {
+        assertEquals(Utils.pow(b, e), expected);
     }
 }

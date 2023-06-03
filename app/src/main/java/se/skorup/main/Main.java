@@ -1,9 +1,16 @@
 package se.skorup.main;
 
+import se.skorup.gui.components.Button;
+import se.skorup.gui.components.Label;
+import se.skorup.gui.components.MathTextField;
 import se.skorup.util.Log;
+import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 import se.skorup.util.resource.ResourceLoader;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
 import java.io.IOException;
 
 public class Main
@@ -12,7 +19,16 @@ public class Main
     {
         loadResources();
         Log.debugf("Localization: %s", Localization.getLanguageMap());
-        System.out.println("Hello, world!");
+        SwingUtilities.invokeLater(() -> {
+            var frame = new JFrame();
+            frame.getContentPane().setBackground(Utils.BACKGROUND_COLOR);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+            frame.add(new Button("ui.button.save"), BorderLayout.PAGE_START);
+            frame.add(new MathTextField(12), BorderLayout.CENTER);
+            frame.add(new Label("ui.info.test", true), BorderLayout.PAGE_END);
+            frame.pack();
+        });
     }
 
     private static void loadResources()
