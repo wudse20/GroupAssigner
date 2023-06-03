@@ -11,10 +11,12 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * An abstract base class for a Dialog.
  * */
-public sealed abstract class Dialog permits MessageDialog
+public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
 {
     private final DialogMonitor mon;
     private final DialogFrame frame;
+
+    protected E result;
 
     protected static ImageIcon informationIcon;
 
@@ -46,7 +48,7 @@ public sealed abstract class Dialog permits MessageDialog
     /**
      * Shows the message dialog.
      * */
-    public void show()
+    public E show()
     {
         try
         {
@@ -56,10 +58,13 @@ public sealed abstract class Dialog permits MessageDialog
             });
 
             mon.start();
+
+            return result;
         }
         catch (InterruptedException | InvocationTargetException unexpected)
         {
             Log.errorf("Unexpected exception: %s", unexpected);
+            return null;
         }
     }
 
