@@ -1,5 +1,11 @@
 ui.button.test: "Test"
 ui.button.save: "Spara"
+ui.button.dialog.close: "Stäng"
+
+ui.title.test: "Test titel och kaka på det!"
 
 ui.info.test: "Detta är ett test!"
 ui.info.about: "Gruppskapare v.%s%n%nUtvecklare: Anton Skorup%nIdè:   Sebastian Wahlberg"
+
+// <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
+ui.info.attribution.information: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"

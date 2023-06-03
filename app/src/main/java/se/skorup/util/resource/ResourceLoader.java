@@ -1,11 +1,18 @@
 package se.skorup.util.resource;
 
+import se.skorup.gui.dialog.Dialog;
 import se.skorup.util.Log;
 import se.skorup.util.io.MyFileReader;
 import se.skorup.util.localization.Localization;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -20,8 +27,10 @@ public class ResourceLoader
 {
     private static final String BASE_DEV_PATH = "/src/resources/";
     private static final String BASE_LANG_PATH = "lang/";
+    private static final String BASE_ICON_PATH = "icons/";
 
     private String languageFile;
+    private String iconFile;
 
     /** No one should ever directly instantiate this class. */
     private ResourceLoader() {}
@@ -59,6 +68,32 @@ public class ResourceLoader
     }
 
     /**
+     * Reads an image and returns it.
+     *
+     * @param file the path to the file.
+     * @throws IOException if file reading fails.
+     * */
+    private BufferedImage getImage(String file) throws IOException
+    {
+        var io = ResourceLoader.class.getClassLoader().getResourceAsStream(file);
+
+        BufferedImage res;
+        if (io != null)
+        {
+            res = ImageIO.read(io);
+            io.close();
+        }
+        else
+        {
+            var bis = new BufferedInputStream(new FileInputStream(BASE_DEV_PATH + file));
+            res = ImageIO.read(bis);
+            bis.close();
+        }
+
+        return res;
+    }
+
+    /**
      * Loads the language
      *
      * @throws IOException if file reading fails.
@@ -67,6 +102,18 @@ public class ResourceLoader
     {
         var lines = getLines("%s%s".formatted(BASE_LANG_PATH, languageFile));
         Localization.parseLanguageFile(lines);
+    }
+
+    /**
+     * Loads the program's icons.
+     *
+     * @throws IOException if file reading fails.
+     * */
+    private void loadIcons() throws IOException
+    {
+        var buffImg = getImage(BASE_ICON_PATH + iconFile).getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var img = new ImageIcon(buffImg);
+        Dialog.loadIcon(img);
     }
 
     /**
@@ -81,6 +128,9 @@ public class ResourceLoader
         Log.debugf("Starting to load language: %s", languageFile);
         loadLanguage();
         Log.debugf("Successfully loaded the language: %s", languageFile);
+        Log.debugf("Starting to load icons");
+        loadIcons();
+        Log.debugf("Successfully loaded the icons.");
         Log.debug("Finished loading resources.");
     }
 
@@ -100,9 +150,19 @@ public class ResourceLoader
          * file of choice.
          *
          * @param langFileName The name of the language file.
-         * @return the resource builder that builds the resource loader.
+         * @return the next step in the chain.
          * */
-        FinalStep initLangFile(String langFileName);
+        IconStep initLangFile(String langFileName);
+    }
+
+    public interface IconStep
+    {
+        /**
+         * Loads the icons into the program.
+         *
+         * @return loads all the icons.
+         * */
+        FinalStep loadIcons();
     }
 
     /** The final step in building the resources. */
@@ -119,7 +179,7 @@ public class ResourceLoader
     /**
      * The builder class used to build the resource loader.
      * */
-    public static class ResourceBuilder implements LanguageStep, FinalStep
+    public static class ResourceBuilder implements LanguageStep, FinalStep, IconStep
     {
         private final ResourceLoader loader;
 
@@ -136,9 +196,16 @@ public class ResourceLoader
         }
 
         @Override
-        public FinalStep initLangFile(String langFileName)
+        public IconStep initLangFile(String langFileName)
         {
             loader.languageFile = langFileName;
+            return this;
+        }
+
+        @Override
+        public FinalStep loadIcons()
+        {
+            loader.iconFile = "information.png";
             return this;
         }
     }
