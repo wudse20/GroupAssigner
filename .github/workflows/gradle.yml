@@ -28,3 +28,5 @@ jobs:
         distribution: 'oracle'
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Build project with Gradle
+      run: ./gradlew buildProject
