@@ -10,3 +10,7 @@ ui.info.about: "Gruppskapare v.%s%n%nUtvecklare: Anton Skorup%nIdè:   Sebastian
 
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
 ui.info.attribution.information: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"
+// <a href="https://www.flaticon.com/free-icons/error" title="error icons">Error icons created by Gregor Cresnar - Flaticon</a>
+ui.info.attribution.warning: "Error icons created by Gregor Cresnar - Flaticon! Download: https://www.flaticon.com/free-icons/error"
+// <a href="https://www.flaticon.com/free-icons/error" title="error icons">Error icons created by Freepik - Flaticon</a>
+ui.info.attribution.error: "Error icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/error"

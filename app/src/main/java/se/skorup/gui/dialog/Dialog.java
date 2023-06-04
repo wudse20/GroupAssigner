@@ -19,6 +19,20 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
     protected E result;
 
     protected static ImageIcon informationIcon;
+    protected static ImageIcon warningIcon;
+    protected static ImageIcon errorIcon;
+
+    protected int type = Dialog.INFORMATION_MESSAGE;
+
+
+    /** Will use the information icon in the dialog. */
+    public static int INFORMATION_MESSAGE = 0;
+
+    /** Will use the warning icon in the dialog. */
+    public static int WARNING_MESSAGE = 1;
+
+    /** Will use the error icon in the dialog. */
+    public static int ERROR_MESSAGE = 2;
 
     /**
      * No one outside this package should
@@ -46,7 +60,9 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
     }
 
     /**
-     * Shows the message dialog.
+     * Shows the dialog.
+     *
+     * @return the value from the dialog.
      * */
     public E show()
     {
@@ -54,6 +70,7 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
         {
             SwingUtilities.invokeAndWait(() -> {
                 this.setupFrame(frame);
+                frame.setIconImage(getIcon().getImage());
                 frame.setVisible(true);
             });
 
@@ -69,13 +86,43 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
     }
 
     /**
+     * Gets the currently selected icon.
+     *
+     * @return the icon that is selected.
+     * */
+    protected ImageIcon getIcon()
+    {
+        return type == INFORMATION_MESSAGE ? informationIcon :
+               type == WARNING_MESSAGE ? warningIcon : errorIcon;
+    }
+
+    /**
+     * Shows the dialog and specifies the type
+     * to be used.
+     *
+     * @param type the type of the message.
+     * @see Dialog#INFORMATION_MESSAGE
+     * @see Dialog#WARNING_MESSAGE
+     * @see Dialog#ERROR_MESSAGE
+     * */
+    public E show(int type)
+    {
+        this.type = type;
+        return show();
+    }
+
+    /**
      * Loads the icon.
      *
-     * @param icon the icon.
+     * @param info the information icon.
+     * @param err the error icon.
+     * @param warn the warning icon.
      * */
-    public static void loadIcon(ImageIcon icon)
+    public static void loadIcons(ImageIcon info, ImageIcon warn, ImageIcon err)
     {
-        informationIcon = icon;
+        informationIcon = info;
+        warningIcon = warn;
+        errorIcon = err;
     }
 
     protected final class DialogFrame extends JFrame

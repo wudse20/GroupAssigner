@@ -29,7 +29,7 @@ public final class MessageDialog extends Dialog<Void>
         bp.add(btnClose);
 
         var ip = new Panel(new FlowLayout(FlowLayout.LEFT));
-        ip.add(new JLabel(informationIcon));
+        ip.add(new JLabel(getIcon()));
         ip.add(new Label(" ".repeat(3)));
         ip.add(lblMessage);
 

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /**
  * A class which is responsible for loading all the resources from the
- * jar-file. If it is in dev mode - i.e. no jar, it will read files from
+ * jar-file. If it is in dev mode - i.e., no jar, it will read files from
  * the resource folder.
  * */
 public class ResourceLoader
@@ -30,7 +30,9 @@ public class ResourceLoader
     private static final String BASE_ICON_PATH = "icons/";
 
     private String languageFile;
-    private String iconFile;
+    private String informationIconFile;
+    private String warningIconFile;
+    private String errorIconFile;
 
     /** No one should ever directly instantiate this class. */
     private ResourceLoader() {}
@@ -111,9 +113,19 @@ public class ResourceLoader
      * */
     private void loadIcons() throws IOException
     {
-        var buffImg = getImage(BASE_ICON_PATH + iconFile).getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-        var img = new ImageIcon(buffImg);
-        Dialog.loadIcon(img);
+        var buffImgInfo = getImage(BASE_ICON_PATH + informationIconFile)
+            .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var info = new ImageIcon(buffImgInfo);
+
+        var buffImgWarn = getImage(BASE_ICON_PATH + warningIconFile)
+            .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var warn = new ImageIcon(buffImgWarn);
+
+        var buffImgErr = getImage(BASE_ICON_PATH + errorIconFile)
+            .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var err = new ImageIcon(buffImgErr);
+
+        Dialog.loadIcons(info, warn, err);
     }
 
     /**
@@ -205,7 +217,9 @@ public class ResourceLoader
         @Override
         public FinalStep loadIcons()
         {
-            loader.iconFile = "information.png";
+            loader.informationIconFile = "information.png";
+            loader.warningIconFile = "warning.png";
+            loader.errorIconFile = "error.png";
             return this;
         }
     }

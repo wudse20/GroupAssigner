@@ -3,7 +3,9 @@ package se.skorup.main;
 import se.skorup.gui.components.Button;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.MathTextField;
+import se.skorup.gui.dialog.Dialog;
 import se.skorup.gui.dialog.InputDialog;
+import se.skorup.gui.dialog.MessageDialog;
 import se.skorup.util.Log;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
@@ -20,13 +22,18 @@ public class Main
     {
         loadResources();
         Log.debugf("Localization: %s", Localization.getLanguageMap());
-        var data = InputDialog.create()
-                              .setLocalizedTitle("ui.title.test")
-                              .setLocalizedInformation("ui.info.test")
-                              .setLocalizedButtonText("ui.button.dialog.close")
-                              .setLocalizedOkButtonText("ui.button.dialog.ok")
-                              .show();
-        Log.debug(data);
+//        var data = InputDialog.create()
+//                              .setLocalizedTitle("ui.title.test")
+//                              .setLocalizedInformation("ui.info.test")
+//                              .setLocalizedButtonText("ui.button.dialog.close")
+//                              .setLocalizedOkButtonText("ui.button.dialog.ok")
+//                              .show();
+//        Log.debug(data);
+        MessageDialog.create()
+                     .setLocalizedTitle("ui.title.test")
+                     .setLocalizedInformation("ui.info.test")
+                     .setLocalizedButtonText("ui.button.dialog.close")
+                     .show(Dialog.ERROR_MESSAGE);
         SwingUtilities.invokeLater(() -> {
             var frame = new JFrame();
             frame.getContentPane().setBackground(Utils.BACKGROUND_COLOR);

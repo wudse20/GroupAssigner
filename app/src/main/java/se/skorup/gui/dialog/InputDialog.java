@@ -38,7 +38,7 @@ public final class InputDialog extends Dialog<String>
         bp.add(btnOk);
 
         var ip = new Panel(new FlowLayout(FlowLayout.LEFT));
-        ip.add(new JLabel(informationIcon));
+        ip.add(new JLabel(getIcon()));
         ip.add(new Label(" ".repeat(3)));
         ip.add(lblMessage);
 
