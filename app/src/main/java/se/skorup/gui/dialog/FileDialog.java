@@ -4,7 +4,6 @@ import se.skorup.gui.components.Button;
 import se.skorup.gui.components.FileList;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.TextField;
 import se.skorup.gui.helper.MyScrollBarUI;
 import se.skorup.util.Log;
 import se.skorup.util.Utils;
@@ -21,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A file dialog.
@@ -44,7 +44,7 @@ public final class FileDialog extends Dialog<File>
     private final FileList file;
 
     /** The FileDialog should never be directly instantiated. */
-    public FileDialog()
+    private FileDialog()
     {
         this.type = Dialog.FILE_DIALOG;
         this.fileTypes = Set.of();
@@ -119,10 +119,10 @@ public final class FileDialog extends Dialog<File>
             this.path = path == null || path.equals("null") ? this.path : path;
             var pathLabel = new File(this.path).getCanonicalPath().replaceAll("\\\\", "/");
             this.lblPath.setText(
-                    Localization.getValuef(
-                            "ui.text.dialog.path",
-                            pathLabel.substring(pathLabel.lastIndexOf('/') + 1)
-                    )
+                Localization.getValuef(
+                        "ui.text.dialog.path",
+                        pathLabel.substring(pathLabel.lastIndexOf('/') + 1)
+                )
             );
 
             if (fileTypes.isEmpty())
@@ -144,7 +144,7 @@ public final class FileDialog extends Dialog<File>
                 }
 
                 var type = f.getAbsolutePath()
-                        .substring(f.getAbsolutePath().lastIndexOf('.'))
+                        .substring(f.getAbsolutePath().lastIndexOf('.') + 1)
                         .toLowerCase();
 
                 if (fileTypes.contains(type))
@@ -217,12 +217,88 @@ public final class FileDialog extends Dialog<File>
 
         frame.setSize(
             new Dimension(
-                (int) Math.max(title.length() * 15, 3 * scr.getPreferredSize().getWidth()),
+                (int) Math.max(title.length() * 15, 5 * scr.getPreferredSize().getWidth()),
                 (int) (
                     3 * bottomPanel.getPreferredSize().getHeight() +
                     scr.getPreferredSize().getHeight() +
                     3 * topPanel.getPreferredSize().getHeight()
                 )
         ));
+    }
+
+    /**
+     * Creates the builder for the FileDialog.
+     *
+     * @return the next step in building the file dialog.
+     * */
+    public static PathStep create()
+    {
+        return new DialogBuilder();
+    }
+
+    /** The path step in building the file dialog. */
+    public interface PathStep
+    {
+        /**
+         * Set the path where the file dialog should start.
+         *
+         * @param path the path of the starting point for the file dialog.
+         * @return the next step in the chain for building the dialog.
+         * */
+        FileTypeStep setPath(String path);
+    }
+
+    /** The file type step in building the dialog. */
+    public interface FileTypeStep
+    {
+        /**
+         * Sets the allowed file extensions.
+         *
+         * @param allowed the allowed file extensions.
+         * @return the building is now complete, and the file dialog is returned.
+         * */
+        FileDialog setAllowedFileExtensions(Set<String> allowed);
+
+        /**
+         * Allows all file extensions.
+         *
+         * @return the building is now complete, and the file dialog is returned.
+         * */
+        FileDialog allowAllFileExtensions();
+    }
+
+    /** The class responsible for building the file dialog. */
+    public static final class DialogBuilder implements PathStep, FileTypeStep
+    {
+        private final FileDialog dialog;
+
+        /** No one should ever instantiate this class, but FileDialog. */
+        private DialogBuilder()
+        {
+            dialog = new FileDialog();
+        }
+
+        @Override
+        public FileTypeStep setPath(String path)
+        {
+            dialog.path = path;
+            return this;
+        }
+
+        @Override
+        public FileDialog setAllowedFileExtensions(Set<String> allowed)
+        {
+            dialog.fileTypes = allowed.stream()
+                                      .map(String::toLowerCase)
+                                      .collect(Collectors.toSet());
+            return dialog;
+        }
+
+        @Override
+        public FileDialog allowAllFileExtensions()
+        {
+            dialog.fileTypes = Set.of();
+            return dialog;
+        }
     }
 }

@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.io.IOException;
+import java.util.Set;
 
 public class Main
 {
@@ -46,7 +47,10 @@ public class Main
 //                .setLocalizedInformation("ui.info.test")
 //                .setLocalizedButtonText("ui.button.dialog.close")
 //                .show(Dialog.WARNING_MESSAGE);
-        var res = new FileDialog().show();
+        var res = FileDialog.create()
+                            .setPath(".")
+                            .setAllowedFileExtensions(Set.of("java", "gradle"))
+                            .show();
         Log.debugf("Result: %s", res);
 //        SwingUtilities.invokeLater(() -> {
 //            var frame = new JFrame();
