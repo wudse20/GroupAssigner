@@ -46,6 +46,9 @@ interface Constants
     /** The light red color. */
     Color LIGHT_RED = new Color(245, 37, 85);
 
+    /** The black color. */
+    Color BLACK = new Color(0, 0, 0);
+
     // About
     /** The version of the program. */
     String VERSION = "0.5 - indev";

@@ -57,6 +57,26 @@ public class Localization
     }
 
     /**
+     * Gets the value of a key and applies a {@link String#format format}
+     * if there exists a <i>'%'</i> in the string else it will just be
+     * the same as {@link Localization#getValue(String) getValue}.
+     *
+     * @param key the key that you want the value for.
+     * @param args the args to the format string.
+     * @return the keys corresponding value iff it exists,
+     *         else it will just return the key.
+     *         If possible, it will apply a format string, else it
+     *         will just return the value.
+     * @see String#format
+     * @see Localization#getValue(String)
+     * */
+    public static String getValuef(String key, Object... args)
+    {
+        var str = getValue(key);
+        return str.contains("%") ? str.formatted(args) : str;
+    }
+
+    /**
      * Gets a copy of the language map.
      *
      * @return a copy of the language map.

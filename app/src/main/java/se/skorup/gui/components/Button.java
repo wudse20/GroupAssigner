@@ -4,6 +4,7 @@ import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 /**
@@ -20,6 +21,25 @@ public class Button extends JButton
     public Button(String localizationTag)
     {
         super(Localization.getValue(localizationTag));
+        setProperties();
+    }
+
+    /**
+     * Creates a button with an icon.
+     *
+     * @param icon the icon to be displayed on the button.
+     * */
+    public Button(ImageIcon icon)
+    {
+        super(icon);
+        setProperties();
+    }
+
+    /**
+     * Sets the properties of the button.
+     * */
+    private void setProperties()
+    {
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setBorder(

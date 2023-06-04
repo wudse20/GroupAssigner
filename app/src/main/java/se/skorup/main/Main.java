@@ -4,6 +4,7 @@ import se.skorup.gui.components.Button;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.MathTextField;
 import se.skorup.gui.dialog.Dialog;
+import se.skorup.gui.dialog.FileDialog;
 import se.skorup.gui.dialog.InputDialog;
 import se.skorup.gui.dialog.MessageDialog;
 import se.skorup.util.Log;
@@ -20,6 +21,7 @@ public class Main
 {
     public static void main(String[] args)
     {
+        System.setProperty("sun.java2d.opengl", "true");
         loadResources();
         Log.debugf("Localization: %s", Localization.getLanguageMap());
 //        var data = InputDialog.create()
@@ -29,21 +31,33 @@ public class Main
 //                              .setLocalizedOkButtonText("ui.button.dialog.ok")
 //                              .show();
 //        Log.debug(data);
-        MessageDialog.create()
-                     .setLocalizedTitle("ui.title.test")
-                     .setLocalizedInformation("ui.info.test")
-                     .setLocalizedButtonText("ui.button.dialog.close")
-                     .show(Dialog.ERROR_MESSAGE);
-        SwingUtilities.invokeLater(() -> {
-            var frame = new JFrame();
-            frame.getContentPane().setBackground(Utils.BACKGROUND_COLOR);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-            frame.add(new Button("ui.button.save"), BorderLayout.PAGE_START);
-            frame.add(new MathTextField(12), BorderLayout.CENTER);
-            frame.add(new Label("ui.info.test", true), BorderLayout.PAGE_END);
-            frame.pack();
-        });
+//        MessageDialog.create()
+//                     .setLocalizedTitle("ui.title.test")
+//                     .setLocalizedInformation("ui.info.test")
+//                     .setLocalizedButtonText("ui.button.dialog.close")
+//                     .show(Dialog.ERROR_MESSAGE);
+//        MessageDialog.create()
+//                .setLocalizedTitle("ui.title.test")
+//                .setLocalizedInformation("ui.info.test")
+//                .setLocalizedButtonText("ui.button.dialog.close")
+//                .show(Dialog.INFORMATION_MESSAGE);
+//        MessageDialog.create()
+//                .setLocalizedTitle("ui.title.test")
+//                .setLocalizedInformation("ui.info.test")
+//                .setLocalizedButtonText("ui.button.dialog.close")
+//                .show(Dialog.WARNING_MESSAGE);
+        var res = new FileDialog().show();
+        Log.debugf("Result: %s", res);
+//        SwingUtilities.invokeLater(() -> {
+//            var frame = new JFrame();
+//            frame.getContentPane().setBackground(Utils.BACKGROUND_COLOR);
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            frame.setVisible(true);
+//            frame.add(new Button("ui.button.save"), BorderLayout.PAGE_START);
+//            frame.add(new MathTextField(12), BorderLayout.CENTER);
+//            frame.add(new Label("ui.info.test", true), BorderLayout.PAGE_END);
+//            frame.pack();
+//        });
     }
 
     private static void loadResources()

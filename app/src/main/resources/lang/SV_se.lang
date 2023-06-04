@@ -1,9 +1,18 @@
 ui.button.test: "Test"
 ui.button.save: "Spara"
+
 ui.button.dialog.close: "Stäng"
 ui.button.dialog.ok: "Okej"
+ui.button.dialog.choose: "Välj"
+ui.button.dialog.open: "Öppna"
 
 ui.title.test: "Test titel och kaka på det!"
+ui.title.dialog.file: "Välj din fil"
+
+ui.text.bug: "Ser du mig är det en bugg :("
+ui.text.dialog.file: "Vald: %s"
+ui.text.dialog.path: "Filsökväg: %s"
+ui.text.dialog.empty: "ingen"
 
 ui.info.test: "Detta är ett test!"
 ui.info.about: "Gruppskapare v.%s%n%nUtvecklare: Anton Skorup%nIdè:   Sebastian Wahlberg"
@@ -14,3 +23,11 @@ ui.info.attribution.information: "Information icons created by Freepik - Flatico
 ui.info.attribution.warning: "Error icons created by Gregor Cresnar - Flaticon! Download: https://www.flaticon.com/free-icons/error"
 // <a href="https://www.flaticon.com/free-icons/error" title="error icons">Error icons created by Freepik - Flaticon</a>
 ui.info.attribution.error: "Error icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/error"
+// <a href="https://www.flaticon.com/free-icons/folder" title="folder icons">Folder icons created by dmitri13 - Flaticon</a>
+ui.info.attribution.folder: "Folder icons created by dmitri13 - Flaticon! Download: https://www.flaticon.com/free-icons/folder"
+// <a href="https://www.flaticon.com/free-icons/file" title="file icons">File icons created by Smartline - Flaticon</a>
+ui.info.attribution.file: "File icons created by Smartline - Flaticon! Download: https://www.flaticon.com/free-icons/file"
+// <a href="https://www.flaticon.com/free-icons/back" title="back icons">Back icons created by Jesus Chavarria - Flaticon</a>
+ui.info.attribution.back: "Back icons created by Jesus Chavarria - Flaticon! Download: https://www.flaticon.com/free-icons/back"
+// <a href="https://www.flaticon.com/free-icons/home" title="home icons">Home icons created by Dave Gandy - Flaticon</a>
+ui.info.attribution.home: "Home icons created by Dave Gandy - Flaticon! Download: https://www.flaticon.com/free-icons/home"

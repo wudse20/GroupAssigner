@@ -1,6 +1,5 @@
 package se.skorup.util.localization;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,6 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +32,16 @@ public class TestLocalization
         var resourceDirectory = Paths.get("src", "test", "resources");
         var SV_se_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se.lang";
         var SV_se_hard_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se_hard.lang";
+        var SV_se_format_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se_format.lang";
+        var map = new HashMap<>(SV_SE);
+        map.put("ui.button.format", "hej %s");
 
         return Stream.of(
             Arguments.of(SV_SE, SV_se_PATH),
-            Arguments.of(SV_SE, SV_se_hard_PATH)
+            Arguments.of(SV_SE, SV_se_hard_PATH),
+            Arguments.of(map, SV_se_format_PATH)
         );
     }
-
     public static Stream<Arguments> getKeyValueData() throws IOException
     {
         var resourceDirectory = Paths.get("src", "test", "resources");
@@ -68,6 +71,21 @@ public class TestLocalization
         );
     }
 
+    public static Stream<Arguments> getFormatKeyValueData() throws IOException
+    {
+        var resourceDirectory = Paths.get("src", "test", "resources");
+        var SV_se_PATH = resourceDirectory.toFile().getAbsolutePath() + "/SV_se_format.lang";
+        Localization.parseLanguageFile(SV_se_PATH);
+
+        var keys = new ArrayList<>(SV_SE.keySet());
+        keys.add("ui.button.format");
+
+        var values = new ArrayList<>(SV_SE.values());
+        values.add("hej kaka");
+
+        return Stream.of(Arguments.of(keys, values, Set.of()));
+    }
+
     @ParameterizedTest
     @MethodSource("getLocalizationData")
     public void testParseLocalization(Map<String, String> values, String path) throws IOException
@@ -90,6 +108,25 @@ public class TestLocalization
             assertEquals(
                 expectedValues.get(i),
                 Localization.getValue(keys.get(i)),
+                "Key and value pair wrong :("
+            );
+
+        assertEquals(expectedMissing, Localization.missing, "The expected missing elements did not match.");
+    }
+
+    @ParameterizedTest
+    @MethodSource({"getKeyValueData", "getFormatKeyValueData"})
+    public void testGetValuef(List<String> keys, List<String> expectedValues, Set<String> expectedMissing)
+    {
+        Localization.missing.clear();
+
+        if (keys.size() != expectedValues.size())
+            fail("Buggy test code!");
+
+        for (var i = 0; i < keys.size(); i++)
+            assertEquals(
+                expectedValues.get(i),
+                Localization.getValuef(keys.get(i), "kaka"),
                 "Key and value pair wrong :("
             );
 

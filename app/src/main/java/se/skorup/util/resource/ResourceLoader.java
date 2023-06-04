@@ -33,6 +33,10 @@ public class ResourceLoader
     private String informationIconFile;
     private String warningIconFile;
     private String errorIconFile;
+    private String folderIconFile;
+    private String fileIconFile;
+    private String returnIconFile;
+    private String homeIconFile;
 
     /** No one should ever directly instantiate this class. */
     private ResourceLoader() {}
@@ -79,13 +83,14 @@ public class ResourceLoader
     {
         var io = ResourceLoader.class.getClassLoader().getResourceAsStream(file);
 
-        BufferedImage res;
+        BufferedImage res = null;
         if (io != null)
         {
             res = ImageIO.read(io);
             io.close();
         }
-        else
+
+        if (io == null || res == null)
         {
             var bis = new BufferedInputStream(new FileInputStream(BASE_DEV_PATH + file));
             res = ImageIO.read(bis);
@@ -125,7 +130,25 @@ public class ResourceLoader
             .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
         var err = new ImageIcon(buffImgErr);
 
-        Dialog.loadIcons(info, warn, err);
+        Dialog.loadTypeIcons(info, warn, err);
+
+        var buffImgFolder = getImage(BASE_ICON_PATH + folderIconFile)
+            .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var folder = new ImageIcon(buffImgFolder);
+
+        var buffImgFile = getImage(BASE_ICON_PATH + fileIconFile)
+            .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var file = new ImageIcon(buffImgFile);
+
+        var buffImgRet = getImage(BASE_ICON_PATH + returnIconFile)
+            .getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+        var ret = new ImageIcon(buffImgRet);
+
+        var buffImgHome = getImage(BASE_ICON_PATH + homeIconFile)
+            .getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+        var home = new ImageIcon(buffImgHome);
+
+        Dialog.loadFileIcons(folder, file, ret, home);
     }
 
     /**
@@ -220,6 +243,10 @@ public class ResourceLoader
             loader.informationIconFile = "information.png";
             loader.warningIconFile = "warning.png";
             loader.errorIconFile = "error.png";
+            loader.folderIconFile = "folder.png";
+            loader.fileIconFile = "files.png";
+            loader.returnIconFile = "return.png";
+            loader.homeIconFile = "home.png";
             return this;
         }
     }

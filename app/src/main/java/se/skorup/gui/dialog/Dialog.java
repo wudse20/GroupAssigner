@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * An abstract base class for a Dialog.
  * */
-public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
+public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileDialog
 {
     private final DialogMonitor mon;
     private final DialogFrame frame;
@@ -21,6 +21,10 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
     protected static ImageIcon informationIcon;
     protected static ImageIcon warningIcon;
     protected static ImageIcon errorIcon;
+    protected static ImageIcon fileIcon;
+    protected static ImageIcon folderIcon;
+    protected static ImageIcon homeIcon;
+    protected static ImageIcon returnIcon;
 
     protected int type = Dialog.INFORMATION_MESSAGE;
 
@@ -33,6 +37,9 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
 
     /** Will use the error icon in the dialog. */
     public static int ERROR_MESSAGE = 2;
+
+    /** Will use the file icon as the icon in the dialog. */
+    protected static int FILE_DIALOG = 3;
 
     /**
      * No one outside this package should
@@ -93,7 +100,8 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
     protected ImageIcon getIcon()
     {
         return type == INFORMATION_MESSAGE ? informationIcon :
-               type == WARNING_MESSAGE ? warningIcon : errorIcon;
+               type == WARNING_MESSAGE ? warningIcon :
+               type == ERROR_MESSAGE ? errorIcon : fileIcon;
     }
 
     /**
@@ -112,17 +120,33 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog
     }
 
     /**
-     * Loads the icon.
+     * Loads the type icon.
      *
      * @param info the information icon.
      * @param err the error icon.
      * @param warn the warning icon.
      * */
-    public static void loadIcons(ImageIcon info, ImageIcon warn, ImageIcon err)
+    public static void loadTypeIcons(ImageIcon info, ImageIcon warn, ImageIcon err)
     {
         informationIcon = info;
         warningIcon = warn;
         errorIcon = err;
+    }
+
+    /**
+     * Loads the file icons for the file dialog.
+     *
+     * @param folder the folder icon.
+     * @param file the file icon.
+     * @param returnIcon the return icon.
+     * @param home the home icon
+     * */
+    public static void loadFileIcons(ImageIcon folder, ImageIcon file, ImageIcon returnIcon, ImageIcon home)
+    {
+        Dialog.folderIcon = folder;
+        Dialog.fileIcon = file;
+        Dialog.returnIcon = returnIcon;
+        Dialog.homeIcon = home;
     }
 
     protected final class DialogFrame extends JFrame
