@@ -2,17 +2,18 @@ package se.skorup.gui.helper;
 
 import se.skorup.util.Utils;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
+/**
+ * A custom UI that matches with the rest of the program.
+ * */
 public class MyScrollBarUI extends BasicScrollBarUI
 {
     @Override
