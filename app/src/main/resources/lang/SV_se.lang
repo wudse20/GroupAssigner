@@ -17,6 +17,8 @@ ui.info.about: "Gruppskapare v.%s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebas
 ui.tab.about.about: "Om"
 ui.tab.about.attribution: "Ikonkällor"
 
+ui.error.web-browser: "Kunde inte öppna webbläsaren"
+
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
 ui.info.attribution.info: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"
 // <a href="https://www.flaticon.com/free-icons/error" title="error icons">Error icons created by Gregor Cresnar - Flaticon</a>

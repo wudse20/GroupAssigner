@@ -61,6 +61,33 @@ public class Log
     }
 
     /**
+     * Logs a message with of type network, which
+     * is a network log.
+     *
+     * @param <T> the type of the message.
+     * @param message the message to be logged.
+     * */
+    public static <T> void network(T message)
+    {
+        Console.setColor(ConsoleColor.BLUE);
+        log("NETWORK", message);
+        Console.resetColor();
+    }
+
+    /**
+     * Logs a message with of type network, which
+     * is a network log. This will also apply a format string.
+     *
+     * @param message the message to be logged.
+     * @param args the arguments to the string format.
+     * @see String#format(String, Object...)
+     * */
+    public static void networkf(String message, Object... args)
+    {
+        network(message.formatted(args));
+    }
+
+    /**
      * Logs a message to the console.
      *
      * @param <T> The type of the message.

@@ -1,5 +1,12 @@
 package se.skorup.util;
 
+import se.skorup.gui.dialog.Dialog;
+import se.skorup.gui.dialog.MessageDialog;
+
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -149,5 +156,28 @@ public class Utils implements Constants
 
         var pow = recPow(base, exp / 2);
         return exp % 2 == 0 ? pow * pow : base * pow * pow;
+    }
+
+    /**
+     * Opens a webpage in the default browser.
+     *
+     * @param url the url of the website.
+     * */
+    public static void openWebpage(String url)
+    {
+        try
+        {
+            Desktop.getDesktop().browse(new URI(url));
+            Log.networkf("Opening website: %s", url);
+        }
+        catch (IOException | URISyntaxException ex)
+        {
+            Log.error(ex);
+            MessageDialog.create()
+                         .setLocalizedTitle("ui.error.web-browser")
+                         .setInformation("Kunde inte öppna webläsaren!\nFel: %s".formatted(ex))
+                         .setLocalizedButtonText("ui.button.dialog.close")
+                         .show(Dialog.ERROR_MESSAGE);
+        }
     }
 }

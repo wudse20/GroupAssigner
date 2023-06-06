@@ -1,9 +1,13 @@
 package se.skorup.main.gui.about.panels;
 
+import se.skorup.gui.components.Button;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
 import se.skorup.gui.components.ScrollPane;
+import se.skorup.util.Utils;
+import se.skorup.util.localization.Localization;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
@@ -50,7 +54,15 @@ public class AttributionPanel extends Panel
         public IconAttributionPanel(IconInfo icon)
         {
             super(new FlowLayout(FlowLayout.LEFT));
-            this.add(new JLabel(icon.icon));
+            var btn = new Button(icon.icon);
+            btn.setBorder(BorderFactory.createEmptyBorder());
+            btn.setBackground(Utils.BACKGROUND_COLOR);
+            btn.addActionListener(e -> {
+                var url = Localization.getValue(icon.localizationKey).split("Download:")[1].trim();
+                Utils.openWebpage(url);
+            });
+
+            this.add(btn);
             this.add(new Label("   "));
             this.add(new Label(icon.localizationKey, true));
         }
