@@ -1,6 +1,8 @@
 package se.skorup.util.resource;
 
+import se.skorup.gui.components.Frame;
 import se.skorup.gui.dialog.Dialog;
+import se.skorup.main.gui.about.panels.AttributionPanel;
 import se.skorup.util.Log;
 import se.skorup.util.io.MyFileReader;
 import se.skorup.util.localization.Localization;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
+import static se.skorup.main.gui.about.panels.AttributionPanel.IconInfo;
 
 /**
  * A class which is responsible for loading all the resources from the
@@ -37,6 +41,7 @@ public class ResourceLoader
     private String fileIconFile;
     private String returnIconFile;
     private String homeIconFile;
+    private String defaultIconFile;
 
     /** No one should ever directly instantiate this class. */
     private ResourceLoader() {}
@@ -140,15 +145,30 @@ public class ResourceLoader
             .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
         var file = new ImageIcon(buffImgFile);
 
-        var buffImgRet = getImage(BASE_ICON_PATH + returnIconFile)
-            .getScaledInstance(14, 14, Image.SCALE_SMOOTH);
-        var ret = new ImageIcon(buffImgRet);
+        var buffImgRet = getImage(BASE_ICON_PATH + returnIconFile);
+        var ret = new ImageIcon(buffImgRet.getScaledInstance(14, 14, Image.SCALE_SMOOTH));
+        var retAttr = new ImageIcon(buffImgRet.getScaledInstance(32, 32,  Image.SCALE_SMOOTH));
 
-        var buffImgHome = getImage(BASE_ICON_PATH + homeIconFile)
-            .getScaledInstance(14, 14, Image.SCALE_SMOOTH);
-        var home = new ImageIcon(buffImgHome);
+        var buffImgHome = getImage(BASE_ICON_PATH + homeIconFile);
+        var home = new ImageIcon(buffImgHome.getScaledInstance(14, 14, Image.SCALE_SMOOTH));
+        var homeAttr = new ImageIcon(buffImgHome.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
 
         Dialog.loadFileIcons(folder, file, ret, home);
+
+        var buffImgDefault = getImage(BASE_ICON_PATH + defaultIconFile);
+        var defaultIcon = new ImageIcon(buffImgDefault);
+
+        Frame.setDefaultIcon(defaultIcon);
+
+        AttributionPanel.loadAttributionIcons(
+            new IconInfo(info, "ui.info.attribution.info"),
+            new IconInfo(warn, "ui.info.attribution.warn"),
+            new IconInfo(err, "ui.info.attribution.error"),
+            new IconInfo(folder, "ui.info.attribution.folder"),
+            new IconInfo(file, "ui.info.attribution.file"),
+            new IconInfo(retAttr, "ui.info.attribution.back"),
+            new IconInfo(homeAttr, "ui.info.attribution.home")
+        );
     }
 
     /**
@@ -247,6 +267,7 @@ public class ResourceLoader
             loader.fileIconFile = "files.png";
             loader.returnIconFile = "return.png";
             loader.homeIconFile = "home.png";
+            loader.defaultIconFile = "GA.png";
             return this;
         }
     }

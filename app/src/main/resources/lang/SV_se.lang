@@ -1,26 +1,26 @@
-ui.button.test: "Test"
 ui.button.save: "Spara"
-
 ui.button.dialog.close: "Stäng"
 ui.button.dialog.ok: "Okej"
 ui.button.dialog.choose: "Välj"
 ui.button.dialog.open: "Öppna"
 
-ui.title.test: "Test titel och kaka på det!"
 ui.title.dialog.file: "Välj din fil"
+ui.title.about: "Om programmet"
 
 ui.text.bug: "Ser du mig är det en bugg :("
 ui.text.dialog.file: "Vald: %s"
 ui.text.dialog.path: "Filsökväg: %s"
 ui.text.dialog.empty: "ingen"
 
-ui.info.test: "Detta är ett test!"
-ui.info.about: "Gruppskapare v.%s%n%nUtvecklare: Anton Skorup%nIdè:   Sebastian Wahlberg"
+ui.info.about: "Gruppskapare v.%s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
+
+ui.tab.about.about: "Om"
+ui.tab.about.attribution: "Ikonkällor"
 
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
-ui.info.attribution.information: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"
+ui.info.attribution.info: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"
 // <a href="https://www.flaticon.com/free-icons/error" title="error icons">Error icons created by Gregor Cresnar - Flaticon</a>
-ui.info.attribution.warning: "Error icons created by Gregor Cresnar - Flaticon! Download: https://www.flaticon.com/free-icons/error"
+ui.info.attribution.warn: "Error icons created by Gregor Cresnar - Flaticon! Download: https://www.flaticon.com/free-icons/error"
 // <a href="https://www.flaticon.com/free-icons/error" title="error icons">Error icons created by Freepik - Flaticon</a>
 ui.info.attribution.error: "Error icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/error"
 // <a href="https://www.flaticon.com/free-icons/folder" title="folder icons">Folder icons created by dmitri13 - Flaticon</a>

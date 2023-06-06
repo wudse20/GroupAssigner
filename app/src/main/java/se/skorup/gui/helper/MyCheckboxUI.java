@@ -61,12 +61,13 @@ public class MyCheckboxUI extends BasicCheckBoxUI
             if (!model.isSelected())
                 return;
 
-            g.setColor(Utils.BLACK);
+            g.setColor(model.isEnabled() ? Utils.LIGHT_BLUE : Utils.LIGHT_BLUE.darker());
             g.fillRect(xPos + 2, yPos + 2, boxSize - 3, boxSize - 4);
         }
 
         @Override
-        public int getIconWidth() {
+        public int getIconWidth()
+        {
             return 16;
         }
 

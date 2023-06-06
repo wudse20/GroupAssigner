@@ -4,6 +4,7 @@ import se.skorup.gui.components.Button;
 import se.skorup.gui.components.FileList;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.ScrollPane;
 import se.skorup.gui.helper.MyScrollBarUI;
 import se.skorup.util.Log;
 import se.skorup.util.Utils;
@@ -194,15 +195,7 @@ public final class FileDialog extends Dialog<File>
         topPanel.add(btnHome);
         topPanel.add(btnBack);
 
-        var scr = new JScrollPane(file);
-        scr.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
-        scr.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
-        scr.setForeground(Utils.FOREGROUND_COLOR);
-        scr.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        var scrBar = scr.getVerticalScrollBar();
-        scrBar.setUI(new MyScrollBarUI());
-
+        var scr = new ScrollPane(file);
         var cont = new Panel(new BorderLayout());
 
         cont.add(topPanel, BorderLayout.PAGE_START);
