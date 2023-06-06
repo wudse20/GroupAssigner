@@ -20,6 +20,7 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -132,25 +133,20 @@ public final class FileDialog extends Dialog<File>
                 return;
             }
 
-            var items = new ArrayList<File>();
             var candidates = new File(this.path).listFiles();
-
             assert candidates != null;
-            for (var f : candidates)
-            {
-                if (f.isDirectory())
-                {
-                    items.add(f);
-                    continue;
-                }
-
-                var type = f.getAbsolutePath()
-                        .substring(f.getAbsolutePath().lastIndexOf('.') + 1)
-                        .toLowerCase();
-
-                if (fileTypes.contains(type))
-                    items.add(f);
-            }
+            var items = Arrays.stream(candidates)
+                              .parallel()
+                              .filter(f ->
+                                  f.isDirectory() ||
+                                  fileTypes.contains(
+                                      f.getAbsolutePath()
+                                       .substring(
+                                           f.getAbsolutePath()
+                                                      .lastIndexOf('.') + 1
+                                       ).toLowerCase()
+                                  )
+                              ).toList();
 
             file.setItems(items.toArray(new File[0]));
         }
