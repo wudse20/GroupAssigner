@@ -1,18 +1,27 @@
 ui.button.save: "Spara"
+ui.button.about: "Om"
+ui.button.quit: "Avsluta"
+ui.button.calculator: "Miniräknare"
+ui.button.my-groups: "Mina Grupper"
+
 ui.button.dialog.close: "Stäng"
 ui.button.dialog.ok: "Okej"
 ui.button.dialog.choose: "Välj"
 ui.button.dialog.open: "Öppna"
 
-ui.title.dialog.file: "Välj din fil"
+ui.title.main: "Group Assigner"
 ui.title.about: "Om programmet"
+ui.title.NYI: "Not yet implemented! Ännu ej implementerat!"
+
+ui.title.dialog.file: "Välj din fil"
 
 ui.text.bug: "Ser du mig är det en bugg :("
+
 ui.text.dialog.file: "Vald: %s"
 ui.text.dialog.path: "Filsökväg: %s"
 ui.text.dialog.empty: "ingen"
 
-ui.info.about: "Gruppskapare v.%s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
+ui.info.about: "Group Assigner v. %s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
 
 ui.tab.about.about: "Om"
 ui.tab.about.attribution: "Ikonkällor"

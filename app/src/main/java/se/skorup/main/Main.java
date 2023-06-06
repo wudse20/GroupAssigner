@@ -1,6 +1,7 @@
 package se.skorup.main;
 
 import se.skorup.main.gui.about.frames.AboutFrame;
+import se.skorup.main.gui.main.frames.MainFrame;
 import se.skorup.util.Log;
 import se.skorup.util.resource.ResourceLoader;
 
@@ -13,7 +14,7 @@ public class Main
     {
         System.setProperty("sun.java2d.opengl", "true");
         loadResources();
-        SwingUtilities.invokeLater(AboutFrame::new);
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 
     private static void loadResources()

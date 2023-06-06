@@ -28,7 +28,7 @@ public class MyTabbedPaneUI extends BasicTabbedPaneUI
         int y, int width, int height, boolean selected
     )
     {
-        g.setColor(selected ? Utils.COMPONENT_BACKGROUND_COLOR : Utils.BACKGROUND_COLOR);
+        g.setColor(selected ? Utils.BACKGROUND_COLOR : Utils.COMPONENT_BACKGROUND_COLOR);
         g.fillRect(x, y, width, height);
     }
 }

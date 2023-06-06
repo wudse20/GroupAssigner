@@ -56,8 +56,6 @@ public class ResourceLoader
     private String[] getLines(String file) throws IOException
     {
         var is = ResourceLoader.class.getClassLoader().getResourceAsStream(file);
-        Log.debugf("file: %s", file);
-        Log.debug(is == null);
 
         if (is != null)
         {

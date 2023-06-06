@@ -75,7 +75,7 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileD
     {
         try
         {
-            SwingUtilities.invokeAndWait(() -> {
+            SwingUtilities.invokeLater(() -> {
                 this.setupFrame(frame);
                 frame.setIconImage(getIcon().getImage());
                 frame.setVisible(true);
@@ -85,7 +85,7 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileD
 
             return result;
         }
-        catch (InterruptedException | InvocationTargetException unexpected)
+        catch (InterruptedException unexpected)
         {
             Log.errorf("Unexpected exception: %s", unexpected);
             return null;
