@@ -1,4 +1,4 @@
-package se.skorup.gui.helper;
+package se.skorup.gui.helper.ui;
 
 import se.skorup.util.Utils;
 

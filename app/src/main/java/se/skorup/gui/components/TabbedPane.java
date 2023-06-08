@@ -1,6 +1,6 @@
 package se.skorup.gui.components;
 
-import se.skorup.gui.helper.MyTabbedPaneUI;
+import se.skorup.gui.helper.ui.MyTabbedPaneUI;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 

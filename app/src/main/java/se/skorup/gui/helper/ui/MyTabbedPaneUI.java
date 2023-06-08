@@ -1,15 +1,10 @@
-package se.skorup.gui.helper;
+package se.skorup.gui.helper.ui;
 
 import se.skorup.util.Utils;
 
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import java.awt.BasicStroke;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 
 /**
  * A custom UI that matches with the rest of the program.
@@ -20,6 +15,16 @@ public class MyTabbedPaneUI extends BasicTabbedPaneUI
     protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex)
     {
         // Do nothing to prevent the border from being drawn :)
+    }
+
+    @Override
+    protected void paintFocusIndicator(
+        Graphics g, int tabPlacement, Rectangle[] rects,
+        int tabIndex, Rectangle iconRect, Rectangle textRect,
+        boolean isSelected
+    )
+    {
+        // Do nothing to prevent the focus border to be painted.
     }
 
     @Override

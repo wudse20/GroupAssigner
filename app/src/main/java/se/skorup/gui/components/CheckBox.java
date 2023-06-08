@@ -1,6 +1,6 @@
 package se.skorup.gui.components;
 
-import se.skorup.gui.helper.MyCheckboxUI;
+import se.skorup.gui.helper.ui.MyCheckboxUI;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 

@@ -1,6 +1,6 @@
 package se.skorup.gui.components;
 
-import se.skorup.gui.helper.MyScrollBarUI;
+import se.skorup.gui.helper.ui.MyScrollBarUI;
 import se.skorup.util.Utils;
 
 import javax.swing.BorderFactory;
