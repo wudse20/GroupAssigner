@@ -66,17 +66,6 @@ public final class TerminalInput extends TerminalPane implements KeyListener
     }
 
     /**
-     * Setter for: sh
-     *
-     * @param sh the new syntax highlighting iff sh != {@code null}.
-     * */
-    public void setSyntaxHighlighting(SyntaxHighlighting sh)
-    {
-        if (sh != null)
-            this.sh = sh;
-    }
-
-    /**
      * Highlights the syntax of the input.
      * */
     public void syntaxHighlighting()

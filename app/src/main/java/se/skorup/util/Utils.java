@@ -69,7 +69,7 @@ public class Utils implements Constants
      * */
     public static String getCurrentDateAndTime()
     {
-        return "%s--%s".formatted(getCurrentDate(), getCurrentTime());
+        return "%s %s".formatted(getCurrentDate(), getCurrentTime());
     }
 
     /**

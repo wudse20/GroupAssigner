@@ -43,6 +43,7 @@ public class Button extends JButton
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setFocusPainted(false);
+        this.setActionCommand(this.getText());
         this.setBorder(
             BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR),
             BorderFactory.createLineBorder(Utils.COMPONENT_BACKGROUND_COLOR, 5)

@@ -2,7 +2,6 @@ package se.skorup.gui.components;
 
 import se.skorup.util.Log;
 import se.skorup.util.Utils;
-import se.skorup.util.collections.ImmutableArray;
 import se.skorup.util.tag_parser.Lexer;
 import se.skorup.util.tag_parser.Parser;
 import se.skorup.util.tag_parser.TextSegment;
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
 public abstract class TerminalPane extends JTextPane
 {
     private int fontSize;
-    private ImmutableArray<TextSegment> lastParseResult;
 
     /**
      * Creates a new terminal pane.
@@ -117,7 +115,6 @@ public abstract class TerminalPane extends JTextPane
             var parser = new Parser(lexResult);
             var parseResult = parser.parse();
             parseResult.forEach(this::addLine);
-            lastParseResult = parseResult;
         }
         else
         {
@@ -172,15 +169,5 @@ public abstract class TerminalPane extends JTextPane
         this.fontSize = fontSize;
         Log.debug("Font Size updated");
         this.repaint();
-    }
-
-    /**
-     * Getter for: the last parse result.
-     *
-     * @return an immutable array with the last parse result.
-     * */
-    public ImmutableArray<TextSegment> getLastParseResult()
-    {
-        return lastParseResult;
     }
 }

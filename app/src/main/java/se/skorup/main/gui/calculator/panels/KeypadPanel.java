@@ -1,16 +1,23 @@
 package se.skorup.main.gui.calculator.panels;
 
+import se.skorup.gui.callbacks.ActionCallback;
 import se.skorup.gui.components.Button;
 import se.skorup.gui.components.Panel;
 
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The keypad for the calculator
  * */
-public class KeypadPanel extends Panel
+public class KeypadPanel extends Panel implements ActionListener
 {
+    private final List<ActionCallback<KeypadEvent>> callbacks;
+
     private final Button btnZero = new Button("ui.button.zero");
     private final Button btnOne = new Button("ui.button.one");
     private final Button btnTwo = new Button("ui.button.two");
@@ -36,10 +43,23 @@ public class KeypadPanel extends Panel
     public KeypadPanel()
     {
         super(new GridLayout(6, 3));
+        this.callbacks = new ArrayList<>();
+
         this.addComponents();
+        this.addActionListeners();
 
         for (var c : this.getComponents())
             c.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+    }
+
+    /**
+     * Adds action listeners to all the buttons.
+     * */
+    private void addActionListeners()
+    {
+        for (var c : this.getComponents())
+            if (c instanceof Button b)
+                b.addActionListener(this);
     }
 
     /**
@@ -67,4 +87,32 @@ public class KeypadPanel extends Panel
         this.add(btnLeftParenthesis);
         this.add(btnRightParenthesis);
     }
+
+    /**
+     * Adds a callback to the panel.
+     *
+     * @param callback the callback to be added.
+     * */
+    public void addCallback(ActionCallback<KeypadEvent> callback)
+    {
+        if (callback == null)
+            return;
+
+        callbacks.add(callback);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        var cmd = e.getActionCommand();
+        var event = new KeypadEvent(cmd);
+        callbacks.forEach(cb -> cb.action(event));
+    }
+
+    /**
+     * A wrapper type for the event sent back when a key is pressed.
+     *
+     * @param cmd the action command of the button.
+     * */
+    public record KeypadEvent(String cmd) {}
 }
