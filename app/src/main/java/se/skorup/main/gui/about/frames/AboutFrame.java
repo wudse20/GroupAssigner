@@ -4,6 +4,7 @@ import se.skorup.gui.components.Frame;
 import se.skorup.gui.components.TabbedPane;
 import se.skorup.main.gui.about.panels.AboutPanel;
 import se.skorup.main.gui.about.panels.AttributionPanel;
+import se.skorup.main.gui.calculator.panels.HexagonPanel;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -17,6 +18,7 @@ public class AboutFrame extends Frame
 
     private final AttributionPanel attrPanel = new AttributionPanel();
     private final AboutPanel abtPanel = new AboutPanel();
+    private final HexagonPanel hexagonPanel = new HexagonPanel();
 
     /**
      * Creates a new AboutFrame.
@@ -33,6 +35,7 @@ public class AboutFrame extends Frame
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         cp.setLayout(new BorderLayout());
+        tabs.add("ui.tab.about.start", hexagonPanel);
         tabs.add("ui.tab.about.about", abtPanel);
         tabs.add("ui.tab.about.attribution", attrPanel);
     }

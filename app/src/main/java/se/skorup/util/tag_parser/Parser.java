@@ -95,6 +95,11 @@ public record Parser(ImmutableArray<TagToken> tokens)
         _colorMap.put("LIGHT_RED", new Color(245, 37, 85));
         _colorMap.put("RED", Color.RED);
         _colorMap.put("DARK_RED", Color.RED.darker());
+        _colorMap.put("BROWN", new Color(110, 66, 40));
+        _colorMap.put("BLACK", Color.BLACK);
+        _colorMap.put("ORANGE", Color.ORANGE);
+        _colorMap.put("LIGHT_PINK", Color.PINK);
+        _colorMap.put("PINK", new Color(203, 16, 229));
 
         return _colorMap;
     }

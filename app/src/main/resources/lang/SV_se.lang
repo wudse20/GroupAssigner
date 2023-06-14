@@ -41,6 +41,7 @@ ui.text.dialog.empty: "ingen"
 
 ui.info.about: "Group Assigner v. %s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
 
+ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"
 ui.tab.about.attribution: "Ikonkällor"
 
