@@ -19,6 +19,7 @@ public interface Expression
     /**
      * Gets the type of the expression.
      *
+     * @param e the environment used to evaluate the expression.
      * @return the type of the expression.
      * */
     Type getType(Environment e);

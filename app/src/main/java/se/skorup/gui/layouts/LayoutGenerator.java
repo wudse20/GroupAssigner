@@ -13,6 +13,7 @@ public interface LayoutGenerator
      * Generates a layout.
      *
      * @param nbrGroups The number of groups.
+     * @return the correct layout manager.
      * */
     LayoutManager generateLayout(int nbrGroups);
 }

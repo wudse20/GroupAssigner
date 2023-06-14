@@ -1,11 +1,10 @@
 package se.skorup.main.gui.calculator.panels;
 
 import se.skorup.gui.components.Panel;
-import se.skorup.util.tag_parser.Parser;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -59,7 +58,8 @@ public class HexagonPanel extends Panel
             var x = new int[6];
             var y = new int[6];
             buildPolygon(x, y, x0s[i], y0s[i]);
-            g.setColor(new ArrayList<>(Parser.colorMap().values()).get(new Random().nextInt(Parser.colorMap().size())));
+//            g.setColor(new ArrayList<>(Parser.colorMap().values()).get(new Random().nextInt(Parser.colorMap().size())));
+            g.setColor(new Color(new Random().nextInt(256), new Random().nextInt(256), new Random().nextInt(256)));
             g.fillPolygon(x, y, 6);
         }
     }

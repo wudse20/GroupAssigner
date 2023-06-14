@@ -6,10 +6,11 @@ import se.skorup.util.Utils;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * An abstract base class for a Dialog.
+ *
+ * @param <E> The type of the dialog, i.e., the type of the result.
  * */
 public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileDialog
 {

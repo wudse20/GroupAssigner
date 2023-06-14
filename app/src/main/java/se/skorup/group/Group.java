@@ -60,6 +60,7 @@ public class Group implements Serializable
      *
      * @param id1 the first id.
      * @param id2 the second id.
+     * @return {@code true} iff a person is blocked else {@code false}
      * */
     public synchronized boolean isDenied(int id1, int id2)
     {

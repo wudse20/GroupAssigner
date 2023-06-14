@@ -502,6 +502,7 @@ public class ImmutableArray<E> implements Iterable<E>
      * Creates an empty ImmutableArray of type T.
      *
      * @param <T> The type of the elements.
+     * @return an empty ImmutableArray.
      * */
     public static <T> ImmutableArray<T> empty()
     {

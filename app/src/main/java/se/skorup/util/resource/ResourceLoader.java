@@ -189,6 +189,8 @@ public class ResourceLoader
 
     /**
      * Gets the builder for the resource loader.
+     *
+     * @return the builder that builds the resource loader.
      * */
     public static LanguageStep getBuilder()
     {
