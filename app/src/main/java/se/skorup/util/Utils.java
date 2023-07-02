@@ -180,4 +180,36 @@ public class Utils implements Constants
                          .show(Dialog.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Checks if the code is running on a window system or not.
+     *
+     * @return {@code true} iff it's running on a Windows system.
+     * */
+    public static boolean isWindowsSystem()
+    {
+        return System.getProperty("os.name").startsWith("Windows");
+    }
+
+    /**
+     * Gets the folder name of this project,
+     * were it saves all its files. <br><br>
+     *
+     * Ends with '\'.
+     *
+     * @return the folder location.
+     * */
+    public static String getFolderName()
+    {
+        if (isWindowsSystem())
+        {
+            Log.debug("Is windows system");
+            return "%s\\.%s\\".formatted(System.getenv("APPDATA"), "group-assigner");
+        }
+        else
+        {
+            Log.debug("Is not windows");
+            return "./.group_assigner/";
+        }
+    }
 }

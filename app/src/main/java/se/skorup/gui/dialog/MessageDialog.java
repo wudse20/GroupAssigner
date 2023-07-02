@@ -70,6 +70,16 @@ public final class MessageDialog extends Dialog<Void>
         InformationStep setLocalizedTitle(String localizationKey);
 
         /**
+         * Sets a localized title. The title will be the value of
+         * the localization key, with formatting.
+         *
+         * @param localizationKey the key used for localization.
+         * @param args the args used in formatting.
+         * @return the next step in the building chain.
+         * */
+        InformationStep setLocalizedTitlef(String localizationKey, Object... args);
+
+        /**
          * Sets a title.
          *
          * @param title the title of the frame.
@@ -89,6 +99,16 @@ public final class MessageDialog extends Dialog<Void>
          * @return the next step in the chain.
          * */
         ButtonStep setLocalizedInformation(String localizationKey);
+
+        /**
+         * Sets localized information. The information will be the value of
+         * the localization key, with a formatting.
+         *
+         * @param localizationKey the key used for localization.
+         * @param args the arguments used in formatting
+         * @return the next step in the chain.
+         * */
+        ButtonStep setLocalizedInformationf(String localizationKey, Object... args);
 
         /**
          * Sets the information.
@@ -131,6 +151,13 @@ public final class MessageDialog extends Dialog<Void>
         }
 
         @Override
+        public InformationStep setLocalizedTitlef(String localizationKey, Object... args)
+        {
+            dialog.title = Localization.getValuef(localizationKey, args);
+            return this;
+        }
+
+        @Override
         public InformationStep setTitle(String title)
         {
             dialog.title = title;
@@ -141,6 +168,13 @@ public final class MessageDialog extends Dialog<Void>
         public ButtonStep setLocalizedInformation(String localizationKey)
         {
             dialog.lblMessage = new Label(localizationKey, true);
+            return this;
+        }
+
+        @Override
+        public ButtonStep setLocalizedInformationf(String localizationKey, Object... args)
+        {
+            dialog.lblMessage = new Label(Localization.getValuef(localizationKey, args));
             return this;
         }
 

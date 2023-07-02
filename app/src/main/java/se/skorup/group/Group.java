@@ -2,6 +2,7 @@ package se.skorup.group;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,7 +108,7 @@ public class Group implements Serializable
     }
 
     /**
-     * Returns a list of all the names in the Group.
+     * Returns a list of all the names currently in the Group.
      *
      * @return a list of all the names.
      * */
@@ -120,13 +121,23 @@ public class Group implements Serializable
     }
 
     /**
-     * Returns a set of all the ids.
+     * Returns a set of all the ids currently in the group.
      *
      * @return a set of all the ids in the group.
      * */
     public synchronized Collection<Integer> getIds()
     {
         return new HashSet<>(persons.keySet());
+    }
+
+    /**
+     * Returns a collection of the people currently in the group.
+     *
+     * @return a collection of all the people currently in the group.
+     * */
+    public synchronized Collection<Person> getPersons()
+    {
+        return new ArrayList<>(persons.values());
     }
 
     /**
@@ -144,5 +155,21 @@ public class Group implements Serializable
     public String toString()
     {
         return name;
+    }
+
+    @Override
+    public synchronized int hashCode()
+    {
+        return persons.hashCode() + wishlist.hashCode() + denylist.hashCode() + name.hashCode();
+    }
+
+    @Override
+    public synchronized boolean equals(Object o)
+    {
+        return o instanceof Group g        &&
+               persons.equals(g.persons)   &&
+               wishlist.equals(g.wishlist) &&
+               denylist.equals(g.denylist) &&
+               name.equals(g.name);
     }
 }

@@ -31,7 +31,7 @@ public abstract class Frame extends JFrame
     /**
      * Initializes the frame.
      * */
-    protected final void init()
+    protected void init()
     {
         cp.setBackground(Utils.BACKGROUND_COLOR);
         this.setProperties();

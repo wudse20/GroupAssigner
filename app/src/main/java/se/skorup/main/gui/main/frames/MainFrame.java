@@ -11,7 +11,7 @@ import java.awt.BorderLayout;
  * */
 public class MainFrame extends Frame
 {
-    private final MainPanel mp = new MainPanel();
+    private final MainPanel mp = new MainPanel(this);
 
     /**
      * Creates a new MainFrame. With a localization key

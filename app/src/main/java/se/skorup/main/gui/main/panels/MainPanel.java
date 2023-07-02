@@ -4,10 +4,10 @@ import se.skorup.gui.components.Button;
 import se.skorup.gui.components.ComponentContainer;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
-import se.skorup.gui.dialog.Dialog;
-import se.skorup.gui.dialog.MessageDialog;
 import se.skorup.main.gui.about.frames.AboutFrame;
 import se.skorup.main.gui.calculator.frames.CalculatorFrame;
+import se.skorup.main.gui.group.frames.GroupFrame;
+import se.skorup.main.gui.main.frames.MainFrame;
 
 import javax.swing.SwingUtilities;
 import java.awt.FlowLayout;
@@ -21,6 +21,8 @@ public class MainPanel extends Panel
 {
     private static final Font FONT = new Font(Font.DIALOG, Font.BOLD, 24);
 
+    private final MainFrame mf;
+
     private final Label lblTitle = new Label("ui.title.main", true);
 
     private final Button btnMyGroups = new Button("ui.button.my-groups");
@@ -30,11 +32,14 @@ public class MainPanel extends Panel
 
     /**
      * Creates a new MainPanel.
+     *
+     * @param mf the instance of the MainFrame in use.
      * */
-    public MainPanel()
+    public MainPanel(MainFrame mf)
     {
         super(new GridLayout(5, 1));
 
+        this.mf = mf;
         this.setupPanel();
         this.addListeners();
     }
@@ -45,13 +50,8 @@ public class MainPanel extends Panel
     private void addListeners()
     {
         btnMyGroups.addActionListener(e -> {
-            new Thread(() -> { // To not halt the EDT, since listeners are run on the EDT.
-                MessageDialog.create()
-                             .setLocalizedTitle("ui.title.NYI")
-                             .setLocalizedInformation("ui.title.NYI")
-                             .setLocalizedButtonText("ui.button.dialog.close")
-                             .show(Dialog.ERROR_MESSAGE);
-            }).start();
+            mf.setVisible(false);
+            SwingUtilities.invokeLater(() -> new GroupFrame(mf));
         });
         btnCalculator.addActionListener(e -> SwingUtilities.invokeLater(CalculatorFrame::new));
         btnAbout.addActionListener(e -> SwingUtilities.invokeLater(AboutFrame::new));

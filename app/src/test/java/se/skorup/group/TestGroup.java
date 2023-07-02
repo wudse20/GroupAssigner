@@ -1,6 +1,9 @@
 package se.skorup.group;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,6 +21,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGroup
 {
+    public static Stream<Arguments> getEqualsHashCodeData()
+    {
+        var gm1 = new Group("Kaka");
+        gm1.registerPerson("Anton");
+        gm1.registerPerson("Sebbe");
+
+        var gm2 = new Group("Kaka");
+        gm2.registerPerson("Anton");
+        gm2.registerPerson("Sebbe");
+
+        var gm3 = new Group("Kaka");
+        var idA = gm3.registerPerson("Anton");
+        var idS = gm3.registerPerson("Sebbe");
+        gm3.addWishItem(idA, idS);
+
+        var gm4 = new Group("Kaka");
+        idA = gm4.registerPerson("Anton");
+        idS = gm4.registerPerson("Sebbe");
+        gm4.addWishItem(idA, idS);
+
+        var gm5 = new Group("Kaka");
+        idA = gm5.registerPerson("Anton");
+        idS = gm5.registerPerson("Sebbe");
+        gm5.addDenyItem(idA, idS);
+
+        var gm6 = new Group("Kaka");
+        idA = gm6.registerPerson("Anton");
+        idS = gm6.registerPerson("Sebbe");
+        gm6.addDenyItem(idA, idS);
+
+        return Stream.of(
+            Arguments.of(new Group("KAKA"), new Group("KAKA"), true),
+            Arguments.of(new Group("Kaka"), new Group("KAKA"), false),
+            Arguments.of(gm1, gm1, true),
+            Arguments.of(gm2, gm2, true),
+            Arguments.of(gm1, gm2, true),
+            Arguments.of(gm3, gm3, true),
+            Arguments.of(gm1, gm3, false),
+            Arguments.of(gm4, gm4, true),
+            Arguments.of(gm3, gm4, true),
+            Arguments.of(gm5, gm5, true),
+            Arguments.of(gm4, gm5, false),
+            Arguments.of(gm1, gm5, false),
+            Arguments.of(gm6, gm6, true),
+            Arguments.of(gm5, gm6, true)
+        );
+    }
+
     @Test
     public void testRegisterSingleThread()
     {
@@ -288,5 +340,13 @@ public class TestGroup
         threads.forEach(Thread::start);
         for (var t : threads)
             t.join();
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEqualsHashCodeData")
+    public void testEqualsHashCode(Group g1, Group g2, boolean expected)
+    {
+        assertEquals(expected, g1.hashCode() == g2.hashCode(), "HASHCODE FUNCTION IS WRONG");
+        assertEquals(expected, g1.equals(g2), "EQUALS FUNCTION IS WRONG");
     }
 }

@@ -29,9 +29,11 @@ ui.button.dialog.open: "Öppna"
 
 ui.title.main: "Group Assigner"
 ui.title.about: "Om programmet"
+ui.title.group: "Grupp"
 ui.title.NYI: "Not yet implemented! Ännu ej implementerat!"
 
 ui.title.dialog.file: "Välj din fil"
+ui.title.dialog.error: "Fel: %s"
 
 ui.text.bug: "Ser du mig är det en bugg :("
 
