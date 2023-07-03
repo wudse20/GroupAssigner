@@ -4,6 +4,7 @@ import se.skorup.group.Group;
 import se.skorup.gui.components.Frame;
 import se.skorup.gui.dialog.Dialog;
 import se.skorup.gui.dialog.MessageDialog;
+import se.skorup.main.gui.group.panels.GroupPanel;
 import se.skorup.main.gui.main.frames.MainFrame;
 import se.skorup.util.Log;
 import se.skorup.util.Utils;
@@ -11,6 +12,7 @@ import se.skorup.util.io.EncryptedSerializationUtil;
 import se.skorup.util.io.SerializationUtil;
 
 import javax.swing.JFrame;
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,6 +31,8 @@ public class GroupFrame extends Frame
 
     private final MainFrame mf;
 
+    private final GroupPanel gp;
+
     /**
      * Creates a new GroupFrame.
      *
@@ -37,7 +41,9 @@ public class GroupFrame extends Frame
     public GroupFrame(MainFrame mf)
     {
         super("ui.title.group");
+
         this.mf = mf;
+        this.gp = new GroupPanel();
         this.init();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::save));
@@ -61,10 +67,13 @@ public class GroupFrame extends Frame
             Log.errorf("Encrypted saving process failed: %s", e.getLocalizedMessage());
 
             // If saving failed, then try the unencrypted route.
-            try {
+            try
+            {
                 SerializationUtil.serializeObject(SAVES_PATH, (Serializable) groups);
                 Log.debug("Saving process finished correctly, although unencrypted.");
-            } catch (IOException ex) {
+            }
+            catch (IOException ex)
+            {
                 ex.printStackTrace();
                 Log.errorf("Unencrypted saving process failed: %s", e.getLocalizedMessage());
             }
@@ -78,13 +87,13 @@ public class GroupFrame extends Frame
     {
         try
         {
-            if (new File(SAVES_PATH + ".enc").exists())
+            if (new File(SAVES_PATH + ".enc").exists()) // First try the encrypted route.
             {
                 groups.addAll(EncryptedSerializationUtil.deserializeObject(SAVES_PATH + ".enc"));
                 return;
             }
 
-            if (!new File(SAVES_PATH).exists())
+            if (!new File(SAVES_PATH).exists()) // Then try the unencrypted route.
             {
                 Log.debug("No save file found.");
                 return;
@@ -119,12 +128,14 @@ public class GroupFrame extends Frame
     protected void setProperties()
     {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        cp.setLayout(new BorderLayout());
     }
 
     @Override
     protected void addComponents()
     {
-
+        cp.add(gp, BorderLayout.CENTER);
+        this.pack();
     }
 
     @Override

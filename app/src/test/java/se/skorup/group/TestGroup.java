@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGroup
@@ -340,6 +341,42 @@ public class TestGroup
         threads.forEach(Thread::start);
         for (var t : threads)
             t.join();
+    }
+
+    @Test
+    public void testModifyIds()
+    {
+        var gm = new Group("kaka");
+        gm.registerPerson("hej");
+        gm.registerPerson("på");
+        gm.registerPerson("dig");
+        var ids = gm.getIds();
+        ids.add(4123);
+        assertNotEquals(ids, gm.getIds(), "The ids should not match since the ids has been updated");
+    }
+
+    @Test
+    public void testModifyPerson()
+    {
+        var gm = new Group("kaka");
+        gm.registerPerson("hej");
+        gm.registerPerson("på");
+        gm.registerPerson("dig");
+        var people = gm.getPersons();
+        people.add(new Person("Krokodil", 12312));
+        assertNotEquals(people, gm.getPersons(), "The people should not match since the people has been updated");
+    }
+
+    @Test
+    public void testModifyNames()
+    {
+        var gm = new Group("kaka");
+        gm.registerPerson("hej");
+        gm.registerPerson("på");
+        gm.registerPerson("dig");
+        var names = gm.getNames();
+        names.add("KAKA");
+        assertNotEquals(names, gm.getNames(), "The names should not match since the names has been updated");
     }
 
     @ParameterizedTest

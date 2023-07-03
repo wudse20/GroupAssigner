@@ -3,6 +3,8 @@ ui.button.about: "Om"
 ui.button.quit: "Avsluta"
 ui.button.calculator: "Miniräknare"
 ui.button.my-groups: "Mina Grupper"
+ui.button.add.text: "Lägg till"
+ui.button.main-groups: "Huvudgrupper"
 ui.button.zero: "0"
 ui.button.one: "1"
 ui.button.two: "2"
@@ -29,7 +31,7 @@ ui.button.dialog.open: "Öppna"
 
 ui.title.main: "Group Assigner"
 ui.title.about: "Om programmet"
-ui.title.group: "Grupp"
+ui.title.group: "Mina Grupper"
 ui.title.NYI: "Not yet implemented! Ännu ej implementerat!"
 
 ui.title.dialog.file: "Välj din fil"
@@ -42,6 +44,9 @@ ui.text.dialog.path: "Filsökväg: %s"
 ui.text.dialog.empty: "ingen"
 
 ui.info.about: "Group Assigner v. %s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
+
+ui.label.my-groups: "Mina Grupper"
+ui.label.name: "Namn:"
 
 ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"

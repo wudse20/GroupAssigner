@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A Thread-Safe group manager.
@@ -117,7 +118,7 @@ public class Group implements Serializable
         return persons.values()
                       .stream()
                       .map(Person::name)
-                      .toList();
+                      .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
