@@ -12,6 +12,7 @@ import se.skorup.gui.components.TextField;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  * */
 public class GroupDisplayPanel extends Panel
 {
-    private final List<Group> groups;
+    private List<Group> groups;
 
     private final ComboBox<Group> cbGroups = new ComboBox<>();
     private final PersonList list = new PersonList();
@@ -27,22 +28,46 @@ public class GroupDisplayPanel extends Panel
     private final TextField txfInput = new TextField(12);
     private final Button btnAdd = new Button("ui.button.add.text");
     private final Button btnMainGroups = new Button("ui.button.main-groups");
+    private final Button btnCreateGroup = new Button("ui.button.create.group");
+    private final Button btnCreateSubgroup = new Button("ui.button.create.subgroup");
 
     /**
      * Creates a new panel.
-     *
-     * @param groups the groups to be displayed.
      * */
-    public GroupDisplayPanel(List<Group> groups)
+    public GroupDisplayPanel()
     {
         super(new BorderLayout());
-        this.groups = groups;
-
-        for (var g : groups)
-            cbGroups.addItem(g);
-
-        list.setGroup(groups.get(0));
+        this.groups = new ArrayList<>();
         addComponents();
+
+        btnAdd.addActionListener(e -> {
+            updateGroup(txfInput.getText().trim());
+            txfInput.clear();
+        });
+
+        txfInput.addActionListener(e -> {
+            updateGroup(txfInput.getText().trim());
+            txfInput.clear();
+        });
+    }
+
+    /**
+     * Updates the current group with a person
+     * by the name of name.
+     *
+     * @param name the name of the new person.
+     * */
+    private void updateGroup(String name)
+    {
+        if (cbGroups.getSelectedIndex() == -1)
+            return;
+
+        if (groups.size() < cbGroups.getSelectedIndex())
+            return;
+
+        var group = groups.get(cbGroups.getSelectedIndex());
+        group.registerPerson(name);
+        list.setGroup(group);
     }
 
     /**
@@ -55,9 +80,34 @@ public class GroupDisplayPanel extends Panel
         cont.add(txfInput);
         cont.add(btnAdd);
         cont.add(btnMainGroups);
+        cont.add(btnCreateGroup);
+        cont.add(btnCreateSubgroup);
 
         this.add(new ComponentContainer(cbGroups), BorderLayout.PAGE_START);
         this.add(new ComponentContainer(new ScrollPane(list)), BorderLayout.CENTER);
         this.add(new ComponentContainer(cont), BorderLayout.PAGE_END);
+    }
+
+    /**
+     * Sets the groups to be displayed.
+     *
+     * @param groups the groups to be displayed.
+     * */
+    public void setGroups(List<Group> groups)
+    {
+        this.groups = groups;
+        cbGroups.removeAllItems();
+
+        for (var g : groups)
+            cbGroups.addItem(g);
+
+        if (groups.size() == 0)
+        {
+            cbGroups.setSelectedIndex(-1);
+            return;
+        }
+
+        cbGroups.setSelectedIndex(0);
+        list.setGroup(groups.get(0));
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class GroupPanel extends Panel
 {
     private final Label lblTitle = new Label("ui.label.my-groups", true);
-    private final GroupDisplayPanel gdp = new GroupDisplayPanel(List.of(new Group("kaka"), new Group("Banan")));
+    private final GroupDisplayPanel gdp = new GroupDisplayPanel();
 
     /**
      * Creates a new GroupPanel.
@@ -45,5 +45,15 @@ public class GroupPanel extends Panel
         cont.add(lblTitle);
         this.add(cont);
         this.add(gdp);
+    }
+
+    /**
+     * Sets the groups to be displayed.
+     *
+     * @param groups the groups that are supposed to be displayed.
+     * */
+    public void setGroups(List<Group> groups)
+    {
+        gdp.setGroups(groups);
     }
 }

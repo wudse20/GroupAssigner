@@ -20,4 +20,12 @@ public class TextField extends JTextField
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
     }
+
+    /**
+     * Clears the textfield, i.e., removes all text.
+     * */
+    public void clear()
+    {
+        this.setText("");
+    }
 }

@@ -120,6 +120,7 @@ public class GroupFrame extends Frame
     {
         Log.debug("Starting to load the groups.");
         loadSave();
+        gp.setGroups(groups);
         Log.debugf("Finished loading the groups! Groups: %s", groups);
         super.init();
     }
