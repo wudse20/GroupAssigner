@@ -526,4 +526,32 @@ public class TestGroup
 
         assertEquals(testSize - remove.size(), gm.size(), "The size after removing is wrong.");
     }
+
+    @Test
+    public void testRemoveDenyItem()
+    {
+        var gm1 = new Group("Kaka");
+        var id1 = gm1.registerPerson("Kalle");
+        var id2 = gm1.registerPerson("Liza");
+        gm1.addDenyItem(id1, id2);
+        assertTrue(gm1.isDenied(id1, id2), "Before removing they should be denied.");
+        assertTrue(gm1.isDenied(id2, id1), "Before removing they should be denied.");
+        gm1.removeDenyItem(id1, id2);
+        assertFalse(gm1.isDenied(id1, id2), "After removing they should be denied.");
+        assertFalse(gm1.isDenied(id2, id1), "After removing they should be denied.");
+    }
+
+    @Test
+    public void testRemoveWishItem()
+    {
+        var gm1 = new Group("Kaka");
+        var id1 = gm1.registerPerson("Kalle");
+        var id2 = gm1.registerPerson("Liza");
+        gm1.addWishItem(id1, id2);
+        assertTrue(gm1.getWishedIds(id1).contains(id2), "Before removing the wish should be registered.");
+        assertFalse(gm1.getWishedIds(id2).contains(id1), "wished should not have wisher.");
+        gm1.removeWishItem(id1, id2);
+        assertFalse(gm1.getWishedIds(id1).contains(id2), "After removing the wish shouldn't be registered.");
+        assertFalse(gm1.getWishedIds(id2).contains(id1), "wished should not have wisher.");
+    }
 }

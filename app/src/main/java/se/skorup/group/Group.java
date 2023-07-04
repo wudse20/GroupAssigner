@@ -58,6 +58,24 @@ public class Group implements Serializable
     }
 
     /**
+     * Removes a deny item.
+     *
+     * @param id1 the first id.
+     * @param id2 the second id.
+     * */
+    public synchronized void removeDenyItem(int id1, int id2)
+    {
+        var l1 = denylist.getOrDefault(id1, new HashSet<>());
+        var l2 = denylist.getOrDefault(id2, new HashSet<>());
+
+        l1.remove(id2);
+        l2.remove(id1);
+
+        denylist.put(id1, l1);
+        denylist.put(id2, l2);
+    }
+
+    /**
      * Checks if two ids are allowed in the same group.
      *
      * @param id1 the first id.
@@ -80,6 +98,19 @@ public class Group implements Serializable
     {
         var set = wishlist.getOrDefault(wisher, new HashSet<>());
         set.add(wished);
+        wishlist.put(wisher, set);
+    }
+
+    /**
+     * Removes wished to wishers wishlist.
+     *
+     * @param wisher the id of the person removing the wish.
+     * @param wished the person that wisher was wishing for.
+     * */
+    public synchronized void removeWishItem(int wisher, int wished)
+    {
+        var set = wishlist.getOrDefault(wisher, new HashSet<>());
+        set.remove(wished);
         wishlist.put(wisher, set);
     }
 

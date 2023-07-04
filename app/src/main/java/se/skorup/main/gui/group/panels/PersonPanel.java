@@ -46,10 +46,15 @@ public class PersonPanel extends Panel
      *
      * @param p the panel affected
      * @param titleKey the key for the title label.
+     * @param id the id of the person that is selected in the GUI.
      * @param all all the ids.
      * @param selectedIds the selected ids.
+     * @param update the function to register an update.
      * */
-    private static void setupPanel(Panel p, String titleKey, List<Person> all, Set<Integer> selectedIds)
+    private static void setupPanel(
+        Panel p, String titleKey, int id, List<Person> all,
+        Set<Integer> selectedIds, RegisterUpdate update
+    )
     {
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 
@@ -59,8 +64,12 @@ public class PersonPanel extends Panel
 
         for (var per : all)
         {
+            if (per.id() == id)
+                continue;
+
             var cb = new CheckBox(per.name());
             cb.setSelected(selectedIds.contains(per.id()));
+            cb.addActionListener(e -> update.onUpdate(id, per.id(), cb.isSelected()));
 
             var cont = new Panel(new FlowLayout(FlowLayout.LEFT));
             cont.add(cb);
@@ -80,10 +89,20 @@ public class PersonPanel extends Panel
         Collections.sort(all);
 
         var wish = new Panel(null);
-        setupPanel(wish, "ui.label.wish", all, wishes);
+        setupPanel(wish, "ui.label.wish", p.id(), all, wishes, (id1, id2, selected) -> {
+            if (selected)
+                g.addWishItem(id1, id2);
+            else
+                g.removeWishItem(id1, id2);
+        });
 
         var deny = new Panel(null);
-        setupPanel(deny, "ui.label.deny", all, denies);
+        setupPanel(deny, "ui.label.deny", p.id(), all, denies, (id1, id2, selected) -> {
+            if (selected)
+                g.addDenyItem(id1, id2);
+            else
+                g.removeDenyItem(id1, id2);
+        });
 
         this.add(wish);
         this.add(deny);
@@ -106,5 +125,19 @@ public class PersonPanel extends Panel
             return;
 
         callbacks.add(callback);
+    }
+
+    @FunctionalInterface
+    private interface RegisterUpdate
+    {
+        /**
+         * This is called on an update.
+         *
+         * @param id1 the id of the person selected in the PersonPanel.
+         * @param id2 the id of the person selected with the checkbox.
+         * @param selected if {@code true} then it will add,
+         *                 if {@code false} then it will remove.
+         * */
+        void onUpdate(int id1, int id2, boolean selected);
     }
 }
