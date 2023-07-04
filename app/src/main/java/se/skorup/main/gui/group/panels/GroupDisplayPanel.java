@@ -1,6 +1,7 @@
 package se.skorup.main.gui.group.panels;
 
 import se.skorup.group.Group;
+import se.skorup.gui.callbacks.PersonSelectionCallback;
 import se.skorup.gui.components.Button;
 import se.skorup.gui.components.ComboBox;
 import se.skorup.gui.components.ComponentContainer;
@@ -20,6 +21,8 @@ import java.util.List;
  * */
 public class GroupDisplayPanel extends Panel
 {
+    private final List<PersonSelectionCallback> callbacks;
+
     private List<Group> groups;
 
     private final ComboBox<Group> cbGroups = new ComboBox<>();
@@ -38,6 +41,7 @@ public class GroupDisplayPanel extends Panel
     {
         super(new BorderLayout());
         this.groups = new ArrayList<>();
+        this.callbacks = new ArrayList<>();
         addComponents();
 
         btnAdd.addActionListener(e -> {
@@ -48,6 +52,19 @@ public class GroupDisplayPanel extends Panel
         txfInput.addActionListener(e -> {
             updateGroup(txfInput.getText().trim());
             txfInput.clear();
+        });
+
+        list.addListSelectionListener(e -> {
+            var groupIndex = cbGroups.getSelectedIndex();
+            var personIndex = list.getSelectedIndex();
+
+            if (groupIndex == -1 || personIndex == -1 || groupIndex > groups.size())
+            {
+                callbacks.forEach(c -> c.personSelected(null, null));
+                return;
+            }
+
+            callbacks.forEach(c -> c.personSelected(list.getSelectedValue(), groups.get(groupIndex)));
         });
     }
 
@@ -109,5 +126,28 @@ public class GroupDisplayPanel extends Panel
 
         cbGroups.setSelectedIndex(0);
         list.setGroup(groups.get(0));
+    }
+
+    /**
+     * Adds a callback that will be invoked when
+     * a person is selected in the list.
+     *
+     * @param callback the callback to be added.
+     * */
+    public void addCallback(PersonSelectionCallback callback)
+    {
+        if (callback == null)
+            return;
+
+        callbacks.add(callback);
+    }
+
+    /**
+     * Clears the selection of the list
+     * with persons.
+     * */
+    public void clearSelection()
+    {
+        list.clearSelection();
     }
 }

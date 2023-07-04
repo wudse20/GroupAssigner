@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGroup
@@ -70,6 +71,18 @@ public class TestGroup
         );
     }
 
+    public static Stream<Arguments> getTestSizes()
+    {
+        return Stream.of(
+            Arguments.of(10),
+            Arguments.of(100),
+            Arguments.of(1000),
+            Arguments.of(10000),
+            Arguments.of(100000),
+            Arguments.of(1000000)
+        );
+    }
+
     @Test
     public void testRegisterSingleThread()
     {
@@ -105,7 +118,7 @@ public class TestGroup
     }
 
     @Test
-    public void testRegisterMultiThreaded() throws InterruptedException
+    public void testRegisterMultithreaded() throws InterruptedException
     {
         var cnt = 10000;
         var al = Collections.synchronizedList(new ArrayList<String>());
@@ -119,7 +132,7 @@ public class TestGroup
                 al.add(name);
                 ids.add(gr.registerPerson(name));
             }
-        }, "testRegisterMultiThreaded-1");
+        }, "testRegisterMultithreaded-1");
 
         var t2 = new Thread(() -> {
             for (var i = cnt/2; i < cnt; i++)
@@ -128,7 +141,7 @@ public class TestGroup
                 al.add(name);
                 ids.add(gr.registerPerson(name));
             }
-        }, "testRegisterMultiThreaded-2");
+        }, "testRegisterMultithreaded-2");
 
         t1.start();
         t2.start();
@@ -203,7 +216,7 @@ public class TestGroup
     }
 
     @Test
-    public void testDenyMultiThreaded() throws InterruptedException
+    public void testDenyMultithreaded() throws InterruptedException
     {
         var gr = new Group("Test");
         var deny = new ConcurrentHashMap<Integer, Set<Integer>>();
@@ -251,7 +264,7 @@ public class TestGroup
                         assertTrue(gr.isDenied(p, id), "%d should be on %d's denylist".formatted(id, p));
                     }
                 }
-            }, "testDenyMultiThreaded-" + i));
+            }, "testDenyMultithreaded-" + i));
         }
 
         threads.forEach(Thread::start);
@@ -297,7 +310,7 @@ public class TestGroup
     }
 
     @Test
-    public void testWishMultiThreaded() throws InterruptedException
+    public void testWishMultithreaded() throws InterruptedException
     {
         var gr = new Group("Test");
         var wish = new HashMap<Integer, Set<Integer>>();
@@ -335,7 +348,7 @@ public class TestGroup
                     assertFalse(gr.getWishedIds(id).contains(id), "%d should not wish for themselves.".formatted(id));
                     assertEquals(gr.getWishedIds(id), e.getValue(), "These should match if everything is correct.");
                 }
-            }, "testWishMultiThreaded-" + i));
+            }, "testWishMultithreaded-" + i));
         }
 
         threads.forEach(Thread::start);
@@ -385,5 +398,132 @@ public class TestGroup
     {
         assertEquals(expected, g1.hashCode() == g2.hashCode(), "HASHCODE FUNCTION IS WRONG");
         assertEquals(expected, g1.equals(g2), "EQUALS FUNCTION IS WRONG");
+    }
+
+    @Test
+    public void testGetDeniedIds()
+    {
+        var gm = new Group("Kaka");
+        var id1 = gm.registerPerson("Kaka 1");
+        var id2 = gm.registerPerson("Kaka 2");
+        var id3 = gm.registerPerson("Kaka 3");
+        gm.addDenyItem(id1, id2);
+
+        assertEquals(Set.of(id2), gm.getDeniedIds(id1), "Kaka 1");
+        assertEquals(Set.of(id1), gm.getDeniedIds(id2), "Kaka 2");
+        assertEquals(Set.of(), gm.getDeniedIds(id3), "Kaka 3");
+    }
+
+    @Test
+    public void testGetDeniedIdsInstance()
+    {
+        var gm = new Group("Kaka");
+        var id1 = gm.registerPerson("Kaka 1");
+        gm.registerPerson("Kaka 2");
+        gm.registerPerson("Kaka 3");
+
+        assertNotSame(gm.getDeniedIds(id1), gm.getDeniedIds(id1), "Should be a new instance each time.");
+    }
+
+    @Test
+    public void testGetWishedIds()
+    {
+        var gm = new Group("Kaka");
+        var id1 = gm.registerPerson("Kaka 1");
+        var id2 = gm.registerPerson("Kaka 2");
+        var id3 = gm.registerPerson("Kaka 3");
+        gm.addWishItem(id1, id2);
+        gm.addWishItem(id1, id3);
+        gm.addWishItem(id2, id1);
+
+        assertEquals(Set.of(id2, id3), gm.getWishedIds(id1), "Kaka 1");
+        assertEquals(Set.of(id1), gm.getWishedIds(id2), "Kaka 2");
+        assertEquals(Set.of(), gm.getWishedIds(id3), "Kaka 3");
+    }
+
+    @Test
+    public void testGetWishedIdsInstance()
+    {
+        var gm = new Group("Kaka");
+        var id1 = gm.registerPerson("Kaka 1");
+        gm.registerPerson("Kaka 2");
+        gm.registerPerson("Kaka 3");
+
+        assertNotSame(gm.getWishedIds(id1), gm.getWishedIds(id1), "Should be a new instance each time.");
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestSizes")
+    public void testRemoveSingleThreaded(int testSize)
+    {
+        var gm = new Group("Kaka");
+
+        var remove = new HashSet<Integer>();
+        var rand = new Random("Kaka".hashCode());
+        for (var i = 0; i < testSize; i++)
+        {
+            var id = gm.registerPerson(UUID.randomUUID().toString());
+
+            if (rand.nextBoolean())
+                remove.add(id);
+        }
+
+        assertEquals(testSize, gm.size(), "The size after registering is wrong.");
+
+        for (var id : remove)
+            gm.removePerson(id);
+
+        assertEquals(testSize - remove.size(), gm.size(), "The size after removal is wrong");
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestSizes")
+    public void testDeleteMultithreaded(int testSize) throws InterruptedException
+    {
+        var gm = new Group("Kaka");
+        Set<Integer> remove = ConcurrentHashMap.newKeySet();
+
+        var t1 = new Thread(() -> {
+            var toRemove = new HashSet<Integer>();
+            var rand = new Random("testDeleteMultithreaded-1".hashCode());
+            for (var i = 0; i < testSize / 2; i++)
+            {
+                var id = gm.registerPerson(UUID.randomUUID().toString());
+
+                if (rand.nextBoolean())
+                {
+                    remove.add(id);
+                    toRemove.add(id);
+                }
+            }
+
+            for (var id : toRemove)
+                gm.removePerson(id);
+        }, "testDeleteMultithreaded-1");
+
+        var t2 = new Thread(() -> {
+            var toRemove = new HashSet<Integer>();
+            var rand = new Random("testDeleteMultithreaded-2".hashCode());
+            for (var i = 0; i < testSize / 2; i++)
+            {
+                var id = gm.registerPerson(UUID.randomUUID().toString());
+
+                if (rand.nextBoolean())
+                {
+                    remove.add(id);
+                    toRemove.add(id);
+                }
+            }
+
+            for (var id : toRemove)
+                gm.removePerson(id);
+        }, "testDeleteMultithreaded-2");
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+
+        assertEquals(testSize - remove.size(), gm.size(), "The size after removing is wrong.");
     }
 }

@@ -43,7 +43,7 @@ public class GroupFrame extends Frame
         super("ui.title.group");
 
         this.mf = mf;
-        this.gp = new GroupPanel();
+        this.gp = new GroupPanel(this);
         this.init();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::save));

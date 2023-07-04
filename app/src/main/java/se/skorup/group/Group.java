@@ -86,7 +86,7 @@ public class Group implements Serializable
     /**
      * Gets all the wished ids for a person. Note that this result
      * might change, since it is only current value. This will not be
-     * updated and the return set is a copy, i.e. another instance.
+     * updated, and the return set is a copy, i.e., another instance.
      *
      * @param id the id that we are searching for.
      * @return a set of the ids that id has wished for.
@@ -94,6 +94,19 @@ public class Group implements Serializable
     public synchronized Set<Integer> getWishedIds(int id)
     {
         return new HashSet<>(wishlist.getOrDefault(id, new HashSet<>()));
+    }
+
+    /**
+     * Gets all the denied ids for a person. Note that this result
+     * might change, since it is only current value. This will not be
+     * updated, and the return set is a copy, i.e., another instance.
+     *
+     * @param id the id that we are searching for.
+     * @return a set of the ids that is denied for id.
+     * */
+    public synchronized Set<Integer> getDeniedIds(int id)
+    {
+        return new HashSet<>(denylist.getOrDefault(id, new HashSet<>()));
     }
 
     /**
@@ -106,6 +119,16 @@ public class Group implements Serializable
     {
         persons.put(currentId, new Person(name, currentId));
         return currentId++;
+    }
+
+    /**
+     * Removes a person from the group.
+     * */
+    public synchronized void removePerson(int id)
+    {
+        persons.remove(id);
+        wishlist.remove(id);
+        denylist.remove(id);
     }
 
     /**

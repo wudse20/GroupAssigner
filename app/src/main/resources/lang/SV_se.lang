@@ -7,6 +7,7 @@ ui.button.add.text: "Lägg till"
 ui.button.main-groups: "Huvudgrupper"
 ui.button.create.group: "Skapa grupp"
 ui.button.create.subgroup: "Skapa undergrupper"
+ui.button.delete: "Ta bort"
 ui.button.zero: "0"
 ui.button.one: "1"
 ui.button.two: "2"
@@ -49,6 +50,8 @@ ui.info.about: "Group Assigner v. %s<br><br>Utvecklare: Anton Skorup<br>Idè: Se
 
 ui.label.my-groups: "Mina Grupper"
 ui.label.name: "Namn:"
+ui.label.deny: "Denylista:"
+ui.label.wish: "Önskelista:"
 
 ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"
