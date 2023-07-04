@@ -7,9 +7,12 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
@@ -210,6 +213,39 @@ public class Utils implements Constants
         {
             Log.debug("Is not windows");
             return "./.group_assigner/";
+        }
+    }
+
+    /**
+     * Downloads the content of a website and returns
+     * the contents of the URL if successful wrapped
+     * in an Optional, if it fails it will return
+     * {@code Optional.empty}.
+     *
+     * @param url The URL of the target.
+     * @return the content of the target, {@code Optional.empty}
+     *         if it fails.
+     * */
+    public static Optional<String> getContentOfURL(String url)
+    {
+        try
+        {
+            var u = URI.create(url).toURL();
+            var sc = new Scanner(u.openStream());
+            var sb = new StringBuilder();
+
+            while (sc.hasNext())
+                sb.append(sc.next());
+
+            Log.networkf("Grabbed data: %s", sb);
+
+            return Optional.of(sb.toString());
+        }
+        catch (IOException e)
+        {
+            Log.errorf("Error getting version: %s", e.getLocalizedMessage());
+
+            return Optional.empty();
         }
     }
 }

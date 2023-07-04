@@ -38,6 +38,9 @@ ui.title.main: "Group Assigner"
 ui.title.about: "Om programmet"
 ui.title.group: "Mina Grupper"
 ui.title.NYI: "Not yet implemented! Ännu ej implementerat!"
+ui.title.version-checking: "Versionskoll"
+ui.title.wrong-version: "Fel version :("
+
 
 ui.title.dialog.file: "Välj din fil"
 ui.title.dialog.error: "Fel: %s"
@@ -49,6 +52,9 @@ ui.text.dialog.path: "Filsökväg: %s"
 ui.text.dialog.empty: "ingen"
 
 ui.info.about: "Group Assigner v. %s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
+ui.info.wrong-version: "<html>Du har inte den senaste versionen<br>Senaste versionen: %s<br>Din version: %s</html>"
+
+ui.question.version-checking: "Vill du att programmet kollar din version varje gång det startar?"
 
 ui.label.my-groups: "Mina Grupper"
 ui.label.name: "Namn:"

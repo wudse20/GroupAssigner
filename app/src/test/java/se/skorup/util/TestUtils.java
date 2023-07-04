@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -94,5 +95,21 @@ public class TestUtils
     public void testPowers(int b, int e, int expected)
     {
         assertEquals(Utils.pow(b, e), expected);
+    }
+
+    public static Stream<Arguments> getURLData()
+    {
+        return Stream.of(
+            Arguments.of("https://skorup.se/test/dont_exist", Optional.empty()),
+            Arguments.of("https://skorup.se/test/test_file1", Optional.of("Connection!")),
+            Arguments.of("https://skorup.se/test/empty", Optional.of(""))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getURLData")
+    public void testGetContentOfURL(String url, Optional<String> expected)
+    {
+        assertEquals(expected, Utils.getContentOfURL(url));
     }
 }
