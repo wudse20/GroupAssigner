@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A GroupCreator that creates all the best groups
- * it can find according to the wishes. This group
+ * it can find, according to the wishes. This group
  * will obey the denylist as well.
  * */
 public final class WishesGroupCreator implements GroupCreator

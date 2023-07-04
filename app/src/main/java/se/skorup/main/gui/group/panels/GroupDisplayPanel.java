@@ -1,6 +1,7 @@
 package se.skorup.main.gui.group.panels;
 
 import se.skorup.group.Group;
+import se.skorup.gui.callbacks.ActionCallback;
 import se.skorup.gui.callbacks.PersonSelectionCallback;
 import se.skorup.gui.components.Button;
 import se.skorup.gui.components.ComboBox;
@@ -21,7 +22,8 @@ import java.util.List;
  * */
 public class GroupDisplayPanel extends Panel
 {
-    private final List<PersonSelectionCallback> callbacks;
+    private final List<PersonSelectionCallback> selectionCallbacks;
+    private final List<ActionCallback<Void>> actionCallbacks;
 
     private List<Group> groups;
 
@@ -41,9 +43,17 @@ public class GroupDisplayPanel extends Panel
     {
         super(new BorderLayout());
         this.groups = new ArrayList<>();
-        this.callbacks = new ArrayList<>();
+        this.selectionCallbacks = new ArrayList<>();
+        this.actionCallbacks = new ArrayList<>();
         addComponents();
+        addListeners();
+    }
 
+    /**
+     * Adds all the listeners.
+     * */
+    private void addListeners()
+    {
         btnAdd.addActionListener(e -> {
             updateGroup(txfInput.getText().trim());
             txfInput.clear();
@@ -60,12 +70,21 @@ public class GroupDisplayPanel extends Panel
 
             if (groupIndex == -1 || personIndex == -1 || groupIndex > groups.size())
             {
-                callbacks.forEach(c -> c.personSelected(null, null));
+                selectionCallbacks.forEach(c -> c.personSelected(null, null));
                 return;
             }
 
-            callbacks.forEach(c -> c.personSelected(list.getSelectedValue(), groups.get(groupIndex)));
+            selectionCallbacks.forEach(c -> c.personSelected(list.getSelectedValue(), groups.get(groupIndex)));
         });
+
+        cbGroups.addItemListener(e -> {
+            if (cbGroups.getSelectedIndex() == -1)
+                return;
+
+            list.setGroup(groups.get(cbGroups.getSelectedIndex()));
+        });
+
+        btnCreateGroup.addActionListener(e -> actionCallbacks.forEach(c -> c.action(null)));
     }
 
     /**
@@ -134,12 +153,26 @@ public class GroupDisplayPanel extends Panel
      *
      * @param callback the callback to be added.
      * */
-    public void addCallback(PersonSelectionCallback callback)
+    public void addSelectionCallback(PersonSelectionCallback callback)
     {
         if (callback == null)
             return;
 
-        callbacks.add(callback);
+        selectionCallbacks.add(callback);
+    }
+
+    /**
+     * Adds a callback that will be invoked when
+     * a person is selected in the list.
+     *
+     * @param callback the callback to be added.
+     * */
+    public void addCreateGroupCallback(ActionCallback<Void> callback)
+    {
+        if (callback == null)
+            return;
+
+        actionCallbacks.add(callback);
     }
 
     /**

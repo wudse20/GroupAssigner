@@ -130,7 +130,7 @@ public final class InputDialog extends Dialog<String>
          * @param localizationKey the key used for localization.
          * @return the MessageDialog.
          */
-        OkButtonStep setLocalizedButtonText(String localizationKey);
+        OkButtonStep setLocalizedCancelButtonText(String localizationKey);
     }
 
     /** The button step in building the dialog. */
@@ -154,36 +154,42 @@ public final class InputDialog extends Dialog<String>
         /**
          * Shouldn't be instantiated outside this class.
          */
-        private DialogBuilder() {
+        private DialogBuilder()
+        {
             this.dialog = new InputDialog();
         }
 
         @Override
-        public InformationStep setLocalizedTitle(String localizationKey) {
+        public InformationStep setLocalizedTitle(String localizationKey)
+        {
             dialog.title = Localization.getValue(localizationKey);
             return this;
         }
 
         @Override
-        public InformationStep setTitle(String title) {
+        public InformationStep setTitle(String title)
+        {
             dialog.title = title;
             return this;
         }
 
         @Override
-        public CloseButtonStep setLocalizedInformation(String localizationKey) {
+        public CloseButtonStep setLocalizedInformation(String localizationKey)
+        {
             dialog.lblMessage = new Label(localizationKey, true);
             return this;
         }
 
         @Override
-        public CloseButtonStep setInformation(String information) {
+        public CloseButtonStep setInformation(String information)
+        {
             dialog.lblMessage = new Label(information);
             return this;
         }
 
         @Override
-        public OkButtonStep setLocalizedButtonText(String localizationKey) {
+        public OkButtonStep setLocalizedCancelButtonText(String localizationKey)
+        {
             dialog.btnClose = new Button(localizationKey);
             dialog.btnClose.addActionListener(e -> dialog.close());
             return this;

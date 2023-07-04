@@ -30,6 +30,9 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileD
     protected int type = Dialog.INFORMATION_MESSAGE;
 
 
+    /** Will display no ICON on the dialog. */
+    public static int NO_ICON = -1;
+
     /** Will use the information icon in the dialog. */
     public static int INFORMATION_MESSAGE = 0;
 
@@ -102,7 +105,8 @@ public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileD
     {
         return type == INFORMATION_MESSAGE ? informationIcon :
                type == WARNING_MESSAGE ? warningIcon :
-               type == ERROR_MESSAGE ? errorIcon : fileIcon;
+               type == ERROR_MESSAGE ? errorIcon :
+               type == FILE_DIALOG ? fileIcon : new ImageIcon(); // new ImageIcon is for no icon.
     }
 
     /**

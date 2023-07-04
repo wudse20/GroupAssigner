@@ -4,9 +4,14 @@ import se.skorup.group.Group;
 import se.skorup.gui.components.ComponentContainer;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
+import se.skorup.gui.dialog.ConfirmDialog;
+import se.skorup.gui.dialog.Dialog;
+import se.skorup.gui.dialog.InputDialog;
 import se.skorup.main.gui.group.frames.GroupFrame;
+import se.skorup.util.Log;
 
 import javax.swing.BoxLayout;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -53,7 +58,8 @@ public class GroupPanel extends Panel
     private void setProperties()
     {
         lblTitle.setFont(new Font(Font.DIALOG, Font.BOLD, 36));
-        gdp.addCallback((p, g) -> {
+
+        gdp.addSelectionCallback((p, g) -> {
             if (p == null || g == null)
             {
                 state = State.NO_SELECTED;
@@ -64,6 +70,51 @@ public class GroupPanel extends Panel
             state = State.SELECTED;
             pp.displayPerson(p, g);
             addComponents();
+        });
+
+        gdp.addCreateGroupCallback(unused -> {
+            gf.setVisible(false);
+            Log.debugf("Is EDT? %s", SwingUtilities.isEventDispatchThread() ? "yes" : "no");
+
+            // New thread since it's the EDT.
+            new Thread(() -> {
+                // true = from scratch
+                // false = CSV-parsing
+                var option = ConfirmDialog.create()
+                                          .setLocalizedQuestion("ui.question.how-create")
+                                          .setLocalizedApproveButtonText("ui.button.empty-group")
+                                          .setLocalizedDisapproveButtonText("ui.button.csv-group")
+                                          .setLocalizedTitle("ui.title.create-group")
+                                          .show(Dialog.NO_ICON);
+
+                if (option) // Group from scratch.
+                {
+                    var name = InputDialog.create()
+                                          .setLocalizedTitle("ui.title.create-group")
+                                          .setLocalizedInformation("ui.label.create-group")
+                                          .setLocalizedCancelButtonText("ui.button.dialog.cancel")
+                                          .setLocalizedOkButtonText("ui.button.dialog.ok")
+                                          .show(InputDialog.NO_ICON);
+
+                    if (name == null)
+                    {
+                        SwingUtilities.invokeLater(() -> gf.setVisible(true));
+                        return;
+                    }
+
+                    SwingUtilities.invokeLater(() -> {
+                        var g = new Group(name);
+                        groups.add(g);
+                        setGroups(groups);
+                        gf.setVisible(true);
+                    });
+                }
+                else // CSV-group.
+                {
+                    // TODO: Implement fully.
+                    SwingUtilities.invokeLater(() -> gf.setVisible(true));
+                }
+            }, "Creation-dialog thread").start();
         });
 
         pp.addCallback((g, p) -> {
@@ -92,9 +143,7 @@ public class GroupPanel extends Panel
         this.add(cont, BorderLayout.CENTER);
 
         if (state.equals(State.SELECTED))
-        {
             this.add(new ComponentContainer(pp), BorderLayout.LINE_END);
-        }
 
         this.revalidate();
         gf.pack();

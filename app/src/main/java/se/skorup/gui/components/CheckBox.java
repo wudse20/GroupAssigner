@@ -31,7 +31,7 @@ public class CheckBox extends JCheckBox
      * */
     public CheckBox(String label)
     {
-        super(label);
+        super(" %s".formatted(label)); // Add some padding.
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setBorder(BorderFactory.createEmptyBorder());
