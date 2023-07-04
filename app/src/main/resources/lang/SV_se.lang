@@ -31,6 +31,8 @@ ui.button.dialog.close: "Stäng"
 ui.button.dialog.ok: "Okej"
 ui.button.dialog.choose: "Välj"
 ui.button.dialog.open: "Öppna"
+ui.button.dialog.approve: "Ja"
+ui.button.dialog.disapprove: "Nej"
 
 ui.title.main: "Group Assigner"
 ui.title.about: "Om programmet"

@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
  *
  * @param <E> The type of the dialog, i.e., the type of the result.
  * */
-public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileDialog
+public sealed abstract class Dialog<E> permits MessageDialog, InputDialog, FileDialog, ConfirmDialog
 {
     private final DialogMonitor mon;
     private final DialogFrame frame;
