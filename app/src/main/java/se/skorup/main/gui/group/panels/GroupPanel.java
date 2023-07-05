@@ -93,6 +93,12 @@ public class GroupPanel extends Panel
                                           .setLocalizedTitle("ui.title.create-group")
                                           .show(Dialog.NO_ICON);
 
+                if (option == null)
+                {
+                    gf.setVisible(true);
+                    return;
+                }
+
                 if (option) // Group from scratch.
                 {
                     var name = InputDialog.create()
