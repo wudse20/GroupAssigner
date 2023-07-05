@@ -98,7 +98,7 @@ public class ImportFrame extends Frame implements KeyListener
     private final ButtonGroup bgMode = new ButtonGroup();
     private final ButtonGroup bgEditMode = new ButtonGroup();
 
-    private final Label lblInfo = new Label("ui.info.person");
+    private final Label lblInfo = new Label("ui.info.person", true);
 
     private final Panel pCSV = new Panel(null);
     private final Panel pButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));

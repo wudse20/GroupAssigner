@@ -1,5 +1,6 @@
 package se.skorup.gui.components;
 
+import se.skorup.gui.helper.ui.MyRadioButtonUI;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 
@@ -21,5 +22,6 @@ public class RadioButton extends JRadioButton
         this.setBackground(Utils.BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setFocusPainted(false);
+        this.setUI(new MyRadioButtonUI());
     }
 }
