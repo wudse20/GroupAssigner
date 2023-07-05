@@ -47,6 +47,7 @@ ui.title.create-group: "Skapa grupp"
 
 ui.title.dialog.file: "Välj din fil"
 ui.title.dialog.error: "Fel: %s"
+ui.title.error-to-few-actions: "För få handlingar"
 
 ui.text.bug: "Ser du mig är det en bugg :("
 
@@ -56,6 +57,11 @@ ui.text.dialog.empty: "ingen"
 
 ui.info.about: "Group Assigner v. %s<br><br>Utvecklare: Anton Skorup<br>Idè: Sebastian Wahlberg<br>Testning: Sebastian Wahlberg"
 ui.info.wrong-version: "<html>Du har inte den senaste versionen<br>Senaste versionen: %s<br>Din version: %s</html>"
+ui.info.person: "Välj en person, genom att klicka på den rutan som personer motsvarar!"
+ui.info.wish: "Välj en person - genom att klicka på rätt ruta, att tilldela önskningar till och sedan klicka på önskningarna."
+ui.info.skip: "Välj en ruta som kommer att hoppas över. Detta är valfritt och behöver inte göras."
+ui.info.creating-template: "Klicka på de rutorna - i den ordningen du önskar, för att skapa en mall. Tryck därefter på 'Avsluta mall'. Det går bara att arbeta på en rad i taget."
+ui.info.created-template: "Välj de rader du vill att mallen skall apliceras på. Vill du skapa en ny mall klicka på 'Skapa mall'."
 
 ui.question.version-checking: "Vill du att programmet kollar din version varje gång det startar?"
 ui.question.how-create: "Vilken typ av grupp vill du skapa?"
@@ -71,6 +77,7 @@ ui.tab.about.about: "Om"
 ui.tab.about.attribution: "Ikonkällor"
 
 ui.error.web-browser: "Kunde inte öppna webbläsaren"
+ui.error.at-least-one-action: "ui.error.at-least-one-action"
 
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
 ui.info.attribution.info: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"

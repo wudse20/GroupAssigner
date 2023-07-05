@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class Group implements Serializable
     private final Map<Integer, Set<Integer>> denylist;
     private final Map<Integer, Set<Integer>> wishlist;
 
-    private final String name;
+    private String name;
 
     /**
      * Creates a new Group.
@@ -36,6 +37,16 @@ public class Group implements Serializable
         this.persons = new HashMap<>();
         this.denylist = new HashMap<>();
         this.wishlist = new HashMap<>();
+        this.name = name;
+    }
+
+    /**
+     * Sets the name of the group
+     *
+     * @param name the new name of the group.
+     * */
+    public synchronized void setName(String name)
+    {
         this.name = name;
     }
 
@@ -206,8 +217,27 @@ public class Group implements Serializable
         return persons.size();
     }
 
+    /**
+     * Gets all the persons that match the provided name.
+     *
+     * @param name the provided name to search after.
+     * @return a list of all the persons matching the provided name.
+     * */
+    public synchronized List<Person> getPersonFromName(String name)
+    {
+        var al = new ArrayList<Person>();
+
+        for (var p : persons.values())
+        {
+            if (p.name().equals(name))
+                al.add(p);
+        }
+
+        return al;
+    }
+
     @Override
-    public String toString()
+    public synchronized String toString()
     {
         return name;
     }

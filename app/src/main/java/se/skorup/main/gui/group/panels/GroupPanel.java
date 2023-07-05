@@ -6,16 +6,22 @@ import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
 import se.skorup.gui.dialog.ConfirmDialog;
 import se.skorup.gui.dialog.Dialog;
+import se.skorup.gui.dialog.FileDialog;
 import se.skorup.gui.dialog.InputDialog;
+import se.skorup.gui.dialog.MessageDialog;
 import se.skorup.main.gui.group.frames.GroupFrame;
+import se.skorup.main.gui.group.frames.ImportFrame;
 import se.skorup.util.Log;
+import se.skorup.util.io.CSVReader;
 
 import javax.swing.BoxLayout;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The panel responsible for displaying the groups.
@@ -111,8 +117,45 @@ public class GroupPanel extends Panel
                 }
                 else // CSV-group.
                 {
-                    // TODO: Implement fully.
-                    SwingUtilities.invokeLater(() -> gf.setVisible(true));
+                    try
+                    {
+                        var file = FileDialog.create()
+                                .setPath(".")
+                                .setAllowedFileExtensions(Set.of("csv"))
+                                .show();
+
+                        if (file == null)
+                        {
+                            SwingUtilities.invokeLater(() -> gf.setVisible(true));
+                            return;
+                        }
+
+                        final var data = CSVReader.readCSV(file.getAbsolutePath());
+
+                        SwingUtilities.invokeLater(() -> {
+                            var frame = new ImportFrame(data);
+                            frame.addActionCallback(g -> {
+                                SwingUtilities.invokeLater(() -> {
+                                    if (g != null)
+                                    {
+                                        groups.add(g);
+                                        setGroups(groups);
+                                    }
+
+                                    gf.setVisible(true);
+                                });
+                            });
+                        });
+                    }
+                    catch (IOException e)
+                    {
+                        MessageDialog.create()
+                                     .setLocalizedTitlef("ui.title.dialog.error", e.getLocalizedMessage())
+                                     .setLocalizedInformation(e.getLocalizedMessage()).setLocalizedButtonText("ui.button.close")
+                                     .show(Dialog.ERROR_MESSAGE);
+
+                        SwingUtilities.invokeLater(() -> gf.setVisible(true));
+                    }
                 }
             }, "Creation-dialog thread").start();
         });

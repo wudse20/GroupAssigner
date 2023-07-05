@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -553,5 +554,20 @@ public class TestGroup
         gm1.removeWishItem(id1, id2);
         assertFalse(gm1.getWishedIds(id1).contains(id2), "After removing the wish shouldn't be registered.");
         assertFalse(gm1.getWishedIds(id2).contains(id1), "wished should not have wisher.");
+    }
+
+    @Test
+    public void testGetPersonFromName()
+    {
+        var gm = new Group("Kaka");
+        assertEquals(List.of(), gm.getPersonFromName("Kalle"));
+        gm.registerPerson("Liza");
+        assertEquals(List.of(), gm.getPersonFromName("Kalle"));
+        var id1 = gm.registerPerson("Kalle");
+        gm.registerPerson("Sven");
+        assertEquals(List.of(new Person("Kalle", id1)), gm.getPersonFromName("Kalle"));
+        var id2 = gm.registerPerson("Kalle");
+        gm.registerPerson("Anton");
+        assertEquals(List.of(new Person("Kalle", id1), new Person("Kalle", id2)), gm.getPersonFromName("Kalle"));
     }
 }
