@@ -13,6 +13,7 @@ import se.skorup.util.io.SerializationUtil;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -136,7 +137,7 @@ public class GroupFrame extends Frame
     protected void addComponents()
     {
         cp.add(gp, BorderLayout.CENTER);
-        this.pack();
+        this.setSize(new Dimension(900, 450));
     }
 
     @Override

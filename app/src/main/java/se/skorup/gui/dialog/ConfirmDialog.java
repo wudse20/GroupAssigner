@@ -74,6 +74,15 @@ public final class ConfirmDialog extends Dialog<Boolean>
          * @return the next step in the building process.
          * */
         ApproveButtonStep setLocalizedQuestion(String localizationKey);
+
+        /**
+         * Sets the question of the dialog using a localization key with formatting.
+         *
+         * @param localizationKey the localization key of the question to be set.
+         * @param args the args for formatting.
+         * @return the next step in the building process.
+         * */
+        ApproveButtonStep setLocalizedQuestionf(String localizationKey, Object... args);
     }
 
     /** The step in the building process, where the approve-button text is set.*/
@@ -142,6 +151,13 @@ public final class ConfirmDialog extends Dialog<Boolean>
         public ApproveButtonStep setLocalizedQuestion(String localizationKey)
         {
             dialog.lblQuestion = new Label(localizationKey, true);
+            return this;
+        }
+
+        @Override
+        public ApproveButtonStep setLocalizedQuestionf(String localizationKey, Object... args)
+        {
+            dialog.lblQuestion = new Label(Localization.getValuef(localizationKey, args));
             return this;
         }
 

@@ -160,6 +160,25 @@ public class GroupPanel extends Panel
             }, "Creation-dialog thread").start();
         });
 
+        gdp.addDeleteGroupCallback(g -> {
+            new Thread(() -> {
+                var ans = ConfirmDialog.create()
+                                       .setLocalizedQuestionf("ui.question.delete-group", g)
+                                       .setLocalizedApproveButtonText("ui.button.dialog.approve")
+                                       .setLocalizedDisapproveButtonText("ui.button.dialog.disapprove")
+                                       .setLocalizedTitle("ui.title.delete")
+                                       .show(Dialog.WARNING_MESSAGE);
+
+                if (!ans)
+                    return;
+
+                SwingUtilities.invokeLater(() -> { // Since the EDT owns the groups. Thread Confinement :)
+                    groups.remove(g);
+                    setGroups(groups);
+                });
+            }, "Group deletion thread").start();
+        });
+
         pp.addCallback((g, p) -> {
             g.removePerson(p.id());
             gdp.setGroups(groups);
@@ -189,7 +208,6 @@ public class GroupPanel extends Panel
             this.add(new ComponentContainer(pp), BorderLayout.LINE_END);
 
         this.revalidate();
-        gf.pack();
     }
 
     /**

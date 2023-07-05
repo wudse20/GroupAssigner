@@ -8,7 +8,9 @@ import se.skorup.gui.components.CheckBox;
 import se.skorup.gui.components.ComponentContainer;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.ScrollPane;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -25,7 +27,7 @@ public class PersonPanel extends Panel
     private Person p;
     private Group g;
 
-    private List<DeleteCallback> callbacks;
+    private final List<DeleteCallback> callbacks;
 
     private final Button btnDelete = new Button("ui.button.delete");
 
@@ -62,6 +64,9 @@ public class PersonPanel extends Panel
         lbl.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         p.add(new ComponentContainer(lbl));
 
+        var cbPanel = new Panel(null);
+        cbPanel.setLayout(new BoxLayout(cbPanel, BoxLayout.Y_AXIS));
+
         for (var per : all)
         {
             if (per.id() == id)
@@ -73,8 +78,12 @@ public class PersonPanel extends Panel
 
             var cont = new Panel(new FlowLayout(FlowLayout.LEFT));
             cont.add(cb);
-            p.add(cont);
+            cbPanel.add(cont);
         }
+
+        var scr = new ScrollPane(cbPanel);
+        scr.setBorder(BorderFactory.createEmptyBorder());
+        p.add(scr);
     }
 
     /**

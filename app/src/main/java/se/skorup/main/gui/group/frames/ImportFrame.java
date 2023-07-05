@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static se.skorup.gui.components.CSVLabel.PERSON_COLOR;
 import static se.skorup.gui.components.CSVLabel.SKIP_COLOR;
@@ -817,9 +816,9 @@ public class ImportFrame extends Frame implements KeyListener
 
         btnFinishTemplate.setEnabled(false);
         btnFinishTemplate.addActionListener(e -> {
-            if (template.isEmpty())
+            if (template.isEmpty()) // I don't think this will ever happen!
             {
-                try // TODO: KEEP AN EYE!
+                try
                 {
                     var t1 = new Thread(() -> {
                         MessageDialog.create()

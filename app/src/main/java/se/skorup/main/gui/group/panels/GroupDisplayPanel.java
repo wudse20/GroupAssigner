@@ -23,7 +23,8 @@ import java.util.List;
 public class GroupDisplayPanel extends Panel
 {
     private final List<PersonSelectionCallback> selectionCallbacks;
-    private final List<ActionCallback<Void>> actionCallbacks;
+    private final List<ActionCallback<Void>> createCallbacks;
+    private final List<ActionCallback<Group>> deleteCallbacks;
 
     private List<Group> groups;
 
@@ -35,6 +36,7 @@ public class GroupDisplayPanel extends Panel
     private final Button btnMainGroups = new Button("ui.button.main-groups");
     private final Button btnCreateGroup = new Button("ui.button.create.group");
     private final Button btnCreateSubgroup = new Button("ui.button.create.subgroup");
+    private final Button btnDeleteGroup = new Button("ui.button.delete-group");
 
     /**
      * Creates a new panel.
@@ -44,9 +46,13 @@ public class GroupDisplayPanel extends Panel
         super(new BorderLayout());
         this.groups = new ArrayList<>();
         this.selectionCallbacks = new ArrayList<>();
-        this.actionCallbacks = new ArrayList<>();
+        this.createCallbacks = new ArrayList<>();
+        this.deleteCallbacks = new ArrayList<>();
+
         addComponents();
         addListeners();
+
+        btnDeleteGroup.setEnabled(groups.size() != 0);
     }
 
     /**
@@ -79,12 +85,17 @@ public class GroupDisplayPanel extends Panel
 
         cbGroups.addItemListener(e -> {
             if (cbGroups.getSelectedIndex() == -1)
+            {
+                btnDeleteGroup.setEnabled(false);
                 return;
+            }
 
             list.setGroup(groups.get(cbGroups.getSelectedIndex()));
+            btnDeleteGroup.setEnabled(true);
         });
 
-        btnCreateGroup.addActionListener(e -> actionCallbacks.forEach(c -> c.action(null)));
+        btnCreateGroup.addActionListener(e -> createCallbacks.forEach(c -> c.action(null)));
+        btnDeleteGroup.addActionListener(e -> deleteCallbacks.forEach(c -> c.action(groups.get(cbGroups.getSelectedIndex()))));
     }
 
     /**
@@ -117,6 +128,7 @@ public class GroupDisplayPanel extends Panel
         cont.add(btnAdd);
         cont.add(btnMainGroups);
         cont.add(btnCreateGroup);
+        cont.add(btnDeleteGroup);
         cont.add(btnCreateSubgroup);
 
         this.add(new ComponentContainer(cbGroups), BorderLayout.PAGE_START);
@@ -172,7 +184,21 @@ public class GroupDisplayPanel extends Panel
         if (callback == null)
             return;
 
-        actionCallbacks.add(callback);
+        createCallbacks.add(callback);
+    }
+
+    /**
+     * Adds a callback that will be invoked when
+     * a group is deleted.
+     *
+     * @param callback the callback to be added.
+     * */
+    public void addDeleteGroupCallback(ActionCallback<Group> callback)
+    {
+        if (callback == null)
+            return;
+
+        deleteCallbacks.add(callback);
     }
 
     /**

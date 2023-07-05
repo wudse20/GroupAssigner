@@ -13,6 +13,8 @@ ui.button.csv-group: "Importera"
 ui.button.create-template: "Skapa mall"
 ui.button.finish-template: "Färdigställ mall"
 ui.button.cancel: "Avbryt"
+ui.button.delete-group: "Ta bort grupp"
+
 ui.button.zero: "0"
 ui.button.one: "1"
 ui.button.two: "2"
@@ -76,6 +78,7 @@ ui.info.created-template: "Välj de rader du vill att mallen skall apliceras på
 
 ui.question.version-checking: "Vill du att programmet kollar din version varje gång det startar?"
 ui.question.how-create: "Vilken typ av grupp vill du skapa?"
+ui.question.delete-group: "Vill du verklinge ta bort gruppen %s?"
 
 ui.label.my-groups: "Mina Grupper"
 ui.label.name: "Namn:"
