@@ -4,6 +4,7 @@ import se.skorup.group.Group;
 import se.skorup.group.progress.Progress;
 import se.skorup.util.collections.ImmutableHashSet;
 import se.skorup.util.Log;
+import se.skorup.util.localization.Localization;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -203,7 +204,7 @@ public final class WishesGroupCreator implements GroupCreator
 
     /**
      * This will interrupt the creation and cancel
-     * the creation resulting in an empty list being
+     * the creation, resulting in an empty list being
      * returned.
      */
     @Override
@@ -215,7 +216,7 @@ public final class WishesGroupCreator implements GroupCreator
     @Override
     public String toString()
     {
-        return "Skapa grupper efter önskningar";
+        return Localization.getValue("wishes-groups.name");
     }
 
     private record Result(List<Set<Integer>> groups, double score) {}

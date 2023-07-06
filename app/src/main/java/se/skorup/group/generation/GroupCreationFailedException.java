@@ -1,7 +1,7 @@
 package se.skorup.group.generation;
 
 /**
- * The exception thrown iff the creation of Groups fail.
+ * The exception thrown iff the creation of Groups fails.
  * */
 public class GroupCreationFailedException extends RuntimeException
 {

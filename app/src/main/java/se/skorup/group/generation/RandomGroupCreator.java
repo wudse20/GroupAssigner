@@ -2,6 +2,7 @@ package se.skorup.group.generation;
 
 import se.skorup.group.Group;
 import se.skorup.group.progress.Progress;
+import se.skorup.util.localization.Localization;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -63,6 +64,6 @@ public class RandomGroupCreator extends GroupCreatorTemplate
     @Override
     public String toString()
     {
-        return "Slumpmässig grupp";
+        return Localization.getValue("random-groups.name");
     }
 }

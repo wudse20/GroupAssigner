@@ -2,23 +2,19 @@ package se.skorup.main.gui.group.panels;
 
 import se.skorup.group.Group;
 import se.skorup.group.MainGroup;
-import se.skorup.group.Person;
 import se.skorup.gui.components.Button;
 import se.skorup.gui.components.ComponentContainer;
 import se.skorup.gui.components.FlowContainer;
 import se.skorup.gui.components.Panel;
 import se.skorup.gui.components.PersonList;
 import se.skorup.gui.components.ScrollPane;
-import se.skorup.util.Utils;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.util.Set;
 import java.util.Vector;
 
 /**

@@ -20,7 +20,7 @@ public abstract class GroupCreatorTemplate implements GroupCreator
     /**
      * Gets the next person.
      *
-     * @param gm the instance of the GroupManger resonsible for the group.
+     * @param gm the instance of the GroupManger responsible for the group.
      * @param left the id's of the persons that are left.
      * @param current the current group being worked on.
      * @param lastId the id that was the last chosen.
