@@ -144,6 +144,7 @@ public class GroupFrame extends Frame
     public void dispose()
     {
         mf.setVisible(true);
+        save();
         super.dispose();
     }
 }
