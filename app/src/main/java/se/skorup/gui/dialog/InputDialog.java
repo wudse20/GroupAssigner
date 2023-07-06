@@ -28,6 +28,10 @@ public final class InputDialog extends Dialog<String>
     private InputDialog()
     {
         this.txfInput = new TextField(12);
+        this.txfInput.addActionListener(e -> {
+            result = txfInput.getText();
+            close();
+        });
     }
 
     @Override
@@ -63,7 +67,7 @@ public final class InputDialog extends Dialog<String>
                 (int) (
                     3 * btnClose.getPreferredSize().getHeight() +
                     3 * lblMessage.getPreferredSize().getHeight() +
-                    3 * txfInput.getPreferredSize().getHeight()
+                    2 * txfInput.getPreferredSize().getHeight()
                 )
             ));
     }
