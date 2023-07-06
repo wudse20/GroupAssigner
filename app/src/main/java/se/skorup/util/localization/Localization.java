@@ -22,6 +22,7 @@ public class Localization
     protected static Map<String, String> map;
 
     static {
+        map = new HashMap<>();
         missing = ConcurrentHashMap.newKeySet();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (!missing.isEmpty())
