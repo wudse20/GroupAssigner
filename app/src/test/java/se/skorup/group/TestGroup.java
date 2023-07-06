@@ -570,4 +570,22 @@ public class TestGroup
         gm.registerPerson("Anton");
         assertEquals(List.of(new Person("Kalle", id1), new Person("Kalle", id2)), gm.getPersonFromName("Kalle"));
     }
+
+    @Test
+    public void testMainGroup()
+    {
+        var gm = new Group("Kaka");
+        var id1 = gm.registerPerson("Kalle");
+        assertEquals(MainGroup.ONE, gm.getMainGroup(id1), "A new person should be registered with mg 1.");
+        assertEquals(Set.of(new Person("Kalle", id1)), gm.getMainGroupOne());
+        gm.setMainGroup(id1, MainGroup.TWO);
+        assertNotSame(gm.getMainGroupOne(), gm.getMainGroupOne(), "Should not be same instance.");
+        assertNotSame(gm.getMainGroupTwo(), gm.getMainGroupTwo(), "Should not be same instance.");
+        assertEquals(MainGroup.TWO, gm.getMainGroup(id1), "After update");
+        assertEquals(Set.of(new Person("Kalle", id1)), gm.getMainGroupTwo());
+        var id2 = gm.registerPerson("Liza");
+        assertEquals(MainGroup.ONE, gm.getMainGroup(id2), "A new person should be registered with mg 1.");
+        gm.setMainGroup(id1, MainGroup.ONE);
+        assertEquals(MainGroup.ONE, gm.getMainGroup(id2), "After update");
+    }
 }

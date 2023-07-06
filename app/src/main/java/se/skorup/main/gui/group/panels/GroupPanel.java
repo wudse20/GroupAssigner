@@ -4,6 +4,7 @@ import se.skorup.group.Group;
 import se.skorup.gui.components.ComponentContainer;
 import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.TabbedPane;
 import se.skorup.gui.dialog.ConfirmDialog;
 import se.skorup.gui.dialog.Dialog;
 import se.skorup.gui.dialog.FileDialog;
@@ -30,7 +31,7 @@ public class GroupPanel extends Panel
 {
     enum State
     {
-        NO_SELECTED, SELECTED
+        NO_SELECTED, SELECTED, MAIN_GROUPS
     }
 
     private State state = State.NO_SELECTED;
@@ -41,6 +42,9 @@ public class GroupPanel extends Panel
 
     private final GroupDisplayPanel gdp = new GroupDisplayPanel();
     private final PersonPanel pp = new PersonPanel();
+    private final MainGroupPanel mgp = new MainGroupPanel();
+
+    private final TabbedPane tabs = new TabbedPane();
 
     private final GroupFrame gf;
 
@@ -64,6 +68,9 @@ public class GroupPanel extends Panel
     private void setProperties()
     {
         lblTitle.setFont(new Font(Font.DIALOG, Font.BOLD, 36));
+
+        tabs.add("ui.title.group", new Panel(null)); // Just a placeholder component
+        tabs.add("ui.title.main-group", mgp);
 
         gdp.addSelectionCallback((p, g) -> {
             if (p == null || g == null)
@@ -185,6 +192,20 @@ public class GroupPanel extends Panel
             }, "Group deletion thread").start();
         });
 
+        gdp.addMainGroupCallback(unused -> {
+            state = State.MAIN_GROUPS;
+            mgp.populateGroup(gdp.getCurrentGroup());
+            addComponents();
+        });
+
+        tabs.addChangeListener(e -> {
+            if (tabs.getSelectedIndex() == 0)
+            {
+                state = State.NO_SELECTED;
+                addComponents();
+            }
+        });
+
         pp.addCallback((g, p) -> {
             g.removePerson(p.id());
             gdp.setGroups(groups);
@@ -199,21 +220,30 @@ public class GroupPanel extends Panel
     {
         this.removeAll();
 
-        var cont = new Panel(null);
-        cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
+        if (state.equals(State.MAIN_GROUPS))
+        {
+            tabs.setSelectedIndex(1);
+            this.add(tabs, BorderLayout.CENTER);
+        }
+        else
+        {
+            var cont = new Panel(null);
+            cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
 
-        var titleCont = new Panel(new FlowLayout(FlowLayout.LEFT));
-        titleCont.add(lblTitle);
+            var titleCont = new Panel(new FlowLayout(FlowLayout.LEFT));
+            titleCont.add(lblTitle);
 
-        cont.add(titleCont);
-        cont.add(gdp);
+            cont.add(titleCont);
+            cont.add(gdp);
 
-        this.add(cont, BorderLayout.CENTER);
+            this.add(cont, BorderLayout.CENTER);
 
-        if (state.equals(State.SELECTED))
-            this.add(new ComponentContainer(pp), BorderLayout.LINE_END);
+            if (state.equals(State.SELECTED))
+                this.add(new ComponentContainer(pp), BorderLayout.LINE_END);
+        }
 
         this.revalidate();
+        this.repaint();
     }
 
     /**

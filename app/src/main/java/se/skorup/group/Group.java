@@ -25,6 +25,9 @@ public class Group implements Serializable
     private final Map<Integer, Set<Integer>> denylist;
     private final Map<Integer, Set<Integer>> wishlist;
 
+    private final Set<Person> mainGroupOne;
+    private final Set<Person> mainGroupTwo;
+
     private String name;
 
     /**
@@ -37,6 +40,8 @@ public class Group implements Serializable
         this.persons = new HashMap<>();
         this.denylist = new HashMap<>();
         this.wishlist = new HashMap<>();
+        this.mainGroupOne = new HashSet<>();
+        this.mainGroupTwo = new HashSet<>();
         this.name = name;
     }
 
@@ -159,7 +164,9 @@ public class Group implements Serializable
      * */
     public synchronized int registerPerson(String name)
     {
-        persons.put(currentId, new Person(name, currentId));
+        var p = new Person(name, currentId);
+        persons.put(currentId, p);
+        mainGroupOne.add(p);
         return currentId++;
     }
 
@@ -171,6 +178,8 @@ public class Group implements Serializable
         persons.remove(id);
         wishlist.remove(id);
         denylist.remove(id);
+        mainGroupOne.remove(persons.get(id));
+        mainGroupTwo.remove(persons.get(id));
     }
 
     /**
@@ -234,6 +243,56 @@ public class Group implements Serializable
         }
 
         return al;
+    }
+
+    /**
+     * Gets which main group a person belongs to.
+     *
+     * @param id the id of the person we are matching against.
+     * */
+    public synchronized MainGroup getMainGroup(int id)
+    {
+        return mainGroupOne.contains(persons.get(id)) ? MainGroup.ONE : MainGroup.TWO;
+    }
+
+    /**
+     * Sets the main group of an id.
+     *
+     * @param id the id to be updated.
+     * @param mg the new main group for the person.
+     * */
+    public synchronized void setMainGroup(int id, MainGroup mg)
+    {
+        if (!persons.containsKey(id))
+            return;
+
+        mainGroupOne.remove(persons.get(id));
+        mainGroupTwo.remove(persons.get(id));
+
+        if (mg.equals(MainGroup.ONE))
+            mainGroupOne.add(persons.get(id));
+        else
+            mainGroupTwo.add(persons.get(id));
+    }
+
+    /**
+     * Gets all the current members of MainGroup 1.
+     *
+     * @return All the current members of MainGroup 1.
+     * */
+    public synchronized Set<Person> getMainGroupOne()
+    {
+        return new HashSet<>(mainGroupOne);
+    }
+
+    /**
+     * Gets all the current members of MainGroup 2.
+     *
+     * @return All the current members of MainGroup 2.
+     * */
+    public synchronized Set<Person> getMainGroupTwo()
+    {
+        return new HashSet<>(mainGroupTwo);
     }
 
     @Override

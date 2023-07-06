@@ -10,6 +10,7 @@ import se.skorup.gui.components.Label;
 import se.skorup.gui.components.Panel;
 import se.skorup.gui.components.PersonList;
 import se.skorup.gui.components.ScrollPane;
+import se.skorup.gui.components.TabbedPane;
 import se.skorup.gui.components.TextField;
 
 import java.awt.BorderLayout;
@@ -24,19 +25,26 @@ public class GroupDisplayPanel extends Panel
 {
     private final List<PersonSelectionCallback> selectionCallbacks;
     private final List<ActionCallback<Void>> createCallbacks;
+    private final List<ActionCallback<Void>> mgCallbacks;
     private final List<ActionCallback<Group>> deleteCallbacks;
 
     private List<Group> groups;
 
     private final ComboBox<Group> cbGroups = new ComboBox<>();
+
     private final PersonList list = new PersonList();
+
     private final Label lblName = new Label("ui.label.name", true);
+
     private final TextField txfInput = new TextField(12);
+
     private final Button btnAdd = new Button("ui.button.add.text");
     private final Button btnMainGroups = new Button("ui.button.main-groups");
     private final Button btnCreateGroup = new Button("ui.button.create.group");
     private final Button btnCreateSubgroup = new Button("ui.button.create.subgroup");
     private final Button btnDeleteGroup = new Button("ui.button.delete-group");
+
+    private final TabbedPane tabs = new TabbedPane();
 
     /**
      * Creates a new panel.
@@ -47,6 +55,7 @@ public class GroupDisplayPanel extends Panel
         this.groups = new ArrayList<>();
         this.selectionCallbacks = new ArrayList<>();
         this.createCallbacks = new ArrayList<>();
+        this.mgCallbacks = new ArrayList<>();
         this.deleteCallbacks = new ArrayList<>();
 
         addComponents();
@@ -96,6 +105,7 @@ public class GroupDisplayPanel extends Panel
 
         btnCreateGroup.addActionListener(e -> createCallbacks.forEach(c -> c.action(null)));
         btnDeleteGroup.addActionListener(e -> deleteCallbacks.forEach(c -> c.action(groups.get(cbGroups.getSelectedIndex()))));
+        btnMainGroups.addActionListener(e -> mgCallbacks.forEach(c -> c.action(null)));
     }
 
     /**
@@ -189,6 +199,20 @@ public class GroupDisplayPanel extends Panel
 
     /**
      * Adds a callback that will be invoked when
+     * the main-group button is pressed.
+     *
+     * @param callback the callback to be added.
+     * */
+    public void addMainGroupCallback(ActionCallback<Void> callback)
+    {
+        if (callback == null)
+            return;
+
+        mgCallbacks.add(callback);
+    }
+
+    /**
+     * Adds a callback that will be invoked when
      * a group is deleted.
      *
      * @param callback the callback to be added.
@@ -208,5 +232,20 @@ public class GroupDisplayPanel extends Panel
     public void clearSelection()
     {
         list.clearSelection();
+    }
+
+    /**
+     * Gets the current group and {@code null}
+     * iff there is no groups.
+     *
+     * @return the current group and {@code null} iff
+     *         there are no groups.
+     * */
+    public Group getCurrentGroup()
+    {
+        if (groups.isEmpty())
+            return null;
+
+        return groups.get(cbGroups.getSelectedIndex());
     }
 }

@@ -17,7 +17,7 @@ public class Panel extends JPanel
      * */
     public Panel(LayoutManager layout)
     {
+        super(layout);
         this.setBackground(Utils.BACKGROUND_COLOR);
-        this.setLayout(layout);
     }
 }
