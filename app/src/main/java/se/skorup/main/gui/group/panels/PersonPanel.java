@@ -3,12 +3,12 @@ package se.skorup.main.gui.group.panels;
 import se.skorup.group.Group;
 import se.skorup.group.Person;
 import se.skorup.gui.callbacks.DeleteCallback;
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.CheckBox;
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.ScrollPane;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.buttons.CheckBox;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
+import se.skorup.gui.components.containers.ScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

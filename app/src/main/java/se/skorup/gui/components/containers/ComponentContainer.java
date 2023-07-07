@@ -1,4 +1,6 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.containers;
+
+import se.skorup.gui.components.output.Label;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

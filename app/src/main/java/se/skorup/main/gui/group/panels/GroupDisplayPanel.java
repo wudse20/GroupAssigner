@@ -3,16 +3,18 @@ package se.skorup.main.gui.group.panels;
 import se.skorup.group.Group;
 import se.skorup.gui.callbacks.ActionCallback;
 import se.skorup.gui.callbacks.PersonSelectionCallback;
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.ComboBox;
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.PersonList;
-import se.skorup.gui.components.ScrollPane;
-import se.skorup.gui.components.TabbedPane;
-import se.skorup.gui.components.TextField;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.list.ComboBox;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
+import se.skorup.gui.components.list.PersonList;
+import se.skorup.gui.components.containers.ScrollPane;
+import se.skorup.gui.components.input.TextField;
+import se.skorup.main.gui.group.frames.GroupFrame;
+import se.skorup.main.gui.group.frames.SubgroupFrame;
 
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
@@ -44,12 +46,12 @@ public class GroupDisplayPanel extends Panel
     private final Button btnCreateSubgroup = new Button("ui.button.create.subgroup");
     private final Button btnDeleteGroup = new Button("ui.button.delete-group");
 
-    private final TabbedPane tabs = new TabbedPane();
-
     /**
      * Creates a new panel.
+     *
+     * @param gf the instance of the GroupFrame in use.
      * */
-    public GroupDisplayPanel()
+    public GroupDisplayPanel(GroupFrame gf)
     {
         super(new BorderLayout());
         this.groups = new ArrayList<>();
@@ -59,15 +61,17 @@ public class GroupDisplayPanel extends Panel
         this.deleteCallbacks = new ArrayList<>();
 
         addComponents();
-        addListeners();
+        addListeners(gf);
 
         btnDeleteGroup.setEnabled(groups.size() != 0);
     }
 
     /**
      * Adds all the listeners.
+     *
+     * @param gf the instance of the GroupFrame in use.
      * */
-    private void addListeners()
+    private void addListeners(GroupFrame gf)
     {
         btnAdd.addActionListener(e -> {
             updateGroup(txfInput.getText().trim());
@@ -106,6 +110,7 @@ public class GroupDisplayPanel extends Panel
         btnCreateGroup.addActionListener(e -> createCallbacks.forEach(c -> c.action(null)));
         btnDeleteGroup.addActionListener(e -> deleteCallbacks.forEach(c -> c.action(groups.get(cbGroups.getSelectedIndex()))));
         btnMainGroups.addActionListener(e -> mgCallbacks.forEach(c -> c.action(null)));
+        btnCreateSubgroup.addActionListener(e -> SwingUtilities.invokeLater(() -> new SubgroupFrame(gf, getCurrentGroup())));
     }
 
     /**

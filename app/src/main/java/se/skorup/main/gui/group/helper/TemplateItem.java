@@ -1,4 +1,4 @@
-package se.skorup.main.gui.group.frames.helper;
+package se.skorup.main.gui.group.helper;
 
 import se.skorup.gui.helper.State;
 

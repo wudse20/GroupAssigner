@@ -588,4 +588,17 @@ public class TestGroup
         gm.setMainGroup(id1, MainGroup.ONE);
         assertEquals(MainGroup.ONE, gm.getMainGroup(id2), "After update");
     }
+
+    @ParameterizedTest
+    @MethodSource("getTestSizes")
+    public void testGetFromId(int testSize)
+    {
+        var gm = new Group("Kaka");
+        var ids = new HashSet<Integer>();
+        for (var i = 0; i < testSize; i++)
+            ids.add(gm.registerPerson(UUID.randomUUID().toString()));
+
+        for (var id : ids)
+            assertEquals(id, gm.getFromId(id).id(), "The id should match");
+    }
 }

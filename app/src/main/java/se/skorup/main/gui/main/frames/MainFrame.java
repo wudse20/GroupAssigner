@@ -1,6 +1,6 @@
 package se.skorup.main.gui.main.frames;
 
-import se.skorup.gui.components.Frame;
+import se.skorup.gui.components.containers.Frame;
 import se.skorup.main.gui.main.panels.MainPanel;
 
 import javax.swing.JFrame;

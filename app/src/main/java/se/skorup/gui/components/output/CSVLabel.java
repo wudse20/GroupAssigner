@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.output;
 
 import se.skorup.gui.callbacks.ActionCallback;
 import se.skorup.gui.callbacks.HoverEffectEnter;

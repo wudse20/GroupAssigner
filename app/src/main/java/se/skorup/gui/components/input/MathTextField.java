@@ -1,5 +1,6 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.input;
 
+import se.skorup.gui.components.input.TextField;
 import se.skorup.util.expression_evaluator.Environment;
 import se.skorup.util.expression_evaluator.expression.Expression;
 import se.skorup.util.expression_evaluator.parser.Parser;

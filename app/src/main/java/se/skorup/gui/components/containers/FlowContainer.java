@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.containers;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -19,6 +19,7 @@ public final class FlowContainer extends Panel
      * @see FlowLayout#RIGHT
      * @see FlowLayout#CENTER
      * @see FlowLayout#TRAILING
+     * @see FlowLayout#LEADING
      * */
     public FlowContainer(Component c, int alignment)
     {

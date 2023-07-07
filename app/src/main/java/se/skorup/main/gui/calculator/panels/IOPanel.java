@@ -1,16 +1,15 @@
 package se.skorup.main.gui.calculator.panels;
 
 import se.skorup.gui.callbacks.ActionCallback;
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.ScrollPane;
-import se.skorup.gui.components.TerminalInput;
-import se.skorup.gui.components.TerminalOutput;
-import se.skorup.gui.components.TerminalPane;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
+import se.skorup.gui.components.containers.ScrollPane;
+import se.skorup.gui.components.input.TerminalInput;
+import se.skorup.gui.components.output.TerminalOutput;
+import se.skorup.gui.components.input.TerminalPane;
 import se.skorup.gui.helper.syntax_highlighting.ExpressionSyntaxHighlighting;
 import se.skorup.util.Utils;
-import se.skorup.util.tag_parser.TextSegment;
 
 import javax.swing.BorderFactory;
 import java.awt.BorderLayout;

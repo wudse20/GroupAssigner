@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.list;
 
 import se.skorup.gui.helper.ui.MyComboBoxUI;
 import se.skorup.util.Utils;

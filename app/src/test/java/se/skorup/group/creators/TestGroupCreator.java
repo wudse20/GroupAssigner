@@ -9,6 +9,7 @@ import se.skorup.group.generation.GroupCreator;
 import se.skorup.group.generation.RandomGroupCreator;
 import se.skorup.group.generation.WishesGroupCreator;
 import se.skorup.group.generation.WishlistGroupCreator;
+import se.skorup.group.progress.Progress;
 import se.skorup.util.collections.ImmutableHashSet;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class TestGroupCreator
 {
     private static final List<Group> gms;
+    private static final Progress p = p -> {};
 
     static
     {
@@ -64,18 +66,18 @@ public class TestGroupCreator
     public static Stream<Arguments> getTestData()
     {
         return Stream.of(
-            Arguments.of(new RandomGroupCreator(a -> {}), 2, gms.get(0)),
+            Arguments.of(new RandomGroupCreator(p), 2, gms.get(0)),
             Arguments.of(new WishlistGroupCreator(), 2, gms.get(0)),
             Arguments.of(new WishlistGroupCreator(0), 2, gms.get(0)),
-            Arguments.of(new WishesGroupCreator(a -> {}), 2, gms.get(0)),
-            Arguments.of(new RandomGroupCreator(a -> {}), 5, gms.get(1)),
+            Arguments.of(new WishesGroupCreator(p), 2, gms.get(0)),
+            Arguments.of(new RandomGroupCreator(p), 5, gms.get(1)),
             Arguments.of(new WishlistGroupCreator(), 5, gms.get(1)),
             Arguments.of(new WishlistGroupCreator(0), 5, gms.get(1)),
-            Arguments.of(new WishesGroupCreator(a -> {}), 5, gms.get(1)),
-            Arguments.of(new RandomGroupCreator(a -> {}), 2, gms.get(2)),
+            Arguments.of(new WishesGroupCreator(p), 5, gms.get(1)),
+            Arguments.of(new RandomGroupCreator(p), 2, gms.get(2)),
             Arguments.of(new WishlistGroupCreator(), 2, gms.get(2)),
             Arguments.of(new WishlistGroupCreator(0), 2, gms.get(2)),
-            Arguments.of(new WishesGroupCreator(a -> {}), 2, gms.get(2))
+            Arguments.of(new WishesGroupCreator(p), 2, gms.get(2))
         );
     }
 
@@ -112,7 +114,7 @@ public class TestGroupCreator
     @Test
     public synchronized void testInterrupt() throws ExecutionException, InterruptedException, TimeoutException
     {
-        var gc = new WishesGroupCreator(a -> {});
+        var gc = new WishesGroupCreator(p);
         var tp = Executors.newSingleThreadExecutor();
 
         var task = tp.submit(() -> gc.generate(gms.get(1), 6, false));

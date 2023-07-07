@@ -1,7 +1,7 @@
 package se.skorup.main.gui.about.frames;
 
-import se.skorup.gui.components.Frame;
-import se.skorup.gui.components.TabbedPane;
+import se.skorup.gui.components.containers.Frame;
+import se.skorup.gui.components.containers.TabbedPane;
 import se.skorup.main.gui.about.panels.AboutPanel;
 import se.skorup.main.gui.about.panels.AttributionPanel;
 import se.skorup.main.gui.calculator.panels.HexagonPanel;

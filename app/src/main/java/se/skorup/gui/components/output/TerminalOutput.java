@@ -1,4 +1,6 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.output;
+
+import se.skorup.gui.components.input.TerminalPane;
 
 import java.awt.Dimension;
 

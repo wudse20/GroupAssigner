@@ -1,10 +1,10 @@
 package se.skorup.main.gui.group.panels;
 
 import se.skorup.group.Group;
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.TabbedPane;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
+import se.skorup.gui.components.containers.TabbedPane;
 import se.skorup.gui.dialog.ConfirmDialog;
 import se.skorup.gui.dialog.Dialog;
 import se.skorup.gui.dialog.FileDialog;
@@ -40,9 +40,9 @@ public class GroupPanel extends Panel
 
     private final Label lblTitle = new Label("ui.label.my-groups", true);
 
-    private final GroupDisplayPanel gdp = new GroupDisplayPanel();
     private final PersonPanel pp = new PersonPanel();
     private final MainGroupPanel mgp = new MainGroupPanel();
+    private final GroupDisplayPanel gdp;
 
     private final TabbedPane tabs = new TabbedPane();
 
@@ -57,6 +57,7 @@ public class GroupPanel extends Panel
     {
         super(new BorderLayout());
         this.gf = gf;
+        this.gdp = new GroupDisplayPanel(gf);
 
         setProperties();
         addComponents();

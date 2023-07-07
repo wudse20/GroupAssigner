@@ -295,6 +295,17 @@ public class Group implements Serializable
         return new HashSet<>(mainGroupTwo);
     }
 
+    /**
+     * Gets a person from an id.
+     *
+     * @param id the id of the person.
+     * @return the person corresponding to the id.
+     * */
+    public synchronized Person getFromId(int id)
+    {
+        return persons.get(id);
+    }
+
     @Override
     public synchronized String toString()
     {

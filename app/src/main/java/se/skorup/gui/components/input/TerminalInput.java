@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.input;
 
 import se.skorup.gui.helper.syntax_highlighting.SyntaxHighlighting;
 import se.skorup.util.collections.ImmutableArray;

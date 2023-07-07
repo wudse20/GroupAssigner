@@ -1,9 +1,9 @@
 package se.skorup.main.gui.main.panels;
 
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
 import se.skorup.main.gui.about.frames.AboutFrame;
 import se.skorup.main.gui.calculator.frames.CalculatorFrame;
 import se.skorup.main.gui.group.frames.GroupFrame;

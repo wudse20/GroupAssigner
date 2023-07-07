@@ -1,6 +1,6 @@
 package se.skorup.util.resource;
 
-import se.skorup.gui.components.Frame;
+import se.skorup.gui.components.containers.Frame;
 import se.skorup.gui.dialog.Dialog;
 import se.skorup.main.gui.about.panels.AttributionPanel;
 import se.skorup.util.Log;

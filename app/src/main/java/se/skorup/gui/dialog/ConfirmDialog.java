@@ -1,14 +1,13 @@
 package se.skorup.gui.dialog;
 
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
 import se.skorup.util.localization.Localization;
 
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 public final class ConfirmDialog extends Dialog<Boolean>

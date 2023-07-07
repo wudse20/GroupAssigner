@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.buttons;
 
 import se.skorup.gui.helper.ui.MyRadioButtonUI;
 import se.skorup.util.Utils;

@@ -3,19 +3,19 @@ package se.skorup.main.gui.group.frames;
 import se.skorup.group.Group;
 import se.skorup.group.Person;
 import se.skorup.gui.callbacks.ActionCallback;
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.CSVLabel;
-import se.skorup.gui.components.Frame;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.RadioButton;
-import se.skorup.gui.components.ScrollPane;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.output.CSVLabel;
+import se.skorup.gui.components.containers.Frame;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
+import se.skorup.gui.components.buttons.RadioButton;
+import se.skorup.gui.components.containers.ScrollPane;
 import se.skorup.gui.dialog.Dialog;
 import se.skorup.gui.dialog.InputDialog;
 import se.skorup.gui.dialog.MessageDialog;
 import se.skorup.gui.helper.State;
-import se.skorup.main.gui.group.frames.helper.Template;
-import se.skorup.main.gui.group.frames.helper.TemplateItem;
+import se.skorup.main.gui.group.helper.Template;
+import se.skorup.main.gui.group.helper.TemplateItem;
 import se.skorup.util.Log;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
@@ -42,10 +42,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static se.skorup.gui.components.CSVLabel.PERSON_COLOR;
-import static se.skorup.gui.components.CSVLabel.SKIP_COLOR;
-import static se.skorup.gui.components.CSVLabel.UNSELECTED_COLOR;
-import static se.skorup.gui.components.CSVLabel.WISH_COLOR;
+import static se.skorup.gui.components.output.CSVLabel.PERSON_COLOR;
+import static se.skorup.gui.components.output.CSVLabel.SKIP_COLOR;
+import static se.skorup.gui.components.output.CSVLabel.UNSELECTED_COLOR;
+import static se.skorup.gui.components.output.CSVLabel.WISH_COLOR;
 
 /**
  * The frame responsible for parsing CSV-files.

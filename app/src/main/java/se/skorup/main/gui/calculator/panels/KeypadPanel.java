@@ -1,8 +1,8 @@
 package se.skorup.main.gui.calculator.panels;
 
 import se.skorup.gui.callbacks.ActionCallback;
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.containers.Panel;
 
 import java.awt.Font;
 import java.awt.GridLayout;

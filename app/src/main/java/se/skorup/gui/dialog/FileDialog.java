@@ -1,10 +1,10 @@
 package se.skorup.gui.dialog;
 
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.FileList;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.ScrollPane;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.list.FileList;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
+import se.skorup.gui.components.containers.ScrollPane;
 import se.skorup.util.Log;
 import se.skorup.util.localization.Localization;
 

@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.list;
 
 import se.skorup.group.Group;
 import se.skorup.group.Person;

@@ -1,6 +1,6 @@
 package se.skorup.main.gui.calculator.panels;
 
-import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.containers.Panel;
 
 import java.awt.Color;
 import java.awt.Graphics;

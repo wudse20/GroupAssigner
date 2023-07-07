@@ -1,7 +1,7 @@
 package se.skorup.main.gui.calculator.frames;
 
-import se.skorup.gui.components.ComponentContainer;
-import se.skorup.gui.components.Frame;
+import se.skorup.gui.components.containers.ComponentContainer;
+import se.skorup.gui.components.containers.Frame;
 import se.skorup.gui.helper.syntax_highlighting.ExpressionSyntaxHighlighting;
 import se.skorup.main.gui.calculator.panels.IOPanel;
 import se.skorup.main.gui.calculator.panels.KeypadPanel;

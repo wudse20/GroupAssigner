@@ -1,19 +1,15 @@
 package se.skorup.main.gui.about.panels;
 
-import se.skorup.gui.components.Button;
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
-import se.skorup.gui.components.ScrollPane;
+import se.skorup.gui.components.buttons.Button;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
 
 /**
  * The attribution panel.

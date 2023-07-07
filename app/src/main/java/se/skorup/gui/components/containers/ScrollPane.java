@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.containers;
 
 import se.skorup.gui.helper.ui.MyScrollBarUI;
 import se.skorup.util.Utils;

@@ -16,6 +16,8 @@ ui.button.cancel: "Avbryt"
 ui.button.delete-group: "Ta bort grupp"
 ui.button.left-arrow: "<html>&larr;</html>"
 ui.button.right-arrow: "<html>&rarr;</html>"
+ui.button.next: "Nästa"
+ui.button.back: "Tillbaka"
 
 ui.button.zero: "0"
 ui.button.one: "1"
@@ -43,6 +45,11 @@ ui.button.dialog.open: "Öppna"
 ui.button.dialog.approve: "Ja"
 ui.button.dialog.disapprove: "Nej"
 ui.button.dialog.cancel: "Avbryt"
+
+ui.radio.random: "Slumpmässiga grupper"
+ui.radio.wish: "Efter önskningar"
+ui.radio.same-size: "Antal personer per grupp"
+ui.radio.different-sizes: "Olika antal personer per grupp"
 
 ui.title.main: "Group Assigner"
 ui.title.about: "Om programmet"
@@ -88,13 +95,19 @@ ui.label.name: "Namn:"
 ui.label.deny: "Denylista:"
 ui.label.wish: "Önskelista:"
 ui.label.create-group: "Vad ska gruppen heta?"
+ui.label.creator: "Vilken typ av grupp vill du skapa?"
+ui.label.size: "Välj gruppstorlek"
+ui.label.sizes: "Välj gruppstorlekar"
+ui.label.subgroup: "Grupp %d:"
 
 ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"
 ui.tab.about.attribution: "Ikonkällor"
 
 ui.error.web-browser: "Kunde inte öppna webbläsaren"
-ui.error.at-least-one-action: "ui.error.at-least-one-action"
+ui.error.at-least-one-action: "Du måste ha minst ett steg i din mall."
+ui.error.not-an-int: "Inte ett giltigt tal"
+ui.error.not-an-intf: "%s är inte ett giltigt tal :("
 
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
 ui.info.attribution.info: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"
@@ -110,3 +123,6 @@ ui.info.attribution.file: "File icons created by Smartline - Flaticon! Download:
 ui.info.attribution.back: "Back icons created by Jesus Chavarria - Flaticon! Download: https://www.flaticon.com/free-icons/back"
 // <a href="https://www.flaticon.com/free-icons/home" title="home icons">Home icons created by Dave Gandy - Flaticon</a>
 ui.info.attribution.home: "Home icons created by Dave Gandy - Flaticon! Download: https://www.flaticon.com/free-icons/home"
+
+random-groups.name: "Slumpmässiga grupper"
+wishes-groups.name: "Grupper efter önskningar"

@@ -1,4 +1,4 @@
-package se.skorup.gui.components;
+package se.skorup.gui.components.buttons;
 
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;

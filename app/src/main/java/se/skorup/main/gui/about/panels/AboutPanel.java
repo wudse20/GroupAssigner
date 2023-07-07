@@ -1,7 +1,7 @@
 package se.skorup.main.gui.about.panels;
 
-import se.skorup.gui.components.Label;
-import se.skorup.gui.components.Panel;
+import se.skorup.gui.components.output.Label;
+import se.skorup.gui.components.containers.Panel;
 import se.skorup.util.Utils;
 import se.skorup.util.localization.Localization;
 
