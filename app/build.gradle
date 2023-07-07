@@ -3,8 +3,9 @@
  *
  * This generated file contains a sample Java application project to get you started.
  * For more details take a look at the 'Building Java & JVM projects' chapter in the Gradle
- * User Manual available at https://docs.gradle.org/7.3.1/userguide/building_java_projects.html
+ * User Manual available at https://docs.gradle.org/8.1-rc-4/userguide/building_java_projects.html
  */
+
 
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
@@ -18,10 +19,17 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
 
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'com.google.guava:guava:31.1-jre'
+}
+
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(20)
+    }
 }
 
 application {
@@ -29,57 +37,27 @@ application {
     mainClass = 'se.skorup.main.Main'
 }
 
-tasks.register('runVersionCheckerTermsFrame', JavaExec) {
-    group = "Execution"
-    description = "Run the main class with JavaExecTask"
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = "se.skorup.version.gui.VersionCheckerTermsFrame"
-}
-
-test {
-    testLogging {
-        events "skipped", "failed", "passed"
-        exceptionFormat "full"
-    }
-}
-
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
 
-    ext.failedTests = []
-    ext.failedTestCounter = 0
-    ext.passedTestCounter = 0
 
-    afterTest { descriptor, result ->
-        if (result.resultType == TestResult.ResultType.FAILURE) {
-            String failedTest = "${descriptor.className}::${descriptor.name}"
-            failedTests << [failedTest]
-            failedTestCounter++
-        } else {
-            passedTestCounter++
-        }
+version = '0.5'
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'GroupAssigner',
+                'Implementation-Version': version,
+                'Main-Class': application.mainClass
     }
+}
 
-    afterSuite { suite, result ->
-        if (!suite.parent) {
-            if (!failedTests.empty) {
-                logger.lifecycle("Failed tests:")
-                failedTests.each { failedTest ->
-                    logger.lifecycle("${failedTest}")
-                }
-            }
-
-            logger.lifecycle("Passed: %d, failed: %d, ratio: %f".formatted(
-                passedTestCounter, failedTestCounter,
-                (double) passedTestCounter / (passedTestCounter + failedTestCounter)
-            ))
-        }
-    }
+tasks.register('buildProject') {
+    dependsOn 'clean', 'jar'
 }

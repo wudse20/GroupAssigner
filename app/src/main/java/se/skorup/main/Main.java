@@ -1,139 +1,117 @@
 package se.skorup.main;
 
-import se.skorup.API.util.DebugMethods;
-import se.skorup.API.util.Utils;
-import se.skorup.main.gui.frames.MainFrame;
-import se.skorup.API.util.SerializationUtil;
-import se.skorup.version.VersionChecker;
-import se.skorup.version.VersionCheckerSettings;
-import se.skorup.version.gui.VersionCheckerTermsFrame;
+import se.skorup.gui.dialog.ConfirmDialog;
+import se.skorup.gui.dialog.Dialog;
+import se.skorup.gui.dialog.MessageDialog;
+import se.skorup.main.gui.main.frames.MainFrame;
+import se.skorup.util.Log;
+import se.skorup.util.Utils;
+import se.skorup.util.io.SerializationUtil;
+import se.skorup.util.resource.ResourceLoader;
 
 import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * The class responsible for starting the program,
- * i.e. the main class.
+ * The main class and the main entry point for the program.
  * */
 public class Main
 {
-    private static final String VERSION_PATH = Utils.getFolderName() + "settings/version_checking.data";
+    /** The path to the version check. */
+    private static final String VERSION_PATH = "%sversion".formatted(Utils.getFolderName());
 
     /**
-     * The main method starts the program.
+     * The main method.
      *
-     * @param args the args passed to the command line.
+     * @param args the arguments sent to this program are ignored.
      * */
     public static void main(String[] args)
     {
-        new Main().startProgram();
+        loadResources();
+        versionCheck();
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 
     /**
-     * The method that does everything to start
-     * the program.
+     * Does a version check.
      * */
-    private void startProgram()
+    private static void versionCheck()
     {
-        var settingsFile = new File(VERSION_PATH);
+        if (Utils.VERSION.toLowerCase().contains("indev"))
+            return;
 
-        if (settingsFile.exists())
+        var permission = false;
+        if (!new File(VERSION_PATH).exists()) // We need to ask permission.
         {
-            var shouldCheck = shouldCheckVersion(settingsFile);
-
-            if (shouldCheck)
-                VersionChecker.checkVersion(); // Checks the version, if allowed.
-        }
-        else
-        {
-            final var mon = new VersionCheckerMonitor();
-
-            SwingUtilities.invokeLater(() -> {
-                new VersionCheckerTermsFrame(shouldCheck -> {
-                    var set = new VersionCheckerSettings(shouldCheck);
-                    new Thread(() -> { // No running this on the EDT.
-                        try
-                        {
-                            SerializationUtil.serializeObject(VERSION_PATH, set);
-                        }
-                        catch (IOException e)
-                        {
-                            DebugMethods.errorF("Error: %s", e.getLocalizedMessage());
-                        }
-                        finally
-                        {
-                            mon.reportFinished();
-                        }
-                    }, "Serializer").start();
-                });
-            });
+            permission = ConfirmDialog.create()
+                                      .setLocalizedQuestion("ui.question.version-checking")
+                                      .setLocalizedApproveButtonText("ui.button.dialog.approve")
+                                      .setLocalizedDisapproveButtonText("ui.button.dialog.disapprove")
+                                      .setLocalizedTitle("ui.title.version-checking")
+                                      .show();
 
             try
             {
-                mon.awaitAnswer();
-                var shouldCheck = shouldCheckVersion(new File(VERSION_PATH));
-
-                if (shouldCheck)
-                    VersionChecker.checkVersion();
+                SerializationUtil.serializeObject(VERSION_PATH, permission);
             }
-            catch (InterruptedException unexpected)
+            catch (IOException e)
             {
-                // Should never happen, but I want an error
-                // if it by some unknown reason happens.
-                throw new RuntimeException(unexpected);
+                Log.errorf("Filed to save permission: %s", e.getLocalizedMessage());
+            }
+        }
+        else
+        {
+            try
+            {
+                permission = SerializationUtil.deserializeObject(VERSION_PATH);
+            } catch (IOException | ClassNotFoundException e)
+            {
+                Log.errorf("Filed to load permission: %s", e.getLocalizedMessage());
+                Log.error("Skips version check...");
+                return;
             }
         }
 
-        SwingUtilities.invokeLater(MainFrame::new); // Starts program.
+        if (!permission)
+        {
+            Log.debug("No version check, we don't have user permission.");
+            return;
+        }
+
+        var version = Utils.getContentOfURL(Utils.VERSION_URL);
+
+        if (version.isPresent())
+        {
+            var ver = version.get();
+            if (!ver.equalsIgnoreCase(Utils.VERSION))
+            {
+                MessageDialog.create()
+                             .setLocalizedTitle("ui.title.wrong-version")
+                             .setLocalizedInformationf("ui.info.wrong-version", ver, Utils.VERSION)
+                             .setLocalizedButtonText("ui.button.dialog.close")
+                             .show(Dialog.WARNING_MESSAGE);
+            }
+        }
     }
 
     /**
-     * Reads the file and checks if it should check for the version.
-     *
-     * @param f the file that stores the user's choice.
-     * @return {@code true} if it should check for it,
-     *         {@code false} if it shouldn't check for it.
+     * Loads the resources from the Jar-file.
      * */
-    private boolean shouldCheckVersion(File f)
+    private static void loadResources()
     {
+        var rl = ResourceLoader.getBuilder()
+                               .initLangFile("SV_se.lang")
+                               .loadIcons()
+                               .build();
+
         try
         {
-            var set = (VersionCheckerSettings) SerializationUtil.deserializeObject(f.getAbsolutePath());
-            return set.shouldCheck();
+            rl.loadResources();
         }
-        catch (IOException | ClassNotFoundException e)
+        catch (IOException e)
         {
-            return false;
-        }
-    }
-
-    /**
-     * A simple monitor to wait for the user's answer.
-     * */
-    private static class VersionCheckerMonitor
-    {
-        private boolean shouldWait = true;
-
-        /**
-         * Awaits an answer from the user.
-         *
-         * @throws InterruptedException iff the thread is interrupted.
-         * */
-        private synchronized void awaitAnswer() throws InterruptedException
-        {
-            while (shouldWait)
-                wait();
-        }
-
-        /**
-         * Reports finished to the monitor and
-         * wakes the waiting threads.
-         * */
-        private synchronized void reportFinished()
-        {
-            shouldWait = false;
-            notifyAll(); // Could probably be the method notify, but no risks taken here.
+            Log.error(e);
         }
     }
 }
