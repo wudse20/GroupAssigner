@@ -103,11 +103,17 @@ ui.label.subgroup: "Grupp %d:"
 ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"
 ui.tab.about.attribution: "Ikonkällor"
+ui.tab.subgroups: "Undergrupper"
+ui.tab.statistics: "Statistik"
 
 ui.error.web-browser: "Kunde inte öppna webbläsaren"
 ui.error.at-least-one-action: "Du måste ha minst ett steg i din mall."
 ui.error.not-an-int: "Inte ett giltigt tal"
 ui.error.not-an-intf: "%s är inte ett giltigt tal :("
+
+ui.wishes.score: "Poäng för undergrupperna: %f"
+ui.wishes.max: "Högsta antal uppfyllda önskningar: %d"
+ui.wishes.number: "Antal personer med %d önskningar: %d"
 
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
 ui.info.attribution.info: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"

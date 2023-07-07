@@ -40,54 +40,6 @@ public final class WishesGroupCreator implements GroupCreator
         this.progress = progress;
     }
 
-    private int n(int i)
-    {
-        return (int) (0.5d * i * i + 2.5d * i);
-    }
-
-    private double omega(int x)
-    {
-        return x <= 0 ? 0 : 10 * Math.exp(x);
-    }
-
-    /**
-     * Calculates the score of a group result.
-     *
-     * @param groups the groups.
-     * @return the score of the group.
-     * */
-    private double getScore(Iterable<Set<Integer>> groups, Group gm)
-    {
-        var persons = gm.getIds();
-        var x = new int[persons.size()];
-        var highestCount = 0;
-
-        for (var p : persons)
-        {
-            var cnt = 0;
-            var wished = ImmutableHashSet.fromCollection(gm.getWishedIds(p));
-
-            for (var g : groups)
-            {
-                if (g.contains(p))
-                {
-                    cnt += wished.intersection(g).size();
-                }
-            }
-
-            highestCount = Math.max(cnt, highestCount);
-            x[cnt]++;
-        }
-
-        var psi = 0;
-        for (var i = 1; i < highestCount; i++)
-        {
-            psi += Math.pow(x[i], i) / Math.pow(2, n(i));
-        }
-
-        return psi - omega(x[0]) * x[0];
-    }
-
     /**
      * Generates the groups using a multithreaded system for generating the best alternatives.
      *
@@ -217,6 +169,66 @@ public final class WishesGroupCreator implements GroupCreator
     public String toString()
     {
         return Localization.getValue("wishes-groups.name");
+    }
+
+    /**
+     * The n-function used in calculating the score.
+     *
+     * @param i the value to apply to n.
+     * @return the value n(i).
+     * */
+    public static int n(int i)
+    {
+        return (int) (0.5d * i * i + 2.5d * i);
+    }
+
+    /**
+     * The omega-function used in calculating the score.
+     *
+     * @param x the number of persons with zero wishes.
+     * @return the value of omega(x).
+     * */
+    public static double omega(int x)
+    {
+        return x <= 0 ? 0 : 10 * Math.exp(x);
+    }
+
+    /**
+     * Calculates the score of a group result.
+     *
+     * @param groups the groups.
+     * @return the score of the group.
+     * */
+    public static double getScore(Iterable<Set<Integer>> groups, Group gm)
+    {
+        var persons = gm.getIds();
+        var x = new int[persons.size()];
+        var highestCount = 0;
+
+        for (var p : persons)
+        {
+            var cnt = 0;
+            var wished = ImmutableHashSet.fromCollection(gm.getWishedIds(p));
+
+            for (var g : groups)
+            {
+                if (g.contains(p))
+                {
+                    cnt += wished.intersection(g).size();
+                }
+            }
+
+            highestCount = Math.max(cnt, highestCount);
+            x[cnt]++;
+        }
+
+        var psi = 0;
+        for (var i = 1; i < highestCount; i++)
+        {
+            psi += Math.pow(x[i], i) / Math.pow(2, n(i));
+        }
+
+        return psi - omega(x[0]) * x[0];
     }
 
     private record Result(List<Set<Integer>> groups, double score) {}
