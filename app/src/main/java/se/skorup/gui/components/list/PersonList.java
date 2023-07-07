@@ -36,6 +36,12 @@ public class PersonList extends JList<Person>
      * */
     public void setGroup(Group g)
     {
+        if (g == null)
+        {
+            this.setListData(new Vector<>());
+            return;
+        }
+
         var people = g.getPersons();
         Collections.sort((List<Person>) people);
         this.setListData(new Vector<>(people));

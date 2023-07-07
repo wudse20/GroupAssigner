@@ -167,6 +167,7 @@ public class GroupDisplayPanel extends Panel
         if (groups.size() == 0)
         {
             cbGroups.setSelectedIndex(-1);
+            list.setGroup(null);
             return;
         }
 
