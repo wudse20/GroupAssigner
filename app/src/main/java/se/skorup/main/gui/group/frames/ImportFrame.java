@@ -35,12 +35,14 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static se.skorup.gui.components.output.CSVLabel.PERSON_COLOR;
 import static se.skorup.gui.components.output.CSVLabel.SKIP_COLOR;
@@ -715,6 +717,11 @@ public class ImportFrame extends Frame implements KeyListener
 
         scrCSV.setBorder(BorderFactory.createEmptyBorder());
 
+        var maxCols = Arrays.stream(data)
+                            .mapToInt(a -> a.length)
+                            .max()
+                            .orElse(0);
+
         for (var i = 0; i < data.length; i++)
         {
             for (var ii = 0; ii < data[i].length; ii++)
@@ -728,6 +735,9 @@ public class ImportFrame extends Frame implements KeyListener
                 pCSV.add(label);
                 labels[i][ii] = new PersonLabelRecord(label, null);
             }
+
+            for (var ii = data[i].length; ii < maxCols; ii++)
+                pCSV.add(new Label(" "));
         }
 
         btnAdd.addActionListener(e -> addGroup());
