@@ -63,7 +63,7 @@ public class GroupDisplayPanel extends Panel
         addComponents();
         addListeners(gf);
 
-        btnDeleteGroup.setEnabled(groups.size() != 0);
+        btnDeleteGroup.setEnabled(!groups.isEmpty());
     }
 
     /**

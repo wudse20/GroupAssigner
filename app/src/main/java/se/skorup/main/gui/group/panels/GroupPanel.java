@@ -203,6 +203,7 @@ public class GroupPanel extends Panel
             if (tabs.getSelectedIndex() == 0)
             {
                 state = State.NO_SELECTED;
+                gdp.clearSelection();
                 addComponents();
             }
         });
