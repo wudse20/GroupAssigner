@@ -31,4 +31,10 @@ public record Person(String name, int id) implements Serializable, Comparable<Pe
     {
         return name.compareTo(o.name);
     }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }

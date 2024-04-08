@@ -59,6 +59,7 @@ ui.title.version-checking: "Versionskoll"
 ui.title.wrong-version: "Fel version :("
 ui.title.create-group: "Skapa grupp"
 ui.title.main-group: "Huvudgrupper"
+ui.title.calculator: "Miniräknare"
 
 ui.title.dialog.file: "Välj din fil"
 ui.title.dialog.error: "Fel: %s"
