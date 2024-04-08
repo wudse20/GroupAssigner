@@ -51,7 +51,7 @@ interface Constants
 
     // About
     /** The version of the program. */
-    String VERSION = "0.5";
+    String VERSION = "0.5.1 - Indev";
 
     /** The about-string. */
     String ABOUT = Localization.getValue("ui.info.about").formatted(VERSION);
