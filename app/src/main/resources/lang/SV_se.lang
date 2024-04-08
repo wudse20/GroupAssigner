@@ -101,6 +101,9 @@ ui.label.creator: "Vilken typ av grupp vill du skapa?"
 ui.label.size: "Välj gruppstorlek"
 ui.label.sizes: "Välj gruppstorlekar"
 ui.label.subgroup: "Grupp %d:"
+ui.label.settings: "Välj inställningar för dina undergrupper"
+ui.label.main-group-1: "Huvudgrupp 1"
+ui.label.main-group-2: "Huvudgrupp 2"
 
 ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"
@@ -116,6 +119,8 @@ ui.error.not-an-intf: "%s är inte ett giltigt tal :("
 ui.wishes.score: "Poäng för undergrupperna: %f"
 ui.wishes.max: "Högsta antal uppfyllda önskningar: %d"
 ui.wishes.number: "Antal personer med %d önskningar: %d"
+
+ui.cb.use-main-groups: "Använd huvudgrupper"
 
 // <a href="https://www.flaticon.com/free-icons/information" title="information icons">Information icons created by Freepik - Flaticon</a>
 ui.info.attribution.info: "Information icons created by Freepik - Flaticon! Download: https://www.flaticon.com/free-icons/information"

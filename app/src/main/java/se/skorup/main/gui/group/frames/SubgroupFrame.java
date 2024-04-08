@@ -9,9 +9,10 @@ import se.skorup.gui.components.containers.ComponentContainer;
 import se.skorup.gui.components.containers.Frame;
 import se.skorup.gui.components.progress.ProgressBar;
 import se.skorup.main.gui.group.helper.Creator;
+import se.skorup.main.gui.group.helper.GenerationSettings;
 import se.skorup.main.gui.group.helper.ProgressReport;
 import se.skorup.main.gui.group.panels.CreatorPanel;
-import se.skorup.main.gui.group.panels.SizePanel;
+import se.skorup.main.gui.group.panels.GenerationSettingsPanel;
 import se.skorup.main.gui.group.panels.SubgroupDisplayPanel;
 import se.skorup.util.Log;
 
@@ -21,7 +22,9 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -44,7 +47,7 @@ public class SubgroupFrame extends Frame implements ComponentListener
     private final GroupFrame gf;
 
     private final CreatorPanel creatorPanel = new CreatorPanel();
-    private final SizePanel sizePanel = new SizePanel();
+    private final GenerationSettingsPanel settingsPanel = new GenerationSettingsPanel(this);
     private final SubgroupDisplayPanel subgroupDisplayPanel = new SubgroupDisplayPanel((JComponent) cp);
 
     private final ProgressBar progress = new ProgressBar();
@@ -84,22 +87,22 @@ public class SubgroupFrame extends Frame implements ComponentListener
             addComponents();
         });
 
-        sizePanel.addBackCallback(unused -> {
+        settingsPanel.addBackCallback(unused -> {
             state = State.CREATOR;
             addComponents();
         });
 
-        sizePanel.addNextCallback(this::generateAction);
+        settingsPanel.addNextCallback(this::generateAction);
     }
 
     /**
      * The action that will be performed when next is pressed
      * in the sizePanel.
      *
-     * @param sizes the list of sizes that is gotten from
+     * @param settings the list of sizes that is gotten from
      *              the size panel.
      * */
-    private void generateAction(List<Integer> sizes)
+    private void generateAction(GenerationSettings settings)
     {
         new Thread(() -> {
             SwingUtilities.invokeLater(() -> {
@@ -107,16 +110,39 @@ public class SubgroupFrame extends Frame implements ComponentListener
                 addComponents();
             });
 
-            final var res = sizes.size() == 1 ?
-                            creator.generate(g, sizes.get(0), false) :
-                            creator.generate(g, sizes);
+            final List<List<Set<Integer>>> res;
+            if (settings.useMainGroups())
+            {
+                var mg1 = settings.mg1Sizes();
+                var mg2 = settings.mg2Sizes();
 
-            Log.debugf("Generated Groups: %s", res);
+                var mg1Res = mg1.size() == 1 ?
+                             creator.generate(g.mainGroupOneAsGroup(), mg1.getFirst(), false) :
+                             creator.generate(g.mainGroupOneAsGroup(), mg1);
+
+                var mg2Res = mg1.size() == 1 ?
+                             creator.generate(g.mainGroupTwoAsGroup(), mg2.getFirst(), false) :
+                             creator.generate(g.mainGroupTwoAsGroup(), mg2);
+
+                var groups = new ArrayList<>(mg1Res.get(new Random().nextInt(0, mg1Res.size())));
+                groups.addAll(mg2Res.get(new Random().nextInt(0, mg2Res.size())));
+                res = List.of(groups);
+            }
+            else
+            {
+                var sizes = settings.sizes();
+
+                res = sizes.size() == 1 ?
+                      creator.generate(g, sizes.getFirst(), false) :
+                      creator.generate(g, sizes);
+
+                Log.debugf("Generated Groups: %s", res);
+            }
 
             SwingUtilities.invokeLater(() -> {
                 progress.setValue(1_000_000);
-                subgroupDisplayPanel.displayGroups(g, res.get(0));
-                current = res.get(0);
+                subgroupDisplayPanel.displayGroups(g, res.getFirst());
+                current = res.getFirst();
                 state = State.DISPLAY;
                 addComponents();
             });
@@ -130,7 +156,7 @@ public class SubgroupFrame extends Frame implements ComponentListener
 
         var p = switch (state) {
             case CREATOR -> creatorPanel;
-            case SIZE -> sizePanel;
+            case SIZE -> settingsPanel;
             case PROGRESS -> new ComponentContainer(progress);
             case DISPLAY -> subgroupDisplayPanel;
         };

@@ -28,7 +28,7 @@ public class GroupFrame extends Frame
     /** The path where the save file lies. */
     public static final String SAVES_PATH = "%ssaves/save.data".formatted(Utils.getFolderName());
 
-    private List<Group> groups = new ArrayList<>();
+    private final List<Group> groups = new ArrayList<>();
 
     private final MainFrame mf;
 
@@ -62,9 +62,8 @@ public class GroupFrame extends Frame
             EncryptedSerializationUtil.serializeObject(SAVES_PATH + ".enc", (Serializable) groups);
             Log.debug("Saving process finished correctly.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-
+        catch (Exception e)
+        {
             Log.errorf("Encrypted saving process failed: %s", e.getLocalizedMessage());
 
             // If saving failed, then try the unencrypted route.
@@ -75,7 +74,6 @@ public class GroupFrame extends Frame
             }
             catch (IOException ex)
             {
-                ex.printStackTrace();
                 Log.errorf("Unencrypted saving process failed: %s", e.getLocalizedMessage());
             }
         }

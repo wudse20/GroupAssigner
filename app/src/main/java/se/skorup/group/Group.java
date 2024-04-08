@@ -170,6 +170,12 @@ public class Group implements Serializable
         return currentId++;
     }
 
+    private synchronized int registerPerson(Person p)
+    {
+        persons.put(p.id(), p);
+        return p.id();
+    }
+
     /**
      * Removes a person from the group.
      * */
@@ -286,6 +292,18 @@ public class Group implements Serializable
     }
 
     /**
+     * Gets all the current members of MainGroup 1 as its own group.
+     *
+     * @return a group containing MainGroup 1.
+     * */
+    public synchronized Group mainGroupOneAsGroup()
+    {
+        var g = new Group("mg1");
+        getMainGroupOne().forEach(g::registerPerson);
+        return g;
+    }
+
+    /**
      * Gets all the current members of MainGroup 2.
      *
      * @return All the current members of MainGroup 2.
@@ -293,6 +311,18 @@ public class Group implements Serializable
     public synchronized Set<Person> getMainGroupTwo()
     {
         return new HashSet<>(mainGroupTwo);
+    }
+
+    /**
+     * Gets all the current members of MainGroup 2 as its own group.
+     *
+     * @return a group containing MainGroup 2.
+     * */
+    public synchronized Group mainGroupTwoAsGroup()
+    {
+        var g = new Group("mg2");
+        getMainGroupTwo().forEach(g::registerPerson);
+        return g;
     }
 
     /**

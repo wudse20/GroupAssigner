@@ -65,7 +65,8 @@ public class Main
             try
             {
                 permission = SerializationUtil.deserializeObject(VERSION_PATH);
-            } catch (IOException | ClassNotFoundException e)
+            }
+            catch (IOException | ClassNotFoundException e)
             {
                 Log.errorf("Filed to load permission: %s", e.getLocalizedMessage());
                 Log.error("Skips version check...");

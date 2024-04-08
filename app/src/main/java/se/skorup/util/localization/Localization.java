@@ -113,7 +113,7 @@ public class Localization
 
         for (var l : lines)
         {
-            if (l.trim().length() == 0)
+            if (l.trim().isEmpty())
                 continue;
 
             if (l.trim().length() > 2 && l.charAt(0) == '/' && l.charAt(1) == '/')
@@ -151,7 +151,7 @@ public class Localization
                 valueSb.append(c);
             }
 
-            if (valueSb.toString().trim().length() == 0)
+            if (valueSb.toString().trim().isEmpty())
                 continue;
 
             map.put(keySb.toString().trim(), valueSb.toString());
