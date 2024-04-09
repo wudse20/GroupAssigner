@@ -89,7 +89,7 @@ public class Utils implements Constants
      * */
     public static String toNameCase(String input)
     {
-        if (input.length() == 0)
+        if (input.isEmpty())
             return input;
 
         var names = input.split("\\s+");
@@ -248,4 +248,25 @@ public class Utils implements Constants
             return Optional.empty();
         }
     }
+
+    /**
+     * Pads a string to a specific length and adds
+     * all the chars to the right side, i.e., right pad.
+     *
+     * @param toPad the string that should be padded.
+     * @param c the char that will be padded with
+     * @param length the length that it will be padded to.
+     * @return <i>toPad</i> if {@code length(toPad) >= length}, else a padded string
+     *         with <i>c</i> to length <i>length</i>.
+     * */
+    public static String pad(String toPad, char c, int length)
+    {
+        var originalLength = toPad.length();
+        if (originalLength >= length)
+            return toPad; // No padding needed, return original string
+
+        var totalPadding = length - originalLength;
+        return "%s%s".formatted(toPad, Character.toString(c).repeat(totalPadding));
+    }
+
 }

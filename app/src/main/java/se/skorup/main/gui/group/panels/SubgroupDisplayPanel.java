@@ -11,6 +11,7 @@ import se.skorup.gui.layouts.DoubleColumnGenerator;
 import se.skorup.gui.layouts.NColumnGenerator;
 import se.skorup.gui.layouts.SingleColumnGenerator;
 import se.skorup.gui.layouts.TripleColumnGenerator;
+import se.skorup.main.gui.group.components.PersonButton;
 import se.skorup.util.Utils;
 import se.skorup.util.collections.ImmutableHashSet;
 import se.skorup.util.localization.Localization;
@@ -29,8 +30,12 @@ import java.util.Set;
  * */
 public class SubgroupDisplayPanel extends Panel
 {
-    private final JComponent parent;
+    private int selectedId = -1;
+    private int selectedGroupIndex = -1;
 
+    private final List<PersonButton> buttons;
+
+    private final JComponent parent;
     private final TabbedPane tabs = new TabbedPane();
 
     /**
@@ -42,6 +47,7 @@ public class SubgroupDisplayPanel extends Panel
     {
         super(new BorderLayout());
         this.parent = parent;
+        this.buttons = new ArrayList<>();
     }
 
     /**
@@ -66,6 +72,7 @@ public class SubgroupDisplayPanel extends Panel
     public void displayGroups(Group g, List<Set<Integer>> groups)
     {
         this.removeAll();
+        this.buttons.clear();
         var groupPanel = getGroupPanel(g, groups);
         var statsPanel = getStatsPanel(g, groups);
 
@@ -92,12 +99,10 @@ public class SubgroupDisplayPanel extends Panel
         var x = new int[persons.size()];
         var highestCount = 0;
         var maxWishes = 0;
-        var index = 0;
 
         for (var p : persons)
         {
             var cnt = 0;
-            index++;
             var wished = ImmutableHashSet.fromCollection(g.getWishedIds(p));
 
             for (var gr : groups)
@@ -150,6 +155,10 @@ public class SubgroupDisplayPanel extends Panel
                            .max()
                            .orElse(0);
 
+        longestName = Math.max(
+            Localization.getValuef("ui.label.subgroup", groups.size()).length(), longestName
+        );
+
         var cont = new Panel(
             getLayout(parent.getWidth(), longestName * 4).generateLayout(groups.size())
         );
@@ -157,12 +166,31 @@ public class SubgroupDisplayPanel extends Panel
         var cnt = 1;
         for (var group : groups)
         {
+            cnt++;
             var p = new Panel(null);
             p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 
-            var header = new Label(Localization.getValuef("ui.label.subgroup", cnt++));
+            var header = new PersonButton(
+                Utils.pad(Localization.getValuef("ui.label.subgroup", cnt), ' ', longestName + 2),
+                cnt - 2, cnt - 2
+            );
+
+            header.setBorder(BorderFactory.createEmptyBorder());
             header.setForeground(Utils.GROUP_NAME_COLOR);
-            header.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
+            header.hoverEffect = false;
+            header.addActionListener(e -> {
+                if (selectedId == -1 || selectedGroupIndex == -1 || selectedGroupIndex == header.groupIndex)
+                    return;
+
+                if (groups.get(selectedGroupIndex).remove(selectedId))
+                    groups.get(header.groupIndex).add(selectedId);
+
+                selectedId = -1;
+                selectedGroupIndex = -1;
+                buttons.forEach(PersonButton::clearSelection);
+                this.displayGroups(g, groups);
+            });
+
             p.add(header);
 
             for (var id : group)
@@ -171,9 +199,29 @@ public class SubgroupDisplayPanel extends Panel
                 spacer.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
                 p.add(spacer);
 
-                var lbl = new Label(g.getFromId(id).name());
-                lbl.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
-                p.add(lbl);
+                var btn = new PersonButton(
+                    Utils.pad(g.getFromId(id).name(), ' ', longestName + 2),
+                    id, cnt - 2
+                );
+
+                btn.addActionListener(e -> {
+                    buttons.forEach(PersonButton::clearSelection);
+
+                    if (selectedId != btn.id)
+                    {
+                        selectedId = btn.id;
+                        selectedGroupIndex = btn.groupIndex;
+                        btn.setSelected();
+                    }
+                    else
+                    {
+                        selectedId = -1;
+                        selectedGroupIndex = -1;
+                    }
+                });
+
+                p.add(btn);
+                buttons.add(btn);
             }
 
             cont.add(p);

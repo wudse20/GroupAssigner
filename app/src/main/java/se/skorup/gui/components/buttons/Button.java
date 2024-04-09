@@ -20,7 +20,26 @@ public class Button extends JButton
      * */
     public Button(String localizationTag)
     {
-        super(Localization.getValue(localizationTag));
+        this(localizationTag, true);
+    }
+
+    /**
+     * Creates a new button where the text is
+     * either a localization tag or just a regular
+     * string. It will be treated as a localization
+     * tag if and only if localization is set to
+     * {@code true}.
+     *
+     * @param text The text or the localization tag that will
+     *             be displayed on the button.
+     * @param localization if {@code true} it will be treated as
+     *                     a localization tag,
+     *                     else it will be treated as an ordinary
+     *                     string.
+     * */
+    public Button(String text, boolean localization)
+    {
+        super(localization ? Localization.getValue(text) : text);
         setProperties();
     }
 
