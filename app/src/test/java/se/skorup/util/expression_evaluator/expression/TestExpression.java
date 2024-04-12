@@ -572,6 +572,16 @@ public class TestExpression
         assertEquals(Utils.pow(5, Utils.pow(2, 2)), power.getValue(alwaysZeroEnv));
     }
 
+    @Test
+    public void testPowerExpression2()
+    {
+        var expr1 = new Parser("5 ^ 2").parse();
+        var expr2 = new Parser("2").parse();
+        var power = new Power(expr1, expr2);
+
+        assertEquals(Utils.pow(5, Utils.pow(2, 2)), power.getValue(alwaysZeroEnv));
+    }
+
     public static ToStringTest[] getData()
     {
         var list = new ArrayList<ToStringTest>();
@@ -588,6 +598,8 @@ public class TestExpression
         list.add(new ToStringTest("x % 2", new Parser("x % 2").parse()));
         list.add(new ToStringTest("5 ** 2", new Parser("5 ** 2").parse()));
         list.add(new ToStringTest("5 ** x", new Parser("5 ** x").parse()));
+        list.add(new ToStringTest("5 ** 2", new Parser("5 ^ 2").parse()));
+        list.add(new ToStringTest("5 ** x", new Parser("5 ^ x").parse()));
         list.add(new ToStringTest("5 * kaka + kakor", new Parser("5 * kaka + kakor").parse()));
 
         // Double
@@ -602,6 +614,8 @@ public class TestExpression
         list.add(new ToStringTest("x % 2.0", new Parser("x % 2.0").parse()));
         list.add(new ToStringTest("5.0 ** 2.0", new Parser("5.0 ** 2.0").parse()));
         list.add(new ToStringTest("5.0 ** x", new Parser("5.0 ** x").parse()));
+        list.add(new ToStringTest("5.0 ** 2.0", new Parser("5.0 ^ 2.0").parse()));
+        list.add(new ToStringTest("5.0 ** x", new Parser("5.0 ^ x").parse()));
         list.add(new ToStringTest("5.0 * kaka + kakor", new Parser("5.0 * kaka + kakor").parse()));
 
         var arr = new ToStringTest[list.size()];
@@ -636,6 +650,10 @@ public class TestExpression
         list.add(new TypingTest("5.0 ** 5", Type.DOUBLE));
         list.add(new TypingTest("5 ** 5.0", Type.DOUBLE));
         list.add(new TypingTest("5.0 ** 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5 ^ 5", Type.INTEGER));
+        list.add(new TypingTest("5.0 ^ 5", Type.DOUBLE));
+        list.add(new TypingTest("5 ^ 5.0", Type.DOUBLE));
+        list.add(new TypingTest("5.0 ^ 5.0", Type.DOUBLE));
         list.add(new TypingTest("5 % 5", Type.INTEGER));
         list.add(new TypingTest("5.0 % 5", Type.DOUBLE));
         list.add(new TypingTest("5 % 5.0", Type.DOUBLE));

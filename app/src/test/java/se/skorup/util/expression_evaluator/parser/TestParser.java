@@ -127,6 +127,25 @@ public class TestParser
         list.add(new TestParserData("5 % 5.0", 0d, alwaysZeroEnv));
         list.add(new TestParserData("5.0 % 5", 0d, alwaysZeroEnv));
         list.add(new TestParserData("5%5", 0, alwaysZeroEnv));
+        list.add(new TestParserData("5 ^ 2", 25, alwaysZeroEnv));
+        list.add(new TestParserData("5 * 5 ^ 2", 5 * Utils.pow(5, 2), alwaysZeroEnv));
+        list.add(new TestParserData("cookie ^ 2", COOKIE * COOKIE, cookieEnv));
+        list.add(new TestParserData("(cookie ^ 2) % 2", 0, cookieEnv));
+        list.add(new TestParserData("5 ^ (2 ^ 2)", Utils.pow(5, 4), alwaysZeroEnv));
+        list.add(new TestParserData("2 ^ (3 ^ 4)", Utils.pow(2, Utils.pow(3, 4)), alwaysZeroEnv));
+        list.add(new TestParserData("5 ^ 2 ^ 2", Utils.pow(5, 4), alwaysZeroEnv));
+        list.add(new TestParserData("2 ^ 3 ^ 4", Utils.pow(2, Utils.pow(3, 4)), alwaysZeroEnv));
+        list.add(new TestParserData("let x = 5 ^ 2 ^ 3", Utils.pow(5, 8), alwaysZeroEnv));
+        list.add(new TestParserData("(let x = 3) ^ (let y = 4) ^ (let z = 5)", Utils.pow(3, Utils.pow(4, 5)), alwaysZeroEnv));
+        list.add(new TestParserData("5 ^ 2 + 5 ^ 2", 50, alwaysZeroEnv));
+        list.add(new TestParserData("(2 ^ 2) ^ 4", Utils.pow(4, 4), alwaysZeroEnv));
+        list.add(new TestParserData("-2 ^ 2", Utils.pow(2, 2), alwaysZeroEnv));
+        list.add(new TestParserData("-2 ^ 2 ^ 2", Utils.pow(2, Utils.pow(2, 2)), alwaysZeroEnv));
+        list.add(new TestParserData("-2 ^ 2 ^ 2 ^ 2", 65536, alwaysZeroEnv));
+        list.add(new TestParserData("(-2) ^ (-2)", Utils.pow(-2, -2), alwaysZeroEnv));
+        list.add(new TestParserData("-(-2) ^ (-2)", Utils.pow(-2, -2), alwaysZeroEnv));
+        list.add(new TestParserData("5.0 ^ 2", 25d, alwaysZeroEnv));
+        list.add(new TestParserData("5 ^ 2.0", 25d, alwaysZeroEnv));
 
         var arr = new TestParserData[list.size()];
         list.toArray(arr);

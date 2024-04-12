@@ -174,7 +174,7 @@ public class Parser
                 case "*"  -> new Multiplication(left, right);
                 case "/"  -> new Division(left, right);
                 case "%"  -> new Modulo(left, right);
-                case "**" -> new Power(left, right);
+                case "**", "^" -> new Power(left, right);
                 default -> throw new RuntimeException("Illegal Input"); // should never happen.
             };
         }

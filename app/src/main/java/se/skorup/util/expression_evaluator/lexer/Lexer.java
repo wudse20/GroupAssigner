@@ -145,6 +145,8 @@ public class Lexer
             case ')' -> new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", 0);
             case '=' -> new SyntaxToken(SyntaxKind.EqualsToken, position++, "=", 0);
             case '%' -> new SyntaxToken(SyntaxKind.PercentToken, position++, "%", 0);
+            // DoubleAstrixToken is technically wrong but it is a nice hack :)
+            case '^' -> new SyntaxToken(SyntaxKind.DoubleAstrixToken, position++, "^", 0);
             default -> {
                 diagnostics.add("ERROR: bad character input: %c".formatted(current()));
                 yield new SyntaxToken(SyntaxKind.BadToken, position++, text.substring(position - 1, position), 0);
