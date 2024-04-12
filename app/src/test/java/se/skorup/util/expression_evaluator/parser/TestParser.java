@@ -169,5 +169,5 @@ public class TestParser
         assertDoesNotThrow(p::parse);
     }
 
-    private record TestParserData(String expression, Number expected, Environment env) {}
+    public record TestParserData(String expression, Number expected, Environment env) {}
 }
