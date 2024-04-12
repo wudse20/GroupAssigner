@@ -12,8 +12,8 @@ import se.skorup.gui.layouts.NColumnGenerator;
 import se.skorup.gui.layouts.SingleColumnGenerator;
 import se.skorup.gui.layouts.TripleColumnGenerator;
 import se.skorup.main.gui.group.components.PersonButton;
+import se.skorup.util.Log;
 import se.skorup.util.Utils;
-import se.skorup.util.collections.ImmutableHashSet;
 import se.skorup.util.localization.Localization;
 
 import javax.swing.BorderFactory;
@@ -21,7 +21,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +32,8 @@ import java.util.Set;
  * */
 public class SubgroupDisplayPanel extends Panel
 {
+    private final Group g;
+
     private int selectedId = -1;
     private int selectedGroupIndex = -1;
 
@@ -43,10 +47,11 @@ public class SubgroupDisplayPanel extends Panel
      *
      * @param parent the parent component of this panel.
      * */
-    public SubgroupDisplayPanel(JComponent parent)
+    public SubgroupDisplayPanel(JComponent parent, Group g)
     {
         super(new BorderLayout());
         this.parent = parent;
+        this.g = g;
         this.buttons = new ArrayList<>();
     }
 
@@ -58,9 +63,13 @@ public class SubgroupDisplayPanel extends Panel
      * */
     private NColumnGenerator getLayout(int width, int vgap)
     {
-        return width < 600 ? new SingleColumnGenerator(width, vgap) :
-               width < 1600 ? new DoubleColumnGenerator(width, vgap) :
-               new TripleColumnGenerator(width, vgap);
+        var gen = width < 600 ? new SingleColumnGenerator(width, vgap)  :
+                  width < 1600 ? new DoubleColumnGenerator(width, vgap) :
+                  new TripleColumnGenerator(width, vgap);
+
+        Log.debugf("Width: %s, gen: %s", width, gen);
+
+        return gen;
     }
 
     /**
@@ -100,19 +109,22 @@ public class SubgroupDisplayPanel extends Panel
         var highestCount = 0;
         var maxWishes = 0;
 
+        var lbl = new Label("ui.label.nbr-wishes", true);
+        lbl.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+
+        var lbl2 = new Label("ui.label.general-stats", true);
+        lbl2.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+
+        var personPanel = new Panel(null);
+        personPanel.setLayout(new BoxLayout(personPanel, BoxLayout.Y_AXIS));
+        personPanel.add(lbl);
+
         for (var p : persons)
         {
-            var cnt = 0;
-            var wished = ImmutableHashSet.fromCollection(g.getWishedIds(p));
-
-            for (var gr : groups)
-            {
-                if (gr.contains(p))
-                {
-                    cnt += wished.intersection(gr).size();
-                }
-            }
-
+            var cnt = getFulfilledWishes(p, groups);
+            personPanel.add(new Label(Localization.getValuef(
+                "ui.label.fulfilled-wishes", g.getFromId(p), cnt)
+            ));
             highestCount = Math.max(cnt, highestCount);
             x[cnt]++;
         }
@@ -124,20 +136,52 @@ public class SubgroupDisplayPanel extends Panel
         for (var i = 0; i < Math.min(maxWishes + 2, x.length); i++)
             data.add(x[i]);
 
-        var cont = new Panel(null);
-        cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
-        cont.add(new Label(Localization.getValuef("ui.wishes.score", score)));
-        cont.add(new Label(Localization.getValuef("ui.wishes.max", highestCount)));
+        var infoPanel = new Panel(new GridLayout(1, 2));
+        var contLeft = new Panel(null);
+        contLeft.setLayout(new BoxLayout(contLeft, BoxLayout.Y_AXIS));
+        contLeft.add(lbl2);
+        contLeft.add(new Label(Localization.getValuef("ui.wishes.score", score)));
+        contLeft.add(new Label(Localization.getValuef("ui.wishes.max", highestCount)));
 
-        for (var i = 0; i < maxWishes; i++)
+        for (var i = 0; i <= maxWishes; i++)
         {
             var nbrWishes = x[i];
-            cont.add(new Label(Localization.getValuef("ui.wishes.number", i, nbrWishes)));
+            contLeft.add(new Label(Localization.getValuef("ui.wishes.number", i, nbrWishes)));
         }
 
+        infoPanel.add(contLeft);
+        infoPanel.add(personPanel);
+
+        var cont = new Panel(null);
+        cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
+        cont.add(infoPanel);
         cont.add(new BarChartPanel(data));
 
         return new ComponentContainer(cont);
+    }
+
+    /**
+     * Calculates the current number of wishes fulfilled for an id.
+     *
+     * @param id the id to count wishes for.
+     * @param groups the groups that we want to calculate this for.
+     * @return the number of granted wishes for <i>id</i>.
+     * */
+    private int getFulfilledWishes(int id, List<Set<Integer>> groups)
+    {
+        Set<Integer> g = null;
+        for (var group : groups)
+        {
+            if (group.contains(id))
+            {
+                g = new HashSet<>(group);
+                break;
+            }
+        }
+
+        assert g != null : "g should never be null";
+        g.retainAll(this.g.getWishedIds(id));
+        return g.size();
     }
 
     /**
@@ -171,7 +215,7 @@ public class SubgroupDisplayPanel extends Panel
             p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 
             var header = new PersonButton(
-                Utils.pad(Localization.getValuef("ui.label.subgroup", cnt), ' ', longestName + 2),
+                Utils.pad(Localization.getValuef("ui.label.subgroup", cnt - 1), ' ', longestName + 2),
                 cnt - 2, cnt - 2
             );
 

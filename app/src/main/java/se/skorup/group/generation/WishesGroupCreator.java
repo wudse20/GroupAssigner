@@ -225,7 +225,7 @@ public final class WishesGroupCreator implements GroupCreator
         var psi = 0;
         for (var i = 1; i < highestCount; i++)
         {
-            psi += Math.pow(x[i], i) / Math.pow(2, n(i));
+            psi += (int) (Math.pow(x[i], i) / Math.pow(2, n(i)));
         }
 
         return psi - omega(x[0]) * x[0];

@@ -56,7 +56,7 @@ public class SubgroupFrame extends Frame implements ComponentListener
 
     private final CreatorPanel creatorPanel = new CreatorPanel();
     private final GenerationSettingsPanel settingsPanel = new GenerationSettingsPanel(this);
-    private final SubgroupDisplayPanel subgroupDisplayPanel = new SubgroupDisplayPanel((JComponent) cp);
+    private final SubgroupDisplayPanel subgroupDisplayPanel;
 
     private final ProgressBar progress = new ProgressBar();
 
@@ -74,6 +74,7 @@ public class SubgroupFrame extends Frame implements ComponentListener
         super("ui.title.subgroups");
         this.gf = gf;
         this.g = g;
+        this.subgroupDisplayPanel = new SubgroupDisplayPanel((JComponent) cp, g);
 
         init();
     }
@@ -175,7 +176,7 @@ public class SubgroupFrame extends Frame implements ComponentListener
                 state = State.DISPLAY;
                 addComponents();
             });
-        }, "Geneartion therad :)").start();
+        }, "Generation thread :)").start();
     }
 
     private String toPrintString()

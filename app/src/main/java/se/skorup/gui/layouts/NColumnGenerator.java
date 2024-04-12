@@ -30,4 +30,10 @@ public abstract class NColumnGenerator implements LayoutGenerator
         var rows = (int) Math.ceil(((double) nbrGroups) / columns);
         return new GridLayout(rows, columns, width / (columns + 1), height);
     }
+
+    @Override
+    public String toString()
+    {
+        return "ColumnGenerator(N = %d)".formatted(columns);
+    }
 }

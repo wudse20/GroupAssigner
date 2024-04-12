@@ -106,6 +106,9 @@ ui.label.subgroup: "Grupp %d:"
 ui.label.settings: "Välj inställningar för dina undergrupper"
 ui.label.main-group-1: "Huvudgrupp 1"
 ui.label.main-group-2: "Huvudgrupp 2"
+ui.label.fulfilled-wishes: "‣ %s har %d uppfyllda önskningar."
+ui.label.nbr-wishes: "Antal uppfyllda önskningar:"
+ui.label.general-stats: "Almänna uppgifter om grupperna:"
 
 ui.tab.about.start: "Start"
 ui.tab.about.about: "Om"
@@ -118,9 +121,9 @@ ui.error.at-least-one-action: "Du måste ha minst ett steg i din mall."
 ui.error.not-an-int: "Inte ett giltigt tal"
 ui.error.not-an-intf: "%s är inte ett giltigt tal :("
 
-ui.wishes.score: "Poäng för undergrupperna: %f"
-ui.wishes.max: "Högsta antal uppfyllda önskningar: %d"
-ui.wishes.number: "Antal personer med %d önskningar: %d"
+ui.wishes.score: "‣ Poäng för undergrupperna: %f"
+ui.wishes.max: "‣ Högsta antal uppfyllda önskningar: %d"
+ui.wishes.number: "‣ Antal personer med %d önskningar: %d"
 
 ui.cb.use-main-groups: "Använd huvudgrupper"
 
