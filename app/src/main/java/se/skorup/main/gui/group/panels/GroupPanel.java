@@ -180,10 +180,10 @@ public class GroupPanel extends Panel
                                        .setLocalizedQuestionf("ui.question.delete-group", g)
                                        .setLocalizedApproveButtonText("ui.button.dialog.approve")
                                        .setLocalizedDisapproveButtonText("ui.button.dialog.disapprove")
-                                       .setLocalizedTitle("ui.title.delete")
+                                       .setLocalizedTitlef("ui.title.delete", g)
                                        .show(Dialog.WARNING_MESSAGE);
 
-                if (!ans)
+                if (ans == null || !ans)
                     return;
 
                 SwingUtilities.invokeLater(() -> { // Since the EDT owns the groups. Thread Confinement :)

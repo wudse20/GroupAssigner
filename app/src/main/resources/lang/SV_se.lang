@@ -63,6 +63,7 @@ ui.title.main-group: "Huvudgrupper"
 ui.title.calculator: "Miniräknare"
 ui.title.subgroups: "Undergrupper"
 ui.title.printer-failure: "Utskrift misslyckades"
+ui.title.delete: "Vill du ta bort: %s?"
 
 ui.title.dialog.file: "Välj din fil"
 ui.title.dialog.error: "Fel: %s"

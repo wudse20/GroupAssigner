@@ -126,6 +126,18 @@ public final class ConfirmDialog extends Dialog<Boolean>
          * @return the finished confirm-dialog.
          * */
         ConfirmDialog setLocalizedTitle(String localizationKey);
+
+        /**
+         * Sets the title of the dialog using a localization key,
+         * with formatting.
+         *
+         * @param localizationKey the key of the title that is supposed to be on the dialog.
+         *                        If the key doesn't contain any format specifiers then it will
+         *                        just treat the key as a normal localization key.
+         * @param args the args to the format string.
+         * @return the finished confirm-dialog.
+         * */
+        ConfirmDialog setLocalizedTitlef(String localizationKey, Object... args);
     }
 
     /** The class responsible for building the dialog. */
@@ -193,6 +205,12 @@ public final class ConfirmDialog extends Dialog<Boolean>
         public ConfirmDialog setLocalizedTitle(String localizationKey)
         {
             dialog.title = Localization.getValue(localizationKey);
+            return dialog;
+        }
+
+        @Override
+        public ConfirmDialog setLocalizedTitlef(String localizationKey, Object... args) {
+            dialog.title = Localization.getValuef(localizationKey, args);
             return dialog;
         }
     }
