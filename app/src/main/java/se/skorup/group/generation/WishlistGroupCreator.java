@@ -75,17 +75,29 @@ public class WishlistGroupCreator extends GroupCreatorTemplate
     /**
      * Gets the person with the least wishes left int the stream.
      *
-     * @param candidates the candidets to be choosen from.
+     * @param candidates the candidates to be chosen from.
      * @param gm the Group in charge.
      * @param left the persons left to use.
      * */
     private int getLeastWishes(Stream<Integer> candidates, Group gm, HashSet<Integer> left)
     {
-        return candidates.map(x -> new PersonWishEntry(x, getNumberWishes(gm, left, x)))
-                         .sorted()
-                         .toList()
-                         .get(0)
-                         .id;
+        var list = candidates.map(x -> new PersonWishEntry(x, getNumberWishes(gm, left, x)))
+                             .sorted()
+                             .toList();
+
+        var least = new ArrayList<PersonWishEntry>();
+        var wishes = list.getFirst().nbrWishes;
+        var p = list.getFirst();
+        var i = 1;
+
+        least.add(p);
+        while (i < list.size() && p.nbrWishes == wishes)
+        {
+            p = list.get(i++);
+            least.add(p);
+        }
+
+        return least.get(new Random().nextInt(0, least.size())).id;
     }
 
     /**
@@ -100,8 +112,8 @@ public class WishlistGroupCreator extends GroupCreatorTemplate
      * */
     private int getOptimalPerson(Group gm, Set<Integer> left, Set<Integer> current, int lastId)
     {
-        var l = // Removes all the id:s that aren't allowed.
-                left.stream()
+        // Removes all the id:s that aren't allowed.
+        var l = left.stream()
                     .filter(i -> isPersonAllowed(i, current, gm))
                     .collect(Collectors.toCollection(HashSet::new));
 
@@ -141,8 +153,8 @@ public class WishlistGroupCreator extends GroupCreatorTemplate
 
     @Override
     protected int getNextPerson(
-            Group gm, Set<Integer> left,
-            Set<Integer> current, int lastId
+        Group gm, Set<Integer> left,
+        Set<Integer> current, int lastId
     ) throws GroupCreationFailedException
     {
         if (shouldUseStartPerson)

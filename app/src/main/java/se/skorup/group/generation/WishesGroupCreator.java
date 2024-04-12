@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A GroupCreator that creates all the best groups
  * it can find, according to the wishes. This group
- * will obey the denylist as well.
+ * will obey the deny-list as well.
  * */
 public final class WishesGroupCreator implements GroupCreator
 {
@@ -50,7 +50,7 @@ public final class WishesGroupCreator implements GroupCreator
         var consumers = 2;
         var producers = Math.max(Runtime.getRuntime().availableProcessors() - consumers - 1, 2);
         Log.debugf(
-            "Starting generation of subgroups: %d producers, %d consumers%n",
+            "Starting generation of subgroups: %d producers, %d consumers",
             producers, consumers
         );
 
@@ -84,9 +84,9 @@ public final class WishesGroupCreator implements GroupCreator
                     progress.onProgress(delta);
                 }
 
-                Log.debugf("Starting with: %d, Found: %s%n", id, res);
+                Log.debugf("Starting with: %d, Found: %s", id, res);
                 var score = getScore(res, gm);
-                Log.debugf("Score: %s%n", score);
+                Log.debugf("Score: %s", score);
                 process.add(new Result(res, score));
                 Log.debug("Produced a candidate for a group");
             });
