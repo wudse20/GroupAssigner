@@ -74,6 +74,9 @@ public class GroupDisplayPanel extends Panel
     private void addListeners(GroupFrame gf)
     {
         btnAdd.addActionListener(e -> {
+            if (txfInput.getText().trim().isEmpty())
+                return;
+
             updateGroup(txfInput.getText().trim());
             txfInput.clear();
         });
