@@ -21,12 +21,30 @@ public class ScrollPane extends JScrollPane
      * */
     public ScrollPane(Component c)
     {
+        this(c, true);
+    }
+
+    /**
+     * Creates a new ScrollPane with a component
+     * inside it. You can also decide weather or not
+     * a border will be display depending on the parameter
+     * <i>useBorder</i>.
+     *
+     * @param c the component to be contained by the ScrollPane.
+     * @param useBorder if {@code true} then the border will be
+     *                  displayed, else it will be an empty
+     *                  border.
+     * */
+    public ScrollPane(Component c, boolean useBorder)
+    {
         super(c);
 
-        this.setBorder(BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR));
         this.setBackground(Utils.COMPONENT_BACKGROUND_COLOR);
         this.setForeground(Utils.FOREGROUND_COLOR);
         this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        this.setBorder(
+            useBorder ? BorderFactory.createLineBorder(Utils.FOREGROUND_COLOR) : BorderFactory.createEmptyBorder()
+        );
 
         var scrBar = this.getVerticalScrollBar();
         scrBar.setUI(new MyScrollBarUI());
