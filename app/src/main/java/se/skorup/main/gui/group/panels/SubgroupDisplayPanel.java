@@ -20,6 +20,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -149,8 +150,11 @@ public class SubgroupDisplayPanel extends Panel
             contLeft.add(new Label(Localization.getValuef("ui.wishes.number", i, nbrWishes)));
         }
 
+        var scr = new ScrollPane(personPanel, false);
+        scr.setPreferredSize(new Dimension( this.getWidth(), this.getHeight() / 2));
+
         infoPanel.add(contLeft);
-        infoPanel.add(personPanel);
+        infoPanel.add(scr);
 
         var cont = new Panel(null);
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
