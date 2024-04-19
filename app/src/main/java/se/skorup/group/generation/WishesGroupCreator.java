@@ -47,20 +47,57 @@ public final class WishesGroupCreator implements GroupCreator
      * */
     private List<List<Set<Integer>>> generate(Group gm, List<Integer> sizes, boolean overflow)
     {
-        var consumers = 2;
+        var consumers = 1;
         var producers = Math.max(Runtime.getRuntime().availableProcessors() - consumers - 1, 2);
         Log.debugf(
             "Starting generation of subgroups: %d producers, %d consumers",
             producers, consumers
         );
 
-        final var cl = new CountDownLatch(gm.size());
+        var factor = 125;
+        final var cl = new CountDownLatch(gm.size() * factor * 2);
         var tpProd = Executors.newFixedThreadPool(producers);
         var process = new LinkedBlockingQueue<Result>();
         var persons = gm.getIds();
-        var delta = 1_000_000 / (Math.max(persons.size(), 1) * 2); // The delta that should be added each time.
+        var delta = 1_000_000_000 / (Math.max(gm.size(), 1) * factor * 2); // The delta that should be added each time.
 
-        for (var id : persons)
+        for (int i = 0; i < factor; i++)
+        {
+            for (var id : persons)
+            {
+                var task = tpProd.submit(() -> {
+                    List<Set<Integer>> res;
+
+                    try
+                    {
+                        if (sizes.size() == 1)
+                            res = new WishlistGroupCreator(id).generate(gm, sizes.getFirst(), overflow).getFirst();
+                        else
+                            res = new WishlistGroupCreator(id).generate(gm, sizes).getFirst();
+                    }
+                    catch (GroupCreationFailedException e)
+                    {
+                        cl.countDown(); // Skip if fails.
+                        Log.errorf("Error in creating groups: %s", e.getLocalizedMessage());
+                        throw e;
+                    }
+                    finally
+                    {
+                        // Updates the progress and adds it to the progress bar.
+                        progress.onProgress(delta);
+                    }
+
+                    Log.debugf("Starting with: %d, Found: %s", id, res);
+                    var score = getScore(res, gm);
+                    Log.debugf("Score: %s", score);
+                    process.add(new Result(res, score));
+                    Log.debug("Produced a candidate for a group");
+                });
+                monitor.addTask(task);
+            }
+        }
+
+        for (int i = 0; i < gm.size() * factor; i++)
         {
             var task = tpProd.submit(() -> {
                 List<Set<Integer>> res;
@@ -68,9 +105,9 @@ public final class WishesGroupCreator implements GroupCreator
                 try
                 {
                     if (sizes.size() == 1)
-                        res = new WishlistGroupCreator().generate(gm, sizes.get(0), overflow).get(0);
+                        res = new WishlistGroupCreator().generate(gm, sizes.getFirst(), overflow).getFirst();
                     else
-                        res = new WishlistGroupCreator().generate(gm, sizes).get(0);
+                        res = new WishlistGroupCreator().generate(gm, sizes).getFirst();
                 }
                 catch (GroupCreationFailedException e)
                 {
@@ -84,7 +121,7 @@ public final class WishesGroupCreator implements GroupCreator
                     progress.onProgress(delta);
                 }
 
-                Log.debugf("Starting with: %d, Found: %s", id, res);
+                Log.debugf("Starting with random person, Found: %s", res);
                 var score = getScore(res, gm);
                 Log.debugf("Score: %s", score);
                 process.add(new Result(res, score));
@@ -135,7 +172,7 @@ public final class WishesGroupCreator implements GroupCreator
             return List.of(); // Want it to exit and return nothing.
         }
 
-        progress.onProgress(1_000_000);
+        progress.onProgress(1_000_000_000);
         tpProd.shutdownNow();
         return monitor.getResult().stream().toList();
     }
@@ -222,10 +259,10 @@ public final class WishesGroupCreator implements GroupCreator
             x[cnt]++;
         }
 
-        var psi = 0;
-        for (var i = 1; i < highestCount; i++)
+        var psi = 0d;
+        for (var i = 1; i <= highestCount; i++)
         {
-            psi += (int) (Math.pow(x[i], i) / Math.pow(2, n(i)));
+            psi += Math.pow(x[i], i) / Math.pow(2, n(i));
         }
 
         return psi - omega(x[0]) * x[0];

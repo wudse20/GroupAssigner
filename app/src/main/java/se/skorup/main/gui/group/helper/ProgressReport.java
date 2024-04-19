@@ -24,7 +24,7 @@ public class ProgressReport implements Progress
         this.ppm = 0;
         this.p = p;
         SwingUtilities.invokeLater(() -> {
-            p.setMaximum(1_000_000);
+            p.setMaximum(1_000_000_000);
             p.setValue(0);
         });
     }
