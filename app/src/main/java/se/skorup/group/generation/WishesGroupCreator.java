@@ -58,7 +58,7 @@ public final class WishesGroupCreator implements GroupCreator
         var tpProd = Executors.newFixedThreadPool(producers);
         var process = new LinkedBlockingQueue<Result>();
         var persons = gm.getIds();
-        var delta = 1_000_000 / (persons.size() * 2); // The delta that should be added each time.
+        var delta = 1_000_000 / (Math.max(persons.size(), 1) * 2); // The delta that should be added each time.
 
         for (var id : persons)
         {
