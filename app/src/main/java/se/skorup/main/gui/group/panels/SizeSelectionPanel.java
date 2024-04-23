@@ -79,6 +79,9 @@ public class SizeSelectionPanel extends Panel
     private void radioAction(String localizationKey)
     {
         lblHeader.setText(Localization.getValue(localizationKey));
+        this.removeAll();
+        this.addComponents();
+        this.revalidate();
     }
 
     public List<Integer> getSizes()
@@ -89,9 +92,10 @@ public class SizeSelectionPanel extends Panel
                 return List.of(Integer.parseInt(txfInput.getText()));
 
             return Arrays.stream(txfInputMulti.getText().split(","))
-                    .map(String::trim)
-                    .map(Integer::parseInt)
-                    .toList();
+                         .map(String::trim)
+                         .filter(s -> !s.isEmpty())
+                         .map(Integer::parseInt)
+                         .toList();
         }
         catch (NumberFormatException e)
         {
@@ -101,7 +105,7 @@ public class SizeSelectionPanel extends Panel
                     MessageDialog.create()
                                  .setLocalizedTitle("ui.error.not-an-int")
                                  .setLocalizedInformationf("ui.error.not-an-intf", "'%s'".formatted(str))
-                                 .setLocalizedButtonText("ui.button.close")
+                                 .setLocalizedButtonText("ui.button.dialog.close")
                                  .show(MessageDialog.ERROR_MESSAGE);
                 }, "SizeSelectionPanel::getSizes-InvalidUserInput").start();
 

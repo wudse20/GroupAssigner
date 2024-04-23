@@ -165,7 +165,7 @@ public class GroupPanel extends Panel
                     {
                         MessageDialog.create()
                                      .setLocalizedTitlef("ui.title.dialog.error", e.getLocalizedMessage())
-                                     .setLocalizedInformation(e.getLocalizedMessage()).setLocalizedButtonText("ui.button.close")
+                                     .setLocalizedInformation(e.getLocalizedMessage()).setLocalizedButtonText("ui.button.dialog.close")
                                      .show(Dialog.ERROR_MESSAGE);
 
                         SwingUtilities.invokeLater(() -> gf.setVisible(true));
