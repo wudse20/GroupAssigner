@@ -198,15 +198,17 @@ public final class FileDialog extends Dialog<File>
 
         frame.pack();
 
-        frame.setSize(
-            new Dimension(
-                (int) Math.max(title.length() * 15, 5 * scr.getPreferredSize().getWidth()),
-                (int) (
-                    3 * bottomPanel.getPreferredSize().getHeight() +
-                    scr.getPreferredSize().getHeight() +
-                    3 * topPanel.getPreferredSize().getHeight()
-                )
-        ));
+        var calculatedSize = new Dimension(
+            (int) Math.max(title.length() * 15, 5 * scr.getPreferredSize().getWidth()),
+            (int) (
+                3 * bottomPanel.getPreferredSize().getHeight() +
+                scr.getPreferredSize().getHeight() +
+                3 * topPanel.getPreferredSize().getHeight()
+            )
+        );
+
+        var actualSize = new Dimension(Math.max(calculatedSize.width, 400), Math.max(calculatedSize.height, 300));
+        frame.setSize(actualSize);
     }
 
     /**
