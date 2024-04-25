@@ -4,6 +4,7 @@ import se.skorup.group.Group;
 import se.skorup.util.collections.ImmutableHashSet;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -82,22 +83,18 @@ public class WishlistGroupCreator extends GroupCreatorTemplate
     private int getLeastWishes(Stream<Integer> candidates, Group gm, HashSet<Integer> left)
     {
         var list = candidates.map(x -> new PersonWishEntry(x, getNumberWishes(gm, left, x)))
-                             .sorted()
                              .toList();
 
-        var least = new ArrayList<PersonWishEntry>();
-        var wishes = list.getFirst().nbrWishes;
-        var p = list.getFirst();
-        var i = 1;
+        var min = list.stream()
+                      .mapToInt(PersonWishEntry::nbrWishes)
+                      .min()
+                      .orElse(0);
 
-        least.add(p);
-        while (i < list.size() && p.nbrWishes == wishes)
-        {
-            p = list.get(i++);
-            least.add(p);
-        }
+        var filtered = list.stream()
+                           .filter(p -> p.nbrWishes == min)
+                           .toList();
 
-        return least.get(new Random().nextInt(0, least.size())).id;
+        return filtered.get(new Random().nextInt(0, filtered.size())).id;
     }
 
     /**

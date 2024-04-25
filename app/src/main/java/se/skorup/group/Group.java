@@ -63,6 +63,9 @@ public class Group implements Serializable
      * */
     public synchronized void addDenyItem(int id1, int id2)
     {
+        if (!persons.containsKey(id1) || !persons.containsKey(id2))
+            return;
+
         var l1 = denylist.getOrDefault(id1, new HashSet<>());
         var l2 = denylist.getOrDefault(id2, new HashSet<>());
 
@@ -112,6 +115,9 @@ public class Group implements Serializable
      * */
     public synchronized void addWishItem(int wisher, int wished)
     {
+        if (!persons.containsKey(wisher) || !persons.containsKey(wished))
+            return;
+
         var set = wishlist.getOrDefault(wisher, new HashSet<>());
         set.add(wished);
         wishlist.put(wisher, set);
@@ -300,7 +306,7 @@ public class Group implements Serializable
     {
         var g = new Group("mg1");
         getMainGroupOne().forEach(g::registerPerson);
-        return g;
+        return addWishesAndDenies(g);
     }
 
     /**
@@ -322,6 +328,35 @@ public class Group implements Serializable
     {
         var g = new Group("mg2");
         getMainGroupTwo().forEach(g::registerPerson);
+        return addWishesAndDenies(g);
+    }
+
+    /**
+     * Adds wishes and denies to the group from this group.
+     *
+     * @param g the group to get the wishes and denies.
+     * @return the created group.
+     * */
+    private Group addWishesAndDenies(Group g)
+    {
+        for (var entry : wishlist.entrySet())
+        {
+            var id1 = entry.getKey();
+            for (var p : entry.getValue())
+            {
+                g.addWishItem(id1, p);
+            }
+        }
+
+        for (var entry : denylist.entrySet())
+        {
+            var id1 = entry.getKey();
+            for (var p : entry.getValue())
+            {
+                g.addDenyItem(id1, p);
+            }
+        }
+
         return g;
     }
 
@@ -334,6 +369,26 @@ public class Group implements Serializable
     public synchronized Person getFromId(int id)
     {
         return persons.get(id);
+    }
+
+    /**
+     * Gets a copy the denylist.
+     *
+     * @return a copy of the denylist.
+     * */
+    public synchronized Map<Integer, Set<Integer>> getDenyList()
+    {
+        return new HashMap<>(denylist);
+    }
+
+    /**
+     * Gets a copy the wishlist.
+     *
+     * @return a copy of the wishlist.
+     * */
+    public synchronized Map<Integer, Set<Integer>> getWishlist()
+    {
+        return new HashMap<>(wishlist);
     }
 
     @Override

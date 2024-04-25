@@ -7,6 +7,7 @@ import se.skorup.util.Log;
 import se.skorup.util.localization.Localization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +142,6 @@ public final class WishesGroupCreator implements GroupCreator
                         monitor.updateResult(r.groups, r.score);
                         progress.onProgress(delta);
                         cl.countDown();
-                        Log.debug(cl.getCount());
                     }
                 }
                 catch (InterruptedException e)
@@ -227,7 +227,7 @@ public final class WishesGroupCreator implements GroupCreator
      * */
     public static double omega(int x)
     {
-        return x <= 0 ? 0 : 10 * Math.exp(x);
+        return x <= 0 ? 0 : 20 * Math.exp(x);
     }
 
     /**
@@ -262,9 +262,10 @@ public final class WishesGroupCreator implements GroupCreator
         var psi = 0d;
         for (var i = 1; i <= highestCount; i++)
         {
-            psi += Math.pow(x[i], i) / Math.pow(2, n(i));
+            psi += Math.pow(x[i], i * i) / Math.pow(2, n(i));
         }
 
+        Log.debugf("%s, score: %f", Arrays.toString(x), psi - omega(x[0]) * x[0]);
         return psi - omega(x[0]) * x[0];
     }
 

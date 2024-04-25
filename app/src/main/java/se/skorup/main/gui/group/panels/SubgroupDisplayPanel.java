@@ -173,7 +173,7 @@ public class SubgroupDisplayPanel extends Panel
      * */
     private int getFulfilledWishes(int id, List<Set<Integer>> groups)
     {
-        Set<Integer> g = null;
+        Set<Integer> g = new HashSet<>();
         for (var group : groups)
         {
             if (group.contains(id))
@@ -183,7 +183,6 @@ public class SubgroupDisplayPanel extends Panel
             }
         }
 
-        assert g != null : "g should never be null";
         g.retainAll(this.g.getWishedIds(id));
         return g.size();
     }
