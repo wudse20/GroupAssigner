@@ -63,7 +63,21 @@ public class GroupDisplayPanel extends Panel
         addComponents();
         addListeners(gf);
 
-        btnDeleteGroup.setEnabled(!groups.isEmpty());
+        setButtonState(!groups.isEmpty());
+    }
+
+    /**
+     * Sets the button state to enabled or disabled.
+     *
+     * @param enabled if {@code true} the buttons will be enabled.
+     *                if {@code false} the buttons will be disabled.
+     * */
+    private void setButtonState(boolean enabled)
+    {
+        btnAdd.setEnabled(enabled);
+        btnMainGroups.setEnabled(enabled);
+        btnCreateSubgroup.setEnabled(enabled);
+        btnDeleteGroup.setEnabled(enabled);
     }
 
     /**
@@ -102,12 +116,12 @@ public class GroupDisplayPanel extends Panel
         cbGroups.addItemListener(e -> {
             if (cbGroups.getSelectedIndex() == -1)
             {
-                btnDeleteGroup.setEnabled(false);
+                setButtonState(false);
                 return;
             }
 
             list.setGroup(groups.get(cbGroups.getSelectedIndex()));
-            btnDeleteGroup.setEnabled(true);
+            setButtonState(true);
         });
 
         btnCreateGroup.addActionListener(e -> createCallbacks.forEach(c -> c.action(null)));
@@ -143,10 +157,13 @@ public class GroupDisplayPanel extends Panel
         var cont = new Panel(new FlowLayout(FlowLayout.CENTER));
         cont.add(lblName);
         cont.add(txfInput);
+        cont.add(new Label(" "));
         cont.add(btnAdd);
-        cont.add(btnMainGroups);
+        cont.add(new Label("    "));
         cont.add(btnCreateGroup);
         cont.add(btnDeleteGroup);
+        cont.add(new Label("    "));
+        cont.add(btnMainGroups);
         cont.add(btnCreateSubgroup);
 
         this.add(new ComponentContainer(cbGroups), BorderLayout.PAGE_START);
