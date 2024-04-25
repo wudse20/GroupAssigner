@@ -10,6 +10,7 @@ import se.skorup.gui.components.list.PersonList;
 import se.skorup.gui.components.containers.ScrollPane;
 
 import javax.swing.BoxLayout;
+import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -43,6 +44,9 @@ public class MainGroupPanel extends Panel
 
         btnRight.addActionListener(e -> handleButtonPress(plMg1, MainGroup.TWO));
         btnLeft.addActionListener(e -> handleButtonPress(plMg2, MainGroup.ONE));
+
+        plMg1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        plMg2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
     /**
@@ -53,11 +57,13 @@ public class MainGroupPanel extends Panel
      * */
     private void handleButtonPress(PersonList list, MainGroup mg)
     {
-        if (list.getSelectedIndex() == -1 || g == null)
+        if (list.getSelectedIndices().length == 0 || g == null)
             return;
 
-        var p = list.getSelectedValue();
-        g.setMainGroup(p.id(), mg);
+        for (var p : list.getSelectedValuesList()) {
+            g.setMainGroup(p.id(), mg);
+        }
+
         populateGroup(g);
     }
 
