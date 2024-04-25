@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static se.skorup.gui.components.output.CSVLabel.PERSON_COLOR;
 import static se.skorup.gui.components.output.CSVLabel.SKIP_COLOR;
@@ -194,8 +193,8 @@ public class ImportFrame extends Frame implements KeyListener
      * Handles hover enter foreach CSVLabel.
      *
      * @param c the label itself.
-     * @param x the x-coord of the label.
-     * @param y the y-coord of the label.
+     * @param x the x-cord of the label.
+     * @param y the y-cord of the label.
      * */
     private void hoverEnter(CSVLabel c, int x, int y)
     {
@@ -216,10 +215,11 @@ public class ImportFrame extends Frame implements KeyListener
 
             for (var i = 0; i < selected.length; i++)
             {
+                if (labels[x][i] == null)
+                    continue;
+
                 var l = labels[x][i].label();
-                l.setSavedBackground(l.getBackground());
-                l.setBackground(Utils.SELECTED_COLOR);
-                selected[i] = l;
+                updateSelected(l, i);
             }
         }
         else if (fs.equals(FrameState.FILL_COLUMN))
@@ -229,10 +229,11 @@ public class ImportFrame extends Frame implements KeyListener
 
             for (var i = 0; i < selected.length; i++)
             {
+                if (labels[i][y] == null)
+                    continue;
+
                 var l = labels[i][y].label();
-                l.setSavedBackground(l.getBackground());
-                l.setBackground(Utils.SELECTED_COLOR);
-                selected[i] = l;
+                updateSelected(l, i);
             }
         }
         else if (fs.equals(FrameState.FILL_TEMPLATE_CREATED))
@@ -243,6 +244,9 @@ public class ImportFrame extends Frame implements KeyListener
 
             for (var i : template)
             {
+                if (labels[x][i.x()] == null)
+                    continue;
+
                 var l = labels[x][i.x()].label();
 
                 if (set.contains(l))
@@ -256,6 +260,20 @@ public class ImportFrame extends Frame implements KeyListener
         }
 
         this.requestFocus();
+    }
+
+    /**
+     * Updates the selected array correctly.
+     * */
+    private void updateSelected(CSVLabel l, int i)
+    {
+        // This will happen if a row has fewer fields than the longest row.
+        if (l == null)
+            return;
+
+        l.setSavedBackground(l.getBackground());
+        l.setBackground(Utils.SELECTED_COLOR);
+        selected[i] = l;
     }
 
     /**
@@ -559,11 +577,14 @@ public class ImportFrame extends Frame implements KeyListener
      * The logic for deselecting when using the skip
      * state.
      *
-     * @param x the x-coord of the label.
-     * @param y the y-coord of the label.
+     * @param x the x-cord of the label.
+     * @param y the y-cord of the label.
      * */
     private void skipDeselectionLogic(int x, int y)
     {
+        if (labels[x][y] == null)
+            return;
+
         var l = labels[x][y].label();
         var p = labels[x][y].p();
 
@@ -650,6 +671,9 @@ public class ImportFrame extends Frame implements KeyListener
                 Log.debugf("Handling item: %s", i);
 
                 state = i.state();
+
+                if (labels[label.getXCoordinate()][i.x()] == null)
+                    continue;
 
                 var label1 = labels[label.getXCoordinate()][i.x()].label;
                 clicked(label1);
