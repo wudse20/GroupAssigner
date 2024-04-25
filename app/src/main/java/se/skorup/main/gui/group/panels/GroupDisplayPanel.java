@@ -184,7 +184,7 @@ public class GroupDisplayPanel extends Panel
         for (var g : groups)
             cbGroups.addItem(g);
 
-        if (groups.size() == 0)
+        if (groups.isEmpty())
         {
             cbGroups.setSelectedIndex(-1);
             list.setGroup(null);
@@ -192,7 +192,7 @@ public class GroupDisplayPanel extends Panel
         }
 
         cbGroups.setSelectedIndex(0);
-        list.setGroup(groups.get(0));
+        list.setGroup(groups.getFirst());
     }
 
     /**
